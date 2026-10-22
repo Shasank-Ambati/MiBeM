@@ -15,6 +15,7 @@ The article text itself is never touched. Add a topic by creating its HTML file
 in computational/ (copy an existing page for the structure), adding an entry to
 assets/topics.js, and running this script.
 """
+import hashlib
 import html
 import json
 import re
@@ -46,6 +47,11 @@ def esc(s):
     return html.escape(s, quote=True)
 
 
+def ver(rel):
+    """Short content hash used as ?v= on asset URLs, so browsers never pair new HTML with a stale cached asset."""
+    return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
+
+
 # ----------------------------------------------------------------- templates
 def head(rel, title, desc, url, og_type="article"):
     return f"""<head>
@@ -68,7 +74,7 @@ def head(rel, title, desc, url, og_type="article"):
     <link rel="apple-touch-icon" href="{rel}assets/apple-touch-icon.png">
     <link rel="manifest" href="{rel}site.webmanifest">
     <script>try{{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{rel}assets/style.css">
+    <link rel="stylesheet" href="{rel}assets/style.css?v={ver('assets/style.css')}">
 </head>"""
 
 
@@ -91,9 +97,10 @@ def footer(rel):
 
 
 def scripts(rel, demos=False):
-    s = f'<script src="{rel}assets/topics.js"></script>\n    <script src="{rel}assets/site.js" defer></script>'
+    s = (f'<script src="{rel}assets/topics.js?v={ver("assets/topics.js")}"></script>\n'
+         f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>')
     if demos:
-        s += f'\n    <script src="{rel}assets/demos.js" defer></script>'
+        s += f'\n    <script src="{rel}assets/demos.js?v={ver("assets/demos.js")}" defer></script>'
     return s
 
 
@@ -361,10 +368,17 @@ def write_manifest():
 import datetime
 LASTMOD = datetime.date.today().isoformat()
 
+def compute_minutes():
+    for t in TOPICS:
+        art = re.search(r"<article.*?</article>", (ROOT / t["path"]).read_text(encoding="utf-8"), re.S).group(0)
+        t["minutes"] = minutes_of(art)
+
+
 if __name__ == "__main__":
+    compute_minutes()
+    write_minutes()
     for i, t in enumerate(TOPICS):
         build_topic(t, i)
-    write_minutes()
     build_index()
     build_map()
     build_sitemap()

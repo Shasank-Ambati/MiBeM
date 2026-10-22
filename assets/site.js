@@ -5,6 +5,7 @@
 
   var script = document.currentScript;
   var ROOT = script && script.src ? script.src.replace(/assets\/site\.js(\?.*)?$/, "") : "";
+  var QS = script && script.src && script.src.indexOf("?") > -1 ? script.src.slice(script.src.indexOf("?")) : "";
   var doc = document;
   var root = doc.documentElement;
   var TOPICS = window.MIBEM_TOPICS || [];
@@ -17,9 +18,9 @@
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
 
   var ICON = {
-    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
-    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
-    moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
+    search: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    sun: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+    moon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>'
   };
 
   /* ---------------- theme ---------------- */
@@ -61,7 +62,7 @@
   function loadIndex(cb) {
     if (window.MIBEM_INDEX) { indexReady = true; return cb(); }
     var s = doc.createElement("script");
-    s.src = ROOT + "assets/search-index.js";
+    s.src = ROOT + "assets/search-index.js" + QS;
     s.onload = function () { indexReady = true; cb(); };
     s.onerror = function () { status.textContent = "Search index could not be loaded."; };
     doc.head.appendChild(s);
