@@ -20,25 +20,25 @@
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="manifest" href="site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="assets/style.css?v=bbdd60a0">
+    <link rel="stylesheet" href="assets/style.css?v=98d42ef1">
 </head>
 <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="#start">Where to start</a><a href="#map">Map</a><a href="#topics">Topics</a><a href="#about">About</a></nav>
+        <nav><a href="#start">Where to start</a><a href="#map">Map</a><a href="#topics">Topics</a><a href="glossary.html">Glossary</a><a href="#about">About</a></nav>
     </div></header>
 
     <main class="wrap" id="main">
 
         <section class="hero">
             <div class="hero-text">
-                <p class="eyebrow">A reading series for materials people</p>
-                <h1>Learn to simulate materials, from electrons to components</h1>
-                <p class="lead">Dense, reference-style pages on the models and numerical methods behind modern materials research: what each method assumes, what it can predict, where it fails, and how to start using it. Written for materials scientists and metallurgists, with animated figures from real simulations.</p>
+                <p class="eyebrow">Free &middot; from zero to working knowledge</p>
+                <h1>Learn computational materials science from scratch</h1>
+                <p class="lead">No background needed. Start with plain-language pages on numbers, calculus ideas, atoms, energy and your first simulation, then climb through university-level refreshers to the methods researchers use: DFT, molecular dynamics, Monte Carlo, CALPHAD, phase-field, finite elements and machine learning. Every page has interactive demos, practice questions with answers, and hover definitions for every new word.</p>
                 <div class="actions">
-                    <a class="btn" href="computational/introduction.html">Start with Topic 1</a>
-                    <a class="btn ghost" href="#topics">Browse all topics</a>
+                    <a class="btn" href="computational/start-here.html">Start here, from zero</a>
+                    <a class="btn ghost" href="computational/start-here.html#quiz">Take the 2-minute placement quiz</a>
                 </div>
             </div>
             <figure class="hero-fig">
@@ -56,27 +56,66 @@
         </ul>
 
         <h2 class="section-title" id="start">Where to start</h2>
-        <p class="section-sub">Skim the background pages first if the maths, physics or materials basics feel rusty; otherwise start at Topic 1, which gives the map for everything else, and then follow whichever question brought you here.</p>
+        <p class="section-sub">Not sure where you fit? Take the two-minute quiz on the Start here page: it tells you which pages to read first. Or pick the description below that sounds most like you.</p>
         <div class="paths">
-            <div class="path"><b><a href="computational/mathematics-for-simulation.html">I want the background first</a></b><span>Refresh the maths, physics, materials science, numerical methods and programming everything else relies on.</span><em>Background <a href="computational/mathematics-for-simulation.html">1</a> &rarr; <a href="computational/physics-for-simulation.html">2</a> &rarr; <a href="computational/materials-science-essentials.html">3</a> &rarr; <a href="computational/numerical-methods-essentials.html">4</a> &rarr; <a href="computational/programming-and-workflow.html">5</a></em></div>
-            <div class="path"><b><a href="computational/introduction.html">I am new to simulation</a></b><span>Get the big picture, then the ideas every method relies on.</span><em>Topics <a href="computational/introduction.html">1</a> &rarr; <a href="computational/crystal-structure-and-periodic-cells.html">2</a> &rarr; <a href="computational/statistical-mechanics.html">3</a></em></div>
+            <div class="path"><b><a href="computational/start-here.html">I am starting from zero</a></b><span>No background in maths, science or programming. Begin with the roadmap and a two-minute quiz, then build up step by step.</span><em>Start here <a href="computational/start-here.html">S0</a> &rarr; <a href="computational/numbers-units-and-graphs.html">1</a> &rarr; <a href="computational/rates-of-change-calculus.html">2</a> &rarr; <a href="computational/atoms-bonds-and-materials.html">3</a> &rarr; <a href="computational/forces-energy-and-heat.html">4</a> &rarr; <a href="computational/chance-averages-and-error-bars.html">5</a> &rarr; <a href="computational/your-first-simulation.html">6</a></em></div>
+            <div class="path"><b><a href="computational/mathematics-for-simulation.html">I need a university-level refresher</a></b><span>Maths, physics, materials science, numerical methods and programming as the methods use them.</span><em>Background <a href="computational/mathematics-for-simulation.html">1</a> &rarr; <a href="computational/physics-for-simulation.html">2</a> &rarr; <a href="computational/materials-science-essentials.html">3</a> &rarr; <a href="computational/numerical-methods-essentials.html">4</a> &rarr; <a href="computational/programming-and-workflow.html">5</a></em></div>
+            <div class="path"><b><a href="computational/introduction.html">I know the basics and want the big picture</a></b><span>What the methods are, what they can predict and where they fail, then the foundations they share.</span><em>Topics <a href="computational/introduction.html">1</a> &rarr; <a href="computational/crystal-structure-and-periodic-cells.html">2</a> &rarr; <a href="computational/statistical-mechanics.html">3</a></em></div>
             <div class="path"><b><a href="computational/density-functional-theory.html">I care about atoms and electrons</a></b><span>Bonding, defects and energies from first principles, then classical dynamics and sampling.</span><em>Topics <a href="computational/density-functional-theory.html">5</a> &rarr; <a href="computational/molecular-dynamics.html">6</a> &rarr; <a href="computational/monte-carlo-methods.html">7</a></em></div>
             <div class="path"><b><a href="computational/thermodynamics-and-calphad.html">I care about phases and microstructure</a></b><span>What is stable, how fast atoms move, and how structures evolve.</span><em>Topics <a href="computational/thermodynamics-and-calphad.html">4</a> &rarr; <a href="computational/diffusion-and-kinetics.html">8</a> &rarr; <a href="computational/phase-field-modelling.html">9</a></em></div>
             <div class="path"><b><a href="computational/finite-element-method.html">I care about components and data</a></b><span>Processes and parts at engineering scale, and learning from data.</span><em>Topics <a href="computational/finite-element-method.html">10</a> &rarr; <a href="computational/machine-learning-for-materials.html">11</a></em></div>
         </div>
-
         <h2 class="section-title" id="map">How the topics connect</h2>
         <p class="section-sub">Each topic builds on a few others. Hover or tab through the map to see what a topic needs and what it unlocks; click to open it.</p>
         <!-- map:start -->
-        <div id="topic-map"><ol><li><a href="computational/mathematics-for-simulation.html">B1. Mathematics for simulation</a></li><li><a href="computational/physics-for-simulation.html">B2. Physics for simulation</a> <span class="meta">builds on 12</span></li><li><a href="computational/materials-science-essentials.html">B3. Materials science essentials</a></li><li><a href="computational/numerical-methods-essentials.html">B4. Numerical methods essentials</a> <span class="meta">builds on 12</span></li><li><a href="computational/programming-and-workflow.html">B5. Programming and workflow</a></li><li><a href="computational/introduction.html">1. Introduction to computational materials science</a> <span class="meta">builds on 14</span></li><li><a href="computational/crystal-structure-and-periodic-cells.html">2. Crystal structures, supercells and periodic boundaries</a> <span class="meta">builds on 1</span></li><li><a href="computational/statistical-mechanics.html">3. Statistical mechanics for simulation</a> <span class="meta">builds on 1, 13</span></li><li><a href="computational/thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a> <span class="meta">builds on 3</span></li><li><a href="computational/density-functional-theory.html">5. Density functional theory in practice</a> <span class="meta">builds on 2, 13</span></li><li><a href="computational/molecular-dynamics.html">6. Molecular dynamics</a> <span class="meta">builds on 2, 3, 15</span></li><li><a href="computational/monte-carlo-methods.html">7. Monte Carlo and kinetic Monte Carlo</a> <span class="meta">builds on 3, 15</span></li><li><a href="computational/diffusion-and-kinetics.html">8. Diffusion and kinetics</a> <span class="meta">builds on 4, 15</span></li><li><a href="computational/phase-field-modelling.html">9. Phase-field modelling</a> <span class="meta">builds on 4, 8</span></li><li><a href="computational/finite-element-method.html">10. The finite element method</a> <span class="meta">builds on 8, 15</span></li><li><a href="computational/machine-learning-for-materials.html">11. Machine learning for materials</a> <span class="meta">builds on 5, 6, 16</span></li></ol></div>
+        <div id="topic-map"><ol><li><a href="computational/start-here.html">S0. Start here: what you will learn and how</a></li><li><a href="computational/numbers-units-and-graphs.html">S1. Numbers, units and graphs</a> <span class="meta">builds on 17</span></li><li><a href="computational/rates-of-change-calculus.html">S2. Rates of change: calculus from scratch</a> <span class="meta">builds on 18</span></li><li><a href="computational/atoms-bonds-and-materials.html">S3. Atoms, bonds and materials from scratch</a> <span class="meta">builds on 17</span></li><li><a href="computational/forces-energy-and-heat.html">S4. Forces, energy, heat and motion</a> <span class="meta">builds on 18</span></li><li><a href="computational/chance-averages-and-error-bars.html">S5. Chance, averages and error bars</a> <span class="meta">builds on 18</span></li><li><a href="computational/your-first-simulation.html">S6. Your first simulation</a> <span class="meta">builds on 19, 22</span></li><li><a href="computational/mathematics-for-simulation.html">B1. Mathematics for simulation</a> <span class="meta">builds on 18, 19</span></li><li><a href="computational/physics-for-simulation.html">B2. Physics for simulation</a> <span class="meta">builds on 12, 21</span></li><li><a href="computational/materials-science-essentials.html">B3. Materials science essentials</a> <span class="meta">builds on 20</span></li><li><a href="computational/numerical-methods-essentials.html">B4. Numerical methods essentials</a> <span class="meta">builds on 12, 23</span></li><li><a href="computational/programming-and-workflow.html">B5. Programming and workflow</a> <span class="meta">builds on 23</span></li><li><a href="computational/introduction.html">1. Introduction to computational materials science</a> <span class="meta">builds on 14</span></li><li><a href="computational/crystal-structure-and-periodic-cells.html">2. Crystal structures, supercells and periodic boundaries</a> <span class="meta">builds on 1</span></li><li><a href="computational/statistical-mechanics.html">3. Statistical mechanics for simulation</a> <span class="meta">builds on 1, 13</span></li><li><a href="computational/thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a> <span class="meta">builds on 3</span></li><li><a href="computational/density-functional-theory.html">5. Density functional theory in practice</a> <span class="meta">builds on 2, 13</span></li><li><a href="computational/molecular-dynamics.html">6. Molecular dynamics</a> <span class="meta">builds on 2, 3, 15</span></li><li><a href="computational/monte-carlo-methods.html">7. Monte Carlo and kinetic Monte Carlo</a> <span class="meta">builds on 3, 15</span></li><li><a href="computational/diffusion-and-kinetics.html">8. Diffusion and kinetics</a> <span class="meta">builds on 4, 15</span></li><li><a href="computational/phase-field-modelling.html">9. Phase-field modelling</a> <span class="meta">builds on 4, 8</span></li><li><a href="computational/finite-element-method.html">10. The finite element method</a> <span class="meta">builds on 8, 15</span></li><li><a href="computational/machine-learning-for-materials.html">11. Machine learning for materials</a> <span class="meta">builds on 5, 6, 16</span></li></ol></div>
 <!-- map:end -->
         <p class="section-sub"><a href="map.html">Open the map on its own page &rarr;</a></p>
 
         <h2 class="section-title" id="topics">All topics</h2>
         <p class="section-sub">Numbered in a sensible reading order. Reading times are approximate.</p>
         <!-- cards:start -->
-        <h3 class="group-title">Background: what to know first</h3>
-        <p class="section-sub">Refreshers on the maths, physics, materials science, numerical methods and programming that the core topics rely on.</p>
+        <h3 class="group-title">Start here: no background needed</h3>
+        <p class="section-sub">Plain-language foundations for anyone starting from school-level maths and science. Read these in order.</p>
+        <ul class="topic-grid">
+            <li><a class="topic-card" data-id="17" href="computational/start-here.html">
+                <span class="num">S0</span>
+                <span class="title">Start here: what you will learn and how</span>
+                <span class="desc">What computational materials science is, a roadmap with time estimates, how to study, and a short quiz that tells you where to begin.</span>
+                <span class="tags"><span class="chip">Start here</span>8 min read</span></a></li>
+            <li><a class="topic-card" data-id="18" href="computational/numbers-units-and-graphs.html">
+                <span class="num">S1</span>
+                <span class="title">Numbers, units and graphs</span>
+                <span class="desc">Scientific notation, units and conversions, algebra, functions, logarithms and reading graphs: the everyday maths of science.</span>
+                <span class="tags"><span class="chip">Start here</span>13 min read</span></a></li>
+            <li><a class="topic-card" data-id="19" href="computational/rates-of-change-calculus.html">
+                <span class="num">S2</span>
+                <span class="title">Rates of change: calculus from scratch</span>
+                <span class="desc">Slopes, derivatives, areas and the idea of an equation that says how fast something changes, built up with pictures instead of proofs.</span>
+                <span class="tags"><span class="chip blue">Start here</span>11 min read</span></a></li>
+            <li><a class="topic-card" data-id="20" href="computational/atoms-bonds-and-materials.html">
+                <span class="num">S3</span>
+                <span class="title">Atoms, bonds and materials from scratch</span>
+                <span class="desc">What materials are made of, why atoms stick together, how crystals and defects arise, and how structure sets properties.</span>
+                <span class="tags"><span class="chip blue">Start here</span>10 min read</span></a></li>
+            <li><a class="topic-card" data-id="21" href="computational/forces-energy-and-heat.html">
+                <span class="num">S4</span>
+                <span class="title">Forces, energy, heat and motion</span>
+                <span class="desc">Newton&#x27;s laws, kinetic and potential energy, springs, why temperature is atomic jiggling, and stress and strain.</span>
+                <span class="tags"><span class="chip">Start here</span>10 min read</span></a></li>
+            <li><a class="topic-card" data-id="22" href="computational/chance-averages-and-error-bars.html">
+                <span class="num">S5</span>
+                <span class="title">Chance, averages and error bars</span>
+                <span class="desc">Probability, means and spread, why more samples shrink the error, the bell curve, and how to be honest about uncertainty.</span>
+                <span class="tags"><span class="chip blue">Start here</span>8 min read</span></a></li>
+            <li><a class="topic-card" data-id="23" href="computational/your-first-simulation.html">
+                <span class="num">S6</span>
+                <span class="title">Your first simulation</span>
+                <span class="desc">Build a simulation from three ingredients, watch diffusion emerge from random walkers, and write the same thing in a few lines of Python.</span>
+                <span class="tags"><span class="chip">Start here</span>12 min read</span></a></li>
+        </ul>
+        <h3 class="group-title">Background: university-level refresher</h3>
+        <p class="section-sub">Maths, physics, materials science, numerical methods and programming as the core topics use them.</p>
         <ul class="topic-grid">
             <li><a class="topic-card" data-id="12" href="computational/mathematics-for-simulation.html">
                 <span class="num bg">B1</span>
@@ -166,15 +205,16 @@
 <!-- cards:end -->
 
         <h2 class="section-title" id="about">About</h2>
-        <p class="section-sub">MiBeM is written for anyone who studies, makes or tests materials: students, researchers and engineers working with metals, ceramics, polymers, semiconductors or composites. The background pages refresh the mathematics, physics, materials science, numerical methods and programming that the core topics rely on, so no prior experience with simulation software is assumed.</p>
+        <p class="section-sub">MiBeM is written for anyone who studies, makes or tests materials: students, researchers and engineers working with metals, ceramics, polymers, semiconductors or composites. The Start here pages assume only school-level maths and science. The Background level refreshes the university-level mathematics, physics, materials science, numerical methods and programming that the Core topics rely on, so no prior experience with simulation software is assumed.</p>
         <p class="section-sub">The animated figures come from small real simulations or computed curves, so what they show is what the method does. Journal details in the reference lists should be checked against the originals before you cite them.</p>
     </main>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="index.html#topics">All topics</a><a href="map.html">Topic map</a><a href="#main">Back to top</a></nav>
+        <nav><a href="index.html#topics">All topics</a><a href="map.html">Topic map</a><a href="glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="assets/topics.js?v=688395a6"></script>
-    <script src="assets/site.js?v=e589e056" defer></script>
+    <script src="assets/topics.js?v=1b91ccf4"></script>
+    <script src="assets/glossary.js?v=ad099721"></script>
+    <script src="assets/site.js?v=ab6e5a9b" defer></script>
 </body>
 </html>

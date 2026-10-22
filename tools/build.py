@@ -51,7 +51,11 @@ def lab(t):
 
 
 def label_text(t):
-    return ("Background " + t["label"].lstrip("B")) if t["series"] == "background" else "Topic " + t["label"]
+    if t["series"] == "background":
+        return "Background " + t["label"].lstrip("B")
+    if t["series"] == "start":
+        return "Start here " + t["label"].lstrip("S")
+    return "Topic " + t["label"]
 
 
 def esc(s):
@@ -159,12 +163,13 @@ def header(rel, links, cta=None):
 def footer(rel):
     return f"""<footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="{rel}index.html#topics">All topics</a><a href="{rel}map.html">Topic map</a><a href="#main">Back to top</a></nav>
+        <nav><a href="{rel}index.html#topics">All topics</a><a href="{rel}map.html">Topic map</a><a href="{rel}glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>"""
 
 
 def scripts(rel, demos=False):
     s = (f'<script src="{rel}assets/topics.js?v={ver("assets/topics.js")}"></script>\n'
+         f'    <script src="{rel}assets/glossary.js?v={ver("assets/glossary.js")}"></script>\n'
          f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>')
     if demos:
         s += f'\n    <script src="{rel}assets/demos.js?v={ver("assets/demos.js")}" defer></script>'
@@ -216,7 +221,7 @@ def build_topic(t, i):
     s = re.sub(r"<head>.*?</head>", lambda m: head(rel, title, desc, url), s, count=1, flags=re.S)
     s = re.sub(r"<body[^>]*>", f'<body data-topic="{t["id"]}">', s, count=1)
     cta = None
-    hdr = header(rel, [(rel + "index.html#topics", "Topics"), (rel + "map.html", "Map")], cta)
+    hdr = header(rel, [(rel + "index.html#topics", "Topics"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary")], cta)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
 
     crumbs = (f'<p class="crumbs"><a href="{rel}index.html#topics">Topics</a><span>/</span>'
@@ -279,7 +284,8 @@ def card_html(t):
 
 
 def cards():
-    groups = [("Background: what to know first", "background", "Refreshers on the maths, physics, materials science, numerical methods and programming that the core topics rely on."),
+    groups = [("Start here: no background needed", "start", "Plain-language foundations for anyone starting from school-level maths and science. Read these in order."),
+              ("Background: university-level refresher", "background", "Maths, physics, materials science, numerical methods and programming as the core topics use them."),
               ("Core topics", "core", "The methods themselves, in a sensible reading order.")]
     out = []
     for title, series, sub in groups:
@@ -302,7 +308,7 @@ def build_index():
     title = re.search(r"<title>(.*?)</title>", s).group(1)
     desc = re.search(r'<meta name="description" content="(.*?)">', s).group(1)
     s = re.sub(r"<head>.*?</head>", lambda m: head("", title, desc, BASE, "website"), s, count=1, flags=re.S)
-    links = [("#start", "Where to start"), ("#map", "Map"), ("#topics", "Topics"), ("#about", "About")]
+    links = [("#start", "Where to start"), ("#map", "Map"), ("#topics", "Topics"), ("glossary.html", "Glossary"), ("#about", "About")]
     hdr = header("", links, None)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
     s = replace_region(s, "cards", cards())
@@ -315,7 +321,7 @@ def build_index():
 def build_map():
     title = "Topic Map - MiBeM"
     desc = "How the topics build on each other: prerequisites and what each topic leads to."
-    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map")], None)
+    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map"), ("glossary.html", "Glossary")], None)
     page = f"""<!DOCTYPE html>
 <html lang="en">
 {head("", title, desc, BASE + "map.html", "website")}
@@ -348,7 +354,7 @@ def build_map():
 def build_404():
     """Served by GitHub Pages for any address that does not exist. Uses absolute URLs so it works at any depth."""
     rel = BASE
-    hdr = header(rel, [(BASE + "index.html#topics", "Topics"), (BASE + "map.html", "Map")], None)
+    hdr = header(rel, [(BASE + "index.html#topics", "Topics"), (BASE + "map.html", "Map"), (BASE + "glossary.html", "Glossary")], None)
     h = head(rel, "Page not found - MiBeM", "That page does not exist.", BASE + "404.html", "website")
     h = h.replace('<meta name="description"', '<meta name="robots" content="noindex">\n    <meta name="description"', 1)
     page = f"""<!DOCTYPE html>
@@ -371,6 +377,57 @@ def build_404():
 </html>
 """
     (ROOT / "404.html").write_text(page, encoding="utf-8")
+
+
+def load_glossary():
+    path = ROOT / "assets" / "glossary.js"
+    if not path.exists():
+        return []
+    text = path.read_text(encoding="utf-8")
+    body = text[text.index("window.MIBEM_GLOSSARY = ") + len("window.MIBEM_GLOSSARY = "):]
+    body = body[: body.rindex("];") + 1]
+    return json.loads(body)
+
+
+def gslug(term):
+    return re.sub(r"[^a-z0-9]+", "-", term.lower()).strip("-")
+
+
+def build_glossary():
+    terms = sorted(load_glossary(), key=lambda g: g["t"].lower())
+    title = "Glossary - MiBeM"
+    desc = "Plain-language definitions of the terms used across the MiBeM topics, from atoms and bonds to eigenvalues and Monte Carlo."
+    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map"), ("glossary.html", "Glossary")], None)
+    letters = sorted({g["t"][0].upper() for g in terms})
+    jump = " ".join(f'<a href="#letter-{c}">{c}</a>' for c in letters)
+    groups = []
+    for c in letters:
+        items = []
+        for g in [x for x in terms if x["t"][0].upper() == c]:
+            link = f' <a class="gl-see" href="computational/{g["p"]}">Read more &rarr;</a>' if g.get("p") else ""
+            items.append(f'<dt id="{gslug(g["t"])}">{esc(g["t"])}</dt><dd>{esc(g["d"])}{link}</dd>')
+        groups.append(f'<h2 id="letter-{c}">{c}</h2>\n<dl class="glossary">' + "".join(items) + "</dl>")
+    page = f"""<!DOCTYPE html>
+<html lang="en">
+{head("", title, desc, BASE + "glossary.html", "website")}
+<body>
+    {hdr}
+
+    <main class="wrap" id="main">
+        <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Glossary</span></p>
+        <h1>Glossary</h1>
+        <p class="lead">Plain-language definitions of the words used across the site. Terms in the topic pages are underlined with a dotted line: hover, focus or tap one to see its meaning without leaving the page.</p>
+        <p class="gl-jump">{jump}</p>
+        {chr(10).join(groups)}
+    </main>
+
+    {footer("")}
+    {scripts("")}
+</body>
+</html>
+"""
+    (ROOT / "glossary.html").write_text(page, encoding="utf-8")
+    return terms
 
 
 # ----------------------------------------------------------------- search index + sitemap
@@ -464,13 +521,15 @@ def build_search():
         for it in p.items:
             it["x"] = re.sub(r"\s+", " ", it["x"]).strip()[:2400]
             entries.append(it)
+    for g in load_glossary():
+        entries.append({"n": 0, "l": "Glossary", "t": "Glossary", "h": g["t"], "u": "glossary.html#" + gslug(g["t"]), "x": g["d"]})
     out = "window.MIBEM_INDEX = " + json.dumps(entries, ensure_ascii=False, separators=(",", ":")) + ";\n"
     (ROOT / "assets" / "search-index.js").write_text(out, encoding="utf-8")
     return len(entries), len(out)
 
 
 def build_sitemap():
-    urls = [BASE, BASE + "map.html"] + [BASE + t["path"] for t in TOPICS]
+    urls = [BASE, BASE + "map.html", BASE + "glossary.html"] + [BASE + t["path"] for t in TOPICS]
     body = "".join(f"  <url><loc>{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in urls)
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n", encoding="utf-8")
 
@@ -513,8 +572,9 @@ if __name__ == "__main__":
     build_index()
     build_map()
     build_404()
+    build_glossary()
     build_sitemap()
     write_manifest()
     n, size = build_search()
-    print(f"built {len(TOPICS)} topic pages, index.html, map.html, 404.html, sitemap.xml, site.webmanifest")
+    print(f"built {len(TOPICS)} topic pages, index.html, map.html, glossary.html, 404.html, sitemap.xml, site.webmanifest")
     print(f"search index: {n} sections, {size // 1024} KB")

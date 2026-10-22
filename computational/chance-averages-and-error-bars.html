@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chance, Averages and Error Bars - MiBeM</title>
+    <meta name="description" content="Probability, means and spread, standard error, the bell curve, random walks and how to report uncertainty honestly, explained from scratch with an interactive coin experiment.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/chance-averages-and-error-bars.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Chance, Averages and Error Bars - MiBeM">
+    <meta property="og:description" content="Probability, means and spread, standard error, the bell curve, random walks and how to report uncertainty honestly, explained from scratch with an interactive coin experiment.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/chance-averages-and-error-bars.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=98d42ef1">
+</head>
+<body data-topic="22">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#why">1. Why chance matters here</a></li>
+                <li><a href="#probability">2. Probability</a></li>
+                <li><a href="#average">3. Averages and spread</a></li>
+                <li><a href="#samples">4. More samples, smaller error</a></li>
+                <li><a href="#bell">5. The bell curve</a></li>
+                <li><a href="#walk">6. Random walks</a></li>
+                <li><a href="#honest">7. Reporting honestly</a></li>
+                <li><a href="#check">8. Check your understanding</a></li>
+                <li><a href="#refs">9. Where to go for more</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Start here</span><span>Start here 5</span></p>
+            <h1>Chance, averages and error bars</h1>
+            <p class="lead">Nothing in science is measured exactly, and nothing in a simulation is calculated from a single run. Atoms move randomly, instruments have noise, and simulations use random numbers. This page teaches how to handle chance sensibly: how to average, how to state how sure you are, and how much data you need.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 8 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="numbers-units-and-graphs.html">S1. Numbers, units, graphs</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="your-first-simulation.html">S6. Your first simulation</a></dd></div>
+<div><dt>Category</dt><dd>Start here</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Calculate simple probabilities and combine them.</li>
+                    <li>Find the mean and standard deviation of a set of numbers and explain what they tell you.</li>
+                    <li>Explain why the error of an average shrinks as one over the square root of the number of samples.</li>
+                    <li>Report a result with an honest uncertainty, and tell random from systematic error.</li>
+                </ul>
+            </div>
+
+            <p><strong>You need:</strong> <a href="numbers-units-and-graphs.html">Numbers, units and graphs</a> (square roots and proportionality).</p>
+
+            <h2 id="why">1. Why chance matters here<a class="anchor" href="#why" aria-label="Link to this section">#</a></h2>
+            <p>There are three reasons you will meet chance throughout the series. First, <strong>measurements are noisy</strong>: measure the same length twice and the numbers differ slightly. Second, <strong>atoms move randomly</strong>: at any temperature each atom gets knocked about by its neighbours in an unpredictable way, so properties like temperature and pressure are <em>averages</em> over enormous numbers of atoms. Third, many <strong>simulation methods deliberately use random numbers</strong> (the name Monte Carlo comes from the casino), and any result computed that way carries a statistical error that you must estimate. Knowing how to do this separates a result from a guess.</p>
+
+            <h2 id="probability">2. Probability<a class="anchor" href="#probability" aria-label="Link to this section">#</a></h2>
+            <p>The <strong>probability</strong> of an event is a number from 0 (impossible) to 1 (certain) saying how likely it is. When all outcomes are equally likely, the probability is the number of outcomes you want divided by the total number of possible outcomes. A fair coin: the probability of heads is 1/2 = 0.5. A fair die: the probability of a six is 1/6 &asymp; 0.17.</p>
+            <ul>
+                <li><strong>Independent events</strong> (one does not affect the other) multiply. Two heads in two flips: 1/2 &times; 1/2 = 1/4. Three heads in a row: 1/8.</li>
+                <li>The chance that an event does <em>not</em> happen is 1 minus the chance that it does. At least one head in three flips: 1 &minus; (chance of no heads) = 1 &minus; 1/8 = 7/8.</li>
+                <li>Mutually exclusive outcomes (they cannot both happen) add. The chance of a one or a six on a die: 1/6 + 1/6 = 1/3.</li>
+            </ul>
+            <p>The <strong>expected value</strong> is the average you would get over many repeats. For a fair die it is (1 + 2 + 3 + 4 + 5 + 6)/6 = 3.5, a value you can never roll, but the long-run average of many rolls. Probability does not say what <em>one</em> trial will do, only what happens in the long run, and that is exactly how it is used.</p>
+
+            <h2 id="average">3. Averages and spread<a class="anchor" href="#average" aria-label="Link to this section">#</a></h2>
+            <p>Given a set of numbers, two summaries do most of the work.</p>
+            <p>The <strong>mean</strong> (average) is the sum divided by how many there are. The <strong>standard deviation</strong>, written &sigma; (sigma) or <em>s</em>, tells you how spread out the numbers are around the mean. Roughly, it is the typical distance of a value from the mean. To calculate it: subtract the mean from each value, square the differences (so negatives do not cancel), add them, divide by one less than the number of values, and take the square root.</p>
+            <p><strong>Worked example.</strong> The values 4, 5, 6, 7, 8 have mean (4+5+6+7+8)/5 = 6. The differences are &minus;2, &minus;1, 0, 1, 2; squared: 4, 1, 0, 1, 4; their sum is 10. Dividing by 5 &minus; 1 = 4 gives 2.5, and the square root is <strong>&sigma; = 1.58</strong>. (We divide by <em>n</em> &minus; 1 instead of <em>n</em> because the mean itself was estimated from the same data, which makes the spread look slightly smaller than it is.)</p>
+            <p>A <strong>histogram</strong> shows the whole picture: divide the range into bins and count how many values fall into each. A tall narrow histogram means small spread; a low wide one means large spread. The <strong>median</strong> is the middle value when the data are sorted, which is less affected by a single wild value than the mean is.</p>
+
+            <h2 id="samples">4. More samples, smaller error<a class="anchor" href="#samples" aria-label="Link to this section">#</a></h2>
+            <p>Suppose each measurement has a random error with spread &sigma;. If you average <em>N</em> independent measurements, the average is a more reliable estimate, because random highs and lows partly cancel. How much better? The uncertainty of the average, called the <strong>standard error</strong>, is</p>
+            <span class="eq">standard error = &sigma; / &radic;N</span>
+            <p>So with &sigma; = 10 and <em>N</em> = 25 measurements, the standard error is 10/5 = 2; with <em>N</em> = 100 it is 1. This <strong>square-root law</strong> has an important consequence: <strong>to cut the error in half you need four times as many measurements</strong>, and to cut it by ten you need a hundred times as many. Gains get expensive, so decide how accurate you need to be before starting.</p>
+            <p>The experiment below makes this visible. Each &ldquo;experiment&rdquo; flips a fair coin <em>n</em> times and records the fraction of heads; the plot shows 1000 such experiments. With a few flips the results are widely spread; with many flips they crowd close to 0.5, and the width follows the 1/&radic;<em>n</em> prediction.</p>
+            <div class="demo" data-demo="coins"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
+            <h2 id="bell">5. The bell curve<a class="anchor" href="#bell" aria-label="Link to this section">#</a></h2>
+            <p>When you plot the histogram of many random errors, or of averages of many samples, the shape is almost always the same: a symmetric hump called the <strong>normal distribution</strong>, or <strong>bell curve</strong>. There is a reason, known as the <strong>central limit theorem</strong>: when a result is the sum of many small, independent random effects, the total tends to a bell shape whatever the individual effects look like. That is why the bell curve is everywhere.</p>
+            <p>The bell curve has well-known proportions, in terms of the mean and the standard deviation &sigma;:</p>
+            <ul>
+                <li>about <strong>68%</strong> of values fall within &plusmn;1&sigma; of the mean,</li>
+                <li>about <strong>95%</strong> within &plusmn;1.96&sigma; (often rounded to 2&sigma;),</li>
+                <li>about <strong>99.7%</strong> within &plusmn;3&sigma;.</li>
+            </ul>
+            <p>For an average, use the standard error in place of &sigma;. If you measure a length 100 times and find a mean of 12.34 mm with a standard error of 0.05 mm, then you can say it is 12.34 &plusmn; 0.05 mm (68% confidence) or 12.34 &plusmn; 0.10 mm (about 95% confidence). Always say which one you mean.</p>
+
+            <h2 id="walk">6. Random walks<a class="anchor" href="#walk" aria-label="Link to this section">#</a></h2>
+            <p>Here is a chance process that will return in the diffusion topics. A walker stands on a line and at each step moves one step left or right, decided by a coin flip. After <em>N</em> steps, where is the walker? On average, exactly where it started, because left and right are equally likely. But it is not likely to be <em>at</em> the start: the typical distance away grows as the <strong>square root of the number of steps</strong>, &radic;<em>N</em>. After 10 000 steps the walker is typically about 100 steps from home, not 10 000.</p>
+            <p>This is the same square-root law as for the standard error, and it is no coincidence: the position is the sum of many independent random steps. Many atoms taking random hops produce diffusion, the spreading of one substance into another, and that is why diffusion distance is proportional to the square root of time. You will see a crowd of random walkers produce diffusion in <a href="your-first-simulation.html">Your first simulation</a>.</p>
+
+            <h2 id="honest">7. Reporting honestly<a class="anchor" href="#honest" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li><strong>Always give an uncertainty.</strong> A number without an error bar cannot be compared with anything. State what it represents (standard deviation, standard error, or a 95% range).</li>
+                <li><strong>Random versus systematic error.</strong> Averaging reduces random error but cannot remove a <em>systematic</em> one: a thermometer that reads 3 degrees too high gives a wrong answer however many times you average. In simulations the systematic error might be a poor model; more runs shrink the noise but not the model error, so the answer converges to the wrong number with a very small error bar.</li>
+                <li><strong>Beware of small samples.</strong> Three measurements tell you very little about the spread. Be wary of conclusions from a handful of data points.</li>
+                <li><strong>Outliers.</strong> A single wildly different value can drag the mean. Investigate it; do not silently throw it away or silently keep it.</li>
+                <li><strong>Correlation is not causation.</strong> Two quantities rising together does not mean one causes the other; both may depend on a third.</li>
+                <li><strong>Do not cherry-pick.</strong> Report all the runs, not only the one that looked best.</li>
+            </ul>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Probability measures how likely an outcome is, from 0 (never) to 1 (always); independent chances multiply.</li>
+<li>The mean says where data centre; the standard deviation says how spread out they are.</li>
+<li>The error of an average falls as one over the square root of the number of samples: four times as many for half the error.</li>
+<li>Sums of many small random effects form a bell curve, which is why it appears everywhere.</li>
+<li>Always report an uncertainty: a number without an error bar is a guess.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">8. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>What is the chance of flipping heads three times in a row with a fair coin?</summary>
+                <p>The flips are independent, so multiply: 1/2 &times; 1/2 &times; 1/2 = 1/8 = 0.125.</p>
+            </details>
+            <details>
+                <summary>Find the mean and standard deviation of 4, 5, 6, 7, 8.</summary>
+                <p>Mean 6. Squared deviations sum to 10; 10/(5 &minus; 1) = 2.5; &sigma; = &radic;2.5 = 1.58.</p>
+            </details>
+            <details>
+                <summary>Individual measurements have &sigma; = 10. What is the standard error of the average of 25?</summary>
+                <p>&sigma;/&radic;<em>N</em> = 10/&radic;25 = 10/5 = 2.</p>
+            </details>
+            <details>
+                <summary>You want to cut a standard error from 2 down to 0.5. How many times more data do you need?</summary>
+                <p>The error must fall by a factor of 4, and since it falls as 1/&radic;<em>N</em>, you need 4<sup>2</sup> = 16 times as many measurements.</p>
+            </details>
+            <details>
+                <summary>A random walker takes 10 000 steps of one unit, left or right at random. About how far from the start is it likely to be?</summary>
+                <p>Typically about &radic;10 000 = 100 units.</p>
+            </details>
+            <details>
+                <summary>An instrument reads 3 units too high. You average 1000 readings. What is wrong with the result?</summary>
+                <p>The random noise is reduced, but the average is still 3 units too high. That is a systematic error, which averaging cannot remove; the instrument must be calibrated.</p>
+            </details>
+
+            <h2 id="refs">9. Where to go for more<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Khan Academy, Statistics and probability (free).</li>
+                <li>Taylor, J. R., <em>An Introduction to Error Analysis</em>, University Science Books.</li>
+                <li>Hughes, I. and Hase, T., <em>Measurements and their Uncertainties</em>, Oxford University Press.</li>
+                <li>Next: <a href="your-first-simulation.html">Your first simulation</a>, and later <a href="mathematics-for-simulation.html">Mathematics for simulation</a> (probability and statistics at university level).</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="forces-energy-and-heat.html"><span class="dir">Previous topic</span>Forces, energy, heat and motion</a>
+<a class="next" href="your-first-simulation.html"><span class="dir">Next topic</span>Your first simulation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=1b91ccf4"></script>
+    <script src="../assets/glossary.js?v=ad099721"></script>
+    <script src="../assets/site.js?v=ab6e5a9b" defer></script>
+    <script src="../assets/demos.js?v=a9303025" defer></script>
+</body>
+</html>

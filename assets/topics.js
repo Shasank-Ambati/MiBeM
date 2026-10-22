@@ -5,6 +5,168 @@
    `builds` = topics worth reading first; `related` = topics that connect but are not required. */
 window.MIBEM_TOPICS = [
   {
+    "id": 17,
+    "label": "S0",
+    "series": "start",
+    "slug": "start-here",
+    "short": "Start here",
+    "part": "Start here",
+    "tone": "a",
+    "minutes": 8,
+    "title": "Start here: what you will learn and how",
+    "blurb": "What computational materials science is, a roadmap with time estimates, how to study, and a short quiz that tells you where to begin.",
+    "builds": [],
+    "related": [],
+    "takeaways": [
+      "Computational materials science uses computers to predict how materials behave, by describing atoms, energy and heat with rules and calculating what follows.",
+      "A model is a simplified description; a simulation is the step-by-step calculation of what the model predicts, and it must be checked against reality.",
+      "The site has three levels: Start here (school-level), Background (university-level refresher) and Core topics (the methods).",
+      "Learn actively: try every demo, attempt each question before opening the answer, and use the glossary when a word is new.",
+      "If a page feels too hard, go one level down instead of pushing on; that is the intended way to use this site."
+    ]
+  },
+  {
+    "id": 18,
+    "label": "S1",
+    "series": "start",
+    "slug": "numbers-units-and-graphs",
+    "short": "Numbers, units, graphs",
+    "part": "Start here",
+    "tone": "a",
+    "minutes": 13,
+    "title": "Numbers, units and graphs",
+    "blurb": "Scientific notation, units and conversions, algebra, functions, logarithms and reading graphs: the everyday maths of science.",
+    "builds": [
+      17
+    ],
+    "related": [],
+    "takeaways": [
+      "Scientific notation (such as 6.0 x 10^23) lets you write very large and very small numbers and compare sizes at a glance.",
+      "A number without a unit is incomplete; convert by multiplying by factors equal to one, and check that units balance.",
+      "A function turns an input into an output; its graph shows how, and the shape (line, curve, exponential) tells you the kind of process.",
+      "A logarithm asks 'what power?', and plotting on a log scale turns exponential curves into straight lines.",
+      "The slope of a straight line is a rate: how much y changes for each step in x."
+    ]
+  },
+  {
+    "id": 19,
+    "label": "S2",
+    "series": "start",
+    "slug": "rates-of-change-calculus",
+    "short": "Rates of change",
+    "part": "Start here",
+    "tone": "b",
+    "minutes": 11,
+    "title": "Rates of change: calculus from scratch",
+    "blurb": "Slopes, derivatives, areas and the idea of an equation that says how fast something changes, built up with pictures instead of proofs.",
+    "builds": [
+      18
+    ],
+    "related": [],
+    "takeaways": [
+      "A derivative is the slope of a curve at a point: the instantaneous rate of change.",
+      "Where the slope of an energy curve is zero there is an equilibrium; a positive curvature there means it is stable.",
+      "An integral adds up many small pieces and equals the area under a curve.",
+      "Many laws say 'the rate of change depends on the amount', and their solutions are exponential decay or growth.",
+      "Force is minus the slope of the energy: the arrow that points downhill."
+    ]
+  },
+  {
+    "id": 20,
+    "label": "S3",
+    "series": "start",
+    "slug": "atoms-bonds-and-materials",
+    "short": "Atoms and materials",
+    "part": "Start here",
+    "tone": "b",
+    "minutes": 10,
+    "title": "Atoms, bonds and materials from scratch",
+    "blurb": "What materials are made of, why atoms stick together, how crystals and defects arise, and how structure sets properties.",
+    "builds": [
+      17
+    ],
+    "related": [],
+    "takeaways": [
+      "Everything is made of atoms; properties come from which atoms there are and how they are arranged and bonded.",
+      "Bonds balance attraction and repulsion, giving a preferred spacing and a stiffness; deeper bonds mean higher melting points.",
+      "Crystals are repeating patterns; real crystals contain defects such as vacancies, solute atoms and dislocations.",
+      "Defects, not perfect order, explain why metals bend, conduct and can be strengthened by alloying.",
+      "We simulate because we cannot see atoms directly and cannot afford to test every composition."
+    ]
+  },
+  {
+    "id": 21,
+    "label": "S4",
+    "series": "start",
+    "slug": "forces-energy-and-heat",
+    "short": "Forces, energy, heat",
+    "part": "Start here",
+    "tone": "a",
+    "minutes": 10,
+    "title": "Forces, energy, heat and motion",
+    "blurb": "Newton's laws, kinetic and potential energy, springs, why temperature is atomic jiggling, and stress and strain.",
+    "builds": [
+      18
+    ],
+    "related": [
+      19
+    ],
+    "takeaways": [
+      "A force changes motion according to F = ma, and forces on atoms come from the slope of an energy curve.",
+      "Energy is conserved: it moves between kinetic (motion) and potential (position) forms.",
+      "Atoms joined by bonds behave like masses on springs, and they vibrate at around ten trillion times a second.",
+      "Temperature measures the average kinetic energy of atoms; heating a solid makes the atoms jiggle more until it melts.",
+      "Stress is force per area, strain is relative stretch, and their ratio for a given material is its stiffness."
+    ]
+  },
+  {
+    "id": 22,
+    "label": "S5",
+    "series": "start",
+    "slug": "chance-averages-and-error-bars",
+    "short": "Chance and averages",
+    "part": "Start here",
+    "tone": "b",
+    "minutes": 8,
+    "title": "Chance, averages and error bars",
+    "blurb": "Probability, means and spread, why more samples shrink the error, the bell curve, and how to be honest about uncertainty.",
+    "builds": [
+      18
+    ],
+    "related": [],
+    "takeaways": [
+      "Probability measures how likely an outcome is, from 0 (never) to 1 (always); independent chances multiply.",
+      "The mean says where data centre; the standard deviation says how spread out they are.",
+      "The error of an average falls as one over the square root of the number of samples: four times as many for half the error.",
+      "Sums of many small random effects form a bell curve, which is why it appears everywhere.",
+      "Always report an uncertainty: a number without an error bar is a guess."
+    ]
+  },
+  {
+    "id": 23,
+    "label": "S6",
+    "series": "start",
+    "slug": "your-first-simulation",
+    "short": "Your first simulation",
+    "part": "Start here",
+    "tone": "a",
+    "minutes": 12,
+    "title": "Your first simulation",
+    "blurb": "Build a simulation from three ingredients, watch diffusion emerge from random walkers, and write the same thing in a few lines of Python.",
+    "builds": [
+      19,
+      22
+    ],
+    "related": [],
+    "takeaways": [
+      "A simulation needs a description of the state, a rule for how it changes, and a loop that applies the rule step by step.",
+      "Smaller time steps give more accurate answers at more cost; always check by changing the step.",
+      "Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.",
+      "Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.",
+      "Everything in the Core topics is this same idea with better rules: atoms, energies, grids and probabilities."
+    ]
+  },
+  {
     "id": 12,
     "label": "B1",
     "series": "background",
@@ -15,7 +177,10 @@ window.MIBEM_TOPICS = [
     "minutes": 15,
     "title": "Mathematics for simulation",
     "blurb": "Vector calculus, linear algebra, differential equations, Fourier analysis and statistics: the maths every method relies on.",
-    "builds": [],
+    "builds": [
+      18,
+      19
+    ],
     "related": [
       8,
       9
@@ -40,7 +205,8 @@ window.MIBEM_TOPICS = [
     "title": "Physics for simulation",
     "blurb": "Classical mechanics, electrostatics, quantum mechanics essentials, thermodynamics and the units used in atomistic work.",
     "builds": [
-      12
+      12,
+      21
     ],
     "related": [
       3,
@@ -65,7 +231,9 @@ window.MIBEM_TOPICS = [
     "minutes": 13,
     "title": "Materials science essentials",
     "blurb": "Bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments simulations are compared with.",
-    "builds": [],
+    "builds": [
+      20
+    ],
     "related": [
       2,
       8
@@ -90,7 +258,8 @@ window.MIBEM_TOPICS = [
     "title": "Numerical methods essentials",
     "blurb": "Floating point, error and stability, root finding and optimisation, linear algebra, integrators, discretisation and parallel scaling.",
     "builds": [
-      12
+      12,
+      23
     ],
     "related": [
       6,
@@ -115,7 +284,9 @@ window.MIBEM_TOPICS = [
     "minutes": 11,
     "title": "Programming and workflow",
     "blurb": "The command line, Python for science, version control, running on clusters, reproducibility and testing your own code.",
-    "builds": [],
+    "builds": [
+      23
+    ],
     "related": [
       11
     ],

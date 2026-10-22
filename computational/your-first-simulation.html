@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your First Simulation - MiBeM</title>
+    <meta name="description" content="Build a simulation from three ingredients, watch diffusion emerge from random walkers, learn to check a simulation, and write it in a few lines of Python.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/your-first-simulation.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Your First Simulation - MiBeM">
+    <meta property="og:description" content="Build a simulation from three ingredients, watch diffusion emerge from random walkers, learn to check a simulation, and write it in a few lines of Python.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/your-first-simulation.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=98d42ef1">
+</head>
+<body data-topic="23">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#recipe">1. The recipe</a></li>
+                <li><a href="#timestep">2. Time steps: tea cooling</a></li>
+                <li><a href="#walkers">3. Random walkers</a></li>
+                <li><a href="#fick">4. Walkers become diffusion</a></li>
+                <li><a href="#python">5. The same thing in Python</a></li>
+                <li><a href="#checking">6. Checking a simulation</a></li>
+                <li><a href="#try">7. Try it yourself</a></li>
+                <li><a href="#leads">8. Where this leads</a></li>
+                <li><a href="#check">9. Check your understanding</a></li>
+                <li><a href="#refs">10. Where to go for more</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Start here</span><span>Start here 6</span></p>
+            <h1>Your first simulation</h1>
+            <p class="lead">Time to build one. This page shows that every simulation in the series is made from the same three ingredients, lets you watch diffusion appear from nothing but coin flips, and then writes the same thing in a few lines of code that you can run yourself.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="rates-of-change-calculus.html">S2. Rates of change</a><br><a href="chance-averages-and-error-bars.html">S5. Chance and averages</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="numerical-methods-essentials.html">B4. Numerical methods</a><br><a href="programming-and-workflow.html">B5. Programming and workflow</a></dd></div>
+<div><dt>Category</dt><dd>Start here</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Describe the three ingredients of any simulation: state, rule and loop.</li>
+                    <li>Explain why smaller time steps are more accurate but cost more, and how to test it.</li>
+                    <li>Explain how random hopping produces diffusion, and use D = a&sup2;/(2&tau;).</li>
+                    <li>Run a short Python program and apply three basic checks to its result.</li>
+                </ul>
+            </div>
+
+            <p><strong>You need:</strong> <a href="rates-of-change-calculus.html">Rates of change</a> (the idea of a rate) and <a href="chance-averages-and-error-bars.html">Chance, averages and error bars</a> (averages, error bars and random walks). No programming experience is assumed.</p>
+
+            <h2 id="recipe">1. The recipe<a class="anchor" href="#recipe" aria-label="Link to this section">#</a></h2>
+            <p>Strip any simulation down and you find three ingredients:</p>
+            <ol>
+                <li><strong>A state</strong>: the numbers that describe the system at one moment. For the tea it is a single number, the temperature. For a crystal it is the position and velocity of every atom.</li>
+                <li><strong>A rule</strong> for how the state changes: the physics. For the tea, &ldquo;it cools in proportion to how much hotter than the room it is&rdquo;. For atoms, Newton&rsquo;s laws with forces from an energy.</li>
+                <li><strong>A loop</strong> that applies the rule again and again to advance the state a little at a time, recording what you want.</li>
+            </ol>
+            <p>That is all. The sophisticated methods later in the series differ in what the state is and how clever the rule is, but the skeleton is this one.</p>
+
+            <h2 id="timestep">2. Time steps: tea cooling<a class="anchor" href="#timestep" aria-label="Link to this section">#</a></h2>
+            <p>Take the cooling cup of tea from the previous pages. The rule says how fast the temperature changes: d<em>T</em>/d<em>t</em> = &minus;<em>k</em>(<em>T</em> &minus; <em>T</em><sub>room</sub>). A computer does not know calculus; it takes small steps. In each step of length <em>&Delta;t</em> it estimates the change as (rate) &times; (<em>&Delta;t</em>) and adds it on:</p>
+            <span class="eq">T<sub>new</sub> = T<sub>old</sub> + &Delta;t &times; [ &minus;k ( T<sub>old</sub> &minus; T<sub>room</sub> ) ]</span>
+            <p>With <em>k</em> = 0.05 per minute, the room at 20 &deg;C and tea starting at 90 &deg;C, a step of 10 minutes gives, by hand: <em>T</em> = 90 &minus; 0.5 &times; (90 &minus; 20) = 55 &deg;C after the first step, then 37.5, 28.8 and so on. The simulation is easy to do on paper, and the computer simply repeats it.</p>
+            <div class="demo" data-demo="cooling"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p>The orange curve is the exact answer (from the calculus page); the blue dots are the simulation. A big step is clearly inaccurate: each step assumes the rate stays fixed over the whole step, but in reality it keeps changing. Shrinking the step improves it, as the table (from running exactly this simulation) shows.</p>
+            <div class="table-scroll" role="region" aria-label="2. Time steps: tea cooling (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Time step &Delta;t</th><th>Temperature after 60 min</th><th>Error (exact answer 23.49 &deg;C)</th><th>Number of steps</th></tr></thead>
+                <tbody>
+                    <tr><td>10 min</td><td>21.09 &deg;C</td><td>2.39 &deg;C</td><td>6</td></tr>
+                    <tr><td>5 min</td><td>22.22 &deg;C</td><td>1.27 &deg;C</td><td>12</td></tr>
+                    <tr><td>1 min</td><td>23.23 &deg;C</td><td>0.26 &deg;C</td><td>60</td></tr>
+                    <tr><td>0.1 min</td><td>23.46 &deg;C</td><td>0.026 &deg;C</td><td>600</td></tr>
+                </tbody>
+            </table></div>
+            <p>Look at the pattern: ten times smaller steps give about ten times smaller error, at ten times the cost. This trade-off between accuracy and cost appears in every simulation, and the lesson is always the same: <strong>never trust a result until you have checked that it does not change when you shrink the step</strong>.</p>
+
+            <h2 id="walkers">3. Random walkers<a class="anchor" href="#walkers" aria-label="Link to this section">#</a></h2>
+            <p>Now a different kind of rule: chance. Imagine a long line of positions and a crowd of walkers. Each time step, every walker flips a coin and moves one step left or right. Nothing else. Orange walkers start on the left half and blue ones on the right, mixed at the boundary. Run the simulation and watch what happens to the boundary.</p>
+            <div class="demo" data-demo="walkers"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p>The sharp edge between orange and blue blurs out, because walkers on the crowded side randomly wander across more often than walkers from the other side wander back. Nobody told the crowd to mix; it follows from nothing but coin flips. This spreading is <strong>diffusion</strong>, the same process by which a drop of ink spreads in water and carbon atoms spread in steel.</p>
+            <p>The simulation gives you numbers too. The <strong>mean squared distance</strong> (MSD), the average over walkers of (distance from start)<sup>2</sup>, grows in proportion to time: after <em>t</em> steps it is about <em>t</em>. In general, with a step length <em>a</em> and a time <em>&tau;</em> per step, the MSD is (<em>a</em><sup>2</sup>/<em>&tau;</em>) <em>t</em>, and the <strong>diffusion coefficient</strong> <em>D</em> is defined from it in one dimension by MSD = 2<em>Dt</em>, so</p>
+            <span class="eq">D = a&sup2; / (2 &tau;)</span>
+            <p>In the demo <em>a</em> = 1 and <em>&tau;</em> = 1, so <em>D</em> = 1/2: check the readout.</p>
+
+            <h2 id="fick">4. Walkers become diffusion<a class="anchor" href="#fick" aria-label="Link to this section">#</a></h2>
+            <p>The dashed curve in the demo is the exact mathematical solution of the diffusion equation (the error function you meet in the diffusion topic), and the walkers follow it closely. Two lessons follow. First, a <strong>macroscopic law</strong> (concentration smoothing out according to <em>D</em>) can be <em>derived from</em> a microscopic random rule; this is the big idea of statistical physics. Second, the spreading distance grows only as the <strong>square root of time</strong>, &radic;(2<em>Dt</em>): to spread twice as far you need four times as long.</p>
+            <p><strong>Worked example with real numbers.</strong> Suppose an atom in a solid hops to a neighbouring site about once every microsecond (<em>&tau;</em> = 10<sup>&minus;6</sup> s), with a hop length <em>a</em> = 0.25 nm = 2.5 &times; 10<sup>&minus;10</sup> m. Then <em>D</em> = (2.5 &times; 10<sup>&minus;10</sup>)<sup>2</sup>/(2 &times; 10<sup>&minus;6</sup>) = 3.1 &times; 10<sup>&minus;14</sup> m<sup>2</sup>/s. In one second the typical spread is &radic;(2<em>Dt</em>) = &radic;(6.2 &times; 10<sup>&minus;14</sup>) = 2.5 &times; 10<sup>&minus;7</sup> m, a quarter of a micrometre. A million hops a second sounds like a lot, but the atom ends up only about a thousand atom-spacings away. That is why diffusion in solids is slow, and why heat treatments take hours.</p>
+
+            <h2 id="python">5. The same thing in Python<a class="anchor" href="#python" aria-label="Link to this section">#</a></h2>
+            <p>Time to run code yourself. <strong>Python</strong> is a programming language, a way of writing instructions that a computer can follow. It is widely used in science because it is readable and has excellent free libraries.</p>
+            <h3>How to run it</h3>
+            <ul>
+                <li><strong>Easiest, nothing to install:</strong> open Google Colab (colab.research.google.com) in your browser with a Google account. It gives you a page where you type code into a cell and press the play button.</li>
+                <li><strong>On your own computer:</strong> install Miniforge or Anaconda (free), which provides Python and the science libraries; then open JupyterLab or VS Code.</li>
+            </ul>
+            <p>Either way, you type code into a cell, run it, and see the result beneath. Mistakes are harmless: read the error message (the last line says what went wrong), fix it and run again.</p>
+            <h3>Program 1: the cooling tea</h3>
+<pre><code>T_room = 20.0     # room temperature, deg C
+k = 0.05          # cooling rate, per minute
+dt = 10.0         # time step, minutes
+T = 90.0          # starting temperature
+t = 0.0           # starting time
+
+while t &lt; 60:                          # the loop: repeat until 60 minutes
+    T = T + dt * (-k * (T - T_room))    # the rule: apply one step
+    t = t + dt
+    print(f"t = {t:4.0f} min   T = {T:5.1f} C")</code></pre>
+            <p>Lines starting with <code>#</code> are comments for humans. <code>T = T + ...</code> means &ldquo;calculate the right side, then store it in <code>T</code>&rdquo;. The output is:</p>
+<pre><code>t =   10 min   T =  55.0 C
+t =   20 min   T =  37.5 C
+t =   30 min   T =  28.8 C
+t =   40 min   T =  24.4 C
+t =   50 min   T =  22.2 C
+t =   60 min   T =  21.1 C</code></pre>
+            <p>The three ingredients are all there: the state (<code>T</code> and <code>t</code>), the rule (the line inside the loop) and the loop itself. Try changing <code>dt</code> to 1.0 and see the last line become about 23.2.</p>
+            <h3>Program 2: random walkers</h3>
+<pre><code>import numpy as np                        # numerical library for arrays
+
+rng = np.random.default_rng(1)            # random number generator (seed 1)
+n_walkers, n_steps = 2000, 400
+
+steps = rng.choice([-1, 1], size=(n_walkers, n_steps))   # coin flips: -1 or +1
+x = steps.cumsum(axis=1)                  # position after each step, per walker
+msd = (x**2).mean(axis=0)                 # mean squared displacement at each time
+
+print("MSD after 400 steps:", msd[-1])
+print("D estimate:", msd[-1] / (2 * 400))</code></pre>
+            <p>This builds a table of 2000 &times; 400 random &plusmn;1 steps in one line, adds them up along each row to get the positions, squares and averages over walkers. With the seed fixed at 1 the output is:</p>
+<pre><code>MSD after 400 steps: 408.726
+D estimate: 0.5109075</code></pre>
+            <p>The MSD is close to the 400 steps taken, and <em>D</em> comes out near the expected 0.5. To see it, add a plot:</p>
+<pre><code>import matplotlib.pyplot as plt
+
+t = np.arange(1, n_steps + 1)
+plt.plot(t, msd, label="simulation")
+plt.plot(t, t, "--", label="theory: MSD = t")
+plt.xlabel("time step")
+plt.ylabel("mean squared displacement")
+plt.legend()
+plt.show()</code></pre>
+
+            <h2 id="checking">6. Checking a simulation<a class="anchor" href="#checking" aria-label="Link to this section">#</a></h2>
+            <p>A program that runs and prints numbers is not necessarily right. Three habits will catch most problems; use them on everything you write.</p>
+            <ol>
+                <li><strong>Compare with a known answer.</strong> Here the theory says MSD = <em>t</em>, and the simulation gave 408.7 for <em>t</em> = 400. When the answer is unknown, test a simpler case where it is known (no cooling when the tea is at room temperature; no spreading with one walker per site).</li>
+                <li><strong>Change the random seed and the sample size.</strong> A result based on chance varies from run to run. Repeat with different seeds to see how much, and use more walkers to shrink the scatter, just as the standard-error law predicts. The table below is from repeating the walker simulation with 60 different seeds for each size.</li>
+                <li><strong>Change the numerical settings.</strong> Halve the time step; use a larger system. If the answer changes substantially, you have not converged (as with the tea above).</li>
+            </ol>
+            <div class="table-scroll" role="region" aria-label="6. Checking a simulation (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Number of walkers</th><th>Average D from 60 runs</th><th>Run-to-run scatter</th><th>Prediction 0.5&radic;(2/N)</th></tr></thead>
+                <tbody>
+                    <tr><td>50</td><td>0.53</td><td>0.080</td><td>0.100</td></tr>
+                    <tr><td>200</td><td>0.505</td><td>0.052</td><td>0.050</td></tr>
+                    <tr><td>800</td><td>0.496</td><td>0.028</td><td>0.025</td></tr>
+                    <tr><td>3200</td><td>0.499</td><td>0.012</td><td>0.013</td></tr>
+                </tbody>
+            </table></div>
+            <p>Each fourfold increase in walkers halves the scatter: the square-root law at work. With few walkers a single run can mislead you by 15% or more, and you could not know without repeating it. Always quote a result with its scatter, as in D = 0.50 &plusmn; 0.03.</p>
+
+            <h2 id="try">7. Try it yourself<a class="anchor" href="#try" aria-label="Link to this section">#</a></h2>
+            <p>The best way to learn is to change things and see what happens. Suggestions, roughly in order of difficulty:</p>
+            <ul>
+                <li>Change <code>n_steps</code> to 100 and 1600. How does the MSD change? (It should equal the number of steps.)</li>
+                <li>Make the walk <em>two-dimensional</em>: each step is up, down, left or right at random. In two dimensions the MSD is still the number of steps, but <em>D</em> is defined by MSD = 4<em>Dt</em>, so <em>D</em> should come out near 0.25. (A version with 2000 walkers and 400 steps gives <em>D</em> = 0.240.)</li>
+                <li>Make the walk <em>biased</em>: choose +1 with probability 0.6 and &minus;1 with probability 0.4 (use <code>rng.choice([-1, 1], p=[0.4, 0.6], size=...)</code>). Now the walkers drift. Plot the mean position against time and find its slope: it should be 0.2 steps per step.</li>
+                <li>Write the tea simulation as a function <code>cool(dt)</code> that returns the final temperature, and call it for several values of <code>dt</code> to draw your own convergence table.</li>
+            </ul>
+
+            <h2 id="leads">8. Where this leads<a class="anchor" href="#leads" aria-label="Link to this section">#</a></h2>
+            <p>The rest of the series is these same ideas applied to real materials.</p>
+            <div class="table-scroll" role="region" aria-label="8. Where this leads (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>In this page</th><th>Becomes</th><th>See</th></tr></thead>
+                <tbody>
+                    <tr><td>State, rule, loop</td><td>The state is atomic positions and velocities, the rule is Newton&rsquo;s laws with forces from an energy</td><td><a href="molecular-dynamics.html">Molecular dynamics</a></td></tr>
+                    <tr><td>Random rule with averaging</td><td>Random moves accepted or rejected with probabilities from the energy</td><td><a href="monte-carlo-methods.html">Monte Carlo</a></td></tr>
+                    <tr><td>Walkers and D = a&sup2;/2&tau;</td><td>Diffusion coefficients, Arrhenius behaviour, solving the diffusion equation</td><td><a href="diffusion-and-kinetics.html">Diffusion and kinetics</a></td></tr>
+                    <tr><td>Time-step accuracy</td><td>Integrators, stability and convergence</td><td><a href="numerical-methods-essentials.html">Numerical methods</a></td></tr>
+                    <tr><td>Averages and error bars</td><td>Ensembles, sampling and uncertainty</td><td><a href="statistical-mechanics.html">Statistical mechanics</a></td></tr>
+                    <tr><td>Programs and checks</td><td>Command line, clusters, version control, testing</td><td><a href="programming-and-workflow.html">Programming and workflow</a></td></tr>
+                </tbody>
+            </table></div>
+            <p>You are ready for the next level. <a href="mathematics-for-simulation.html">Mathematics for simulation</a> and <a href="physics-for-simulation.html">Physics for simulation</a> take the ideas of the Start here pages to university level, and <a href="programming-and-workflow.html">Programming and workflow</a> develops what you started here.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A simulation needs a description of the state, a rule for how it changes, and a loop that applies the rule step by step.</li>
+<li>Smaller time steps give more accurate answers at more cost; always check by changing the step.</li>
+<li>Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.</li>
+<li>Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.</li>
+<li>Everything in the Core topics is this same idea with better rules: atoms, energies, grids and probabilities.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">9. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>Name the three ingredients of a simulation and give them for the cooling tea.</summary>
+                <p>State: the temperature (and the time). Rule: the temperature changes at a rate proportional to its excess over room temperature. Loop: repeatedly add (rate &times; time step) to the temperature until the end time.</p>
+            </details>
+            <details>
+                <summary>You reduce the time step from 1 min to 0.5 min and the result changes noticeably. What does that tell you?</summary>
+                <p>The simulation has not converged: the step is still too large to give an accurate answer. Keep reducing it until the result stops changing (to the accuracy you need).</p>
+            </details>
+            <details>
+                <summary>A random walker takes steps of 1 nm every 1 ns. What is its diffusion coefficient in one dimension?</summary>
+                <p><em>D</em> = <em>a</em><sup>2</sup>/(2<em>&tau;</em>) = (1 nm)<sup>2</sup>/(2 ns) = 0.5 nm<sup>2</sup>/ns = 0.5 &times; 10<sup>&minus;18</sup>/10<sup>&minus;9</sup> = 5 &times; 10<sup>&minus;10</sup> m<sup>2</sup>/s.</p>
+            </details>
+            <details>
+                <summary>Why does diffusion spread things out only as the square root of time?</summary>
+                <p>Positions are the sum of many independent random steps, and the typical size of such a sum grows only as the square root of the number of steps (as for the standard error of an average). So to double the spread distance you need four times as many steps, that is, four times the time.</p>
+            </details>
+            <details>
+                <summary>Your walker simulation gives D = 0.58 with 50 walkers. Should you worry?</summary>
+                <p>Not yet. With 50 walkers the run-to-run scatter is about 0.08, so 0.58 is within one scatter of the expected 0.5. Repeat with other seeds and more walkers to see whether the average settles near 0.5 and the scatter shrinks as expected.</p>
+            </details>
+
+            <h2 id="refs">10. Where to go for more<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Sweigart, A., <em>Automate the Boring Stuff with Python</em> (free online): the friendliest start to programming.</li>
+                <li>Software Carpentry lessons (free online): Python for scientists, the command line and version control.</li>
+                <li>The official Python tutorial (python.org).</li>
+                <li>Berg, H. C., <em>Random Walks in Biology</em>, Princeton University Press (a short, readable book on exactly this idea).</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="chance-averages-and-error-bars.html"><span class="dir">Previous topic</span>Chance, averages and error bars</a>
+<a class="next" href="mathematics-for-simulation.html"><span class="dir">Next topic</span>Mathematics for simulation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=1b91ccf4"></script>
+    <script src="../assets/glossary.js?v=ad099721"></script>
+    <script src="../assets/site.js?v=ab6e5a9b" defer></script>
+    <script src="../assets/demos.js?v=a9303025" defer></script>
+</body>
+</html>

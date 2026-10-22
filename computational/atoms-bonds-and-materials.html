@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atoms, Bonds and Materials from Scratch - MiBeM</title>
+    <meta name="description" content="What materials are made of, why atoms bond, how crystals and their defects form, and how structure sets properties, explained from the beginning with interactive demos.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/atoms-bonds-and-materials.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Atoms, Bonds and Materials from Scratch - MiBeM">
+    <meta property="og:description" content="What materials are made of, why atoms bond, how crystals and their defects form, and how structure sets properties, explained from the beginning with interactive demos.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/atoms-bonds-and-materials.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=98d42ef1">
+</head>
+<body data-topic="20">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#atoms">1. Everything is atoms</a></li>
+                <li><a href="#inside">2. Inside an atom</a></li>
+                <li><a href="#bonds">3. Why atoms stick together</a></li>
+                <li><a href="#types">4. Types of bond</a></li>
+                <li><a href="#solids">5. How atoms arrange in solids</a></li>
+                <li><a href="#defects">6. Imperfections</a></li>
+                <li><a href="#properties">7. From atoms to properties</a></li>
+                <li><a href="#why">8. Why simulate</a></li>
+                <li><a href="#check">9. Check your understanding</a></li>
+                <li><a href="#refs">10. Where to go for more</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Start here</span><span>Start here 3</span></p>
+            <h1>Atoms, bonds and materials from scratch</h1>
+            <p class="lead">Why is a diamond hard and graphite soft when both are pure carbon? Why does a metal bend instead of shatter? The answers lie in how atoms are bonded and arranged. This page builds that picture from the beginning, with two interactive tools to explore it.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 10 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="start-here.html">S0. Start here</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="materials-science-essentials.html">B3. Materials essentials</a></dd></div>
+<div><dt>Category</dt><dd>Start here</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Describe an atom, a bond and a crystal, with the sizes involved.</li>
+                    <li>Explain why atoms settle at a particular distance, and what bond stiffness and strength mean.</li>
+                    <li>Name the main types of bond and the four classes of material.</li>
+                    <li>Say what a vacancy, a solute atom and a dislocation are, and why defects matter.</li>
+                </ul>
+            </div>
+
+            <p><strong>You need:</strong> nothing beyond the previous pages, mainly powers of ten from <a href="numbers-units-and-graphs.html">Numbers, units and graphs</a>.</p>
+
+            <h2 id="atoms">1. Everything is atoms<a class="anchor" href="#atoms" aria-label="Link to this section">#</a></h2>
+            <p>Every material, whether steel, wood, water or air, is built from <strong>atoms</strong>. There are about a hundred different kinds, each a different <strong>element</strong>: iron, carbon, oxygen, silicon and so on. An atom is incredibly small, roughly 0.1 to 0.3 nanometres across, which is a few tenths of a billionth of a metre. A single pinch of iron weighing one gram contains about 10<sup>22</sup> of them, that is 10 000 000 000 000 000 000 000.</p>
+            <p>To count such numbers chemists use the <strong>mole</strong>: one mole is 6.022 &times; 10<sup>23</sup> items (the Avogadro number). The mass of one mole of an element in grams, its <em>molar mass</em>, is a number you can read off the periodic table: iron 55.85 g/mol, copper 63.55, aluminium 26.98, carbon 12.01. So the number of atoms in 1 g of iron is (1/55.85) &times; 6.022 &times; 10<sup>23</sup> &asymp; 1.08 &times; 10<sup>22</sup>.</p>
+            <p>What a material is like depends on two things: <em>which atoms</em> it contains, and <em>how they are arranged and held together</em>. Diamond and graphite are both pure carbon; the only difference is the arrangement, and the properties are completely different.</p>
+
+            <h2 id="inside">2. Inside an atom<a class="anchor" href="#inside" aria-label="Link to this section">#</a></h2>
+            <p>An atom has a tiny, dense <strong>nucleus</strong> at the centre, made of <strong>protons</strong> (positive electric charge) and <strong>neutrons</strong> (no charge). Around it is a cloud of <strong>electrons</strong> (negative charge, much lighter than protons). The nucleus is only about 10<sup>&minus;15</sup> m across, 100 000 times smaller than the atom: almost all of an atom&rsquo;s size is the electron cloud, and almost all of its mass is the nucleus.</p>
+            <ul>
+                <li>The number of protons, the <strong>atomic number</strong>, decides which element it is: 6 for carbon, 8 for oxygen, 26 for iron. A neutral atom has equal numbers of protons and electrons.</li>
+                <li>Electrons are arranged in <strong>shells</strong> at different distances. The electrons in the outermost shell, the <strong>valence electrons</strong>, are the ones that take part in bonding, and the number of them decides the atom&rsquo;s chemistry.</li>
+                <li>The <strong>periodic table</strong> lists elements by atomic number and puts atoms with similar valence electrons in the same column. That is why sodium and potassium behave alike, and why the metals fill the left and middle of the table.</li>
+            </ul>
+            <p>The rules governing electrons come from quantum mechanics. You do not need them yet: it is enough to know that electrons are what hold atoms together.</p>
+
+            <h2 id="bonds">3. Why atoms stick together<a class="anchor" href="#bonds" aria-label="Link to this section">#</a></h2>
+            <p>Two atoms attract each other because the positive nucleus of one pulls on the negative electrons of the other. But if they get too close their electron clouds and nuclei repel strongly. The balance of attraction and repulsion produces a preferred distance, the <strong>bond length</strong>, where the energy is lowest, just as a ball settles at the bottom of a valley. The <strong>bond energy</strong> (or well depth) is the energy needed to pull the atoms apart; typical values are 0.5 to 8 eV per atom.</p>
+            <p>The picture below shows this as an energy curve. Drag the slider to change the separation and watch the force arrows: too close, they push apart; too far, they pull together; at the bond length the force is zero. The force is minus the slope of the curve, exactly the idea from <a href="rates-of-change-calculus.html">the calculus page</a>.</p>
+            <div class="demo" data-demo="bond"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p>Two numbers describe a bond. The <strong>strength</strong> is the depth of the valley: stronger bonds mean materials that melt at higher temperatures and are harder to break. The <strong>stiffness</strong> is how steep the sides of the valley are: stiff bonds resist being stretched or squeezed, so a material with stiff bonds is hard to bend elastically. Make the bond stronger with the second slider and notice that the valley deepens and gets steeper; in general strong bonds are stiff bonds.</p>
+
+            <h2 id="types">4. Types of bond<a class="anchor" href="#types" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="4. Types of bond (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Bond</th><th>How it works</th><th>Picture</th><th>Examples</th><th>Typical result</th></tr></thead>
+                <tbody>
+                    <tr><td>Metallic</td><td>Outer electrons are shared by all the atoms and move freely</td><td>Positive ions in a sea of electrons</td><td>Iron, copper, aluminium</td><td>Conduct electricity and heat, shiny, can be bent (ductile)</td></tr>
+                    <tr><td>Covalent</td><td>Neighbouring atoms share pairs of electrons in definite directions</td><td>Atoms holding hands at fixed angles</td><td>Diamond, silicon, plastics</td><td>Hard and brittle (solids) or flexible chains (polymers); often poor conductors</td></tr>
+                    <tr><td>Ionic</td><td>One atom hands electrons to another; the opposite charges attract</td><td>Alternating positive and negative balls</td><td>Table salt (NaCl), alumina, magnesia</td><td>Hard, brittle, high melting points, insulating</td></tr>
+                    <tr><td>van der Waals</td><td>Weak attraction between neutral atoms from fleeting charge shifts</td><td>A faint stickiness</td><td>Argon solid, layers of graphite, between polymer chains</td><td>Soft, low melting points; layers slide</td></tr>
+                    <tr><td>Hydrogen bond</td><td>A hydrogen atom attracted to a neighbouring electronegative atom</td><td>A weak bridge</td><td>Water, many polymers</td><td>Responsible for the structure of water and for strong plastics like nylon</td></tr>
+                </tbody>
+            </table></div>
+            <p>Materials are commonly grouped into four classes by their bonding and behaviour, plus combinations:</p>
+            <ul>
+                <li><strong>Metals</strong> (steel, aluminium, copper): strong, tough, conduct electricity and heat.</li>
+                <li><strong>Ceramics and glasses</strong> (alumina, concrete, window glass): hard, brittle, resist heat and corrosion, insulate.</li>
+                <li><strong>Polymers</strong> (polyethylene, nylon, rubber): long chain molecules; light, flexible, easy to shape, insulating.</li>
+                <li><strong>Semiconductors</strong> (silicon, gallium arsenide): conduct only a little, in a way that can be controlled, which is the basis of electronics.</li>
+                <li><strong>Composites</strong> (carbon fibre in resin): combine two or more to get properties that none has alone.</li>
+            </ul>
+
+            <h2 id="solids">5. How atoms arrange in solids<a class="anchor" href="#solids" aria-label="Link to this section">#</a></h2>
+            <p>In a <strong>crystal</strong> the atoms sit in a regular pattern that repeats in all directions, like oranges stacked in a crate. The smallest repeating block is the <strong>unit cell</strong>. Many common metals take one of three simple patterns: <em>face-centred cubic</em> (aluminium, copper, and iron at high temperature), <em>body-centred cubic</em> (iron at room temperature, tungsten) and <em>hexagonal close-packed</em> (magnesium, titanium). Each has a different density of packing and different ways of deforming, which is why iron and copper behave differently.</p>
+            <p>A <strong>glass</strong> has no repeating pattern: the atoms are jumbled like a frozen liquid. Many polymers are partly crystalline and partly jumbled. And most real metals are <strong>polycrystals</strong>: they are made of millions of tiny crystals called <strong>grains</strong>, each with the atoms tilted differently, meeting along surfaces called <strong>grain boundaries</strong>. The pattern of grains and other features, visible in a microscope at micrometre scale, is the <strong>microstructure</strong>, and it is one of the most important things engineers control.</p>
+
+            <h2 id="defects">6. Imperfections<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
+            <p>A perfect crystal would be a poor guide to a real material. Real crystals always contain <strong>defects</strong>, and defects control many useful properties.</p>
+            <ul>
+                <li>A <strong>vacancy</strong> is an empty site where an atom is missing. At any temperature a few sites are always empty, and vacancies are what allow atoms to move around inside a solid by hopping into the gaps.</li>
+                <li>An <strong>interstitial</strong> atom is an atom squeezed into the space between the normal sites; small atoms like carbon sit this way in iron.</li>
+                <li>A <strong>solute atom</strong> (or substitutional atom) replaces a normal atom with a different element. Mixing elements in this way gives an <strong>alloy</strong>.</li>
+                <li>A <strong>dislocation</strong> is a line defect: imagine an extra half-sheet of atoms pushed into the crystal, like an extra card in a deck. When a metal bends permanently, dislocations glide through the crystal one row at a time, a bit like moving a ruck across a carpet instead of dragging the whole carpet. This is why metals deform at far smaller forces than you would calculate by pulling whole planes of atoms apart.</li>
+                <li>A <strong>grain boundary</strong>, as described above, is a surface defect between grains.</li>
+            </ul>
+            <p>Try the crystal below: click atoms to create vacancies and solute atoms, and see how many there are.</p>
+            <div class="demo" data-demo="crystal2d"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p>How many vacancies are there? The fraction of empty sites in equilibrium is <em>e</em><sup>&minus;<em>E</em>/(<em>kT</em>)</sup>, where <em>E</em> is the energy cost of making one (the exponential from the <a href="numbers-units-and-graphs.html">graphs page</a>, with <em>k</em> and <em>T</em> to be explained soon). For a typical cost of 1 eV at 1000 K that fraction is about 10<sup>&minus;5</sup>: one site in a hundred thousand. It is tiny but vital, and it rises very steeply with temperature.</p>
+
+            <h2 id="properties">7. From atoms to properties<a class="anchor" href="#properties" aria-label="Link to this section">#</a></h2>
+            <p>Properties that you can measure in the lab come from the atomic picture:</p>
+            <div class="table-scroll" role="region" aria-label="7. From atoms to properties (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Property</th><th>What controls it at the atomic level</th></tr></thead>
+                <tbody>
+                    <tr><td>Stiffness (how much it stretches under a load)</td><td>Bond stiffness: steep valleys in the energy curve</td></tr>
+                    <tr><td>Melting point</td><td>Bond strength compared with the thermal jiggling of atoms</td></tr>
+                    <tr><td>Electrical conductivity</td><td>Whether electrons are free to move (metals) or bound (ceramics)</td></tr>
+                    <tr><td>Strength and ductility</td><td>How easily dislocations move and how many obstacles there are</td></tr>
+                    <tr><td>Density</td><td>Atomic mass and how tightly the atoms pack</td></tr>
+                    <tr><td>Corrosion resistance</td><td>Chemical reactions at the surface and the films that form there</td></tr>
+                </tbody>
+            </table></div>
+            <p>Take steel, the world&rsquo;s most important engineering material. Pure iron is soft because dislocations glide easily. Adding a little carbon, which sits between the iron atoms, puts obstacles in the way of dislocations, so the material becomes much stronger. Heat treatment then controls the size of the grains and the tiny particles that form, and the strength can change by a factor of several. Understanding and predicting all this from atoms upward is what computational materials science is about.</p>
+
+            <h2 id="why">8. Why simulate<a class="anchor" href="#why" aria-label="Link to this section">#</a></h2>
+            <p>We simulate because we cannot see inside a material at the atomic scale in real time, because experiments are slow and costly, and because the number of possible compositions and treatments is far too large to test one by one. A simulation can show a dislocation moving, or tell us whether an alloy will be stable, before anyone makes it. It does not replace experiments; it helps decide which ones to do and explains what they find.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Everything is made of atoms; properties come from which atoms there are and how they are arranged and bonded.</li>
+<li>Bonds balance attraction and repulsion, giving a preferred spacing and a stiffness; deeper bonds mean higher melting points.</li>
+<li>Crystals are repeating patterns; real crystals contain defects such as vacancies, solute atoms and dislocations.</li>
+<li>Defects, not perfect order, explain why metals bend, conduct and can be strengthened by alloying.</li>
+<li>We simulate because we cannot see atoms directly and cannot afford to test every composition.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">9. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>How many atoms are in 1 g of aluminium (molar mass 26.98 g/mol)?</summary>
+                <p>(1/26.98) &times; 6.022 &times; 10<sup>23</sup> &asymp; 2.2 &times; 10<sup>22</sup> atoms.</p>
+            </details>
+            <details>
+                <summary>Why does pulling two bonded atoms slightly apart make them pull back?</summary>
+                <p>Beyond the bond length the attraction between the nucleus of one atom and the electrons of the other is stronger than the repulsion, so the net force points back toward the bond length. The force is the slope of the energy curve and always points toward the bottom of the valley.</p>
+            </details>
+            <details>
+                <summary>Which type of bond involves atoms sharing pairs of electrons in definite directions?</summary>
+                <p>Covalent bonding. This directionality is why covalent solids such as diamond and silicon are hard and brittle.</p>
+            </details>
+            <details>
+                <summary>If a material&rsquo;s bonds are made stronger, what generally happens to its stiffness and melting point?</summary>
+                <p>Both tend to increase: a deeper, steeper energy valley resists stretching (more stiffness) and takes more thermal jiggling to overcome (higher melting point).</p>
+            </details>
+            <details>
+                <summary>Why are alloys often stronger than the pure metal?</summary>
+                <p>The foreign atoms distort the crystal and act as obstacles that dislocations have to push past, so more force is needed to deform the metal permanently.</p>
+            </details>
+            <details>
+                <summary>What fraction of atomic sites is vacant at 1000 K if a vacancy costs 1 eV? (Use <em>kT</em> = 0.0862 eV at 1000 K.)</summary>
+                <p>The fraction is e<sup>&minus;1/0.0862</sup> = e<sup>&minus;11.6</sup> &asymp; 9 &times; 10<sup>&minus;6</sup>, about one site in a hundred thousand.</p>
+            </details>
+
+            <h2 id="refs">10. Where to go for more<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Callister, W. D. and Rethwisch, D. G., <em>Materials Science and Engineering: An Introduction</em>, Wiley (chapters on atomic structure and bonding, crystal structures and imperfections).</li>
+                <li>Ashby, M. F. and Jones, D. R. H., <em>Engineering Materials 1</em>, Butterworth-Heinemann.</li>
+                <li>MIT OpenCourseWare, 3.091 Introduction to Solid State Chemistry (free).</li>
+                <li>Next in the Background level: <a href="materials-science-essentials.html">Materials science essentials</a>, which covers the same ground at university level.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="rates-of-change-calculus.html"><span class="dir">Previous topic</span>Rates of change: calculus from scratch</a>
+<a class="next" href="forces-energy-and-heat.html"><span class="dir">Next topic</span>Forces, energy, heat and motion</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=1b91ccf4"></script>
+    <script src="../assets/glossary.js?v=ad099721"></script>
+    <script src="../assets/site.js?v=ab6e5a9b" defer></script>
+    <script src="../assets/demos.js?v=a9303025" defer></script>
+</body>
+</html>

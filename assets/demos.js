@@ -460,7 +460,484 @@
     redraws.push(draw); draw();
   }
 
-  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep };
+  /* ================= beginner demos ================= */
+
+  /* ---- placement quiz ---- */
+  function placement(host) {
+    var api = shell(host, "Where should you start? A two-minute check",
+      "This is not a test and nothing is saved or sent anywhere. Answer what you can (it is fine to guess or skip), and you will get a suggested order of pages.");
+    var Q = [
+      { page: "S1", q: "Solve 3x + 6 = 21 for x.", o: ["x = 3", "x = 5", "x = 7", "x = 9"], c: 1 },
+      { page: "S1", q: "Write 0.0025 in scientific notation.", o: ["2.5 × 10³", "2.5 × 10⁻⁴", "2.5 × 10⁻³", "25 × 10⁻³"], c: 2 },
+      { page: "S1", q: "A straight line on a graph passes through (0, 2) and (4, 10). What is its slope?", o: ["1", "4", "8", "2"], c: 3 },
+      { page: "S2", q: "On a distance-against-time graph, a steeper line means…", o: ["a longer distance", "a higher speed", "a heavier object", "more time"], c: 1 },
+      { page: "S2", q: "At the very bottom of a smooth valley-shaped curve, the slope is…", o: ["positive", "negative", "zero", "infinite"], c: 2 },
+      { page: "S3", q: "Which of these conducts electricity best?", o: ["glass", "diamond", "rubber", "copper"], c: 3 },
+      { page: "S3", q: "In a crystal, a “vacancy” is…", o: ["an extra atom squeezed in", "an empty atom site", "a crack", "a different crystal grain"], c: 1 },
+      { page: "S4", q: "A ball rolls down a smooth hill. Its kinetic energy…", o: ["increases as it goes down", "decreases as it goes down", "stays zero", "is always equal to its height"], c: 0 },
+      { page: "S4", q: "The temperature of a solid is related to…", o: ["the number of atoms in it", "its colour", "how much the atoms jiggle on average", "how heavy it is"], c: 2 },
+      { page: "S5", q: "You repeat a measurement 100 times instead of once and take the average. The result is…", o: ["exactly right", "more reliable (smaller random error)", "no different", "less reliable"], c: 1 },
+      { page: "S5", q: "You flip a fair coin twice. The chance of two heads is…", o: ["1/2", "1/3", "1/4", "1"], c: 2 },
+      { page: "S6", q: "Have you written any program before (for example in Python)?", o: ["Never", "A little", "Yes, regularly"], c: -1 }
+    ];
+    var picks = {};
+    Q.forEach(function (item, qi) {
+      var fs = el("fieldset", "quiz-q"), lg = el("legend", null, (qi + 1) + ". " + item.q.replace(/&/g, "&amp;").replace(/</g, "&lt;"));
+      fs.appendChild(lg);
+      item.o.forEach(function (text, oi) {
+        var id = "q" + qi + "o" + oi + "-" + (++uid);
+        var lab = el("label", "quiz-o"); lab.setAttribute("for", id);
+        var inp = doc.createElement("input"); inp.type = "radio"; inp.name = "q" + qi + "-" + uid; inp.id = id;
+        inp.addEventListener("change", function () { picks[qi] = oi; });
+        lab.appendChild(inp); lab.appendChild(doc.createTextNode(" " + text));
+        fs.appendChild(lab);
+      });
+      api.controls.appendChild(fs);
+    });
+    api.controls.className = "quiz-list";
+    var out = el("div", "quiz-out");
+    var go = button(api, "Show my starting point", true, function () {
+      var need = {};
+      Q.forEach(function (item, qi) {
+        var ok = item.c === -1 ? (picks[qi] !== undefined && picks[qi] !== 0) : picks[qi] === item.c;
+        if (!ok) need[item.page] = true;
+      });
+      var names = { S1: ["numbers-units-and-graphs", "Numbers, units and graphs"], S2: ["rates-of-change-calculus", "Rates of change"], S3: ["atoms-bonds-and-materials", "Atoms, bonds and materials"], S4: ["forces-energy-and-heat", "Forces, energy, heat and motion"], S5: ["chance-averages-and-error-bars", "Chance, averages and error bars"], S6: ["your-first-simulation", "Your first simulation"] };
+      var order = ["S1", "S2", "S3", "S4", "S5", "S6"], list = order.filter(function (k) { return need[k]; });
+      var html;
+      if (!list.length) {
+        html = "<p><b>You can skip most of the Start here pages.</b> Skim <a href=\"start-here.html\">Start here</a> for the roadmap, then begin with <a href=\"mathematics-for-simulation.html\">Background 1: Mathematics</a> or go straight to <a href=\"introduction.html\">Topic 1: the Introduction</a>.</p>";
+      } else {
+        html = "<p><b>Suggested order:</b></p><ol><li>Finish reading this page (<a href=\"start-here.html\">Start here</a>).</li>" +
+          list.map(function (k) { return "<li><a href=\"" + names[k][0] + ".html\">" + names[k][1] + "</a></li>"; }).join("") +
+          "</ol><p>After those, continue with Background 1 and the rest. Pages you did not need to open can be skimmed later for review.</p>";
+      }
+      out.innerHTML = html;
+    });
+    api.controls.appendChild(go);
+    api.body.appendChild(out);
+    api.finish();
+  }
+
+  /* ---- unit converter ---- */
+  function units(host) {
+    var api = shell(host, "Unit converter: energy and length",
+      "Type a value and pick its unit. Scientists move between these units constantly, so it is worth getting a feel for the sizes: 1 eV is the energy an electron gains crossing 1 volt, and 1 Ångström is a tenth of a nanometre, about the size of an atom.");
+    var E = { "eV": 1, "meV": 1e-3, "J": 1 / 1.602176634e-19, "kJ/mol": 1 / 96.485332, "kcal/mol": 1 / 23.060548, "K (as energy/kᴮ)": 1 / 11604.518, "Hartree": 27.211386 };
+    var Lg = { "Å": 1, "pm": 0.01, "nm": 10, "µm": 1e4, "mm": 1e7, "m": 1e10 };
+    function block(title, table, def, unit0, dec) {
+      var wrap = el("div"); wrap.style.minWidth = "260px"; wrap.style.flex = "1 1 260px";
+      wrap.appendChild(el("b", null, title));
+      var row = el("div"); row.style.cssText = "display:flex;gap:8px;margin:8px 0";
+      var inp = doc.createElement("input"); inp.type = "number"; inp.value = def; inp.step = "any"; inp.style.cssText = "flex:1;min-width:0;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit";
+      inp.setAttribute("aria-label", title + " value");
+      var sel = doc.createElement("select"); sel.style.cssText = "padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit";
+      sel.setAttribute("aria-label", title + " unit");
+      Object.keys(table).forEach(function (u) { var o = doc.createElement("option"); o.value = u; o.textContent = u; if (u === unit0) o.selected = true; sel.appendChild(o); });
+      row.appendChild(inp); row.appendChild(sel); wrap.appendChild(row);
+      var res = el("div"); res.style.cssText = "font-size:.88rem;color:var(--muted);line-height:1.7"; wrap.appendChild(res);
+      function upd() {
+        var base = parseFloat(inp.value) * table[sel.value], h = "";
+        if (isNaN(base)) { res.textContent = "Enter a number."; return; }
+        Object.keys(table).forEach(function (u) { if (u !== sel.value) { var v = base / table[u]; h += "<div>= <b>" + (Math.abs(v) >= 1e5 || (Math.abs(v) < 1e-3 && v !== 0) ? v.toExponential(3) : +v.toPrecision(5)) + "</b> " + u + "</div>"; } });
+        res.innerHTML = h;
+      }
+      inp.addEventListener("input", upd); sel.addEventListener("change", upd); upd();
+      api.controls.appendChild(wrap);
+    }
+    block("Energy", E, 1, "eV");
+    block("Length", Lg, 2.5, "Å");
+    api.controls.style.alignItems = "flex-start";
+    api.finish();
+  }
+
+  /* ---- graph explorer ---- */
+  function graphs(host) {
+    var api = shell(host, "Graph explorer: four shapes you will keep meeting",
+      "Straight lines describe steady change, parabolas describe the bottom of an energy valley, exponentials describe growth and decay, and power laws describe scaling. Tick the log scale box with the exponential: it becomes a straight line.");
+    var cv = api.addCanvas(640, 320);
+    var type = "linear", logy = false;
+    var selWrap = el("label"); selWrap.appendChild(el("span", null, "Shape"));
+    var sel = doc.createElement("select"); sel.style.cssText = "padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit";
+    [["linear", "Straight line  y = m x + c"], ["quad", "Parabola  y = a (x − 3)² + c"], ["exp", "Exponential  y = A e^(k x)"], ["power", "Power law  y = A x^p"]].forEach(function (o) { var op = doc.createElement("option"); op.value = o[0]; op.textContent = o[1]; sel.appendChild(op); });
+    selWrap.appendChild(sel); api.controls.appendChild(selWrap);
+    var p1 = slider(api, "parameter 1", -3, 3, 0.1, 1, function (v) { return v.toFixed(1); }, draw);
+    var p2 = slider(api, "parameter 2", -5, 5, 0.1, 1, function (v) { return v.toFixed(1); }, draw);
+    var lab1 = p1.el.parentNode.firstChild, lab2 = p2.el.parentNode.firstChild;
+    function relabel() {
+      var cfg = { linear: ["slope m", -3, 3, 1, "intercept c", -5, 5, 1], quad: ["a (opening)", -1, 1, 0.3, "c (height of the bottom)", -5, 5, 0], exp: ["rate k", -0.8, 0.8, 0.3, "starting value A", 0.1, 5, 1], power: ["power p", -2, 3, 2, "scale A", 0.1, 3, 1] }[type];
+      lab1.childNodes[0].nodeValue = cfg[0] + ": "; lab2.childNodes[0].nodeValue = cfg[4] + ": ";
+      p1.el.min = cfg[1]; p1.el.max = cfg[2]; p1.el.value = cfg[3];
+      p2.el.min = cfg[5]; p2.el.max = cfg[6]; p2.el.value = cfg[7];
+      p1.el.dispatchEvent(new Event("input")); p2.el.dispatchEvent(new Event("input"));
+    }
+    sel.addEventListener("change", function () { type = sel.value; relabel(); });
+    checkbox(api, "Log scale on the y axis", function (v) { logy = v; draw(); });
+    api.finish();
+    function f(x) {
+      var a = p1.get(), b = p2.get();
+      if (type === "linear") return a * x + b;
+      if (type === "quad") return a * (x - 3) * (x - 3) + b;
+      if (type === "exp") return b * Math.exp(a * x);
+      return b * Math.pow(Math.max(x, 1e-9), a);
+    }
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h;
+      var p = { x0: 56, y0: 16, x1: W - 16, y1: H - 44 }, N = 200, xs = [], ys = [], i;
+      for (i = 0; i <= N; i++) { xs.push(10 * i / N); ys.push(f(xs[i])); }
+      var ok = !logy || ys.every(function (v) { return v > 0 && isFinite(v); });
+      var vals = logy && ok ? ys.map(function (v) { return Math.log10(v); }) : ys.filter(isFinite);
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+      if (hi - lo < 1e-6) { hi += 1; lo -= 1; }
+      var pad = (hi - lo) * 0.1; lo -= pad; hi += pad;
+      var X = function (x) { return p.x0 + x / 10 * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - (v - lo) / (hi - lo) * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "x", logy && ok ? "log₁₀ of y" : "y");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "center";
+      for (i = 0; i <= 10; i += 2) ctx.fillText(i, X(i), p.y1 + 15);
+      ctx.textAlign = "right";
+      for (i = 0; i <= 4; i++) { var v = lo + (hi - lo) * i / 4; ctx.fillText(v.toFixed(Math.abs(hi - lo) < 5 ? 2 : 1), p.x0 - 6, Y(v) + 4); }
+      if (lo < 0 && hi > 0) { ctx.strokeStyle = C.border; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(p.x0, Y(0)); ctx.lineTo(p.x1, Y(0)); ctx.stroke(); ctx.setLineDash([]); }
+      if (!ok) { ctx.fillStyle = C.ink; ctx.textAlign = "center"; ctx.font = "14px system-ui, sans-serif"; ctx.fillText("A log scale needs positive values: choose a shape and settings where y > 0.", W / 2, H / 2); }
+      else {
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.beginPath();
+        var started = false;
+        for (i = 0; i <= N; i++) { var yv = logy ? Math.log10(ys[i]) : ys[i]; if (!isFinite(yv)) continue; var yy = Y(yv); if (!started) { ctx.moveTo(X(xs[i]), yy); started = true; } else ctx.lineTo(X(xs[i]), yy); }
+        ctx.stroke(); ctx.lineWidth = 1;
+      }
+      var a = p1.get(), b = p2.get(), msg;
+      if (type === "linear") msg = "slope = <b>" + fmtN(a, 1) + "</b> (y changes by this much for each step in x); crosses the y axis at <b>" + fmtN(b, 1) + "</b>";
+      else if (type === "quad") msg = "lowest or highest point at x = <b>3</b>, y = <b>" + fmtN(b, 1) + "</b>; " + (a > 0 ? "opens upward like an energy valley" : a < 0 ? "opens downward like a hill" : "a = 0 gives a flat line");
+      else if (type === "exp") msg = a > 0 ? "doubling time = ln 2 / k = <b>" + fmtN(Math.LN2 / a, 2) + "</b>" : a < 0 ? "half-life = ln 2 / |k| = <b>" + fmtN(Math.LN2 / -a, 2) + "</b>" : "k = 0 gives a flat line";
+      else msg = "doubling x multiplies y by <b>" + fmtN(Math.pow(2, a), 2) + "</b>";
+      setRead(api, [msg]);
+    }
+    relabel(); redraws.push(draw);
+  }
+
+  /* ---- tangent and slope ---- */
+  function tangent(host) {
+    var api = shell(host, "Slope at a point: from secant to tangent",
+      "The slope between two points on a curve (blue, a secant) approaches the slope of the curve at one point (orange, the tangent) as the two points move together. That limit is the derivative.");
+    var cv = api.addCanvas(640, 320);
+    var fn = "x2";
+    var sel = doc.createElement("select"); sel.style.cssText = "padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit";
+    [["x2", "f(x) = x²"], ["sin", "f(x) = sin x"], ["cubic", "f(x) = x³/3 − x"]].forEach(function (o) { var op = doc.createElement("option"); op.value = o[0]; op.textContent = o[1]; sel.appendChild(op); });
+    var w0 = el("label"); w0.appendChild(el("span", null, "Curve")); w0.appendChild(sel); api.controls.appendChild(w0);
+    sel.addEventListener("change", function () { fn = sel.value; draw(); });
+    var x0s = slider(api, "Point x", -2.5, 2.5, 0.05, 1, function (v) { return v.toFixed(2); }, draw);
+    var hs = slider(api, "Gap h to the second point", 0.02, 2, 0.02, 1.2, function (v) { return v.toFixed(2); }, draw);
+    api.finish();
+    var F = { x2: [function (x) { return x * x; }, function (x) { return 2 * x; }], sin: [Math.sin, Math.cos], cubic: [function (x) { return x * x * x / 3 - x; }, function (x) { return x * x - 1; }] };
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, f = F[fn][0], d = F[fn][1], x0 = x0s.get(), h = hs.get();
+      var p = { x0: 50, y0: 16, x1: W - 16, y1: H - 40 }, lo = -3, hi = 5, xl = -3, xh = 3;
+      var X = function (x) { return p.x0 + (x - xl) / (xh - xl) * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - (v - lo) / (hi - lo) * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "x", "f(x)");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "center";
+      for (var t = -3; t <= 3; t++) ctx.fillText(t, X(t), p.y1 + 15);
+      ctx.textAlign = "right"; for (var u = -2; u <= 4; u += 2) ctx.fillText(u, p.x0 - 6, Y(u) + 4);
+      ctx.strokeStyle = C.border; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(p.x0, Y(0)); ctx.lineTo(p.x1, Y(0)); ctx.moveTo(X(0), p.y0); ctx.lineTo(X(0), p.y1); ctx.stroke(); ctx.setLineDash([]);
+      ctx.save(); ctx.beginPath(); ctx.rect(p.x0, p.y0, p.x1 - p.x0, p.y1 - p.y0); ctx.clip();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var i = 0; i <= 200; i++) { var x = xl + (xh - xl) * i / 200; if (i === 0) ctx.moveTo(X(x), Y(f(x))); else ctx.lineTo(X(x), Y(f(x))); }
+      ctx.stroke();
+      var y0 = f(x0), sec = (f(x0 + h) - y0) / h, tan = d(x0);
+      function line(slope, col, w) { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(X(xl), Y(y0 + slope * (xl - x0))); ctx.lineTo(X(xh), Y(y0 + slope * (xh - x0))); ctx.stroke(); }
+      line(sec, C.blue, 2); line(tan, C.accent, 2.5);
+      ctx.restore(); ctx.lineWidth = 1;
+      [[x0, C.accent], [x0 + h, C.blue]].forEach(function (pt) { ctx.fillStyle = pt[1]; ctx.beginPath(); ctx.arc(X(pt[0]), Y(f(pt[0])), 5.5, 0, 6.2832); ctx.fill(); });
+      setRead(api, ["secant slope (blue) = <b>" + fmtN(sec, 3) + "</b>", "tangent slope, the derivative (orange) = <b>" + fmtN(tan, 3) + "</b>", "difference = <b>" + fmtN(Math.abs(sec - tan), 3) + "</b> (shrinks as h shrinks)"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ---- area under a curve ---- */
+  function area(host) {
+    var api = shell(host, "Adding up thin slices: the area under a curve",
+      "Left-edge rectangles approximate the area under the curve. With more, thinner rectangles the sum approaches the exact area: that limit is the integral.");
+    var cv = api.addCanvas(640, 320);
+    var fn = "x2";
+    var sel = doc.createElement("select"); sel.style.cssText = "padding:6px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit";
+    [["x2", "f(x) = x² from 0 to 3"], ["sin", "f(x) = sin x from 0 to π"], ["speed", "speed = 2x from 0 to 4"]].forEach(function (o) { var op = doc.createElement("option"); op.value = o[0]; op.textContent = o[1]; sel.appendChild(op); });
+    var w0 = el("label"); w0.appendChild(el("span", null, "Curve")); w0.appendChild(sel); api.controls.appendChild(w0);
+    sel.addEventListener("change", function () { fn = sel.value; draw(); });
+    var ns = slider(api, "Number of rectangles", 1, 100, 1, 6, function (v) { return String(v); }, draw);
+    api.finish();
+    var CF = { x2: { f: function (x) { return x * x; }, a: 0, b: 3, ex: 9, top: 10 }, sin: { f: Math.sin, a: 0, b: Math.PI, ex: 2, top: 1.2 }, speed: { f: function (x) { return 2 * x; }, a: 0, b: 4, ex: 16, top: 9 } };
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, c = CF[fn], n = ns.get();
+      var p = { x0: 50, y0: 16, x1: W - 16, y1: H - 40 };
+      var X = function (x) { return p.x0 + (x - c.a) / (c.b - c.a) * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - v / c.top * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "x", "f(x)");
+      var dx = (c.b - c.a) / n, sum = 0;
+      ctx.fillStyle = C.soft; ctx.strokeStyle = C.accent;
+      for (var i = 0; i < n; i++) { var xl = c.a + i * dx, v = c.f(xl); sum += v * dx; ctx.fillRect(X(xl), Y(v), X(xl + dx) - X(xl), p.y1 - Y(v)); if (n <= 60) ctx.strokeRect(X(xl), Y(v), X(xl + dx) - X(xl), p.y1 - Y(v)); }
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var k = 0; k <= 200; k++) { var x = c.a + (c.b - c.a) * k / 200; if (k === 0) ctx.moveTo(X(x), Y(c.f(x))); else ctx.lineTo(X(x), Y(c.f(x))); }
+      ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = C.muted; ctx.font = "11px system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(c.a.toFixed(0), X(c.a), p.y1 + 15); ctx.fillText(c.b.toFixed(2), X(c.b), p.y1 + 15);
+      setRead(api, ["rectangles = <b>" + n + "</b>", "sum of areas = <b>" + fmtN(sum, 3) + "</b>", "exact area = <b>" + fmtN(c.ex, 3) + "</b>", "error = <b>" + fmtN(Math.abs(sum - c.ex), 3) + "</b>"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ---- a chemical bond as an energy curve ---- */
+  function bond(host) {
+    var D0 = 1.0, a = 0.8, r0 = 2.5;
+    var api = shell(host, "Why atoms stay at a distance: a bond as an energy curve",
+      "Too close and the atoms repel; too far and they attract; the energy is lowest at the bond length. The force is minus the slope of the energy curve. A deeper well (a stronger bond) is stiffer, which is why strongly bonded materials are stiffer and melt at higher temperatures. This uses a Morse curve with typical numbers: bond length 2.5 Å.");
+    var cv = api.addCanvas(640, 320);
+    var rs = slider(api, "Distance between the atoms", 1.8, 6, 0.05, 3.4, function (v) { return v.toFixed(2) + " Å"; }, draw);
+    var Ds = slider(api, "Bond strength (well depth)", 0.2, 3, 0.1, 1, function (v) { return v.toFixed(1) + " eV"; }, draw);
+    api.finish();
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, r = rs.get(), D = Ds.get();
+      var U = function (x) { var e = Math.exp(-a * (x - r0)); return D * ((1 - e) * (1 - e) - 1); };
+      var F = function (x) { var e = Math.exp(-a * (x - r0)); return -2 * D * a * (1 - e) * e; }; // -dU/dr
+      var p = { x0: 56, y0: 120, x1: W - 16, y1: H - 40 }, rl = 1.8, rh = 6, ulo = -3.2, uhi = 3;
+      var X = function (x) { return p.x0 + (x - rl) / (rh - rl) * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - (v - ulo) / (uhi - ulo) * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "distance between atoms (Å)", "energy (eV)");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "right";
+      [-3, -2, -1, 0, 1, 2, 3].forEach(function (v) { ctx.fillText(v, p.x0 - 6, Y(v) + 4); });
+      ctx.textAlign = "center"; for (var t = 2; t <= 6; t++) ctx.fillText(t, X(t), p.y1 + 15);
+      ctx.strokeStyle = C.border; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(p.x0, Y(0)); ctx.lineTo(p.x1, Y(0)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.save(); ctx.beginPath(); ctx.rect(p.x0, p.y0, p.x1 - p.x0, p.y1 - p.y0); ctx.clip();
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.beginPath();
+      for (var i = 0; i <= 240; i++) { var x = rl + (rh - rl) * i / 240; if (i === 0) ctx.moveTo(X(x), Y(U(x))); else ctx.lineTo(X(x), Y(U(x))); }
+      ctx.stroke(); ctx.restore(); ctx.lineWidth = 1;
+      ctx.fillStyle = C.blue; ctx.beginPath(); ctx.arc(X(r), Y(U(r)), 6, 0, 6.2832); ctx.fill();
+      // the two atoms
+      var cx = W / 2, cy = 56, scale = 34, d = (r - rl) * 0 + r * scale * 0.55;
+      var ax = cx - d / 2, bx = cx + d / 2;
+      [ax, bx].forEach(function (px) { ctx.fillStyle = C.blue; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.arc(px, cy, 17, 0, 6.2832); ctx.fill(); ctx.stroke(); });
+      var f = F(r), mag = Math.min(60, Math.abs(f) * 90), dir = f > 0 ? 1 : -1; // f>0: pushes apart
+      var state = Math.abs(f) < 0.01 ? "balanced: the bond length" : (f > 0 ? "too close: repulsion pushes the atoms apart" : "too far: attraction pulls the atoms together");
+      if (mag > 2) {
+        ctx.strokeStyle = C.accent; ctx.fillStyle = C.accent; ctx.lineWidth = 3;
+        [[ax - 20, -dir], [bx + 20, dir]].forEach(function (a2) { var x1 = a2[0], x2 = a2[0] + a2[1] * mag; ctx.beginPath(); ctx.moveTo(x1, cy); ctx.lineTo(x2, cy); ctx.stroke(); var s = a2[1] > 0 ? 1 : -1; ctx.beginPath(); ctx.moveTo(x2, cy); ctx.lineTo(x2 - s * 9, cy - 6); ctx.lineTo(x2 - s * 9, cy + 6); ctx.closePath(); ctx.fill(); });
+        ctx.lineWidth = 1;
+      }
+      var k = 2 * D * a * a;
+      setRead(api, ["energy = <b>" + fmtN(U(r), 2) + " eV</b>", "force = <b>" + fmtN(Math.abs(f), 2) + " eV/Å</b>", state, "stiffness at the bond length = <b>" + fmtN(k, 2) + " eV/Å²</b> (about " + fmtN(k * 16.02, 0) + " N/m)"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ---- a 2D crystal with defects ---- */
+  function crystal2d(host) {
+    var cols = 14, rows = 9, R = 17, state = [], hexMode = true;
+    var api = shell(host, "A crystal with defects: click atoms to change them",
+      "Click an atom to turn it into a vacancy (an empty site), click again for a different kind of atom (a solute, as in an alloy), and once more to restore it. Real crystals always contain such defects, and they control many properties.");
+    var cv = api.addCanvas(640, 335);
+    var kT = 0.08617;
+    api.finish();
+    function reset() { state = []; for (var i = 0; i < cols * rows; i++) state.push(0); draw(); }
+    button(api, "Add 6 random vacancies", false, function () { for (var k = 0; k < 6; k++) state[(Math.random() * state.length) | 0] = 1; draw(); });
+    button(api, "Add 6 random solute atoms", false, function () { for (var k = 0; k < 6; k++) state[(Math.random() * state.length) | 0] = 2; draw(); });
+    button(api, "Reset", false, reset);
+    api.controls.parentNode.insertBefore(api.controls, cv.c);
+    function pos(i) { var c = i % cols, r = (i / cols) | 0, dx = 2 * R + 6, dy = hexMode ? dx * 0.866 : dx; return { x: 44 + c * dx + (hexMode && r % 2 ? dx / 2 : 0), y: 30 + r * dy }; }
+    cv.c.style.cursor = "pointer";
+    cv.c.addEventListener("click", function (e) {
+      var rect = cv.c.getBoundingClientRect(), sx = cv.w / rect.width, mx = (e.clientX - rect.left) * sx, my = (e.clientY - rect.top) * sx, best = -1, bd = 1e9;
+      for (var i = 0; i < state.length; i++) { var q = pos(i), d = Math.hypot(q.x - mx, q.y - my); if (d < bd) { bd = d; best = i; } }
+      if (best >= 0 && bd < R + 6) { state[best] = (state[best] + 1) % 3; draw(); }
+    });
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < state.length; i++) {
+        var q = pos(i);
+        if (state[i] === 1) { ctx.strokeStyle = C.muted; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.arc(q.x, q.y, R, 0, 6.2832); ctx.stroke(); ctx.setLineDash([]); }
+        else { ctx.fillStyle = state[i] === 2 ? C.accent : C.blue; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.arc(q.x, q.y, state[i] === 2 ? R * 0.75 : R, 0, 6.2832); ctx.fill(); ctx.stroke(); }
+      }
+      var v = state.filter(function (s) { return s === 1; }).length, s2 = state.filter(function (s) { return s === 2; }).length, n = state.length;
+      setRead(api, ["sites = <b>" + n + "</b>", "vacancies = <b>" + v + "</b> (" + fmtN(100 * v / n, 1) + "%)", "solute atoms = <b>" + s2 + "</b> (" + fmtN(100 * s2 / n, 1) + "%)", "for comparison: at 1000 K a vacancy costing 1 eV is present at only about <b>" + Math.exp(-1 / (kT * 1000 / 1000) * (1 / 1)).toExponential(1).replace("e", " × 10^") + "</b> of sites"]);
+    }
+    reset(); redraws.push(draw);
+  }
+
+  /* ---- mass on a spring ---- */
+  function oscillator(host) {
+    var atomMode = false, t0 = performance.now();
+    var api = shell(host, "A mass on a spring: stiffness and mass set the rhythm",
+      "A stiffer spring or a lighter mass vibrates faster: the period is T = 2π√(m/k). Atoms joined by bonds behave the same way: with bond-like stiffness and an atom’s mass the frequency is a few trillion times per second. In atomic mode the animation is slowed down by a factor of a trillion so that 1 second on screen is 1 picosecond.");
+    var cv = api.addCanvas(640, 260);
+    var ks = slider(api, "Stiffness k", 1, 50, 1, 10, function (v) { return v + " N/m"; }, function () { draw(); });
+    var ms = slider(api, "Mass m", 0.1, 5, 0.1, 1, function (v) { return v.toFixed(1) + (atomMode ? " (× atom mass 63.5 u)" : " kg"); }, function () { draw(); });
+    var btn = button(api, "Switch to atomic scale", false, function () { atomMode = !atomMode; btn.textContent = atomMode ? "Switch to everyday scale" : "Switch to atomic scale"; ms.el.dispatchEvent(new Event("input")); draw(); });
+    api.finish();
+    var visible = true;
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }, { threshold: 0.1 }).observe(host);
+    function period() { var k = ks.get(), m = ms.get() * (atomMode ? 63.5 * 1.66054e-27 : 1); return 2 * Math.PI * Math.sqrt(m / k); }
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, T = period();
+      var tdisp = atomMode ? T * 1e12 : T; // seconds on screen
+      var t = (performance.now() - t0) / 1000, x = Math.cos(2 * Math.PI * t / tdisp);
+      ctx.clearRect(0, 0, W, H);
+      var wall = 40, eq = 230, amp = 90, px = eq + x * amp, cy = 80;
+      ctx.fillStyle = C.border; ctx.fillRect(wall - 12, cy - 40, 12, 80);
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(wall, cy);
+      var coils = 14, len = px - 22 - wall;
+      for (var i = 1; i <= coils; i++) ctx.lineTo(wall + len * (i - 0.5) / coils, cy + (i % 2 ? -14 : 14));
+      ctx.lineTo(px - 22, cy); ctx.stroke();
+      ctx.fillStyle = C.blue; ctx.beginPath(); ctx.rect(px - 22, cy - 22, 44, 44); ctx.fill(); ctx.strokeStyle = C.ink; ctx.stroke();
+      ctx.setLineDash([3, 4]); ctx.strokeStyle = C.muted; ctx.beginPath(); ctx.moveTo(eq, cy - 50); ctx.lineTo(eq, cy + 50); ctx.stroke(); ctx.setLineDash([]);
+      // trace
+      var p = { x0: 300, y0: 20, x1: W - 16, y1: 150 }; ctx.strokeStyle = C.border; ctx.strokeRect(p.x0, p.y0, p.x1 - p.x0, p.y1 - p.y0);
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var j = 0; j <= 160; j++) { var tt = t - 2 * tdisp + 2 * tdisp * j / 160; var xx = Math.cos(2 * Math.PI * tt / tdisp); var X = p.x0 + (p.x1 - p.x0) * j / 160, Y = (p.y0 + p.y1) / 2 - xx * 52; if (j === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y); }
+      ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = C.muted; ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("position against time (two periods)", (p.x0 + p.x1) / 2, p.y1 + 18);
+      setRead(api, atomMode ? ["period = <b>" + fmtN(T * 1e12, 3) + " ps</b>", "frequency = <b>" + fmtN(1 / T / 1e12, 2) + " THz</b> (trillions of vibrations per second)"] : ["period = <b>" + fmtN(T, 2) + " s</b>", "frequency = <b>" + fmtN(1 / T, 2) + " Hz</b>"]);
+    }
+    function loop() { if (visible) draw(); setTimeout(loop, 40); }
+    redraws.push(draw); loop();
+  }
+
+  /* ---- atoms jiggle with temperature ---- */
+  function jiggle(host) {
+    var cols = 12, rows = 8, sp = 46, phase = [], freq = [], rw = [], t0 = performance.now(), visible = true;
+    var api = shell(host, "Temperature is atomic jiggling",
+      "Each atom vibrates about its lattice site; heating makes the vibrations larger. The rms displacement grows as the square root of temperature. When it reaches roughly a tenth of the atomic spacing (the Lindemann rule of thumb) the crystal melts and atoms begin to wander. Move the temperature past the melting point.");
+    var cv = api.addCanvas(640, 350);
+    var Ts = slider(api, "Temperature", 10, 3500, 10, 300, function (v) { return v + " K"; }, function () { draw(); });
+    var Ms = slider(api, "Melting point of this material", 500, 3500, 50, 1500, function (v) { return v + " K"; }, function () { draw(); });
+    api.finish();
+    for (var i = 0; i < cols * rows; i++) { phase.push([Math.random() * 6.28, Math.random() * 6.28]); freq.push(0.8 + Math.random() * 0.8); rw.push([0, 0]); }
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }, { threshold: 0.1 }).observe(host);
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, T = Ts.get(), Tm = Ms.get(), t = (performance.now() - t0) / 1000;
+      var frac = 0.11 * Math.sqrt(T / Tm), melted = T >= Tm, amp = frac * sp;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < cols * rows; i++) {
+        var c = i % cols, r = (i / cols) | 0, bx = 60 + c * sp + (r % 2 ? sp / 2 : 0), by = 40 + r * sp * 0.866, dx, dy;
+        if (melted) { rw[i][0] = Math.max(-0.7 * sp, Math.min(0.7 * sp, rw[i][0] + (Math.random() - 0.5) * 0.5 * sp * (T / Tm))); rw[i][1] = Math.max(-0.7 * sp, Math.min(0.7 * sp, rw[i][1] + (Math.random() - 0.5) * 0.5 * sp * (T / Tm))); dx = rw[i][0]; dy = rw[i][1]; }
+        else { rw[i][0] *= 0.8; rw[i][1] *= 0.8; dx = amp * Math.cos(freq[i] * 6 * t + phase[i][0]); dy = amp * Math.cos(freq[i] * 6 * t + phase[i][1]); }
+        var u = Math.min(1, Math.hypot(dx, dy) / (0.25 * sp));
+        ctx.fillStyle = "rgb(" + Math.round(43 + u * 190) + "," + Math.round(108 - u * 30) + "," + Math.round(176 - u * 140) + ")";
+        ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.arc(bx + dx, by + dy, 14, 0, 6.2832); ctx.fill(); ctx.stroke();
+      }
+      var v = Math.sqrt(3 * 1.380649e-23 * T / (63.5 * 1.66054e-27));
+      setRead(api, ["T = <b>" + T + " K</b> (thermal energy k<sub>B</sub>T = <b>" + fmtN(T * 8.617333e-5, 3) + " eV</b>)", "rms displacement = <b>" + fmtN(frac * 100, 1) + "%</b> of the atomic spacing", melted ? "<span class='status-bad'>above the melting point: liquid</span>" : "<span class='status-ok'>solid</span>", "typical speed of a copper-mass atom = <b>" + fmtN(v, 0) + " m/s</b>"]);
+    }
+    function loop() { if (visible) draw(); setTimeout(loop, 50); }
+    redraws.push(draw); loop();
+  }
+
+  /* ---- coin averages ---- */
+  function coins(host) {
+    var api = shell(host, "More samples, smaller error: averaging coin flips",
+      "Each experiment flips a fair coin n times and records the fraction of heads. Doing 1000 experiments shows how the results are spread: the spread shrinks as 1/√n, so to halve the error you need four times as many flips. This is the idea behind error bars on every simulation.");
+    var cv = api.addCanvas(640, 300);
+    var ns = slider(api, "Flips per experiment, n", 1, 400, 1, 10, function (v) { return String(v); }, function () { run(); });
+    button(api, "Run again", true, function () { run(); });
+    api.finish();
+    var data = [];
+    function run() {
+      var n = ns.get(); data = [];
+      for (var e = 0; e < 1000; e++) { var h = 0; for (var i = 0; i < n; i++) if (Math.random() < 0.5) h++; data.push(h / n); }
+      draw();
+    }
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, n = ns.get();
+      var p = { x0: 50, y0: 16, x1: W - 16, y1: H - 44 }, bins = 41, hist = [], i;
+      for (i = 0; i < bins; i++) hist.push(0);
+      data.forEach(function (v) { hist[Math.min(bins - 1, Math.floor(v * bins))]++; });
+      var mx = Math.max.apply(null, hist) || 1;
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "fraction of heads in one experiment", "number of experiments");
+      var bw = (p.x1 - p.x0) / bins;
+      ctx.fillStyle = C.accent;
+      hist.forEach(function (c, k) { var h = c / mx * (p.y1 - p.y0 - 6); ctx.fillRect(p.x0 + k * bw + 1, p.y1 - h, bw - 2, h); });
+      ctx.fillStyle = C.muted; ctx.font = "11px system-ui, sans-serif"; ctx.textAlign = "center";
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (v) { ctx.fillText(v, p.x0 + v * (p.x1 - p.x0), p.y1 + 15); });
+      var mean = data.reduce(function (a, b) { return a + b; }, 0) / data.length;
+      var sd = Math.sqrt(data.reduce(function (a, b) { return a + (b - mean) * (b - mean); }, 0) / (data.length - 1));
+      ctx.strokeStyle = C.blue; ctx.setLineDash([5, 4]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(p.x0 + 0.5 * (p.x1 - p.x0), p.y0); ctx.lineTo(p.x0 + 0.5 * (p.x1 - p.x0), p.y1); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+      setRead(api, ["n = <b>" + n + "</b> flips", "average of the 1000 results = <b>" + fmtN(mean, 3) + "</b> (true value 0.5)", "spread (standard deviation) = <b>" + fmtN(sd, 3) + "</b>", "prediction 0.5/√n = <b>" + fmtN(0.5 / Math.sqrt(n), 3) + "</b>"]);
+    }
+    redraws.push(draw); run();
+  }
+
+  /* ---- Euler stepping: tea cooling ---- */
+  function cooling(host) {
+    var api = shell(host, "Your first time-stepping simulation: a cooling cup of tea",
+      "The rule: the tea cools at a rate proportional to how much hotter it is than the room, dT/dt = −k (T − T<sub>room</sub>). The simulation applies the rule in steps of size dt: new T = old T + dt × rate. The orange curve is the exact solution; the blue dots are the simulation. Make dt smaller and the dots follow the curve more closely.");
+    var cv = api.addCanvas(640, 300);
+    var dts = slider(api, "Time step dt", 0.5, 20, 0.5, 10, function (v) { return v + " min"; }, draw);
+    var ks = slider(api, "Cooling rate k", 0.02, 0.15, 0.01, 0.05, function (v) { return v.toFixed(2) + " per min"; }, draw);
+    api.finish();
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, dt = dts.get(), k = ks.get(), Tr = 20, T0 = 90, tmax = 60;
+      var p = { x0: 56, y0: 16, x1: W - 16, y1: H - 44 };
+      var X = function (t) { return p.x0 + t / tmax * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - (v - 10) / 90 * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "time (minutes)", "temperature (°C)");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "center";
+      [0, 10, 20, 30, 40, 50, 60].forEach(function (v) { ctx.fillText(v, X(v), p.y1 + 15); });
+      ctx.textAlign = "right"; [20, 40, 60, 80, 100].forEach(function (v) { ctx.fillText(v, p.x0 - 6, Y(v) + 4); });
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var i = 0; i <= 120; i++) { var t = tmax * i / 120, T = Tr + (T0 - Tr) * Math.exp(-k * t); if (i === 0) ctx.moveTo(X(t), Y(T)); else ctx.lineTo(X(t), Y(T)); }
+      ctx.stroke(); ctx.lineWidth = 1;
+      var Te = T0, t2 = 0; ctx.fillStyle = C.blue; ctx.strokeStyle = C.blue;
+      ctx.beginPath(); ctx.moveTo(X(0), Y(Te));
+      var pts = [[0, Te]];
+      while (t2 + dt <= tmax + 1e-9) { Te = Te + dt * (-k * (Te - Tr)); t2 += dt; pts.push([t2, Te]); ctx.lineTo(X(t2), Y(Te)); }
+      ctx.stroke();
+      pts.forEach(function (q) { ctx.beginPath(); ctx.arc(X(q[0]), Y(q[1]), 4, 0, 6.2832); ctx.fill(); });
+      var tEnd = pts[pts.length - 1][0], exact = Tr + (T0 - Tr) * Math.exp(-k * tEnd);
+      setRead(api, ["steps taken = <b>" + (pts.length - 1) + "</b>", "at t = " + tEnd + " min: simulation <b>" + fmtN(Te, 1) + " °C</b>, exact <b>" + fmtN(exact, 1) + " °C</b>", "error = <b>" + fmtN(Math.abs(Te - exact), 2) + " °C</b>"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ---- random walkers: diffusion from coin flips ---- */
+  function walkers(host) {
+    var N = 3000, L = 150, x = new Int16Array(N), x0 = new Int16Array(N), t = 0, running = true, visible = true;
+    var api = shell(host, "Diffusion from random walkers",
+      "Every walker takes one step left or right, chosen by a coin flip, each time step. Walkers that started on the left are orange, those that started on the right are blue. Watch the sharp boundary blur: this is diffusion. The mean squared distance grows in proportion to time, MSD = t, so D = MSD/(2t) = 1/2 in these units. The dashed curve is the exact diffusion solution.");
+    var cv = api.addCanvas(640, 340);
+    var runBtn = button(api, "Pause", true, function () { running = !running; runBtn.textContent = running ? "Pause" : "Run"; });
+    button(api, "Reset", false, function () { reset(); });
+    var sp = slider(api, "Steps per frame", 1, 20, 1, 3, function (v) { return String(v); }, function () {});
+    api.finish();
+    function reset() { t = 0; for (var i = 0; i < N; i++) { x0[i] = x[i] = i < N / 2 ? -1 - ((Math.random() * L) | 0) : ((Math.random() * L) | 0); } draw(); }
+    function step() { for (var i = 0; i < N; i++) { var v = x[i] + (Math.random() < 0.5 ? -1 : 1); if (v < -L) v = -L + 1; if (v >= L) v = L - 2; x[i] = v; } t++; }
+    function erfc(z) { var s = z < 0 ? -1 : 1; z = Math.abs(z); var q = 1 / (1 + 0.3275911 * z), y = 1 - (((((1.061405429 * q - 1.453152027) * q) + 1.421413741) * q - 0.284496736) * q + 0.254829592) * q * Math.exp(-z * z); return s < 0 ? 1 + y : 1 - y; }
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h;
+      ctx.clearRect(0, 0, W, H);
+      var sx = function (v) { return 20 + (v + L) / (2 * L) * (W - 40); };
+      // top strip: sample of walkers
+      ctx.strokeStyle = C.border; ctx.strokeRect(20, 10, W - 40, 100);
+      for (var i = 0; i < N; i += 6) { ctx.fillStyle = x0[i] < 0 ? C.accent : C.blue; ctx.globalAlpha = .75; ctx.fillRect(sx(x[i]) - 1.5, 14 + ((i * 7919) % 90), 3, 3); }
+      ctx.globalAlpha = 1;
+      // bottom: profile of orange fraction
+      var p = { x0: 50, y0: 140, x1: W - 20, y1: H - 40 }, bins = 50, a = new Float64Array(bins), b = new Float64Array(bins);
+      for (var j = 0; j < N; j++) { var k = Math.min(bins - 1, Math.floor((x[j] + L) / (2 * L) * bins)); if (x0[j] < 0) a[k]++; else b[k]++; }
+      axes(ctx, C, p, "position", "fraction orange");
+      ctx.fillStyle = C.muted; ctx.font = "11px system-ui, sans-serif"; ctx.textAlign = "right";
+      [0, 0.5, 1].forEach(function (v) { ctx.fillText(v, p.x0 - 6, p.y1 - v * (p.y1 - p.y0) + 4); });
+      var bw = (p.x1 - p.x0) / bins;
+      for (var m = 0; m < bins; m++) { var tot = a[m] + b[m]; if (!tot) continue; var fr = a[m] / tot; ctx.fillStyle = C.accent; ctx.globalAlpha = .55; ctx.fillRect(p.x0 + m * bw + 1, p.y1 - fr * (p.y1 - p.y0), bw - 2, fr * (p.y1 - p.y0)); }
+      ctx.globalAlpha = 1;
+      if (t > 0) { ctx.strokeStyle = C.ink; ctx.setLineDash([6, 4]); ctx.lineWidth = 2; ctx.beginPath(); for (var q = 0; q <= 200; q++) { var xx = -L + 2 * L * q / 200, c = 0.5 * erfc((xx + 0.5) / Math.sqrt(2 * t)); var X = p.x0 + (xx + L) / (2 * L) * (p.x1 - p.x0), Y = p.y1 - c * (p.y1 - p.y0); if (q === 0) ctx.moveTo(X, Y); else ctx.lineTo(X, Y); } ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1; }
+      var msd = 0; for (var r = 0; r < N; r++) { var d = x[r] - x0[r]; msd += d * d; } msd /= N;
+      setRead(api, ["time steps t = <b>" + t + "</b>", "mean squared distance = <b>" + fmtN(msd, 1) + "</b>", "D = MSD/(2t) = <b>" + (t ? fmtN(msd / (2 * t), 3) : "–") + "</b> (expected 0.5)", "typical spread √t = <b>" + fmtN(Math.sqrt(t), 1) + "</b>"]);
+    }
+    if ("IntersectionObserver" in window) new IntersectionObserver(function (en) { visible = en[0].isIntersecting; }, { threshold: 0.1 }).observe(host);
+    function loop() { if (running && visible && t < 4000) { var n = sp.get(); for (var s = 0; s < n; s++) step(); draw(); } setTimeout(loop, 40); }
+    reset(); redraws.push(draw); loop();
+  }
+
+  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep, placement: placement, units: units, graphs: graphs, tangent: tangent, area: area, bond: bond, crystal2d: crystal2d, oscillator: oscillator, jiggle: jiggle, coins: coins, cooling: cooling, walkers: walkers };
   function boot() {
     doc.querySelectorAll(".demo[data-demo]").forEach(function (h) { var f = REG[h.getAttribute("data-demo")]; if (f) { try { f(h); } catch (e) { h.innerHTML = '<div class="demo-body"><p class="demo-note">This demo could not start in your browser.</p></div>'; if (window.console) console.error(e); } } });
     var redrawAll = function () { redraws.forEach(function (f) { f(); }); };

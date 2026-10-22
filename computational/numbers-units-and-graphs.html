@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbers, Units and Graphs - MiBeM</title>
+    <meta name="description" content="Scientific notation, units and conversions, algebra, functions and graphs, logarithms and straight-line fits explained from scratch with worked examples.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/numbers-units-and-graphs.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Numbers, Units and Graphs - MiBeM">
+    <meta property="og:description" content="Scientific notation, units and conversions, algebra, functions and graphs, logarithms and straight-line fits explained from scratch with worked examples.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/numbers-units-and-graphs.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=98d42ef1">
+</head>
+<body data-topic="18">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#why">1. Why start with this</a></li>
+                <li><a href="#notation">2. Very big and very small numbers</a></li>
+                <li><a href="#units">3. Units and conversions</a></li>
+                <li><a href="#algebra">4. Algebra: working with unknowns</a></li>
+                <li><a href="#graphs">5. Functions and graphs</a></li>
+                <li><a href="#logs">6. Logarithms</a></li>
+                <li><a href="#slope">7. Slopes and straight-line fits</a></li>
+                <li><a href="#angles">8. Angles and arrows</a></li>
+                <li><a href="#check">9. Check your understanding</a></li>
+                <li><a href="#refs">10. Where to go for more</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Start here</span><span>Start here 1</span></p>
+            <h1>Numbers, units and graphs</h1>
+            <p class="lead">Science speaks in numbers with units, pictures called graphs, and a little algebra. This page teaches exactly the amount you need for everything that follows, with worked examples you can check yourself.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="start-here.html">S0. Start here</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="rates-of-change-calculus.html">S2. Rates of change</a><br><a href="forces-energy-and-heat.html">S4. Forces, energy, heat</a><br><a href="chance-averages-and-error-bars.html">S5. Chance and averages</a><br><a href="mathematics-for-simulation.html">B1. Mathematics</a></dd></div>
+<div><dt>Category</dt><dd>Start here</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Write and compare very large and very small numbers in scientific notation.</li>
+                    <li>Convert between units without mistakes, and spot an answer whose units are wrong.</li>
+                    <li>Rearrange simple equations and read a graph of a line, a curve, an exponential or a power law.</li>
+                    <li>Explain what a logarithm is and why scientists plot on log scales.</li>
+                </ul>
+            </div>
+
+            <p><strong>You need:</strong> basic arithmetic (adding, multiplying, fractions, percentages). Everything else is explained here.</p>
+
+            <h2 id="why">1. Why start with this<a class="anchor" href="#why" aria-label="Link to this section">#</a></h2>
+            <p>An atom is about 0.0000000001 metres across; a bridge is about a hundred metres long. A day has 86 400 seconds; an atom vibrates in a ten-thousand-billionth of a second. To describe such different sizes we need a compact way to write numbers, a careful way to handle units, and graphs that show how one quantity depends on another. These are the tools, and once you are comfortable with them nearly every equation in the series becomes readable.</p>
+
+            <h2 id="notation">2. Very big and very small numbers<a class="anchor" href="#notation" aria-label="Link to this section">#</a></h2>
+            <h3>Powers of ten</h3>
+            <p>Instead of writing a long string of zeros we use <strong>powers of ten</strong>. 10<sup>3</sup> means 10 &times; 10 &times; 10 = 1000. 10<sup>6</sup> is a million. For small numbers, a negative power means divide: 10<sup>&minus;3</sup> = 1/1000 = 0.001, and 10<sup>&minus;9</sup> is a billionth. The exponent (the small raised number) counts the zeros, and its sign says whether the number is big or small.</p>
+            <p><strong>Scientific notation</strong> writes any number as a value between 1 and 10 times a power of ten:</p>
+            <ul>
+                <li>The Avogadro number: 602 200 000 000 000 000 000 000 = <strong>6.022 &times; 10<sup>23</sup></strong>.</li>
+                <li>The spacing between atoms in a metal: 0.00000000025 m = <strong>2.5 &times; 10<sup>&minus;10</sup> m</strong>.</li>
+                <li>A trick for converting: count how many places the decimal point moves. Moving it left makes the exponent positive, moving right makes it negative.</li>
+            </ul>
+            <h3>Calculating with powers of ten</h3>
+            <p>To <strong>multiply</strong>, multiply the numbers and <em>add</em> the exponents. To <strong>divide</strong>, divide the numbers and <em>subtract</em> the exponents. For example:</p>
+            <span class="eq">(3 &times; 10<sup>5</sup>) &times; (2 &times; 10<sup>&minus;2</sup>) = 6 &times; 10<sup>3</sup> &nbsp;&nbsp;&nbsp; (6 &times; 10<sup>8</sup>) / (3 &times; 10<sup>2</sup>) = 2 &times; 10<sup>6</sup></span>
+            <p><strong>Worked example.</strong> How many atoms fit in a row across 1 millimetre (10<sup>&minus;3</sup> m) if the spacing is 2.5 &times; 10<sup>&minus;10</sup> m? Divide: (1 &times; 10<sup>&minus;3</sup>) / (2.5 &times; 10<sup>&minus;10</sup>) = 0.4 &times; 10<sup>7</sup> = <strong>4 &times; 10<sup>6</sup></strong>, four million atoms. A computer simulation holding a million atoms in a cube therefore covers a cube only about a hundred atoms on a side, which is tiny.</p>
+            <h3>Orders of magnitude and significant figures</h3>
+            <p>Two numbers differ by one <strong>order of magnitude</strong> if one is about ten times the other. Comparing powers of ten tells you at a glance whether something is a small correction or a huge effect. The <strong>significant figures</strong> of a number are the digits that carry information: 2.5 &times; 10<sup>&minus;10</sup> has two. Never quote an answer with more figures than the least precise number you started with, and do not round in the middle of a calculation, only at the end.</p>
+            <div class="table-scroll" role="region" aria-label="Orders of magnitude and significant figures (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Prefix</th><th>Symbol</th><th>Meaning</th><th>Example</th></tr></thead>
+                <tbody>
+                    <tr><td>tera</td><td>T</td><td>10<sup>12</sup></td><td>1 THz = a trillion vibrations per second</td></tr>
+                    <tr><td>giga</td><td>G</td><td>10<sup>9</sup></td><td>1 GPa = a billion pascals (pressure or stress)</td></tr>
+                    <tr><td>mega</td><td>M</td><td>10<sup>6</sup></td><td>1 MPa = a million pascals</td></tr>
+                    <tr><td>kilo</td><td>k</td><td>10<sup>3</sup></td><td>1 kJ = 1000 joules</td></tr>
+                    <tr><td>milli</td><td>m</td><td>10<sup>&minus;3</sup></td><td>1 meV = a thousandth of an electronvolt</td></tr>
+                    <tr><td>micro</td><td>&micro;</td><td>10<sup>&minus;6</sup></td><td>1 &micro;m = a millionth of a metre; a human hair is about 70 &micro;m wide</td></tr>
+                    <tr><td>nano</td><td>n</td><td>10<sup>&minus;9</sup></td><td>1 nm = a billionth of a metre</td></tr>
+                    <tr><td>pico</td><td>p</td><td>10<sup>&minus;12</sup></td><td>1 ps = a trillionth of a second</td></tr>
+                    <tr><td>femto</td><td>f</td><td>10<sup>&minus;15</sup></td><td>1 fs = a thousandth of a trillionth of a second</td></tr>
+                </tbody>
+            </table></div>
+            <p>One extra unit appears constantly in materials science: the <strong>&Aring;ngstr&ouml;m</strong>, 1 &Aring; = 10<sup>&minus;10</sup> m = 0.1 nm, about the size of an atom.</p>
+
+            <h2 id="units">3. Units and conversions<a class="anchor" href="#units" aria-label="Link to this section">#</a></h2>
+            <p>A number without a unit is almost meaningless: &ldquo;the rod is 5 long&rdquo; could be 5 millimetres or 5 kilometres. Always carry the unit, and treat it like part of the number: you can multiply and divide units, and you can only add or compare quantities that have the same unit.</p>
+            <h3>Converting by multiplying by one</h3>
+            <p>A conversion factor is a fraction equal to 1, because the top and bottom are the same amount in different units: (10<sup>&minus;9</sup> m)/(1 nm) = 1. Multiply by it so that the unit you do not want cancels:</p>
+            <span class="eq">5 nm &times; (10<sup>&minus;9</sup> m / 1 nm) = 5 &times; 10<sup>&minus;9</sup> m</span>
+            <p><strong>Worked example.</strong> Convert 72 km/h to metres per second. Use 1 km = 1000 m and 1 h = 3600 s:</p>
+            <span class="eq">72 km/h &times; (1000 m / 1 km) &times; (1 h / 3600 s) = 20 m/s</span>
+            <h3>Check the units</h3>
+            <p>Units are a free error detector. If you compute a speed and the units come out as seconds, something is wrong. For instance, distance divided by time gives m/s, so a distance of 100 m covered in 25 s gives 100/25 = 4 m/s; the same numbers in the other order would give 0.25 s/m, which is not a speed. Checking units at the end of every calculation catches many mistakes.</p>
+            <h3>Units you will meet in this series</h3>
+            <ul>
+                <li><strong>Temperature:</strong> the kelvin (K) starts at absolute zero. To convert, K = &deg;C + 273.15. A difference of 1 K equals a difference of 1 &deg;C.</li>
+                <li><strong>Energy:</strong> the joule (J) is the standard unit, but at the atomic scale it is far too big, so scientists use the <strong>electronvolt</strong> (eV): 1 eV = 1.602 &times; 10<sup>&minus;19</sup> J. For chemical reactions you will also see kJ/mol (energy per mole of atoms), where 1 eV per atom = 96.5 kJ/mol. A typical chemical bond is about 1 to 4 eV.</li>
+                <li><strong>Pressure and stress:</strong> the pascal (Pa), which is a newton of force per square metre. Steel yields at about 250 million pascals, written 250 MPa.</li>
+            </ul>
+            <p><strong>Worked example.</strong> A bond has energy 2 eV. In kJ/mol that is 2 &times; 96.5 = <strong>193 kJ/mol</strong>. Try it yourself with the converter below, which does the arithmetic and lets you build a feel for the sizes.</p>
+            <div class="demo" data-demo="units"><div class="demo-body"><p class="demo-note">This interactive converter needs JavaScript to run.</p></div></div>
+
+            <h2 id="algebra">4. Algebra: working with unknowns<a class="anchor" href="#algebra" aria-label="Link to this section">#</a></h2>
+            <p>Algebra uses letters for numbers we do not know yet, or that can change. An <strong>equation</strong> says two things are equal, and we can do the same thing to both sides without breaking the equality. To <strong>solve</strong> an equation means to rearrange it until the unknown is alone on one side.</p>
+            <p><strong>Worked example.</strong> Solve 3<em>x</em> + 6 = 21. Subtract 6 from both sides: 3<em>x</em> = 15. Divide both sides by 3: <em>x</em> = 5. Check by putting 5 back: 3 &times; 5 + 6 = 21. &#10003; Always check.</p>
+            <p>Formulas can be rearranged the same way. Speed = distance / time can be written <em>v</em> = <em>d</em>/<em>t</em>. Multiply both sides by <em>t</em> to get <em>d</em> = <em>v t</em>; divide both sides by <em>v</em> to get <em>t</em> = <em>d</em>/<em>v</em>. One formula gives three questions you can answer.</p>
+            <h3>Exponents (powers) and roots</h3>
+            <p><em>a</em><sup><em>n</em></sup> means multiply <em>a</em> by itself <em>n</em> times. The rules you will use most:</p>
+            <ul>
+                <li><em>a</em><sup><em>m</em></sup> &times; <em>a</em><sup><em>n</em></sup> = <em>a</em><sup><em>m</em>+<em>n</em></sup> (add exponents when multiplying), for example 10<sup>3</sup> &times; 10<sup>2</sup> = 10<sup>5</sup>.</li>
+                <li>(<em>a</em><sup><em>m</em></sup>)<sup><em>n</em></sup> = <em>a</em><sup><em>mn</em></sup>.</li>
+                <li><em>a</em><sup>&minus;<em>n</em></sup> = 1/<em>a</em><sup><em>n</em></sup>, for example 2<sup>&minus;3</sup> = 1/8.</li>
+                <li><em>a</em><sup>1/2</sup> = &radic;<em>a</em>, the square root: the number which multiplied by itself gives <em>a</em>. So 16<sup>1/2</sup> = 4.</li>
+            </ul>
+            <h3>Proportionality and percentages</h3>
+            <p>&ldquo;<em>y</em> is <strong>proportional</strong> to <em>x</em>&rdquo; (written <em>y</em> &prop; <em>x</em>) means doubling <em>x</em> doubles <em>y</em>. If <em>y</em> &prop; <em>x</em><sup>2</sup>, doubling <em>x</em> makes <em>y</em> four times bigger; if <em>y</em> &prop; 1/<em>x</em>, doubling <em>x</em> halves <em>y</em>. Many laws in this series are of this kind: the area of a circle is proportional to the square of its radius, and the distance atoms spread by diffusion is proportional to the <em>square root</em> of time. A <strong>percentage change</strong> is (new &minus; old)/old &times; 100%: going from 200 to 230 is a 15% increase.</p>
+
+            <h2 id="graphs">5. Functions and graphs<a class="anchor" href="#graphs" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>function</strong> is a rule that takes an input and gives an output, like a machine. We write <em>y</em> = <em>f</em>(<em>x</em>): put in <em>x</em>, get <em>y</em>. A <strong>graph</strong> shows the function as a picture: the horizontal axis (<em>x</em>) is the input, the vertical axis (<em>y</em>) the output, and each point shows one input and its output. A good graph always labels both axes with the quantity and its unit.</p>
+            <p>Four shapes cover most of what you will see:</p>
+            <ul>
+                <li><strong>Straight line</strong>, <em>y</em> = <em>m x</em> + <em>c</em>. The number <em>m</em> is the <strong>slope</strong> (how much <em>y</em> rises for each step of 1 in <em>x</em>) and <em>c</em> is the <strong>intercept</strong> (where the line crosses the <em>y</em> axis). A constant speed gives a straight distance&ndash;time graph whose slope is the speed.</li>
+                <li><strong>Parabola</strong>, <em>y</em> = <em>a</em>(<em>x</em> &minus; <em>x</em><sub>0</sub>)<sup>2</sup> + <em>c</em>, a bowl or hill shape. The bottom of any smooth valley looks like a parabola, which is why it describes the energy of atoms near their preferred positions.</li>
+                <li><strong>Exponential</strong>, <em>y</em> = <em>A</em>e<sup><em>kx</em></sup>, where e &asymp; 2.718 is a special number. With <em>k</em> positive it grows faster and faster (doubling every fixed amount, the doubling time ln 2/<em>k</em>); with <em>k</em> negative it dies away (a half-life). Radioactive decay, cooling and diffusion into a solid all behave this way.</li>
+                <li><strong>Power law</strong>, <em>y</em> = <em>A x</em><sup><em>p</em></sup>. Doubling <em>x</em> multiplies <em>y</em> by 2<sup><em>p</em></sup>. With <em>p</em> = 2 it is a parabola through the origin; with <em>p</em> = 1/2 it is a square root.</li>
+            </ul>
+            <p>Use the explorer to see how each shape responds to its settings. Change the sliders and watch what the numbers do.</p>
+            <div class="demo" data-demo="graphs"><div class="demo-body"><p class="demo-note">This interactive graph explorer needs JavaScript to run.</p></div></div>
+
+            <h2 id="logs">6. Logarithms<a class="anchor" href="#logs" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>logarithm</strong> answers the question &ldquo;what power?&rdquo; Since 10<sup>3</sup> = 1000, we say log<sub>10</sub>(1000) = 3: the power of ten that gives 1000. Likewise log<sub>10</sub>(0.001) = &minus;3, and log<sub>10</sub>(1) = 0. The logarithm to base e is called the <strong>natural logarithm</strong>, written ln, and it undoes the exponential: ln(e<sup><em>x</em></sup>) = <em>x</em>.</p>
+            <p>Two rules make logarithms useful: log(<em>a b</em>) = log <em>a</em> + log <em>b</em> (multiplying turns into adding) and log(<em>a</em><sup><em>n</em></sup>) = <em>n</em> log <em>a</em> (a power turns into a multiplication).</p>
+            <h3>Why scientists use log scales</h3>
+            <p>Many quantities span enormous ranges: diffusion coefficients can differ by a factor of 10<sup>10</sup> between two elements. On an ordinary axis the small ones are invisible; on a <strong>log scale</strong> every step of one unit is a factor of ten, so all of them fit and can be compared. A second reason is more powerful: <strong>an exponential becomes a straight line on a log scale</strong>, because ln(<em>A</em>e<sup><em>kx</em></sup>) = ln <em>A</em> + <em>k x</em>. A straight line is easy to fit and to read. Try it in the explorer: choose the exponential, then tick &ldquo;Log scale on the y axis&rdquo;.</p>
+            <p>This is how activation energies are measured. Many processes speed up with temperature as <em>D</em> = <em>D</em><sub>0</sub> e<sup>&minus;<em>Q</em>/(<em>kT</em>)</sup>. Taking the log gives ln <em>D</em> = ln <em>D</em><sub>0</sub> &minus; (<em>Q</em>/<em>k</em>) &times; (1/<em>T</em>), a straight line when ln <em>D</em> is plotted against 1/<em>T</em>, with slope &minus;<em>Q</em>/<em>k</em>. Reading the slope gives the energy barrier <em>Q</em>. You will meet this again in <a href="diffusion-and-kinetics.html">diffusion and kinetics</a>.</p>
+
+            <h2 id="slope">7. Slopes and straight-line fits<a class="anchor" href="#slope" aria-label="Link to this section">#</a></h2>
+            <p>The slope of a straight line through two points (<em>x</em><sub>1</sub>, <em>y</em><sub>1</sub>) and (<em>x</em><sub>2</sub>, <em>y</em><sub>2</sub>) is the rise over the run:</p>
+            <span class="eq">slope = (y<sub>2</sub> &minus; y<sub>1</sub>) / (x<sub>2</sub> &minus; x<sub>1</sub>)</span>
+            <p><strong>Worked example.</strong> A line passes through (0, 2) and (4, 10). Slope = (10 &minus; 2)/(4 &minus; 0) = 8/4 = <strong>2</strong>. The intercept is 2, so <em>y</em> = 2<em>x</em> + 2. The slope has units: if <em>y</em> is distance in metres and <em>x</em> is time in seconds, the slope is 2 m/s, a speed.</p>
+            <p>Real measurements scatter, so the points do not lie exactly on a line. A <strong>line of best fit</strong> is the line that passes as close as possible to all the points; the standard method, called <em>least squares</em>, chooses the line that minimises the sum of the squared vertical distances to the points. Spreadsheets and Python do this for you (the <a href="your-first-simulation.html">first simulation</a> page shows how). What you should do is look at the points and the line together: if the points curve systematically away from the line, a straight line is the wrong model.</p>
+
+            <h2 id="angles">8. Angles and arrows<a class="anchor" href="#angles" aria-label="Link to this section">#</a></h2>
+            <p>Two last ideas appear repeatedly. First, <strong>sine and cosine</strong>. In a right-angled triangle with an angle &theta;, sin &theta; is the length of the side opposite divided by the hypotenuse (the longest side), and cos &theta; is the side next to the angle divided by the hypotenuse. As &theta; goes round a circle, sin and cos trace out smooth repeating waves between &minus;1 and 1, which is why they describe vibrations, sound and light. Angles are often given in <strong>radians</strong>, where a full turn is 2&pi; (about 6.28), so &pi; radians = 180&deg;.</p>
+            <p>Second, a <strong>vector</strong> is a quantity with a size and a direction, such as a force or a velocity, drawn as an arrow. In two dimensions we describe it by its components, how far it goes along <em>x</em> and <em>y</em>. The vector (3, 4) points 3 along and 4 up, and by Pythagoras its length is &radic;(3<sup>2</sup> + 4<sup>2</sup>) = &radic;25 = 5. To add vectors, add their components.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Scientific notation (such as 6.0 x 10^23) lets you write very large and very small numbers and compare sizes at a glance.</li>
+<li>A number without a unit is incomplete; convert by multiplying by factors equal to one, and check that units balance.</li>
+<li>A function turns an input into an output; its graph shows how, and the shape (line, curve, exponential) tells you the kind of process.</li>
+<li>A logarithm asks &#x27;what power?&#x27;, and plotting on a log scale turns exponential curves into straight lines.</li>
+<li>The slope of a straight line is a rate: how much y changes for each step in x.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">9. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Try each question on paper first.</p>
+            <details>
+                <summary>Convert 250 pm (picometres) to &Aring;ngstr&ouml;ms.</summary>
+                <p>1 pm = 10<sup>&minus;12</sup> m and 1 &Aring; = 10<sup>&minus;10</sup> m, so 1 pm = 0.01 &Aring;. Then 250 pm = 2.5 &Aring;, a typical distance between atoms.</p>
+            </details>
+            <details>
+                <summary>Calculate (3 &times; 10<sup>5</sup>) &times; (2 &times; 10<sup>&minus;2</sup>).</summary>
+                <p>Multiply the numbers: 3 &times; 2 = 6. Add the exponents: 5 + (&minus;2) = 3. The answer is 6 &times; 10<sup>3</sup> = 6000.</p>
+            </details>
+            <details>
+                <summary>Solve 5<em>x</em> &minus; 7 = 18.</summary>
+                <p>Add 7 to both sides: 5<em>x</em> = 25. Divide by 5: <em>x</em> = 5. Check: 5 &times; 5 &minus; 7 = 18. &#10003;</p>
+            </details>
+            <details>
+                <summary>A quantity doubles every 3 hours and starts at 1. What is it after 12 hours?</summary>
+                <p>12 hours is four doubling times, so the value is 2<sup>4</sup> = 16.</p>
+            </details>
+            <details>
+                <summary>What is log<sub>10</sub>(0.001)?</summary>
+                <p>0.001 = 10<sup>&minus;3</sup>, so the logarithm is &minus;3.</p>
+            </details>
+            <details>
+                <summary>A straight line passes through (1, 5) and (3, 11). Find its equation.</summary>
+                <p>Slope = (11 &minus; 5)/(3 &minus; 1) = 3. Use <em>y</em> = 3<em>x</em> + <em>c</em> with the point (1, 5): 5 = 3 + <em>c</em>, so <em>c</em> = 2. The line is <em>y</em> = 3<em>x</em> + 2.</p>
+            </details>
+
+            <h2 id="refs">10. Where to go for more<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Khan Academy: Pre-algebra, Algebra 1, and Algebra 2 (free).</li>
+                <li>Kreyszig, E., <em>Advanced Engineering Mathematics</em>, Wiley (for later reference).</li>
+                <li>Taylor, J. R., <em>An Introduction to Error Analysis</em>, University Science Books (on units, uncertainties and significant figures).</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="start-here.html"><span class="dir">Previous topic</span>Start here: what you will learn and how</a>
+<a class="next" href="rates-of-change-calculus.html"><span class="dir">Next topic</span>Rates of change: calculus from scratch</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=1b91ccf4"></script>
+    <script src="../assets/glossary.js?v=ad099721"></script>
+    <script src="../assets/site.js?v=ab6e5a9b" defer></script>
+    <script src="../assets/demos.js?v=a9303025" defer></script>
+</body>
+</html>

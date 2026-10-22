@@ -15,7 +15,11 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
   };
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function tLabel(t) { return t.series === "background" ? "Background " + String(t.label).replace(/^B/, "") : "Topic " + (t.label || t.id); }
+  function tLabel(t) {
+    if (t.series === "background") return "Background " + String(t.label).replace(/^B/, "");
+    if (t.series === "start") return "Start here " + String(t.label).replace(/^S/, "");
+    return "Topic " + (t.label || t.id);
+  }
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
 
   var ICON = {
@@ -555,11 +559,88 @@
     doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && box && box.classList.contains("open")) close(); });
   }
 
+  /* ---------------- glossary: dotted terms with a definition on hover, focus or tap ---------------- */
+  function gslug(t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function initGlossary() {
+    var G = window.MIBEM_GLOSSARY || [];
+    var art = doc.querySelector("article");
+    if (!art || !G.length || doc.querySelector(".gl-jump")) return;
+    var map = {}, words = [];
+    G.forEach(function (g) {
+      [g.t].concat(g.a || []).forEach(function (w) { map[w.toLowerCase()] = g; words.push(w); });
+    });
+    words.sort(function (a, b) { return b.length - a.length; });
+    var re;
+    try {
+      re = new RegExp("(^|[^\\p{L}\\p{N}])(" + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("|") + ")(?![\\p{L}\\p{N}])", "giu");
+    } catch (e) { return; }
+    var skipTag = /^(A|CODE|PRE|H1|H2|H3|H4|BUTTON|SCRIPT|STYLE|SUMMARY|TEXTAREA|SELECT|LABEL|OUTPUT|SVG|MARK)$/;
+    var skipClass = ["eq", "toc", "demo", "crumbs", "facts", "term", "table-scroll-skip", "pager"];
+    var walker = doc.createTreeWalker(art, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        for (var p = n.parentNode; p && p !== art; p = p.parentNode) {
+          if (skipTag.test(p.tagName)) return NodeFilter.FILTER_REJECT;
+          if (p.classList) for (var i = 0; i < skipClass.length; i++) if (p.classList.contains(skipClass[i])) return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var nodes = [], used = {};
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (node) {
+      var text = node.nodeValue, last = 0, frag = null, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(text))) {
+        var g = map[m[2].toLowerCase()];
+        if (!g || used[g.t]) continue;
+        used[g.t] = 1;
+        var start = m.index + m[1].length;
+        frag = frag || doc.createDocumentFragment();
+        frag.appendChild(doc.createTextNode(text.slice(last, start)));
+        var span = el("span", "term", esc(m[2]));
+        span.tabIndex = 0; span.setAttribute("role", "button"); span.setAttribute("data-term", g.t);
+        frag.appendChild(span);
+        last = start + m[2].length;
+      }
+      if (frag) { frag.appendChild(doc.createTextNode(text.slice(last))); node.parentNode.replaceChild(frag, node); }
+    });
+
+    var pop = el("div", "gloss-pop"); pop.setAttribute("role", "tooltip"); pop.hidden = true;
+    doc.body.appendChild(pop);
+    var current = null, byTerm = {};
+    G.forEach(function (g) { byTerm[g.t] = g; });
+    function show(t) {
+      var g = byTerm[t.getAttribute("data-term")]; if (!g) return;
+      current = t;
+      pop.innerHTML = "<b>" + esc(g.t) + "</b><p>" + esc(g.d) + '</p><a href="' + esc(ROOT + "glossary.html#" + gslug(g.t)) + '">Glossary entry &rarr;</a>';
+      pop.hidden = false;
+      var r = t.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+      var left = Math.max(8, Math.min(window.innerWidth - w - 8, r.left + r.width / 2 - w / 2));
+      var top = r.bottom + 8; if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 8);
+      pop.style.left = left + "px"; pop.style.top = top + "px";
+    }
+    function hide() { pop.hidden = true; current = null; }
+    var hideTimer = null;
+    art.addEventListener("mouseover", function (e) { var t = e.target.closest && e.target.closest(".term"); if (t) { clearTimeout(hideTimer); show(t); } });
+    art.addEventListener("mouseout", function (e) { if (e.target.closest && e.target.closest(".term")) hideTimer = setTimeout(hide, 250); });
+    pop.addEventListener("mouseenter", function () { clearTimeout(hideTimer); });
+    pop.addEventListener("mouseleave", function () { hideTimer = setTimeout(hide, 200); });
+    art.addEventListener("focusin", function (e) { var t = e.target.closest && e.target.closest(".term"); if (t) show(t); });
+    art.addEventListener("focusout", function (e) { if (e.target.closest && e.target.closest(".term")) hideTimer = setTimeout(hide, 250); });
+    art.addEventListener("click", function (e) { var t = e.target.closest && e.target.closest(".term"); if (t) { e.preventDefault(); if (current === t && !pop.hidden) hide(); else show(t); } });
+    art.addEventListener("keydown", function (e) { var t = e.target.closest && e.target.closest(".term"); if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); show(t); } });
+    doc.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+    doc.addEventListener("click", function (e) { if (!e.target.closest(".term") && !e.target.closest(".gloss-pop")) hide(); });
+    window.addEventListener("scroll", hide, { passive: true });
+  }
+
   /* ---------------- boot ---------------- */
   function boot() {
     addHeaderButtons();
     initMenu();
     initTocMobile();
+    initGlossary();
     initMotion();
     initLightbox();
     initScrollSpy();
