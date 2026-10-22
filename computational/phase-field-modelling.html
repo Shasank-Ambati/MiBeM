@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase-Field Modelling - MiBeM</title>
+    <meta name="description" content="Diffuse interfaces, free-energy functionals, Allen-Cahn and Cahn-Hilliard dynamics, spinodal decomposition, parameters and numerics of phase-field models.">
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <header class="site">
+        <a class="brand" href="../index.html">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a></nav>
+    </header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#idea">1. The diffuse-interface idea</a></li>
+                <li><a href="#functional">2. The free-energy functional</a></li>
+                <li><a href="#ac">3. Allen&ndash;Cahn: non-conserved fields</a></li>
+                <li><a href="#ch">4. Cahn&ndash;Hilliard: conserved fields</a></li>
+                <li><a href="#models">5. Models for materials</a></li>
+                <li><a href="#parameters">6. Where parameters come from</a></li>
+                <li><a href="#numerics">7. Numerics</a></li>
+                <li><a href="#code">8. A short program</a></li>
+                <li><a href="#limits">9. Strengths and limits</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article>
+            <p class="meta">Computational materials science &middot; Topic 9</p>
+            <h1>Phase-field modelling</h1>
+            <p class="lead">Microstructure is made of interfaces: grain boundaries, phase boundaries, solidification fronts. Tracking each one explicitly through merging, splitting and branching is a bookkeeping nightmare. Phase-field models sidestep it by describing the whole microstructure with smooth fields and letting the interfaces take care of themselves.</p>
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Describe a diffuse interface and how it relates to interface energy and width.</li>
+                    <li>Write the Allen&ndash;Cahn and Cahn&ndash;Hilliard equations and say which describes which kind of process.</li>
+                    <li>Explain spinodal decomposition, curvature-driven motion and coarsening from the equations.</li>
+                    <li>List the inputs a quantitative phase-field model needs and the numerical constraints on grid and time step.</li>
+                </ul>
+            </div>
+
+            <h2 id="idea">1. The diffuse-interface idea</h2>
+            <p>In a <strong>sharp-interface</strong> description, two phases are separated by a surface of zero thickness, whose motion must be computed and tracked as part of the problem. In a <strong>phase-field</strong> description, an <em>order parameter</em> &phi;(<strong>r</strong>, <em>t</em>) takes one constant value inside each phase (say &phi; = &minus;1 and &phi; = +1) and varies smoothly across a thin transition layer. The interface is wherever &phi; passes through its mid-value, found after the fact. The motion follows from the equations without special rules, and topology changes (two grains merging, a particle splitting, dendrite arms branching) need no extra treatment.</p>
+            <p>Two types of field appear:</p>
+            <ul>
+                <li><strong>Non-conserved</strong> order parameters, such as phase identity or crystal orientation, can change locally without the quantity being transported from elsewhere (a region of liquid can freeze in place).</li>
+                <li><strong>Conserved</strong> fields, such as composition, can change only by diffusion: material that arrives at one place must leave from another.</li>
+            </ul>
+            <p>Many materials problems combine both, such as solidification of an alloy (a phase field plus a concentration field).</p>
+
+            <h2 id="functional">2. The free-energy functional</h2>
+            <p>The model is built on the total free energy of the microstructure as a <em>functional</em> of the fields:</p>
+            <span class="eq">F[&phi;, c] = &int;<sub>V</sub> [ f(&phi;, c, T) + (&kappa;<sub>&phi;</sub>/2) |&nabla;&phi;|&sup2; + (&kappa;<sub>c</sub>/2) |&nabla;c|&sup2; + f<sub>el</sub> + &hellip; ] dV</span>
+            <p>The <strong>bulk term</strong> <em>f</em> carries the thermodynamics: for a two-phase system it has a double-well shape with a minimum for each phase, for example <em>f</em> = (<em>A</em>/4)(&phi;&sup2; &minus; 1)&sup2;. In alloys it is taken from CALPHAD (see <a href="thermodynamics-and-calphad.html">thermodynamics</a>). The <strong>gradient terms</strong> penalise sharp changes, so they set the cost of an interface: without them the field would jump discontinuously to whichever well is lower at each point. The competition between the double well (which wants &phi; at a minimum) and the gradient term (which wants &phi; uniform) gives a finite-width interface.</p>
+            <p>For the double well above the equilibrium one-dimensional profile solves &kappa;&phi;&Prime; = <em>f</em>&prime;(&phi;), and the solution can be written exactly:</p>
+            <span class="eq">&phi;(x) = tanh( x / &ell; ), &nbsp;&nbsp; &ell; = &radic;(2&kappa;/A), &nbsp;&nbsp; &gamma; = (2&radic;2 / 3) &radic;(&kappa;A)</span>
+            <p>The parameters &kappa; and <em>A</em> are thus tied to two physical quantities: the <strong>interface energy</strong> &gamma; and an <strong>interface width</strong> (about 2&ell; from the 10&ndash;90% points of the profile). Setting them to reproduce a chosen &gamma; and width is the first step in building a model. Additional terms add other physics: elastic energy for misfitting precipitates, magnetic or electric energy, anisotropy in &kappa;&phi; (which yields crystal facets and dendrite arms).</p>
+
+            <h2 id="ac">3. Allen&ndash;Cahn: non-conserved fields</h2>
+            <p>The simplest dynamics is relaxation toward lower free energy at a rate proportional to the driving force:</p>
+            <span class="eq">&part;&phi;/&part;t = &minus; L &delta;F/&delta;&phi; = L [ &kappa; &nabla;&sup2;&phi; &minus; f&prime;(&phi;) ]</span>
+            <p>with <em>L</em> a kinetic coefficient (interface mobility). This is the <strong>Allen&ndash;Cahn</strong> equation (originally for antiphase boundaries). Two consequences follow. The free energy never increases, <em>dF</em>/<em>dt</em> &le; 0, so the system moves downhill. And an interface moves with normal velocity proportional to its mean curvature <em>K</em>, toward its centre of curvature:</p>
+            <span class="eq">v = &minus; L &kappa; K &nbsp;&rarr;&nbsp; for a circle of radius R in two dimensions: d(R&sup2;)/dt = &minus;2 L &kappa;</span>
+            <p>so the area of a circular grain shrinks <em>linearly</em> with time, and the smaller of two circles vanishes first, the essential mechanism of normal grain growth. The animation below solves the equation for two circular regions of different size: curved boundaries retreat, the small circle disappears first, and the large one shrinks more slowly because its curvature is lower.</p>
+            <figure>
+                <img src="../assets/animations/allen-cahn-shrinkage.gif" alt="Animation of two circular domains shrinking under Allen-Cahn dynamics, the smaller disappearing first">
+                <figcaption>Allen&ndash;Cahn dynamics in two dimensions (a real numerical solution). The boundary of each disc moves toward its centre of curvature at a speed proportional to its curvature.</figcaption>
+            </figure>
+            <p>For many grains, one uses a set of order parameters &phi;<sub>1</sub>, &hellip;, &phi;<sub><em>n</em></sub>, one per orientation, coupled so that at most one is large at any point (the Fan&ndash;Chen model for grain growth) or constrained to sum to one (multi-phase-field models). Misorientation-dependent mobility and energy enter through the coefficients.</p>
+
+            <h2 id="ch">4. Cahn&ndash;Hilliard: conserved fields</h2>
+            <p>For a conserved quantity such as composition, the flux is driven by the gradient of the <em>chemical potential</em> &mu; = &delta;<em>F</em>/&delta;<em>c</em> (the thermodynamic driving force from the <a href="diffusion-and-kinetics.html">diffusion</a> page), and the equation is a continuity equation:</p>
+            <span class="eq">&part;c/&part;t = &nabla; &middot; ( M &nabla;&mu; ), &nbsp;&nbsp; &mu; = f&prime;(c) &minus; &kappa; &nabla;&sup2;c</span>
+            <p>This is the <strong>Cahn&ndash;Hilliard</strong> equation. It is fourth-order in space (the &nabla;&sup2; acts on &mu;, which already contains &nabla;&sup2;<em>c</em>), conserves the total amount of solute, and also lowers the free energy.</p>
+            <h3>Spinodal decomposition</h3>
+            <p>Suppose a homogeneous alloy with <em>c</em> = <em>c</em><sub>0</sub> sits inside the spinodal, where <em>f</em>&Prime;(<em>c</em><sub>0</sub>) &lt; 0 (see <a href="thermodynamics-and-calphad.html">the Gibbs energy curve</a>). Linearise the equation for a small fluctuation of wavenumber <em>k</em>: it grows as exp[<em>R</em>(<em>k</em>)<em>t</em>] with</p>
+            <span class="eq">R(k) = &minus; M k&sup2; ( f&Prime;(c<sub>0</sub>) + &kappa; k&sup2; )</span>
+            <p>For <em>f</em>&Prime; &lt; 0 this is positive in a band of wavenumbers (<em>k</em> &lt; &radic;(&minus;<em>f</em>&Prime;/&kappa;)): long-wavelength fluctuations are slow because material must travel far, and short-wavelength ones are suppressed by the interface-energy cost. In between there is a fastest-growing wavenumber, <em>k</em><sub><em>m</em></sub> = &radic;(&minus;<em>f</em>&Prime;/2&kappa;), which sets the characteristic spacing of the early microstructure, &lambda;<sub><em>m</em></sub> = 2&pi;/<em>k</em><sub><em>m</em></sub>. No nucleation barrier is involved; any random noise seeds the pattern. After the compositions reach the two equilibrium values, the structure <em>coarsens</em>: small domains dissolve and large ones grow to lower the total interface area, with a mean domain size increasing as <em>t</em><sup>1/3</sup> (diffusion-limited coarsening).</p>
+            <figure>
+                <img src="../assets/animations/spinodal-decomposition.gif" alt="Animation of spinodal decomposition producing droplets that coarsen">
+                <figcaption>Cahn&ndash;Hilliard spinodal decomposition in two dimensions (a real numerical solution of the equation, periodic boundaries). A nearly uniform mixture, seeded with small random noise, develops composition waves, forms droplets of the minority phase and then coarsens. The mixture here is off-critical, which gives droplets; a 50:50 mixture would give an interconnected pattern.</figcaption>
+            </figure>
+
+            <h2 id="models">5. Models for materials</h2>
+            <table>
+                <thead><tr><th>Process</th><th>Typical model</th><th>Key point</th></tr></thead>
+                <tbody>
+                    <tr><td>Solidification of alloys</td><td>Wheeler&ndash;Boettinger&ndash;McFadden (WBM); Kim&ndash;Kim&ndash;Suzuki (KKS); thin-interface models with an anti-trapping current (Karma)</td><td>KKS separates interface and bulk contributions by assuming equal chemical potentials inside the interface; the thin-interface limit allows an interface much wider than physical while still giving correct kinetics</td></tr>
+                    <tr><td>Grain growth and recrystallisation</td><td>Fan&ndash;Chen multiple order parameters; multi-phase-field (Steinbach)</td><td>Boundary energy and mobility depend on misorientation; stored energy drives recrystallisation</td></tr>
+                    <tr><td>Precipitation and spinodal decomposition</td><td>Cahn&ndash;Hilliard with elastic energy (Khachaturyan, Chen)</td><td>Misfit strain selects shapes and alignment of precipitates</td></tr>
+                    <tr><td>Diffusional and displacive solid-state transformations</td><td>Concentration field plus phase fields; martensite models with transformation strain</td><td>Variants and habit planes from elastic energy</td></tr>
+                    <tr><td>Fracture</td><td>Variational approach (Bourdin&ndash;Francfort&ndash;Marigo; Miehe)</td><td>A damage field &phi; &isin; [0,1] degrades stiffness; regularised crack surface energy</td></tr>
+                    <tr><td>Domain structures in ferroelectrics and ferromagnets</td><td>Time-dependent Ginzburg&ndash;Landau equations</td><td>Polarisation or magnetisation as order parameter</td></tr>
+                    <tr><td>Corrosion, electrochemistry, sintering</td><td>Coupled phase-field with transport</td><td>Moving boundaries and multiple physics</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="parameters">6. Where parameters come from</h2>
+            <p>A phase-field model is only quantitative if its inputs are. The ingredients and their usual sources:</p>
+            <ul>
+                <li><strong>Bulk free energy:</strong> CALPHAD databases (compositions, driving forces, chemical potentials), with DFT for compounds not covered.</li>
+                <li><strong>Interface energies and their anisotropy:</strong> measured (dihedral angles, equilibrium shapes) or computed by atomistic simulation (see <a href="molecular-dynamics.html">molecular dynamics</a> and <a href="density-functional-theory.html">DFT</a>).</li>
+                <li><strong>Mobilities:</strong> diffusion mobilities from databases (see <a href="diffusion-and-kinetics.html">diffusion</a>); interface mobilities from experiments (grain growth, recrystallisation) or from MD.</li>
+                <li><strong>Elastic constants and misfit strains:</strong> from DFT, lattice parameters and experiments.</li>
+                <li><strong>Interface width:</strong> a numerical choice. Physical interfaces are of nanometre width, but resolving them across a micrometre-scale microstructure is prohibitive; the width is therefore chosen as large as the microstructure features allow, and the model is built (or the thin-interface analysis applied) so that results do not depend on it.</li>
+            </ul>
+            <p>Check that results are independent of the interface width and the grid spacing before drawing conclusions.</p>
+
+            <h2 id="numerics">7. Numerics</h2>
+            <ul>
+                <li><strong>Resolution.</strong> The interface must be resolved by roughly 4 to 8 grid points across its width. With a coarser grid the interface becomes artificially pinned to the grid and moves in jumps.</li>
+                <li><strong>Explicit time stepping</strong> is simple but severely limited: for Allen&ndash;Cahn the time step must satisfy roughly &Delta;<em>t</em> &lt; &Delta;<em>x</em>&sup2;/(4<em>L</em>&kappa;) in two dimensions, and for Cahn&ndash;Hilliard roughly &Delta;<em>t</em> &lt; &Delta;<em>x</em>&sup4;/(32<em>M</em>&kappa;) because of the fourth-order term, so halving the grid spacing costs sixteen times as many steps.</li>
+                <li><strong>Semi-implicit spectral methods</strong> treat the linear gradient terms implicitly in Fourier space and the nonlinear bulk term explicitly. They are fast on periodic domains and allow much larger steps (Chen and Shen, 1998); the animation above uses this approach.</li>
+                <li><strong>Finite elements</strong> handle complex geometry and adaptive mesh refinement, which concentrates resolution at interfaces and can reduce cost by orders of magnitude in three dimensions.</li>
+                <li><strong>Large 3D simulations</strong> rely on parallel computing, GPUs and adaptive grids.</li>
+            </ul>
+            <p>Open-source frameworks include MOOSE (finite elements, with a phase-field module), PRISMS-PF, FiPy, OpenPhase and FEniCS-based codes; MICRESS and Pace3D are commercial and research multi-phase-field programs respectively.</p>
+
+            <h2 id="code">8. A short program</h2>
+            <p>The following solves the Cahn&ndash;Hilliard equation on a periodic square with the semi-implicit Fourier scheme (non-dimensional units, <em>f</em> = (<em>c</em>&sup2; &minus; 1)&sup2;/4, <em>M</em> = 1, grid spacing 1). Plot <code>c</code> every few hundred steps to reproduce the animation above.</p>
+<pre><code>import numpy as np
+
+N, dt, kappa = 128, 0.2, 1.0
+c = -0.25 + 0.03 * np.random.randn(N, N)        # off-critical mixture plus noise
+k = 2 * np.pi * np.fft.fftfreq(N)
+k2 = k[:, None]**2 + k[None, :]**2
+
+for step in range(5000):
+    f_hat = np.fft.fft2(c**3 - c)                # f'(c) for the double well
+    c = np.real(np.fft.ifft2((np.fft.fft2(c) - dt * k2 * f_hat) / (1 + dt * kappa * k2**2)))
+
+print("mean c is conserved:", c.mean())</code></pre>
+            <p>Change the initial mean to 0 to get the interconnected pattern; change &kappa; to alter the domain size; and check that the average composition stays constant, a property of the conservative equation.</p>
+
+            <h2 id="limits">9. Strengths and limits</h2>
+            <p><strong>Strengths.</strong> No front tracking; arbitrary topology; the free-energy structure makes it easy to couple thermodynamics, elasticity, electromagnetism and other physics; results are visual, with morphology directly comparable with micrographs.</p>
+            <p><strong>Limits.</strong> Cost grows quickly with domain size and with the need to resolve the interface; quantitative accuracy depends on how well the interface energy, mobility and (especially) anisotropy are known; many parameters are poorly known and are calibrated; the diffuse interface can create artefacts (solute trapping, spurious interface effects) unless the model is formulated carefully; and the result is a continuum description, so atomic-scale features (dislocation cores, interface structure) must be supplied from below. Three dimensions and long times are expensive. Phase-field is best used with a clear question about morphology or kinetics, in a regime where the microstructure scale (tens of nanometres to millimetres) is what matters.</p>
+
+            <h2 id="check">10. Check your understanding</h2>
+            <details>
+                <summary>For the double well <em>f</em> = (<em>A</em>/4)(&phi;&sup2; &minus; 1)&sup2;, what happens to the interface width and interface energy if &kappa; is quadrupled?</summary>
+                <p>The width &ell; = &radic;(2&kappa;/<em>A</em>) doubles, and the interface energy &gamma; = (2&radic;2/3)&radic;(&kappa;<em>A</em>) also doubles. Widths and energies cannot be set independently without changing both &kappa; and <em>A</em>.</p>
+            </details>
+            <details>
+                <summary>A Cahn&ndash;Hilliard run with a time step typical for Allen&ndash;Cahn becomes unstable. Why?</summary>
+                <p>The Cahn&ndash;Hilliard equation has a fourth-order spatial operator, so the explicit stability limit scales as &Delta;<em>x</em><sup>4</sup> instead of &Delta;<em>x</em>&sup2;. The same step that is safe for Allen&ndash;Cahn can be far too large. Use a smaller step or a semi-implicit scheme.</p>
+            </details>
+            <details>
+                <summary>Why does a mixture inside the spinodal decompose with a characteristic length scale, instead of at the largest wavelength?</summary>
+                <p>Growth rate <em>R</em>(<em>k</em>) is zero at <em>k</em> = 0 (no net transport is possible) and negative above a cut-off set by the interface cost, so it has a maximum at an intermediate wavenumber <em>k</em><sub><em>m</em></sub>. That mode grows fastest and dominates the early microstructure.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading</h2>
+            <ul>
+                <li>Provatas, N. and Elder, K., <em>Phase-Field Methods in Materials Science and Engineering</em>, Wiley-VCH (2010).</li>
+                <li>Chen, L.-Q., Phase-field models for microstructure evolution, <em>Annu. Rev. Mater. Res.</em> 32, 113 (2002).</li>
+                <li>Moelans, N., Blanpain, B. and Wollants, P., An introduction to phase-field modeling of microstructure evolution, <em>Calphad</em> 32, 268 (2008).</li>
+                <li>Steinbach, I., Phase-field models in materials science, <em>Modelling Simul. Mater. Sci. Eng.</em> 17, 073001 (2009).</li>
+                <li>Cahn, J. W. and Hilliard, J. E., <em>J. Chem. Phys.</em> 28, 258 (1958); Allen, S. M. and Cahn, J. W., <em>Acta Metall.</em> 27, 1085 (1979).</li>
+                <li>Wheeler, A. A., Boettinger, W. J. and McFadden, G. B., Phase-field model for isothermal phase transitions in binary alloys, <em>Phys. Rev. A</em> 45, 7424 (1992).</li>
+                <li>Kim, S. G., Kim, W. T. and Suzuki, T., Phase-field model for binary alloys, <em>Phys. Rev. E</em> 60, 7186 (1999).</li>
+                <li>Karma, A. and Rappel, W.-J., Quantitative phase-field modeling of dendritic growth in two and three dimensions, <em>Phys. Rev. E</em> 57, 4323 (1998).</li>
+                <li>Steinbach, I. et al., A phase field concept for multiphase systems, <em>Physica D</em> 94, 135 (1996).</li>
+                <li>Fan, D. and Chen, L.-Q., Computer simulation of grain growth using a continuum field model, <em>Acta Mater.</em> 45, 611 (1997).</li>
+                <li>Chen, L. Q. and Shen, J., Applications of semi-implicit Fourier-spectral method to phase field equations, <em>Comput. Phys. Commun.</em> 108, 147 (1998).</li>
+            </ul>
+
+            <nav class="pager">
+                <a class="prev" href="diffusion-and-kinetics.html"><span class="dir">Previous topic</span>Diffusion and kinetics</a>
+                <a class="next" href="finite-element-method.html"><span class="dir">Next topic</span>The finite element method</a>
+            </nav>
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site">
+        MiBeM &middot; <a href="../index.html#topics">All topics</a>
+    </footer>
+</body>
+</html>

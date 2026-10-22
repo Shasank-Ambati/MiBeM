@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diffusion and Kinetics - MiBeM</title>
+    <meta name="description" content="Fick's laws, thermodynamic driving force, atomistic mechanisms, Arrhenius behaviour, computing diffusion coefficients and solving the diffusion equation numerically.">
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <header class="site">
+        <a class="brand" href="../index.html">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a></nav>
+    </header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#fick">1. Fick&rsquo;s laws</a></li>
+                <li><a href="#force">2. The true driving force</a></li>
+                <li><a href="#mechanisms">3. Atomistic mechanisms</a></li>
+                <li><a href="#arrhenius">4. Temperature dependence</a></li>
+                <li><a href="#compute">5. Computing D</a></li>
+                <li><a href="#numerics">6. Solving the equation numerically</a></li>
+                <li><a href="#multi">7. Multicomponent diffusion</a></li>
+                <li><a href="#micro">8. From diffusion to microstructure</a></li>
+                <li><a href="#check">9. Check your understanding</a></li>
+                <li><a href="#refs">10. References</a></li>
+            </ol>
+        </aside>
+
+        <article>
+            <p class="meta">Computational materials science &middot; Topic 8</p>
+            <h1>Diffusion and kinetics</h1>
+            <p class="lead">Thermodynamics says where a material is heading; diffusion usually decides how fast it gets there. Homogenisation, carburising, precipitation, oxidation, sintering, creep and grain growth are all limited by how quickly atoms move.</p>
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Write Fick&rsquo;s laws and use the error-function and Gaussian solutions to estimate diffusion distances.</li>
+                    <li>Explain why the real driving force is a chemical-potential gradient, and when diffusion runs uphill.</li>
+                    <li>Relate the diffusion coefficient to atomistic jump mechanisms and the Arrhenius law.</li>
+                    <li>Outline how D is obtained by DFT, MD and kinetic Monte Carlo, and solve the diffusion equation with a stable finite-difference scheme.</li>
+                </ul>
+            </div>
+
+            <h2 id="fick">1. Fick&rsquo;s laws</h2>
+            <p><strong>Fick&rsquo;s first law</strong> says that the flux <em>J</em> of atoms (amount per area per time) is proportional to the concentration gradient and directed down it:</p>
+            <span class="eq">J = &minus;D &nabla;c</span>
+            <p>The proportionality constant <em>D</em> is the <strong>diffusion coefficient</strong> (m&sup2; s<sup>&minus;1</sup>). Combining this with conservation of matter gives <strong>Fick&rsquo;s second law</strong>, the diffusion equation:</p>
+            <span class="eq">&part;c/&part;t = &nabla; &middot; ( D &nabla;c ) &nbsp;&rarr;&nbsp; &part;c/&part;t = D &part;&sup2;c/&part;x&sup2; &nbsp;(constant D, one dimension)</span>
+            <p>Two closed-form solutions cover many practical problems. For a diffusion couple or a surface held at fixed concentration, the solution involves the error function; for a thin film of total amount <em>M</em> per unit area spreading into a large body, it is a Gaussian:</p>
+            <span class="eq">Couple (step initial profile): c(x,t) = &frac12; (c<sub>1</sub> + c<sub>2</sub>) &minus; &frac12; (c<sub>1</sub> &minus; c<sub>2</sub>) erf( x / 2&radic;(Dt) )<br>Surface at c<sub>s</sub> (carburising): c(x,t) = c<sub>s</sub> &minus; (c<sub>s</sub> &minus; c<sub>0</sub>) erf( x / 2&radic;(Dt) )<br>Thin film: c(x,t) = M / &radic;(4&pi;Dt) &middot; exp( &minus;x&sup2; / 4Dt )</span>
+            <figure>
+                <img src="../assets/animations/diffusion-profile.svg" alt="Animation of a sharp concentration step spreading into a smooth profile over time">
+                <figcaption>A diffusion couple: a sharp step smears out, with the width growing as &radic;(Dt). The curve is the error-function solution with the time shown by the bar below.</figcaption>
+            </figure>
+            <p>All three depend on <em>x</em>/&radic;(<em>Dt</em>), so the affected distance grows as the <strong>square root of time</strong>, and a rule of thumb is the diffusion length &asymp; 2&radic;(<em>Dt</em>) (or &radic;(<em>Dt</em>)). Doubling the distance takes four times as long. This is why the time to homogenise a segregated structure scales with the square of the segregation spacing: halving the dendrite arm spacing cuts the required time by four.</p>
+            <p><strong>Worked example.</strong> Take carbon in ferrite with illustrative values <em>D</em><sub>0</sub> = 2&times;10<sup>&minus;6</sup> m&sup2; s<sup>&minus;1</sup> and <em>Q</em> = 84 kJ mol<sup>&minus;1</sup> at 700 &deg;C (973 K): <em>D</em> = 2&times;10<sup>&minus;6</sup> exp[&minus;84 000/(8.314 &times; 973)] &asymp; 6&times;10<sup>&minus;11</sup> m&sup2; s<sup>&minus;1</sup>. After one hour, &radic;(<em>Dt</em>) &asymp; 0.5 mm: carbon moves far in a thin sheet, while a substitutional element such as manganese, with a diffusivity many orders of magnitude lower at the same temperature, barely moves on the scale of a micrometre.</p>
+
+            <h2 id="force">2. The true driving force</h2>
+            <p>Fick&rsquo;s first law with a constant <em>D</em> is an approximation. Atoms move to lower their free energy, so the driving force is the gradient of the <strong>chemical potential</strong>, not of concentration:</p>
+            <span class="eq">J<sub>i</sub> = &minus; M<sub>i</sub> c<sub>i</sub> &nabla;&mu;<sub>i</sub> &nbsp;&rarr;&nbsp; D<sub>i</sub> = M<sub>i</sub> k<sub>B</sub>T &middot; &Theta;, &nbsp;&nbsp; &Theta; = &part;ln a<sub>i</sub> / &part;ln c<sub>i</sub></span>
+            <p>where <em>M</em><sub><em>i</em></sub> is the atomic <em>mobility</em> and &Theta; the <strong>thermodynamic factor</strong>. In an ideal solution &Theta; = 1 and Fick&rsquo;s law holds in its simple form. If unlike atoms attract, &Theta; &gt; 1 and diffusion is faster than the intrinsic atomic mobility suggests; if like atoms attract so strongly that the Gibbs energy curve has negative curvature (inside the spinodal; see <a href="thermodynamics-and-calphad.html">CALPHAD</a>), &Theta; &lt; 0 and the effective <em>D</em> is negative: atoms diffuse <strong>uphill</strong> against the concentration gradient, which is spinodal decomposition. Uphill diffusion also occurs in alloys of multiple elements even outside a miscibility gap: in Darken&rsquo;s classic experiment, carbon moved out of a high-silicon steel into a plain steel that started with the same carbon content, because silicon raises the chemical potential of carbon.</p>
+            <p>Two practical consequences. First, mobilities are the fundamental kinetic quantity, and CALPHAD-style databases store them as functions of composition and temperature next to the thermodynamics. Second, in a binary substitutional couple the <strong>interdiffusion coefficient</strong> combines the two intrinsic mobilities (Darken):</p>
+            <span class="eq">D&#771; = ( x<sub>B</sub> D*<sub>A</sub> + x<sub>A</sub> D*<sub>B</sub> ) &Theta;</span>
+            <p>The two species typically have different tracer diffusivities <em>D</em>*, so a net flow of vacancies accompanies the net atomic flux; inert markers placed at the original interface then shift relative to the ends of the specimen. This is the <strong>Kirkendall effect</strong>, and it can leave pores (Kirkendall voids) on the fast-diffusing side.</p>
+
+            <h2 id="mechanisms">3. Atomistic mechanisms</h2>
+            <p>An atom in a crystal sits in a potential well and occasionally gains enough thermal energy to jump to a neighbouring site. The pathway depends on the type of atom and the defects present:</p>
+            <ul>
+                <li><strong>Vacancy mechanism.</strong> A substitutional atom swaps with a neighbouring vacancy. It is the dominant route for self-diffusion and for substitutional solutes (Mn, Cr, Ni in iron; Cu in aluminium). Atoms can only move when a vacancy is next to them, so the rate involves both the vacancy concentration and the jump rate.</li>
+                <li><strong>Interstitial mechanism.</strong> Small solutes (C, N, H, O) hop between interstitial sites without needing a vacancy. These jumps are fast, with low activation energy, which is why carbon equilibrates in steel in minutes while alloying elements do not.</li>
+                <li><strong>Short-circuit paths.</strong> Grain boundaries, dislocation cores and free surfaces have an open structure and diffusivities that can be many orders of magnitude higher than in the lattice, dominating at low temperature and in fine-grained or heavily deformed material.</li>
+                <li><strong>Others.</strong> Interstitialcy (a displaced pair), ring and exchange mechanisms matter in some systems, for example in covalent semiconductors.</li>
+            </ul>
+            <figure>
+                <img src="../assets/animations/vacancy-hop.svg" alt="Animation of atoms hopping into a vacancy on a lattice">
+                <figcaption>The vacancy mechanism. The dashed ring is the vacancy; the highlighted atom is displaced each time the vacancy passes it. The hop sequence in the animation is illustrative and is replayed in reverse to loop.</figcaption>
+            </figure>
+
+            <h2 id="arrhenius">4. Temperature dependence</h2>
+            <p>A hop requires crossing an energy barrier <em>E</em><sub>m</sub> (the migration energy). The jump rate is thermally activated, and the diffusion coefficient follows an Arrhenius law:</p>
+            <span class="eq">D = D<sub>0</sub> exp( &minus;Q / RT )</span>
+            <p>Plotting ln <em>D</em> against 1/<em>T</em> gives a straight line of slope &minus;<em>Q</em>/<em>R</em>, and a change of slope signals a change of mechanism (for example lattice to grain-boundary diffusion). The microscopic content comes from the random-walk theory: for jumps of length &lambda; at total rate &Gamma;, <em>D</em> = &Gamma;&lambda;&sup2;/6 in three dimensions. For vacancy diffusion in a cubic crystal this becomes</p>
+            <span class="eq">D = f a&sup2; &nu; exp( &minus;(E<sub>f</sub> + E<sub>m</sub>) / k<sub>B</sub>T ) &nbsp;(fcc; vibrational entropy factors omitted)</span>
+            <p>where <em>f</em> is the <strong>correlation factor</strong> (about 0.78 for fcc and 0.73 for bcc, since a tracer atom is slightly more likely to jump back into the vacancy it just left than elsewhere), <em>a</em> the lattice parameter, &nu; an attempt frequency, and the activation energy of self-diffusion is <em>Q</em> = <em>E</em><sub>f</sub> + <em>E</em><sub>m</sub>, vacancy formation plus migration. For interstitial diffusion, <em>Q</em> = <em>E</em><sub>m</sub> only, because the available interstitial sites are always there.</p>
+            <p>A useful sanity check is the empirical rule that <em>Q</em> for vacancy self-diffusion in close-packed metals is about 17 to 18 <em>RT</em><sub>m</sub>, where <em>T</em><sub>m</sub> is the melting temperature. For copper (<em>T</em><sub>m</sub> = 1358 K) this gives about 200 kJ mol<sup>&minus;1</sup>, close to the measured value of roughly 200 kJ mol<sup>&minus;1</sup>. It means that diffusion at a given fraction of the melting temperature (the &ldquo;homologous temperature&rdquo;) is similar across many metals.</p>
+
+            <h2 id="compute">5. Computing D</h2>
+            <p>Several complementary routes exist, matched to how fast the species moves.</p>
+            <table>
+                <thead><tr><th>Method</th><th>What it gives</th><th>Strength</th><th>Limit</th></tr></thead>
+                <tbody>
+                    <tr><td>Molecular dynamics</td><td><em>D</em> from the mean-squared displacement, <em>D</em> = lim MSD/(6<em>t</em>); or from the velocity autocorrelation integral</td><td>Direct, includes all anharmonicity; ideal for liquids, fast ionic conductors, grain boundaries at high <em>T</em></td><td>Only practical for <em>D</em> above roughly 10<sup>&minus;11</sup> m&sup2; s<sup>&minus;1</sup> within nanoseconds, so lattice diffusion in solids is out of reach well below the melting point</td></tr>
+                    <tr><td>DFT + transition-state theory</td><td><em>E</em><sub>f</sub>, <em>E</em><sub>m</sub> (nudged elastic band), attempt frequency &nu; from phonons (Vineyard), then <em>D</em> by the formula above</td><td>Parameter-free; works for any <em>T</em>; resolves each solute&ndash;vacancy interaction</td><td>Needs many calculations; assumes harmonic transition-state theory and a defined mechanism</td></tr>
+                    <tr><td>Five-frequency model (Lidiard&ndash;LeClaire)</td><td>Solute diffusion and vacancy drag in dilute fcc alloys from five jump frequencies computed by DFT</td><td>Compact route from DFT to solute <em>D</em> and the Onsager coefficients</td><td>Dilute limit; fcc geometry (other lattices need extensions)</td></tr>
+                    <tr><td>Kinetic Monte Carlo</td><td><em>D</em> from the MSD of tracer atoms in a lattice with environment-dependent barriers</td><td>Reaches physical time for slow diffusion; handles concentrated alloys and correlations</td><td>Needs the barrier model (see <a href="monte-carlo-methods.html">Monte Carlo</a>)</td></tr>
+                    <tr><td>Databases and assessment</td><td>Mobility parameters fitted to experiments</td><td>Directly usable in diffusion codes with thermodynamic data</td><td>Only for systems already assessed</td></tr>
+                </tbody>
+            </table>
+            <p>Whichever route is used, results should be compared with experiments at one or more temperatures. Agreement within a factor of two in <em>D</em> is considered good, because a 0.1 eV error in the barrier changes <em>D</em> by a factor of about 3 at 1000 K and by about 10 at 500 K.</p>
+
+            <h2 id="numerics">6. Solving the equation numerically</h2>
+            <p>When <em>D</em> depends on composition, when several phases are present, or when the geometry is complicated, there is no closed-form solution and the equation is solved on a grid. For one dimension with spacing &Delta;<em>x</em> and time step &Delta;<em>t</em>, the simplest scheme is the <strong>explicit (forward-time, centred-space) method</strong>:</p>
+            <span class="eq">c<sub>i</sub><sup>n+1</sup> = c<sub>i</sub><sup>n</sup> + r ( c<sub>i+1</sub><sup>n</sup> &minus; 2c<sub>i</sub><sup>n</sup> + c<sub>i&minus;1</sub><sup>n</sup> ), &nbsp;&nbsp; r = D &Delta;t / &Delta;x&sup2;</span>
+            <p>It is stable only if <em>r</em> &le; &frac12; (and <em>r</em> &le; 1/4 in two dimensions, 1/6 in three); exceeding it makes errors grow exponentially and the solution oscillate. Refining the grid by a factor of two forces the time step down by four, so explicit schemes become expensive. <strong>Implicit</strong> schemes (backward Euler) are stable for any step; they require solving a tridiagonal linear system at each step, which is cheap in one dimension. The <strong>Crank&ndash;Nicolson</strong> average of the two is second-order accurate in time. For conserving the total amount of solute, which matters in diffusion couples, a <strong>finite-volume</strong> formulation (fluxes across cell faces) is preferred.</p>
+            <h3>Boundary and interface conditions</h3>
+            <ul>
+                <li><strong>Fixed concentration</strong> (Dirichlet): a surface in equilibrium with a carburising atmosphere.</li>
+                <li><strong>Zero flux</strong> (Neumann): a symmetry plane or an impermeable wall.</li>
+                <li><strong>Mass-transfer</strong> (Robin): the flux at the surface is <em>J</em> = &beta;(<em>c</em><sub>gas</sub> &minus; <em>c</em><sub>surface</sub>), with a finite transfer coefficient &beta;.</li>
+                <li><strong>Moving interface</strong> between phases &alpha; and &beta;: concentrations on either side are set by local equilibrium (from thermodynamics) and the interface velocity <em>v</em> follows from solute conservation, (<em>c</em><sup>&beta;</sup> &minus; <em>c</em><sup>&alpha;</sup>)<em>v</em> = <em>J</em><sup>&alpha;</sup> &minus; <em>J</em><sup>&beta;</sup>. This Stefan-type problem is the basis of diffusion-controlled transformation models in steels.</li>
+            </ul>
+            <p>An explicit solver in Python, with the surface held at <em>c</em> = 1 and zero flux at the far end, fits in a few lines. The time step is chosen with <em>r</em> = 0.2 for safety:</p>
+<pre><code>import numpy as np
+
+D, L, nx = 1e-11, 1e-3, 201            # m^2/s, m, grid points
+dx = L / (nx - 1)
+dt = 0.2 * dx**2 / D                    # r = D*dt/dx^2 = 0.2 (stable: r &lt;= 0.5)
+c = np.zeros(nx); c[0] = 1.0            # surface at c = 1, initially empty
+
+t = 0.0
+while t &lt; 3600:                         # one hour
+    c[1:-1] += D * dt / dx**2 * (c[2:] - 2*c[1:-1] + c[:-2])
+    c[0], c[-1] = 1.0, c[-2]            # fixed surface, zero flux at the far end
+    t += dt</code></pre>
+            <p>Compare the result with the error-function solution c = 1 &minus; erf(<em>x</em>/2&radic;(<em>Dt</em>)) as a first verification, then change <em>r</em> to 0.6 and watch the solution blow up.</p>
+
+            <h2 id="multi">7. Multicomponent diffusion</h2>
+            <p>In an alloy with several solutes, the flux of each element depends on the gradient of all the others:</p>
+            <span class="eq">J<sub>i</sub> = &minus; &Sigma;<sub>j</sub> D<sub>ij</sub> &nabla;c<sub>j</sub></span>
+            <p>The full <em>D</em><sub><em>ij</em></sub> matrix has off-diagonal terms (cross-diffusion) of either sign, and Onsager reciprocity constrains it. Practically, one works with chemical potentials and mobilities, <em>J</em><sub><em>i</em></sub> = &minus;&Sigma;<sub><em>j</em></sub> <em>L</em><sub><em>ij</em></sub> &nabla;&mu;<sub><em>j</em></sub>, with mobilities from a database and thermodynamics from CALPHAD, so cross effects (like carbon moving in a silicon gradient) come out automatically. The difference between interstitial and substitutional diffusivities, often six or more orders of magnitude, makes the equations <em>stiff</em> and motivates special treatments such as paraequilibrium, where carbon redistributes while substitutional elements are frozen.</p>
+
+            <h2 id="micro">8. From diffusion to microstructure</h2>
+            <p>Diffusion enters models of microstructure change in a few standard ways.</p>
+            <ul>
+                <li><strong>Nucleation.</strong> Classical nucleation theory gives the barrier for a spherical nucleus, &Delta;<em>G</em>* = 16&pi;&gamma;&sup3;/(3&Delta;<em>G</em><sub>v</sub>&sup2;), where &gamma; is the interface energy and &Delta;<em>G</em><sub>v</sub> the volume driving force (from CALPHAD, less any strain energy); the rate is proportional to exp(&minus;&Delta;<em>G</em>*/<em>k</em><sub>B</sub><em>T</em>) times an atom-attachment term controlled by diffusion.</li>
+                <li><strong>Growth.</strong> Diffusion-controlled growth of a particle or plate is parabolic in time: thickness or radius &prop; &radic;(<em>Dt</em>), with a proportionality set by the supersaturation.</li>
+                <li><strong>Coarsening.</strong> Small precipitates dissolve and large ones grow because of the Gibbs&ndash;Thomson effect (higher solubility around curved surfaces). The Lifshitz&ndash;Slyozov&ndash;Wagner (LSW) theory gives <em>r</em><sup>3</sup> &minus; <em>r</em><sub>0</sub><sup>3</sup> = <em>Kt</em>, with <em>K</em> proportional to <em>D</em>, &gamma; and the equilibrium solubility, which sets how long strengthening precipitates stay fine at service temperature.</li>
+                <li><strong>Overall transformation kinetics.</strong> The Johnson&ndash;Mehl&ndash;Avrami&ndash;Kolmogorov equation, <em>f</em> = 1 &minus; exp(&minus;<em>kt</em><sup><em>n</em></sup>), combines nucleation and growth into a sigmoidal fraction-transformed curve; the exponent <em>n</em> hints at the mechanism.</li>
+            </ul>
+            <p>Models that resolve the microstructure itself, such as <a href="phase-field-modelling.html">phase-field</a>, solve diffusion and interface motion together.</p>
+
+            <h2 id="check">9. Check your understanding</h2>
+            <details>
+                <summary>A homogenisation anneal takes 10 hours for segregation with a 100 &micro;m spacing. How long for a 50 &micro;m spacing at the same temperature?</summary>
+                <p>The time scales as the square of the length (<em>t</em> &prop; <em>x</em>&sup2;/<em>D</em>), so halving the spacing needs one quarter of the time: 2.5 hours.</p>
+            </details>
+            <details>
+                <summary>Why is the activation energy of vacancy self-diffusion larger than the migration energy alone?</summary>
+                <p>An atom can only move if a vacancy is adjacent, and vacancies must be created thermally at an energy cost <em>E</em><sub>f</sub>. The equilibrium vacancy fraction contributes a factor exp(&minus;<em>E</em><sub>f</sub>/<em>k</em><sub>B</sub><em>T</em>), so the total activation energy is <em>E</em><sub>f</sub> + <em>E</em><sub>m</sub>.</p>
+            </details>
+            <details>
+                <summary>Your explicit diffusion solver gives wild oscillations. What do you check first?</summary>
+                <p>The stability number <em>r</em> = <em>D</em>&Delta;<em>t</em>/&Delta;<em>x</em>&sup2;. It must be at most 0.5 in one dimension. Reduce &Delta;<em>t</em> (or coarsen &Delta;<em>x</em>), or switch to an implicit scheme.</p>
+            </details>
+
+            <h2 id="refs">10. References and further reading</h2>
+            <ul>
+                <li>Crank, J., <em>The Mathematics of Diffusion</em>, Oxford University Press (1975).</li>
+                <li>Shewmon, P., <em>Diffusion in Solids</em>, Springer.</li>
+                <li>Mehrer, H., <em>Diffusion in Solids: Fundamentals, Methods, Materials, Diffusion-Controlled Processes</em>, Springer (2007).</li>
+                <li>Balluffi, R. W., Allen, S. M. and Carter, W. C., <em>Kinetics of Materials</em>, Wiley (2005).</li>
+                <li>Porter, D. A., Easterling, K. E. and Sherif, M. Y., <em>Phase Transformations in Metals and Alloys</em>, CRC Press.</li>
+                <li>Darken, L. S., Diffusion, mobility and their interrelation through free energy in binary metallic systems, <em>Trans. AIME</em> 175, 184 (1948); Darken, L. S., Diffusion of carbon in austenite with a discontinuity in composition, <em>Trans. AIME</em> 180, 430 (1949).</li>
+                <li>Smigelskas, A. D. and Kirkendall, E. O., Zinc diffusion in alpha brass, <em>Trans. AIME</em> 171, 130 (1947).</li>
+                <li>Vineyard, G. H., Frequency factors and isotope effects in solid state rate processes, <em>J. Phys. Chem. Solids</em> 3, 121 (1957).</li>
+                <li>Andersson, J.-O. and &Aring;gren, J., Models for numerical treatment of multicomponent diffusion in simple phases, <em>J. Appl. Phys.</em> 72, 1350 (1992).</li>
+            </ul>
+
+            <nav class="pager">
+                <a class="prev" href="monte-carlo-methods.html"><span class="dir">Previous topic</span>Monte Carlo and kinetic Monte Carlo</a>
+                <a class="next" href="phase-field-modelling.html"><span class="dir">Next topic</span>Phase-field modelling</a>
+            </nav>
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site">
+        MiBeM &middot; <a href="../index.html#topics">All topics</a>
+    </footer>
+</body>
+</html>

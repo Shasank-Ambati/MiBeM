@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermodynamics and CALPHAD - MiBeM</title>
+    <meta name="description" content="Gibbs energy, solution models, phase equilibrium and the CALPHAD method for computing phase diagrams.">
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <header class="site">
+        <a class="brand" href="../index.html">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a></nav>
+    </header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#basics">1. Equilibrium and Gibbs energy</a></li>
+                <li><a href="#mixing">2. Mixing and solution models</a></li>
+                <li><a href="#tangent">3. Common tangent and stability</a></li>
+                <li><a href="#diagrams">4. Reading phase diagrams</a></li>
+                <li><a href="#calphad">5. The CALPHAD method</a></li>
+                <li><a href="#models">6. Models inside a database</a></li>
+                <li><a href="#calc">7. What can be calculated</a></li>
+                <li><a href="#python">8. A short calculation</a></li>
+                <li><a href="#limits">9. Limits and coupling</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article>
+            <p class="meta">Computational materials science &middot; Topic 4</p>
+            <h1>Thermodynamics and CALPHAD</h1>
+            <p class="lead">Before asking how fast anything happens, ask what is stable. The CALPHAD method turns measured and computed thermodynamic data into models of the Gibbs energy of every phase, and from those models any equilibrium can be calculated for any composition.</p>
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>State the condition for equilibrium in terms of Gibbs energy and chemical potentials.</li>
+                    <li>Write the Gibbs energy of ideal and regular solutions and predict a miscibility gap.</li>
+                    <li>Construct the common tangent and apply the lever rule.</li>
+                    <li>Describe how CALPHAD models phases, and list what the method can and cannot calculate.</li>
+                </ul>
+            </div>
+
+            <h2 id="basics">1. Equilibrium and Gibbs energy</h2>
+            <p>At constant temperature <em>T</em> and pressure <em>p</em>, a closed system is at equilibrium when its <strong>Gibbs energy</strong> is a minimum:</p>
+            <span class="eq">G = H &minus; TS = U + pV &minus; TS</span>
+            <p>The enthalpy <em>H</em> favours strong bonding and the entropy term &minus;<em>TS</em> favours disorder, and rising temperature shifts the balance toward entropy. For a multicomponent system the contribution of each component is its <strong>chemical potential</strong> &mu;<sub><em>i</em></sub> = (&part;<em>G</em>/&part;<em>n</em><sub><em>i</em></sub>)<sub><em>T</em>,<em>p</em>,<em>n</em><sub>j&ne;i</sub></sub>. Equilibrium between phases then requires that each component has the <em>same chemical potential in every phase</em> in which it is present:</p>
+            <span class="eq">&mu;<sub>i</sub><sup>&alpha;</sup> = &mu;<sub>i</sub><sup>&beta;</sup> = &hellip; for every component i</span>
+            <p>The <strong>Gibbs phase rule</strong> counts how many variables may be changed independently: <em>F</em> = <em>C</em> &minus; <em>P</em> + 2 with pressure free, or <em>F</em> = <em>C</em> &minus; <em>P</em> + 1 at fixed pressure, where <em>C</em> is the number of components and <em>P</em> the number of phases. In a binary alloy at constant pressure, three phases can coexist only at one temperature (<em>F</em> = 0), which is why eutectic, eutectoid and peritectic reactions occur at fixed temperatures.</p>
+
+            <h2 id="mixing">2. Mixing and solution models</h2>
+            <p>The Gibbs energy of one mole of a binary solution of A and B is built from three parts:</p>
+            <span class="eq">G = x<sub>A</sub> G<sub>A</sub><sup>0</sup> + x<sub>B</sub> G<sub>B</sub><sup>0</sup> + &Delta;G<sub>mix</sub>, &nbsp;&nbsp; &Delta;G<sub>mix</sub> = RT (x<sub>A</sub> ln x<sub>A</sub> + x<sub>B</sub> ln x<sub>B</sub>) + G<sup>ex</sup></span>
+            <p>The first two terms are the pure components in the same structure; the logarithmic term is the <strong>ideal entropy of mixing</strong> (&minus;<em>R</em>&Sigma;<em>x</em> ln <em>x</em> per mole), always favouring mixing and with infinite slope at the pure ends, which is why no phase is perfectly pure; and <em>G</em><sup>ex</sup> is the <strong>excess Gibbs energy</strong> that collects all non-ideal interactions. The simplest form is the <strong>regular solution</strong> <em>G</em><sup>ex</sup> = &Omega;<em>x</em><sub>A</sub><em>x</em><sub>B</sub>, where &Omega; &gt; 0 means unlike neighbours are disfavoured (tendency to separate) and &Omega; &lt; 0 means they are favoured (tendency to order or form compounds).</p>
+            <p>The <strong>activity</strong> <em>a</em><sub><em>i</em></sub> = exp[(&mu;<sub><em>i</em></sub> &minus; &mu;<sub><em>i</em></sub><sup>0</sup>)/<em>RT</em>] = &gamma;<sub><em>i</em></sub><em>x</em><sub><em>i</em></sub> measures the effective concentration. The activity coefficient &gamma;<sub><em>i</em></sub> equals 1 for an ideal solution; Raoult&rsquo;s law holds for the solvent and Henry&rsquo;s law (<em>a</em><sub><em>i</em></sub> &prop; <em>x</em><sub><em>i</em></sub>) for a dilute solute, with &gamma; constant but not 1.</p>
+
+            <h2 id="tangent">3. Common tangent and stability</h2>
+            <p>For a regular solution with &Omega; &gt; 0 the shape of the Gibbs energy curve changes with temperature: at high temperature the entropy term wins and the curve has a single minimum, while at low temperature the curve has two minima separated by a hump. Watch it happen in the animation: the cooling solution develops a miscibility gap.</p>
+            <figure>
+                <img src="../assets/animations/gibbs-temperature.svg" alt="Animated Gibbs energy curve changing from one well to two wells as the solution cools">
+                <figcaption>Regular-solution Gibbs energy of mixing as temperature falls (hot to cool, gauge on the right). Below the critical temperature, the dashed line is the common tangent and the composition range between its touching points is the miscibility gap.</figcaption>
+            </figure>
+            <p>For a regular solution the critical (consolute) temperature, above which the gap closes, is</p>
+            <span class="eq">T<sub>c</sub> = &Omega; / (2R)</span>
+            <p>Below <em>T</em><sub>c</sub> an alloy of intermediate composition lowers its Gibbs energy by splitting into two phases. The compositions of the two phases are found by the <strong>common tangent construction</strong>: draw the line that touches the curve at two points. The tangent condition is exactly equal chemical potentials in the two phases (the intercepts of the tangent with the pure-component axes <em>are</em> &mu;<sub>A</sub> and &mu;<sub>B</sub>). For a binary mixture of overall composition <em>x</em><sub>0</sub> splitting into phases of compositions <em>x</em><sub>&alpha;</sub> and <em>x</em><sub>&beta;</sub>, the <strong>lever rule</strong> gives the fractions:</p>
+            <span class="eq">f<sub>&beta;</sub> = (x<sub>0</sub> &minus; x<sub>&alpha;</sub>) / (x<sub>&beta;</sub> &minus; x<sub>&alpha;</sub>), &nbsp;&nbsp; f<sub>&alpha;</sub> = 1 &minus; f<sub>&beta;</sub></span>
+            <h3>Binodal and spinodal</h3>
+            <p>Within the gap there are two kinds of instability. Between the common-tangent points (the <strong>binodal</strong>) the two-phase state is stable, but a homogeneous solution may still be locally stable and decompose only after nucleation of a second phase. Inside the <strong>spinodal</strong>, where &part;&sup2;<em>G</em>/&part;<em>x</em>&sup2; &lt; 0, the solution is unstable to any small composition fluctuation and decomposes spontaneously. The distinction matters for kinetics and for simulation: the spinodal mechanism is the one modelled in the <a href="phase-field-modelling.html">phase-field</a> topic.</p>
+
+            <h2 id="diagrams">4. Reading phase diagrams</h2>
+            <p>A binary phase diagram is a map of the stable phases against temperature and composition, produced by repeating the common-tangent construction at each temperature. Boundaries are loci of tangent points. A few conventions let you read any diagram:</p>
+            <ul>
+                <li>In a single-phase region, the phase composition equals the overall composition.</li>
+                <li>In a two-phase region, draw a horizontal <em>tie line</em> at the temperature; its ends on the phase boundaries give the phase compositions, and the lever rule gives the amounts.</li>
+                <li>Three-phase equilibria appear as horizontal lines (invariant reactions): <em>eutectic</em> L &rarr; &alpha; + &beta;, <em>eutectoid</em> &gamma; &rarr; &alpha; + &beta;, <em>peritectic</em> L + &alpha; &rarr; &beta;.</li>
+                <li>Ternary systems are shown as isothermal sections or vertical sections (isopleths); tie lines in a ternary two-phase region do not generally lie along a fixed direction, which is why calculation is needed.</li>
+            </ul>
+            <p>The iron&ndash;carbon system illustrates the points. The eutectoid at about 727 &deg;C and 0.76 wt% C converts austenite (fcc) into ferrite (bcc, almost no carbon) and cementite (Fe<sub>3</sub>C, 6.67 wt% C). A 0.40 wt% C steel just below 727 &deg;C contains, by the lever rule, a cementite fraction of (0.40 &minus; 0.02)/(6.67 &minus; 0.02) &asymp; 5.7%. Note that Fe&ndash;Fe<sub>3</sub>C is a <em>metastable</em> diagram: graphite is the true equilibrium phase, but cementite forms because its nucleation is much easier.</p>
+
+            <h2 id="calphad">5. The CALPHAD method</h2>
+            <p>Phase diagrams were originally drawn from measurements alone. <strong>CALPHAD</strong> (CALculation of PHAse Diagrams, developed from the 1970s, building on Kaufman and Bernstein) replaces drawing with modelling: every phase gets an analytical expression for its Gibbs energy as a function of <em>T</em>, <em>p</em> and composition, with adjustable parameters. The workflow is:</p>
+            <ol>
+                <li><strong>Collect data</strong> for the system: phase boundaries, invariant temperatures, heats of formation and mixing, activities, heat capacities, plus first-principles (DFT) formation energies for compounds that are hard to measure.</li>
+                <li><strong>Choose models</strong> for each phase that match its crystal structure and chemistry (Section 6).</li>
+                <li><strong>Optimise parameters</strong> so that the combined calculation reproduces all data within experimental uncertainty. Binary systems are assessed first, then ternaries, and the models are extrapolated to higher-order systems.</li>
+                <li><strong>Store</strong> the parameters in a thermodynamic database. The common exchange format is the TDB text file, readable by several programs.</li>
+                <li><strong>Calculate</strong> equilibria by minimising total Gibbs energy under the imposed conditions.</li>
+            </ol>
+            <p>The strength of the approach is that the same expression describes stable and metastable states and extends into regions that were never measured; its weakness is that the result is only as good as the assessment (Section 9).</p>
+
+            <h2 id="models">6. Models inside a database</h2>
+            <h3>Pure elements</h3>
+            <p>Each element in each structure (even structures it never adopts, such as bcc for a metal that is hcp) has a Gibbs energy function written as a polynomial in <em>T</em>, relative to a reference state. The SGTE unary database, a community standard, supplies these <em>lattice stabilities</em> in the form</p>
+            <span class="eq">G(T) = a + bT + cT ln T + dT&sup2; + eT<sup>&minus;1</sup> + fT&sup3; + &hellip;</span>
+            <h3>Substitutional solutions</h3>
+            <p>Solution phases with atoms mixing on one set of sites are written as the sum of the three terms in Section 2, with the excess term expanded in a <strong>Redlich&ndash;Kister polynomial</strong>:</p>
+            <span class="eq">G<sup>ex</sup> = x<sub>A</sub> x<sub>B</sub> &Sigma;<sub>k</sub> <sup>k</sup>L<sub>AB</sub> (x<sub>A</sub> &minus; x<sub>B</sub>)<sup>k</sup>, &nbsp;&nbsp; <sup>k</sup>L = a<sub>k</sub> + b<sub>k</sub>T</span>
+            <p>The term with <em>k</em> = 0 is the regular-solution parameter; <em>k</em> = 1 introduces asymmetry. The parameters <em>a</em><sub><em>k</em></sub> and <em>b</em><sub><em>k</em></sub> are the quantities fitted during assessment. Higher-order systems add ternary interaction terms, and binary data are extrapolated to ternaries with symmetric or asymmetric schemes (Muggianu, Kohler, Toop).</p>
+            <h3>Sublattice models</h3>
+            <p>Interstitial solutions and compounds with more than one type of site are written with the <strong>compound energy formalism</strong> (Hillert and Staffansson). Each sublattice has its own set of species, including vacancies (Va). For austenite or ferrite in the Fe&ndash;C system, carbon occupies interstitial sites that are mostly empty, giving the model (Fe)<sub><em>a</em></sub>(C, Va)<sub><em>c</em></sub>, with <em>a</em> = <em>c</em> = 1 for fcc and <em>a</em> = 1, <em>c</em> = 3 for bcc. Intermetallics such as Fe<sub>3</sub>C or sigma phase use sublattices with composition-dependent occupancy, and a stoichiometric compound is the limiting case with fixed site fractions.</p>
+            <h3>Magnetism and ordering</h3>
+            <p>Ferromagnetic transitions change the Gibbs energy by an amount large enough to move phase boundaries (it is why iron is bcc at low temperature and fcc between about 912 and 1394 &deg;C). They are included with a separate magnetic term based on the Curie temperature and the Bohr magneton number (Inden&ndash;Hillert&ndash;Jarl model). Chemical ordering, for example B2 from bcc, is handled by using the same Gibbs energy for the ordered and disordered phases with an additional sublattice description for the ordered state.</p>
+
+            <h2 id="calc">7. What can be calculated</h2>
+            <table>
+                <thead><tr><th>Calculation</th><th>What it gives</th><th>Typical use</th></tr></thead>
+                <tbody>
+                    <tr><td>Equilibrium at fixed T, p, composition</td><td>Stable phases, their amounts and compositions</td><td>Heat treatment windows, solubility limits, second-phase amounts</td></tr>
+                    <tr><td>Property diagram (phase fraction versus T)</td><td>Transformation temperatures, fraction curves</td><td>Solvus, solidus and liquidus; A<sub>e1</sub> and A<sub>e3</sub> of steels</td></tr>
+                    <tr><td>Phase diagram and isopleth</td><td>Phase boundaries in a plane of composition and T</td><td>Alloy design; checking the effect of a new addition</td></tr>
+                    <tr><td>Scheil&ndash;Gulliver solidification</td><td>Solidification path assuming no diffusion in the solid and complete mixing in the liquid</td><td>Segregation, last-liquid composition, hot-cracking tendency</td></tr>
+                    <tr><td>Constrained equilibrium (for example paraequilibrium)</td><td>Equilibrium with some elements held fixed, such as interstitial carbon moving while substitutional atoms do not</td><td>Fast transformations, bainite and martensite thermodynamics</td></tr>
+                    <tr><td>Driving force</td><td>Gibbs energy change for forming a new phase from the current state</td><td>Nucleation models; precipitation and phase-field inputs</td></tr>
+                    <tr><td>Activities and chemical potentials</td><td>Effective concentrations</td><td>Slag&ndash;metal reactions, oxidation, diffusion couples</td></tr>
+                </tbody>
+            </table>
+
+            <h2 id="python">8. A short calculation</h2>
+            <p>The open-source Python package <code>pycalphad</code> calculates equilibria from a TDB database. The sketch below finds the equilibrium phases of a 2 at.% carbon iron alloy over a temperature range, assuming you have a suitable Fe&ndash;C database file:</p>
+<pre><code>from pycalphad import Database, equilibrium, variables as v
+
+dbf = Database("Fe-C.tdb")                      # your thermodynamic database
+comps = ["FE", "C", "VA"]
+phases = ["LIQUID", "BCC_A2", "FCC_A1", "CEMENTITE"]
+
+eq = equilibrium(
+    dbf, comps, phases,
+    {v.X("C"): 0.02, v.T: (600, 1800, 10), v.P: 101325, v.N: 1},
+)
+# eq.Phase, eq.NP (phase fractions) and eq.X (compositions) vs temperature</code></pre>
+            <p>Phase names depend on the database. A database is licensed data: some are free and published with the assessment, others are commercial. Always check which composition and temperature ranges a database was assessed for before trusting an answer outside them.</p>
+
+            <h2 id="limits">9. Limits and coupling</h2>
+            <ul>
+                <li><strong>Equilibrium only.</strong> CALPHAD has no time, geometry or interfaces. It says where a system is heading, not how fast or in what shape.</li>
+                <li><strong>Database quality.</strong> Parameters are fitted to the data that existed; predictions outside the assessed range, or for a phase with sparse data, rest on extrapolation. A ternary or higher-order prediction made from binary data alone can be wrong when real ternary interactions are strong.</li>
+                <li><strong>Missing phases.</strong> If a phase is absent from the database (or from your list of candidate phases), it cannot be predicted. Metastable phases may be included deliberately.</li>
+                <li><strong>Local equilibrium assumption.</strong> Used in diffusion calculations, it holds when interfaces are fast compared with diffusion.</li>
+            </ul>
+            <p>Coupling extends what CALPHAD can do. <em>Diffusion mobility databases</em> assessed in the same way as thermodynamics (used in DICTRA and similar programs) enable one-dimensional simulation of diffusion-controlled transformations and homogenisation. Phase-field models take their free-energy densities, driving forces and chemical potentials from CALPHAD. DFT supplies formation energies of compounds and end-member energies. The thermodynamic input of larger models is therefore often a CALPHAD calculation.</p>
+
+            <h2 id="check">10. Check your understanding</h2>
+            <details>
+                <summary>A regular solution has &Omega; = 20 kJ/mol. At what temperature does the miscibility gap close?</summary>
+                <p><em>T</em><sub>c</sub> = &Omega;/(2<em>R</em>) = 20 000/(2 &times; 8.314) &asymp; 1 200 K.</p>
+            </details>
+            <details>
+                <summary>An alloy with 30 at.% B splits into phases of 10 at.% and 70 at.% B. What fraction is the B-rich phase?</summary>
+                <p>Lever rule: (30 &minus; 10)/(70 &minus; 10) = 20/60 &asymp; 33%.</p>
+            </details>
+            <details>
+                <summary>Why does the ideal entropy of mixing make perfectly pure phases impossible?</summary>
+                <p>The slope of <em>RT</em>(<em>x</em> ln <em>x</em> + (1 &minus; <em>x</em>) ln(1 &minus; <em>x</em>)) is infinite at <em>x</em> = 0 and <em>x</em> = 1, so adding even a tiny amount of a second component always lowers the Gibbs energy. Every real phase therefore dissolves some of every component, however small.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading</h2>
+            <ul>
+                <li>Lukas, H. L., Fries, S. G. and Sundman, B., <em>Computational Thermodynamics: The Calphad Method</em>, Cambridge University Press (2007).</li>
+                <li>Saunders, N. and Miodownik, A. P., <em>CALPHAD: Calculation of Phase Diagrams</em>, Pergamon (1998).</li>
+                <li>Hillert, M., <em>Phase Equilibria, Phase Diagrams and Phase Transformations</em>, Cambridge University Press.</li>
+                <li>Gaskell, D. R. and Laughlin, D. E., <em>Introduction to the Thermodynamics of Materials</em>, CRC Press.</li>
+                <li>Kaufman, L. and Bernstein, H., <em>Computer Calculation of Phase Diagrams</em>, Academic Press (1970).</li>
+                <li>Dinsdale, A. T., SGTE data for pure elements, <em>Calphad</em> 15, 317 (1991).</li>
+                <li>Hillert, M. and Staffansson, L.-I., The regular solution model for stoichiometric phases and ionic melts, <em>Acta Chem. Scand.</em> 24, 3618 (1970).</li>
+                <li>Otis, R. and Liu, Z.-K., pycalphad: CALPHAD-based computational thermodynamics in Python, <em>J. Open Res. Softw.</em> 5, 1 (2017).</li>
+                <li>Bocklund, B. et al., ESPEI for efficient thermodynamic database development, modification and uncertainty quantification, <em>MRS Commun.</em> 9, 618 (2019).</li>
+            </ul>
+
+            <nav class="pager">
+                <a class="prev" href="statistical-mechanics.html"><span class="dir">Previous topic</span>Statistical mechanics for simulation</a>
+                <a class="next" href="density-functional-theory.html"><span class="dir">Next topic</span>Density functional theory in practice</a>
+            </nav>
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site">
+        MiBeM &middot; <a href="../index.html#topics">All topics</a>
+    </footer>
+</body>
+</html>

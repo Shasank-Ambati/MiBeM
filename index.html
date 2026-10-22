@@ -3,53 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiBeM - Mineral Beneficiation, Metallurgy and Computational Materials Science</title>
-    <meta name="description" content="A static knowledge repository for studying metallurgy and computational materials science, one page at a time.">
+    <title>MiBeM - Computational Materials Science</title>
+    <meta name="description" content="A static knowledge repository for learning computational materials science, with animated figures.">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <header class="site">
         <a class="brand" href="index.html">MiBeM</a>
         <nav>
-            <a href="#path">Learning path</a>
+            <a href="#topics">Topics</a>
             <a href="#about">About</a>
         </nav>
     </header>
 
-    <main>
-        <h1>MiBeM</h1>
-        <p class="lead">A growing, static repository for learning metallurgy and computational materials science, with steel and process metallurgy as the running theme.</p>
+    <div class="wrap">
+        <h1>Computational materials science</h1>
+        <p class="lead">A reference series for materials scientists and metallurgists: the physical models, numerical methods and practical habits behind simulating materials, from electrons to components.</p>
 
-        <h2 id="about">About this site</h2>
-        <p>MiBeM began as notes on mineral beneficiation and metallurgy. It is now also a working study guide for computational materials science, written for a practising metallurgist who wants to apply simulation and data methods to real R&amp;D problems.</p>
-        <p>One new page is added each day. Every page is written in original words, states what you should be able to do afterwards, and lists references for further reading.</p>
+        <figure>
+            <img src="assets/animations/scale-ladder.svg" alt="Animated bars showing the length scales covered by simulation methods">
+            <figcaption>Every method covers a limited window of length and time. The topics below take them one at a time.</figcaption>
+        </figure>
 
-        <h2 id="path">Learning path</h2>
-        <ul class="card-list">
-            <li>
-                <span class="day">Day 1</span><br>
-                <a href="computational/01-introduction.html">Computational materials science for the metallurgist</a><br>
-                <span class="meta">The scale ladder, the main method families, and which one answers which steel question.</span>
-            </li>
-            <li class="planned">
-                <span class="day">Day 2 &middot; planned</span><br>
-                Thermodynamics and CALPHAD: equilibrium phase fractions for steel compositions
-            </li>
-            <li class="planned">
-                <span class="day">Day 3 &middot; planned</span><br>
-                Diffusion and kinetics: from Fick's laws to numerical solutions
-            </li>
-            <li class="planned">
-                <span class="day">Day 4 &middot; planned</span><br>
-                Atomistic simulation: molecular dynamics and interatomic potentials
-            </li>
-            <li class="planned">
-                <span class="day">Day 5 &middot; planned</span><br>
-                Electronic structure: what density functional theory gives you
-            </li>
+        <h2 id="topics">Topics</h2>
+        <p>Read in order, or jump to any topic. Each page states what you should be able to do afterwards and ends with references.</p>
+        <ul class="card-list ordered">
+            <li><a class="card" href="computational/introduction.html">
+                <span class="label"></span>
+                <span class="title">Introduction to computational materials science</span>
+                <span class="meta">Scales, method families, multiscale linking, validation, software and data resources.</span></a></li>
+            <li><a class="card" href="computational/crystal-structure-and-periodic-cells.html">
+                <span class="label"></span>
+                <span class="title">Crystal structures, supercells and periodic boundaries</span>
+                <span class="meta">Lattices, unit cells, Miller indices, defects, building simulation cells, periodic boundary conditions.</span></a></li>
+            <li><a class="card" href="computational/statistical-mechanics.html">
+                <span class="label"></span>
+                <span class="title">Statistical mechanics for simulation</span>
+                <span class="meta">Microstates, ensembles, the partition function, free energy, ergodicity and sampling.</span></a></li>
+            <li><a class="card" href="computational/thermodynamics-and-calphad.html">
+                <span class="label"></span>
+                <span class="title">Thermodynamics and CALPHAD</span>
+                <span class="meta">Gibbs energy, common tangent, solution models, phase diagrams and equilibrium calculation.</span></a></li>
+            <li><a class="card" href="computational/density-functional-theory.html">
+                <span class="label"></span>
+                <span class="title">Density functional theory in practice</span>
+                <span class="meta">The Kohn&ndash;Sham scheme, functionals, the SCF cycle, convergence parameters, what to compute.</span></a></li>
+            <li><a class="card" href="computational/molecular-dynamics.html">
+                <span class="label"></span>
+                <span class="title">Molecular dynamics</span>
+                <span class="meta">Integrators, interatomic potentials, thermostats, equilibration and analysis.</span></a></li>
+            <li><a class="card" href="computational/monte-carlo-methods.html">
+                <span class="label"></span>
+                <span class="title">Monte Carlo and kinetic Monte Carlo</span>
+                <span class="meta">Importance sampling, Metropolis, the Ising model, rejection-free kinetics.</span></a></li>
+            <li><a class="card" href="computational/diffusion-and-kinetics.html">
+                <span class="label"></span>
+                <span class="title">Diffusion and kinetics</span>
+                <span class="meta">Fick&rsquo;s laws, Arrhenius behaviour, atomistic mechanisms and numerical solution.</span></a></li>
+            <li><a class="card" href="computational/phase-field-modelling.html">
+                <span class="label"></span>
+                <span class="title">Phase-field modelling</span>
+                <span class="meta">Diffuse interfaces, Allen&ndash;Cahn and Cahn&ndash;Hilliard, spinodal decomposition and numerics.</span></a></li>
+            <li><a class="card" href="computational/finite-element-method.html">
+                <span class="label"></span>
+                <span class="title">The finite element method</span>
+                <span class="meta">Weak form, shape functions, meshing, convergence and nonlinear problems.</span></a></li>
+            <li><a class="card" href="computational/machine-learning-for-materials.html">
+                <span class="label"></span>
+                <span class="title">Machine learning for materials</span>
+                <span class="meta">Data, descriptors, models, validation, machine-learned potentials and active learning.</span></a></li>
         </ul>
-        <p class="meta">The list will be extended as the series grows. More sections, such as mineral beneficiation and extractive metallurgy, will be added later.</p>
-    </main>
+
+        <h2 id="about">About</h2>
+        <p>MiBeM is written for anyone who studies, makes or tests materials: students, researchers and engineers working with metals, ceramics, polymers, semiconductors or composites. Pages assume a materials-science background (thermodynamics, crystal structure, mechanical behaviour) but not prior experience with simulation software.</p>
+        <p>The animated figures are produced from small real simulations or computed curves, not drawn by hand, so what they show is what the method does.</p>
+    </div>
 
     <footer class="site">
         MiBeM &middot; a personal study repository.

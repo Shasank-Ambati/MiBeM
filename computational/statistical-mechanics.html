@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistical Mechanics for Simulation - MiBeM</title>
+    <meta name="description" content="Microstates, ensembles, the partition function, free energy, ergodicity and error estimation for atomistic simulation.">
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <header class="site">
+        <a class="brand" href="../index.html">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a></nav>
+    </header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#bridge">1. From atoms to properties</a></li>
+                <li><a href="#ensembles">2. Ensembles</a></li>
+                <li><a href="#boltzmann">3. The Boltzmann distribution</a></li>
+                <li><a href="#partition">4. Partition function and examples</a></li>
+                <li><a href="#free-energy">5. Free energy and entropy</a></li>
+                <li><a href="#fluctuations">6. Properties from fluctuations</a></li>
+                <li><a href="#correlation">7. Correlation functions and transport</a></li>
+                <li><a href="#ergodicity">8. Ergodicity and sampling</a></li>
+                <li><a href="#errors">9. Statistical error</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article>
+            <p class="meta">Computational materials science &middot; Topic 3</p>
+            <h1>Statistical mechanics for simulation</h1>
+            <p class="lead">A simulation follows a few thousand atoms; a material has 10<sup>23</sup>. Statistical mechanics is the bridge: it says which averages over the small system reproduce the temperature, pressure, free energy and transport coefficients of the large one.</p>
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Distinguish microstates from macrostates and time averages from ensemble averages.</li>
+                    <li>State the main ensembles, their fixed variables and their thermodynamic potentials.</li>
+                    <li>Write and use the Boltzmann distribution and the canonical partition function.</li>
+                    <li>Explain why free-energy differences are harder to compute than energies, and name the main methods.</li>
+                    <li>Estimate the statistical uncertainty of a simulated average.</li>
+                </ul>
+            </div>
+
+            <h2 id="bridge">1. From atoms to properties</h2>
+            <p>A <strong>microstate</strong> is a complete specification of the system at the atomic level: all positions and momenta for a classical system, or a full quantum state. A <strong>macrostate</strong> is what an experiment sees: a few variables such as temperature <em>T</em>, pressure <em>p</em>, volume <em>V</em>, number of atoms <em>N</em> and composition. Enormously many microstates correspond to one macrostate, and the macroscopic property is the average of the microscopic quantity over those microstates, weighted by how probable each is.</p>
+            <p>For <em>N</em> classical atoms the microstate is a point in <strong>phase space</strong> of 6<em>N</em> dimensions, (<strong>r</strong><sub>1</sub>, &hellip;, <strong>r</strong><sub><em>N</em></sub>, <strong>p</strong><sub>1</sub>, &hellip;, <strong>p</strong><sub><em>N</em></sub>). The total energy as a function of that point is the Hamiltonian,</p>
+            <span class="eq">H(r, p) = &Sigma;<sub>i</sub> |p<sub>i</sub>|&sup2; / 2m<sub>i</sub> + U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
+            <p>Two kinds of average appear in simulation. An <strong>ensemble average</strong> &lang;<em>A</em>&rang; weights every phase-space point by its probability. A <strong>time average</strong> follows one trajectory and averages over time. Molecular dynamics produces time averages; Monte Carlo produces samples that estimate ensemble averages directly. The two agree if the system is <em>ergodic</em> (Section 8).</p>
+
+            <h2 id="ensembles">2. Ensembles</h2>
+            <p>An <strong>ensemble</strong> is the set of microstates consistent with a set of fixed macroscopic conditions. Which one to use depends on what the experiment holds constant and what the algorithm can impose.</p>
+            <table>
+                <thead><tr><th>Ensemble</th><th>Fixed</th><th>Fluctuates</th><th>Potential that is minimised at equilibrium</th><th>Typical use</th></tr></thead>
+                <tbody>
+                    <tr><td>Microcanonical (NVE)</td><td>N, V, E</td><td>T, p</td><td>Entropy S is maximised (S = k<sub>B</sub> ln &Omega;)</td><td>Plain MD without a thermostat; testing energy conservation</td></tr>
+                    <tr><td>Canonical (NVT)</td><td>N, V, T</td><td>E, p</td><td>Helmholtz free energy F = U &minus; TS</td><td>Properties at fixed volume; Monte Carlo</td></tr>
+                    <tr><td>Isothermal&ndash;isobaric (NPT)</td><td>N, p, T</td><td>E, V</td><td>Gibbs free energy G = H &minus; TS</td><td>Matching laboratory conditions; thermal expansion; phase stability</td></tr>
+                    <tr><td>Grand canonical (&mu;VT)</td><td>&mu;, V, T</td><td>E, N</td><td>Grand potential &Omega; = F &minus; &mu;N</td><td>Adsorption, segregation, chemical equilibrium with a reservoir</td></tr>
+                </tbody>
+            </table>
+            <p>In the thermodynamic limit (large <em>N</em>) the ensembles give the same averages. Fluctuations of an extensive quantity scale as 1/&radic;<em>N</em> relative to its mean, so they are tiny for a macroscopic sample but visible in a box of a few hundred atoms, and they differ between ensembles. A well-posed simulation states which ensemble it samples.</p>
+
+            <h2 id="boltzmann">3. The Boltzmann distribution</h2>
+            <p>For a system in contact with a heat bath at temperature <em>T</em> (canonical ensemble), the probability of finding it in a microstate of energy <em>E</em><sub><em>i</em></sub> is</p>
+            <span class="eq">p<sub>i</sub> = exp(&minus;E<sub>i</sub> / k<sub>B</sub>T) / Z, &nbsp;&nbsp; Z = &Sigma;<sub>i</sub> exp(&minus;E<sub>i</sub> / k<sub>B</sub>T)</span>
+            <p>This single formula underlies Metropolis Monte Carlo, thermostatted molecular dynamics, transition-state theory and the equilibrium populations of defects and phases. Lower-energy states are more probable, but the number of states at each energy (the degeneracy) also counts: a high-energy level with many states can hold more total probability than a low-energy level with few. The balance between these two effects is the balance between energy and entropy.</p>
+            <figure>
+                <img src="../assets/animations/boltzmann-distribution.svg" alt="Animated bars showing level populations broadening as temperature increases">
+                <figcaption>Populations of six equally spaced energy levels as temperature changes. The scale of &ldquo;hot&rdquo; and &ldquo;cold&rdquo; is set by the spacing &epsilon; compared with k<sub>B</sub>T.</figcaption>
+            </figure>
+
+            <h2 id="partition">4. Partition function and examples</h2>
+            <p>The <strong>partition function</strong> <em>Z</em> is the sum above, and it generates the thermodynamics. With &beta; = 1/<em>k</em><sub>B</sub><em>T</em>:</p>
+            <span class="eq">F = &minus;k<sub>B</sub>T ln Z, &nbsp; &lang;E&rang; = &minus;&part;(ln Z)/&part;&beta;, &nbsp; S = &minus;&part;F/&part;T, &nbsp; p = &minus;&part;F/&part;V</span>
+            <p>If <em>Z</em> can be computed, everything follows. It can be computed exactly only for simple models, which are nevertheless the building blocks of larger ones.</p>
+            <h3>Two-level system</h3>
+            <p>A defect with ground state at 0 and an excited state at &epsilon; has <em>Z</em> = 1 + exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>). The excited fraction is exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)/<em>Z</em>, which at low temperature gives the Arrhenius form used for equilibrium vacancy concentration.</p>
+            <h3>Harmonic oscillator and equipartition</h3>
+            <p>For one classical oscillator <em>Z</em> &prop; <em>k</em><sub>B</sub><em>T</em>/(&hbar;&omega;), giving mean energy <em>k</em><sub>B</sub><em>T</em>: <strong>equipartition</strong> assigns &frac12;<em>k</em><sub>B</sub><em>T</em> to every quadratic term in the Hamiltonian. A solid of <em>N</em> atoms has 3<em>N</em> oscillators and so heat capacity 3<em>Nk</em><sub>B</sub> (3<em>R</em> &asymp; 24.9 J mol<sup>&minus;1</sup> K<sup>&minus;1</sup>, the Dulong&ndash;Petit value). This is why classical simulations give a constant heat capacity at all temperatures, while real solids drop below it at low temperature because quantum oscillators with &hbar;&omega; &gt; <em>k</em><sub>B</sub><em>T</em> are frozen out. Classical MD is therefore reliable only when <em>T</em> is comparable to or above the Debye temperature of the material, or when quantum corrections are applied.</p>
+            <h3>Kinetic temperature</h3>
+            <p>Equipartition also defines the temperature seen in an MD run:</p>
+            <span class="eq">&lang;K&rang; = &frac12; N<sub>f</sub> k<sub>B</sub>T, &nbsp;&nbsp; N<sub>f</sub> = 3N &minus; 3 (for fixed total momentum; subtract further constraints)</span>
+            <p>The instantaneous kinetic temperature fluctuates by a relative amount of order &radic;(2/<em>N</em><sub>f</sub>) in a small box, so a reading of a few percent away from the target in a 200-atom cell is normal, not an error.</p>
+
+            <h2 id="free-energy">5. Free energy and entropy</h2>
+            <p>Phase stability, defect concentrations, solubility, nucleation barriers and reaction equilibria are governed by <em>free energies</em>, not energies. Free energies are harder to compute because they depend on the <em>volume</em> of phase space accessible, not just on averages of observables. In a simulation, regions of high entropy are visited often and are easy to see, but the free energy needs the absolute probability, which is ln <em>Z</em>, and <em>Z</em> is not an average of anything that is directly sampled.</p>
+            <p>Contributions to the entropy of a material include <em>vibrational</em> (the main finite-temperature term in most solids), <em>configurational</em> (arrangement of atoms or vacancies on a lattice), <em>electronic</em> (important in metals) and <em>magnetic</em> (important in iron and its alloys, where it changes the relative stability of bcc and fcc). Neglecting the right one is a common reason that a 0 K energy ranking fails at the temperature of interest.</p>
+            <h3>Methods for free-energy differences</h3>
+            <ul>
+                <li><strong>Harmonic and quasi-harmonic approximation.</strong> The vibrational free energy of a crystal from its phonon frequencies &omega;<sub><em>i</em></sub>: <em>F</em><sub>vib</sub> = &Sigma;<sub><em>i</em></sub> [&frac12;&hbar;&omega;<sub><em>i</em></sub> + <em>k</em><sub>B</sub><em>T</em> ln(1 &minus; exp(&minus;&hbar;&omega;<sub><em>i</em></sub>/<em>k</em><sub>B</sub><em>T</em>))]. The quasi-harmonic version lets frequencies depend on volume, capturing thermal expansion. It fails when anharmonicity is strong.</li>
+                <li><strong>Thermodynamic integration.</strong> Switch the Hamiltonian from a reference <em>H</em><sub>0</sub> to the target <em>H</em><sub>1</sub> through a coupling parameter &lambda;, and integrate: &Delta;<em>F</em> = &int;<sub>0</sub><sup>1</sup> &lang;&part;<em>H</em>/&part;&lambda;&rang;<sub>&lambda;</sub> d&lambda;. With an Einstein crystal as reference this is the Frenkel&ndash;Ladd method for absolute free energies of solids; melting points follow from equating solid and liquid free energies.</li>
+                <li><strong>Free-energy perturbation.</strong> &Delta;<em>F</em> = &minus;<em>k</em><sub>B</sub><em>T</em> ln&lang;exp(&minus;&Delta;<em>U</em>/<em>k</em><sub>B</sub><em>T</em>)&rang;<sub>0</sub>, accurate only when the two states overlap strongly.</li>
+                <li><strong>Umbrella sampling and metadynamics.</strong> To obtain a free-energy <em>profile</em> along a coordinate (for example the distance an atom moves, or a nucleation order parameter), bias the simulation so that it samples barriers and then remove the bias. Both rely on a good choice of coordinate.</li>
+                <li><strong>Coexistence methods.</strong> Simulate two phases in one box and watch the interface move or stay still; the temperature at which it is stationary is the transition temperature.</li>
+            </ul>
+
+            <h2 id="fluctuations">6. Properties from fluctuations</h2>
+            <p>Response functions are determined by fluctuations of the corresponding quantities at equilibrium. For example in the canonical ensemble,</p>
+            <span class="eq">C<sub>V</sub> = ( &lang;E&sup2;&rang; &minus; &lang;E&rang;&sup2; ) / (k<sub>B</sub> T&sup2;)</span>
+            <p>and in the isothermal&ndash;isobaric ensemble the isothermal compressibility follows from the variance of the volume, &kappa;<sub><em>T</em></sub> = (&lang;<em>V</em>&sup2;&rang; &minus; &lang;<em>V</em>&rang;&sup2;)/(<em>k</em><sub>B</sub><em>T</em>&lang;<em>V</em>&rang;). Thermal expansion comes from the cross-fluctuation of enthalpy and volume, and elastic constants from stress fluctuations. These formulae let one run produce several properties, but they converge slowly because they are variances; direct perturbation (apply a small strain and measure the response) is often more efficient.</p>
+
+            <h2 id="correlation">7. Correlation functions and transport</h2>
+            <p><strong>Structure.</strong> The radial distribution function <em>g</em>(<em>r</em>) is the probability, relative to a uniform gas, of finding an atom a distance <em>r</em> from another. Crystals give sharp peaks, liquids give damped oscillations that decay to 1, and amorphous solids lie between. Its Fourier transform is the structure factor <em>S</em>(<em>q</em>), directly comparable with diffraction. The coordination number is the integral of 4&pi;<em>r</em>&sup2;&rho;<em>g</em>(<em>r</em>) up to the first minimum.</p>
+            <p><strong>Dynamics.</strong> Time-correlation functions measure how quickly the system forgets a state. Transport coefficients follow from them. The diffusion coefficient has two equivalent forms:</p>
+            <span class="eq">Einstein: D = lim<sub>t&rarr;&infin;</sub> &lang;|r(t) &minus; r(0)|&sup2;&rang; / (6t) &nbsp;&nbsp;&nbsp; Green&ndash;Kubo: D = (1/3) &int;<sub>0</sub><sup>&infin;</sup> &lang;v(0)&middot;v(t)&rang; dt</span>
+            <p>The mean-squared displacement (MSD) must be computed from unwrapped coordinates, and the slope fitted only in the linear (diffusive) regime, not the early ballistic regime where MSD &prop; <em>t</em>&sup2;. Viscosity and thermal conductivity have analogous Green&ndash;Kubo expressions (from stress and heat-current correlations), and these converge slowly.</p>
+
+            <h2 id="ergodicity">8. Ergodicity and sampling</h2>
+            <p>A system is <strong>ergodic</strong> if, given enough time, a trajectory visits all accessible regions of phase space in proportion to their probability. Then the time average equals the ensemble average. Real simulations are finite, and several situations break this in practice:</p>
+            <ul>
+                <li><strong>Rare events.</strong> A system with an energy barrier much larger than <em>k</em><sub>B</sub><em>T</em> can sit in one basin for longer than the run, so the average describes only that basin. With a typical attempt frequency of 10<sup>13</sup> s<sup>&minus;1</sup>, an atomic hop over a 1 eV barrier at 300 K occurs about once every 10<sup>4</sup> seconds (hours), compared with MD runs of nanoseconds, a gap of some thirteen orders of magnitude.</li>
+                <li><strong>Metastability and hysteresis.</strong> Heating and cooling runs through a phase transition give different answers because nucleation is slow.</li>
+                <li><strong>Glassy dynamics.</strong> Structural relaxation is much slower than the simulated time.</li>
+            </ul>
+            <p>Remedies are: run longer; start from several independent configurations and compare; use methods that sample differently (Monte Carlo with swap moves, replica exchange, which exchanges configurations between temperatures; metadynamics; accelerated dynamics); or use kinetic methods that model rare events explicitly (see the <a href="monte-carlo-methods.html">Monte Carlo</a> page).</p>
+
+            <h2 id="errors">9. Statistical error</h2>
+            <p>A simulated average is an estimate with an uncertainty, and a number without an error bar is incomplete. Successive configurations in an MD or MC run are <em>correlated</em>, so the number of independent samples is much smaller than the number of recorded frames. For <em>M</em> frames with correlation time &tau; (in units of the sampling interval), the standard error of the mean is approximately</p>
+            <span class="eq">&sigma;<sub>mean</sub> &asymp; &sigma; &radic;( 2&tau; / M )</span>
+            <p>where &sigma; is the standard deviation of the quantity. Practical ways to get it:</p>
+            <ul>
+                <li><strong>Block averaging.</strong> Divide the series into blocks longer than the correlation time, average each block and compute the error from the block means. Increase the block length until the estimated error stops growing.</li>
+                <li><strong>Independent replicas.</strong> Repeat with different random seeds or initial velocities; the spread of results is the error.</li>
+                <li><strong>Discard the equilibration period.</strong> The start of a run depends on the initial configuration; plot the property against time and start averaging only after it has stopped drifting.</li>
+            </ul>
+            <p>Systematic errors (a poor potential, finite box, neglected quantum effects) are not reduced by longer runs and are usually larger than the statistical error. Report both kinds.</p>
+
+            <h2 id="check">10. Check your understanding</h2>
+            <details>
+                <summary>At what temperature is the excited state of a two-level defect with &epsilon; = 1 eV populated at 1%?</summary>
+                <p>Solve exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)/(1 + exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)) = 0.01, which gives &epsilon;/<em>k</em><sub>B</sub><em>T</em> &asymp; 4.6, so <em>T</em> &asymp; 11 600 K / 4.6 &asymp; 2 500 K (using 1 eV/<em>k</em><sub>B</sub> &asymp; 11 600 K). Even at high temperature the excited state stays rare for such a large gap.</p>
+            </details>
+            <details>
+                <summary>Why does classical MD overestimate the heat capacity of a solid at low temperature?</summary>
+                <p>Classical equipartition gives each oscillator energy <em>k</em><sub>B</sub><em>T</em> at every temperature, so <em>C</em><sub>V</sub> = 3<em>Nk</em><sub>B</sub>. In a real solid, modes with &hbar;&omega; larger than <em>k</em><sub>B</sub><em>T</em> are not excited, so <em>C</em><sub>V</sub> falls below this value as the temperature drops.</p>
+            </details>
+            <details>
+                <summary>A run of 10<sup>6</sup> frames has a correlation time of 10<sup>3</sup> frames. About how many independent samples is that?</summary>
+                <p>Roughly <em>M</em>/(2&tau;) = 10<sup>6</sup>/(2&times;10<sup>3</sup>) = 500 independent samples, so the standard error is about &sigma;/&radic;500, not &sigma;/&radic;10<sup>6</sup>.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading</h2>
+            <ul>
+                <li>Chandler, D., <em>Introduction to Modern Statistical Mechanics</em>, Oxford University Press.</li>
+                <li>McQuarrie, D. A., <em>Statistical Mechanics</em>, University Science Books.</li>
+                <li>Tuckerman, M. E., <em>Statistical Mechanics: Theory and Molecular Simulation</em>, Oxford University Press.</li>
+                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press (free energies, ensembles, error analysis).</li>
+                <li>Frenkel, D. and Ladd, A. J. C., New Monte Carlo method to compute the free energy of arbitrary solids, <em>J. Chem. Phys.</em> 81, 3188 (1984).</li>
+                <li>Flyvbjerg, H. and Petersen, H. G., Error estimates on averages of correlated data, <em>J. Chem. Phys.</em> 91, 461 (1989).</li>
+                <li>Laio, A. and Parrinello, M., Escaping free-energy minima, <em>Proc. Natl. Acad. Sci. USA</em> 99, 12562 (2002).</li>
+            </ul>
+
+            <nav class="pager">
+                <a class="prev" href="crystal-structure-and-periodic-cells.html"><span class="dir">Previous topic</span>Crystal structures, supercells and periodic boundaries</a>
+                <a class="next" href="thermodynamics-and-calphad.html"><span class="dir">Next topic</span>Thermodynamics and CALPHAD</a>
+            </nav>
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site">
+        MiBeM &middot; <a href="../index.html#topics">All topics</a>
+    </footer>
+</body>
+</html>
