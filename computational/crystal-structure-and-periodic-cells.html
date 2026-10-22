@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crystal Structures, Supercells and Periodic Boundaries - MiBeM</title>
     <meta name="description" content="Lattices, unit cells, defects, supercell construction and periodic boundary conditions for atomistic simulation.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Crystal Structures, Supercells and Periodic Boundaries - MiBeM">
+    <meta property="og:description" content="Lattices, unit cells, defects, supercell construction and periodic boundary conditions for atomistic simulation.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a></nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="statistical-mechanics.html">Next topic</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -33,8 +44,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science &middot; Topic 2</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 2 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
             <h1>Crystal structures, supercells and periodic boundaries</h1>
             <p class="lead">Almost every atomistic simulation starts by writing down where the atoms are. For crystals, a handful of numbers describes an infinite solid; for defects, the same description is stretched into a finite, repeating box that must be chosen with care.</p>
 
@@ -48,7 +59,7 @@
                 </ul>
             </div>
 
-            <h2 id="lattice">1. Lattice and basis</h2>
+            <h2 id="lattice">1. Lattice and basis<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
             <p>An ideal crystal is invariant under translation by any vector of a <strong>Bravais lattice</strong>:</p>
             <span class="eq">R = n<sub>1</sub>a<sub>1</sub> + n<sub>2</sub>a<sub>2</sub> + n<sub>3</sub>a<sub>3</sub>, &nbsp; n<sub>i</sub> integers</span>
             <p>where <strong>a</strong><sub>1,2,3</sub> are the primitive lattice vectors. The parallelepiped they span is the <em>primitive cell</em>: the smallest volume that tiles space by translation and contains exactly one lattice point. The crystal is the lattice decorated with a <strong>basis</strong>, a set of atoms at positions <strong>r</strong><sub><em>j</em></sub> inside each cell, usually given as <em>fractional coordinates</em> (<em>x</em>, <em>y</em>, <em>z</em>) between 0 and 1 along the lattice vectors:</p>
@@ -56,7 +67,7 @@
             <p>A cell can be described by six numbers: three lengths <em>a</em>, <em>b</em>, <em>c</em> and three angles &alpha;, &beta;, &gamma;. Symmetry sorts all lattices into <strong>seven crystal systems</strong> (cubic, tetragonal, orthorhombic, hexagonal, trigonal, monoclinic, triclinic) and <strong>fourteen Bravais lattices</strong> once centring is included (primitive P, body-centred I, face-centred F, base-centred C). Adding the basis and its symmetry gives <strong>230 space groups</strong>. Symmetry matters computationally: it reduces the number of distinct <em>k</em>-points in electronic-structure calculations and the number of independent elastic constants (3 for cubic, 5 for hexagonal, 21 for triclinic).</p>
             <p>Often a <em>conventional</em> cell larger than the primitive cell is used because it shows the symmetry more clearly. The face-centred cubic conventional cell holds 4 lattice points, the body-centred cubic one holds 2.</p>
 
-            <h2 id="structures">2. Common structures</h2>
+            <h2 id="structures">2. Common structures<a class="anchor" href="#structures" aria-label="Link to this section">#</a></h2>
             <table>
                 <thead><tr><th>Structure</th><th>Lattice</th><th>Atoms per conventional cell</th><th>Nearest neighbours</th><th>Packing fraction</th><th>Examples</th></tr></thead>
                 <tbody>
@@ -71,19 +82,19 @@
             <p>Close packing arises from stacking triangular layers. The sequence ABAB&hellip; gives hcp and ABCABC&hellip; gives fcc, which explains why the two structures have the same density and coordination but different symmetry, and why stacking faults in fcc metals locally look like hcp. Bcc is less densely packed and has no single close-packed slip plane; the mobility of its screw dislocations depends strongly on temperature, which is the origin of the ductile-to-brittle transition that bcc metals show and fcc metals do not.</p>
             <p>Lattice parameters at room temperature are the first numbers to check against any model: Cu fcc <em>a</em> &asymp; 3.61 &Aring;, Al fcc 4.05 &Aring;, &alpha;-Fe bcc 2.87 &Aring;, Si diamond 5.43 &Aring;. If a calculation or potential reproduces these to within a percent or two, the basic bonding description is plausible; if not, nothing downstream can be trusted.</p>
 
-            <h2 id="indices">3. Directions and planes</h2>
+            <h2 id="indices">3. Directions and planes<a class="anchor" href="#indices" aria-label="Link to this section">#</a></h2>
             <p><strong>Directions</strong> are written [<em>uvw</em>]: the smallest integers proportional to the components of the vector in lattice coordinates, with negative values shown by a bar. A family of equivalent directions is written &lang;<em>uvw</em>&rang;. <strong>Planes</strong> use <strong>Miller indices</strong> (<em>hkl</em>): take the intercepts of the plane with the axes in units of the lattice parameters, invert them, and clear fractions. A family of equivalent planes is written {<em>hkl</em>}. In cubic crystals, [<em>hkl</em>] is perpendicular to (<em>hkl</em>), but this is not true in general for other systems.</p>
             <p>The spacing of (<em>hkl</em>) planes in a cubic crystal is</p>
             <span class="eq">d<sub>hkl</sub> = a / &radic;(h&sup2; + k&sup2; + l&sup2;)</span>
             <p>which is used directly in diffraction (Bragg&rsquo;s law, <em>n</em>&lambda; = 2<em>d</em> sin&theta;) and to compare simulated structures with X-ray or electron diffraction. Close-packed planes and directions control plasticity: slip occurs most readily on {111}&lang;110&rang; in fcc and on {110}, {112} and {123} planes along &lang;111&rang; in bcc. Surface energy also depends on orientation, with close-packed surfaces such as fcc (111) typically lowest.</p>
             <p>Hexagonal crystals use four-index Miller&ndash;Bravais notation (<em>hkil</em>) with <em>i</em> = &minus;(<em>h</em> + <em>k</em>), which makes equivalent planes look alike.</p>
 
-            <h2 id="reciprocal">4. Reciprocal lattice</h2>
+            <h2 id="reciprocal">4. Reciprocal lattice<a class="anchor" href="#reciprocal" aria-label="Link to this section">#</a></h2>
             <p>Waves in a periodic solid, whether electrons, phonons or X-rays, are best described in <strong>reciprocal space</strong>. The reciprocal lattice vectors satisfy</p>
             <span class="eq">a<sub>i</sub> &middot; b<sub>j</sub> = 2&pi; &delta;<sub>ij</sub>, &nbsp; i.e. &nbsp; b<sub>1</sub> = 2&pi; (a<sub>2</sub> &times; a<sub>3</sub>) / [a<sub>1</sub> &middot; (a<sub>2</sub> &times; a<sub>3</sub>)] and cyclic permutations</span>
             <p>The Wigner&ndash;Seitz cell of the reciprocal lattice is the first <strong>Brillouin zone</strong>. A key rule: the larger the real-space cell, the smaller its Brillouin zone, so a supercell needs fewer <em>k</em>-points. The reciprocal lattice vector <strong>G</strong><sub><em>hkl</em></sub> = <em>h</em><strong>b</strong><sub>1</sub> + <em>k</em><strong>b</strong><sub>2</sub> + <em>l</em><strong>b</strong><sub>3</sub> is perpendicular to the (<em>hkl</em>) planes and has length 2&pi;/<em>d</em><sub><em>hkl</em></sub>, which links this section to Section 3.</p>
 
-            <h2 id="defects">5. Defects</h2>
+            <h2 id="defects">5. Defects<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
             <p>Real materials are defined as much by their defects as by their ideal structure, and most of the interesting simulation questions concern them. Defects are classified by dimension.</p>
             <table>
                 <thead><tr><th>Dimension</th><th>Defect</th><th>Typical simulation question</th></tr></thead>
@@ -98,7 +109,7 @@
             <span class="eq">c<sub>v</sub> &asymp; exp( &minus;E<sub>f</sub> / k<sub>B</sub>T ) &nbsp; (times a vibrational-entropy factor)</span>
             <p>Because the formation energy <em>E</em><sub>f</sub> of a vacancy is of order 1 eV in many metals, equilibrium vacancy fractions near the melting point are about 10<sup>&minus;4</sup> to 10<sup>&minus;3</sup> and fall steeply on cooling. Computing <em>E</em><sub>f</sub> from DFT or an interatomic potential is one of the most common first tasks in atomistic modelling.</p>
 
-            <h2 id="supercell">6. Building supercells</h2>
+            <h2 id="supercell">6. Building supercells<a class="anchor" href="#supercell" aria-label="Link to this section">#</a></h2>
             <p>A simulation cell cannot be infinite, so a <strong>supercell</strong> is built by repeating the unit cell <em>n</em><sub>1</sub>&times;<em>n</em><sub>2</sub>&times;<em>n</em><sub>3</sub> times and then modifying it, for example by removing one atom to create a vacancy. Because the supercell is itself periodically repeated, the defect interacts with its own periodic images. The artefact shrinks as the cell grows, and the cost grows too, so supercell size is a convergence parameter (see the convergence section of the <a href="density-functional-theory.html">density functional theory</a> page).</p>
             <p>The defect concentration implied by a single vacancy in a <em>n</em>&times;<em>n</em>&times;<em>n</em> fcc supercell is 1/(4<em>n</em>&sup3;):</p>
             <table>
@@ -119,7 +130,7 @@ cell = bulk("Cu", "fcc", a=3.61, cubic=True).repeat((4, 4, 4))   # 256 atoms
 del cell[0]                                                      # one vacancy: 255 atoms
 print(len(cell), cell.get_volume())</code></pre>
 
-            <h2 id="pbc">7. Periodic boundary conditions</h2>
+            <h2 id="pbc">7. Periodic boundary conditions<a class="anchor" href="#pbc" aria-label="Link to this section">#</a></h2>
             <p>With <strong>periodic boundary conditions</strong> (PBC) the cell is surrounded by an infinite array of copies of itself. An atom that leaves through one face re-enters through the opposite face, so the simulation has no surfaces and a small number of atoms mimics bulk. Follow the highlighted atom in the figure: it leaves on the right and reappears on the left.</p>
             <figure>
                 <img src="../assets/animations/periodic-boundary.svg" alt="Animation showing atoms leaving a simulation cell on one side and re-entering on the opposite side">
@@ -138,13 +149,13 @@ print(len(cell), cell.get_volume())</code></pre>
                 <li><strong>Compatibility of the defect with the box.</strong> A grain boundary must be compatible with the periodicity in the plane, and a single dislocation cannot be placed in a fully periodic cell because it would leave a net Burgers vector; dislocation dipoles or quadrupoles are used instead, so that opposite dislocations cancel.</li>
             </ul>
 
-            <h2 id="surfaces">8. Surfaces and interfaces</h2>
+            <h2 id="surfaces">8. Surfaces and interfaces<a class="anchor" href="#surfaces" aria-label="Link to this section">#</a></h2>
             <p>To model a surface, periodicity is kept in two directions and broken in the third by adding a <strong>vacuum layer</strong>. This is called a <em>slab</em> model. The slab must be thick enough that the two surfaces do not interact (the middle layers should look like bulk), and the vacuum must be wide enough, often 10 &Aring; or more, that neighbouring slabs do not interact through the vacuum. Surface energy follows from</p>
             <span class="eq">&gamma; = ( E<sub>slab</sub> &minus; N E<sub>bulk</sub> ) / (2A)</span>
             <p>where <em>E</em><sub>bulk</sub> is the energy per atom of the bulk crystal, <em>N</em> the number of atoms in the slab, <em>A</em> the surface area and the factor 2 counts both faces. Using the same computational settings for the slab and the bulk reference is essential, otherwise numerical differences swamp the small difference being measured.</p>
             <p>For <strong>grain boundaries</strong>, two crystals with relative misorientation are joined. Geometric descriptions such as the <em>coincidence site lattice</em> (&Sigma;) count how many lattice points of the two grains coincide: low-&Sigma; boundaries (for example the &Sigma;3 coherent twin) have high symmetry and low energy. A fully periodic cell contains <em>two</em> boundaries (the second appears where the two grains meet across the periodic boundary), so the excess energy is divided by twice the area. Many initial atomic arrangements (rigid-body translations, atom deletion) should be relaxed and the lowest-energy result kept, because boundary structure is a global-optimisation problem.</p>
 
-            <h2 id="tools">9. Tools and file formats</h2>
+            <h2 id="tools">9. Tools and file formats<a class="anchor" href="#tools" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Building and manipulating:</strong> ASE and pymatgen (Python), Atomsk (command line, good for dislocations and polycrystals), VESTA (visual).</li>
                 <li><strong>Visualisation and analysis:</strong> OVITO (defect and structure identification such as common neighbour analysis and dislocation extraction), VESTA, VMD.</li>
@@ -152,7 +163,7 @@ print(len(cell), cell.get_volume())</code></pre>
                 <li><strong>Symmetry analysis:</strong> spglib (used inside ASE and pymatgen) identifies space groups and primitive cells from coordinates.</li>
             </ul>
 
-            <h2 id="check">10. Check your understanding</h2>
+            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>How many atoms are in a 5&times;5&times;5 bcc supercell, and what is the concentration from one vacancy?</summary>
                 <p>The conventional bcc cell holds 2 atoms, so the supercell has 2 &times; 125 = 250 atoms. One vacancy gives 1/250 = 0.4%.</p>
@@ -166,7 +177,7 @@ print(len(cell), cell.get_volume())</code></pre>
                 <p>Whether the slab and the bulk reference were computed with identical settings (cutoff, <em>k</em>-point density, number of layers, smearing). Inconsistent settings are the usual cause, because the quantity being computed is a small difference of two large energies.</p>
             </details>
 
-            <h2 id="refs">11. References and further reading</h2>
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley.</li>
                 <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Saunders.</li>
@@ -186,8 +197,9 @@ print(len(cell), cell.get_volume())</code></pre>
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>

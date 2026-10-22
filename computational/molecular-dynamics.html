@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Molecular Dynamics - MiBeM</title>
     <meta name="description" content="Integrators, interatomic potentials, thermostats, workflow and analysis in classical molecular dynamics of materials.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/molecular-dynamics.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Molecular Dynamics - MiBeM">
+    <meta property="og:description" content="Integrators, interatomic potentials, thermostats, workflow and analysis in classical molecular dynamics of materials.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/molecular-dynamics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a></nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="monte-carlo-methods.html">Next topic</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -34,8 +45,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science &middot; Topic 6</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 6 of 11</span><span>&middot;</span><span>about 11 min read</span></p>
             <h1>Molecular dynamics</h1>
             <p class="lead">Molecular dynamics (MD) is the closest thing to a movie of matter: place atoms in a box, compute the force on each from an interatomic potential, move them a tiny step, and repeat a few million times. Averages over the trajectory give thermodynamic and transport properties, and the pictures show mechanisms.</p>
 
@@ -49,7 +60,7 @@
                 </ul>
             </div>
 
-            <h2 id="idea">1. The idea</h2>
+            <h2 id="idea">1. The idea<a class="anchor" href="#idea" aria-label="Link to this section">#</a></h2>
             <p>Classical MD treats atoms as point masses that obey Newton&rsquo;s second law under forces derived from a potential energy function <em>U</em> of all the positions:</p>
             <span class="eq">m<sub>i</sub> d&sup2;r<sub>i</sub>/dt&sup2; = F<sub>i</sub> = &minus;&nabla;<sub>i</sub> U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
             <p>There are three ingredients: a <strong>potential</strong> that supplies the forces, an <strong>integrator</strong> that advances the positions and velocities, and the <strong>conditions</strong> (cell, boundaries, temperature, pressure). Starting from initial positions and random velocities, the trajectory samples the ensemble defined by those conditions (see <a href="statistical-mechanics.html">statistical mechanics</a>). The following simulation shows a two-dimensional crystal of Lennard-Jones atoms being heated: atoms start vibrating about lattice sites, then the lattice loses order and atoms begin to wander.</p>
@@ -58,14 +69,14 @@
                 <figcaption>A real molecular dynamics run: 144 atoms interacting through the Lennard-Jones potential in two dimensions, periodic boundaries, temperature ramped from low to high (reduced units). Colour shows how far each atom has moved: blue atoms stay near their sites, red atoms have travelled.</figcaption>
             </figure>
 
-            <h2 id="integration">2. Integrating the equations</h2>
+            <h2 id="integration">2. Integrating the equations<a class="anchor" href="#integration" aria-label="Link to this section">#</a></h2>
             <p>A good integrator should be cheap (one force evaluation per step, because forces dominate the cost), time-reversible and <em>symplectic</em>, so that the energy does not drift over long runs. The standard choice is the <strong>velocity-Verlet</strong> algorithm. With time step &Delta;<em>t</em>:</p>
             <span class="eq">v(t + &Delta;t/2) = v(t) + F(t) &Delta;t / 2m<br>r(t + &Delta;t) = r(t) + v(t + &Delta;t/2) &Delta;t<br>compute F(t + &Delta;t) from the new positions<br>v(t + &Delta;t) = v(t + &Delta;t/2) + F(t + &Delta;t) &Delta;t / 2m</span>
             <p>Its error per step is of order &Delta;<em>t</em><sup>3</sup>, but its structure preserves a nearby &ldquo;shadow&rdquo; energy, so the total energy fluctuates slightly without drifting if &Delta;<em>t</em> is small enough. Trajectories themselves are chaotic: two runs that start a hair apart diverge exponentially, so individual trajectories are not reproducible over long times, but statistical averages are.</p>
             <h3>Choosing the time step</h3>
             <p>The step must resolve the fastest motion in the system, roughly one-tenth to one-twentieth of the shortest vibrational period. Metals with embedded-atom potentials commonly use 1 to 5 fs; systems with light atoms (hydrogen) or stiff bonds need 0.5 fs or less. The practical test is to run in the NVE ensemble and check that the total energy is conserved: a steady drift or large fluctuations mean the step is too long, the cutoff is too abrupt or the potential is not smooth. Each step is 10<sup>&minus;15</sup> s, so a nanosecond needs 10<sup>6</sup> steps and a microsecond 10<sup>9</sup>.</p>
 
-            <h2 id="potentials">3. Interatomic potentials</h2>
+            <h2 id="potentials">3. Interatomic potentials<a class="anchor" href="#potentials" aria-label="Link to this section">#</a></h2>
             <p>The potential is a model of the Born&ndash;Oppenheimer energy surface (see <a href="density-functional-theory.html">DFT</a>). The faster the potential, the simpler its functional form and the more physics it leaves out. The simplest, the <strong>Lennard-Jones</strong> pair potential, is a good model for noble gases and a useful teaching and testing tool:</p>
             <span class="eq">U(r) = 4&epsilon; [ (&sigma;/r)<sup>12</sup> &minus; (&sigma;/r)<sup>6</sup> ], &nbsp;&nbsp; minimum at r = 2<sup>1/6</sup>&sigma;, depth &epsilon;</span>
             <table>
@@ -92,10 +103,10 @@
             </ul>
             <p>Repositories such as the NIST interatomic potentials repository and OpenKIM provide published potentials with test results. Using a potential outside the conditions for which it was fitted is the most common source of misleading MD results.</p>
 
-            <h2 id="efficiency">4. Neighbour lists and cost</h2>
+            <h2 id="efficiency">4. Neighbour lists and cost<a class="anchor" href="#efficiency" aria-label="Link to this section">#</a></h2>
             <p>Short-range potentials are truncated at a cutoff <em>r</em><sub>c</sub>, so each atom interacts with the neighbours within it. Checking every pair would scale as <em>N</em><sup>2</sup>. Instead a <strong>neighbour list</strong> (Verlet list) records atoms within <em>r</em><sub>c</sub> plus a skin distance and is rebuilt only every few steps, using spatial <em>cell lists</em> to find candidates quickly; the cost per step then scales as <em>N</em>. Large runs divide space into domains handled by different processors (domain decomposition, with MPI) and exchange atoms near the domain edges, so billions of atoms are feasible on supercomputers. Long-range Coulomb forces use Ewald summation or particle-mesh methods (PPPM, PME), scaling as <em>N</em> log <em>N</em>.</p>
 
-            <h2 id="control">5. Controlling temperature and pressure</h2>
+            <h2 id="control">5. Controlling temperature and pressure<a class="anchor" href="#control" aria-label="Link to this section">#</a></h2>
             <p>With no control the simulation conserves energy (NVE). To model an experiment at constant temperature or pressure, a thermostat or barostat is added. The algorithms differ in whether they produce the correct ensemble.</p>
             <table>
                 <thead><tr><th>Method</th><th>Controls</th><th>Correct ensemble?</th><th>Note</th></tr></thead>
@@ -110,7 +121,7 @@
             </table>
             <p>Thermostat strength matters: strong coupling distorts the natural dynamics, so for transport coefficients the system is equilibrated with a thermostat and then run in NVE.</p>
 
-            <h2 id="workflow">6. Workflow</h2>
+            <h2 id="workflow">6. Workflow<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
             <ol>
                 <li><strong>Build the structure</strong> and cell (see <a href="crystal-structure-and-periodic-cells.html">crystal structures and periodic cells</a>), with box edges at least twice the cutoff.</li>
                 <li><strong>Minimise the energy</strong> (conjugate gradient or FIRE) to remove overlaps and high forces before dynamics begin.</li>
@@ -120,7 +131,7 @@
                 <li><strong>Analyse</strong> and estimate uncertainties from independent runs or block averages.</li>
             </ol>
 
-            <h2 id="analysis">7. Analysis</h2>
+            <h2 id="analysis">7. Analysis<a class="anchor" href="#analysis" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Structure.</strong> Radial distribution function <em>g</em>(<em>r</em>) and coordination numbers; <em>common neighbour analysis</em> or polyhedral template matching labels each atom as fcc, bcc, hcp or other, revealing stacking faults, twins and grain boundaries; the centrosymmetry parameter highlights defects.</li>
                 <li><strong>Defects.</strong> The dislocation extraction algorithm (DXA in OVITO) finds dislocation lines and Burgers vectors; Wigner&ndash;Seitz analysis counts vacancies and interstitials after radiation damage.</li>
@@ -129,10 +140,10 @@
                 <li><strong>Thermodynamics.</strong> Melting temperature by two-phase coexistence (solid and liquid in one box: the interface advances toward melting or freezing depending on temperature); free energies by thermodynamic integration.</li>
             </ul>
 
-            <h2 id="applications">8. Applications in materials</h2>
+            <h2 id="applications">8. Applications in materials<a class="anchor" href="#applications" aria-label="Link to this section">#</a></h2>
             <p>MD is strongest where atomic mechanisms control behaviour on nanosecond time scales: tensile and compression tests of nanowires and nanopillars; nanoindentation; dislocation nucleation and motion at interfaces; grain-boundary sliding and migration; dislocation&ndash;precipitate and dislocation&ndash;solute interaction; crack propagation and brittle&ndash;ductile behaviour at a crack tip; shock compression; radiation-damage cascades; melting, solidification and nucleation of simple systems; diffusion in liquids and fast-diffusion solids; thermal conductivity of nanostructures.</p>
 
-            <h2 id="limits">9. Limits</h2>
+            <h2 id="limits">9. Limits<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Time scale.</strong> Nanoseconds to microseconds. Processes governed by rare events with barriers much above <em>k</em><sub>B</sub><em>T</em> are not reached directly.</li>
                 <li><strong>Strain rate.</strong> Deformation is typically driven at 10<sup>7</sup> to 10<sup>10</sup> s<sup>&minus;1</sup>, some ten orders of magnitude faster than a tensile test, and flow stresses are correspondingly high. Rate effects must be considered before comparing with experiment.</li>
@@ -141,7 +152,7 @@
                 <li><strong>Classical nuclei.</strong> Quantum effects (zero-point energy, tunnelling of hydrogen) are neglected, and classical heat capacity is wrong at low temperature.</li>
             </ul>
 
-            <h2 id="lammps">10. A minimal input</h2>
+            <h2 id="lammps">10. A minimal input<a class="anchor" href="#lammps" aria-label="Link to this section">#</a></h2>
             <p>LAMMPS is the most widely used open-source MD code. This input equilibrates a 4000-atom copper crystal at 300 K and zero pressure with an EAM potential (the potential file ships with the program):</p>
 <pre><code>units           metal
 boundary        p p p
@@ -161,7 +172,7 @@ thermo          100
 run             10000</code></pre>
             <p>In LAMMPS &ldquo;metal&rdquo; units, distance is in &Aring;, energy in eV, time in ps and pressure in bar. The numbers 0.1 and 1.0 on the <code>npt</code> line are the temperature and pressure damping times in ps.</p>
 
-            <h2 id="check">11. Check your understanding</h2>
+            <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>A NVE run shows the total energy rising steadily. List three things to check.</summary>
                 <p>(1) The time step may be too large for the fastest vibration. (2) The potential or its cutoff may be discontinuous, so the force jumps at <em>r</em><sub>c</sub> (use a smoothly truncated or shifted form). (3) A neighbour-list skin that is too small can cause missed interactions when atoms move; also check for overlapping atoms in the starting structure.</p>
@@ -175,7 +186,7 @@ run             10000</code></pre>
                 <p>No. Strain rates in MD are far higher than in experiments, and nanoscale samples have few pre-existing dislocation sources, so high stresses are expected. Compare like with like (rate, size, defect content) and check whether the potential reproduces stacking-fault and surface energies, which control the mechanism.</p>
             </details>
 
-            <h2 id="refs">12. References and further reading</h2>
+            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Allen, M. P. and Tildesley, D. J., <em>Computer Simulation of Liquids</em>, Oxford University Press.</li>
                 <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press.</li>
@@ -199,8 +210,9 @@ run             10000</code></pre>
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>

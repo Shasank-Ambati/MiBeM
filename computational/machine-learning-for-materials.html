@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Learning for Materials - MiBeM</title>
     <meta name="description" content="Data, descriptors, models, validation, uncertainty, machine-learned interatomic potentials and active learning for materials science.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/machine-learning-for-materials.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Machine Learning for Materials - MiBeM">
+    <meta property="og:description" content="Data, descriptors, models, validation, uncertainty, machine-learned interatomic potentials and active learning for materials science.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/machine-learning-for-materials.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a></nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -36,8 +47,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science &middot; Topic 11</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Data</span><span>Topic 11 of 11</span><span>&middot;</span><span>about 15 min read</span></p>
             <h1>Machine learning for materials</h1>
             <p class="lead">Machine learning (ML) fits flexible functions to data. In materials science it supplies fast surrogates for expensive simulations, extracts structure&ndash;property relationships from experiments, and guides which calculation or experiment to do next. It interpolates well and extrapolates badly, and most of the craft lies in knowing the difference.</p>
 
@@ -51,7 +62,7 @@
                 </ul>
             </div>
 
-            <h2 id="role">1. Where machine learning fits</h2>
+            <h2 id="role">1. Where machine learning fits<a class="anchor" href="#role" aria-label="Link to this section">#</a></h2>
             <p>The methods in the earlier topics are built from physical laws, which give reliable predictions but at a computational cost that limits how many materials, structures or conditions can be examined. ML trades some of that generality for speed: it learns a mapping from inputs to outputs from examples, then evaluates it in microseconds. The main uses in materials are:</p>
             <ul>
                 <li><strong>Property prediction.</strong> Predict a property (formation energy, band gap, strength, hardness, fatigue life) from composition, structure or processing history.</li>
@@ -62,7 +73,7 @@
             </ul>
             <p>All of these rely on the premise that similar inputs give similar outputs. They work where the data cover the question and fail where they do not. The &ldquo;learning&rdquo; is statistics, not understanding, so ML is best treated as one more tool beside the physical models, and its predictions as hypotheses to test.</p>
 
-            <h2 id="workflow">2. The workflow</h2>
+            <h2 id="workflow">2. The workflow<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
             <ol>
                 <li><strong>Define the target</strong> and the decision it informs: what accuracy is useful, and what error would be harmful?</li>
                 <li><strong>Collect and clean data</strong> (Section 3), documenting its origin.</li>
@@ -74,7 +85,7 @@
             </ol>
             <p><strong>Supervised learning</strong> (input&ndash;output examples) covers regression (continuous property) and classification (phase present or not, stable or unstable). <strong>Unsupervised learning</strong> finds structure without labels: clustering of microstructures, dimensionality reduction (PCA, t-SNE, UMAP) to visualise a composition space or a set of atomic environments.</p>
 
-            <h2 id="data">3. Data</h2>
+            <h2 id="data">3. Data<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
             <p>Data are almost always the limiting factor. Computed data are abundant and consistent (Materials Project, OQMD, AFLOW, JARVIS, NOMAD; see the <a href="introduction.html#data">introduction</a>), with hundreds of thousands of DFT entries; experimental data are scarcer, noisier and heterogeneous, with typical industrial datasets of tens to thousands of samples.</p>
             <ul>
                 <li><strong>Small data.</strong> A few hundred points constrain a model to be simple; complex models memorise. Use strong prior information (physics-based features), simple models and cross-validation.</li>
@@ -84,7 +95,7 @@
                 <li><strong>Provenance.</strong> Store raw data, code and software versions so that results can be reproduced and data reused (FAIR principles: findable, accessible, interoperable, reusable).</li>
             </ul>
 
-            <h2 id="features">4. Descriptors</h2>
+            <h2 id="features">4. Descriptors<a class="anchor" href="#features" aria-label="Link to this section">#</a></h2>
             <p>A model needs each material as a fixed-length vector of numbers, the <strong>descriptor</strong> or <strong>feature</strong> vector. Good descriptors encode the physics that matters; they are the main way prior knowledge enters.</p>
             <table>
                 <thead><tr><th>Descriptor type</th><th>Examples</th><th>When to use</th></tr></thead>
@@ -98,7 +109,7 @@
             </table>
             <p>The libraries matminer, pymatgen and DScribe compute many of these. Two rules help: features must be <em>invariant</em> to things that should not matter (atom labelling, rotation, translation, choice of unit cell), and the number of features should be small compared with the number of samples, or regularisation must control it.</p>
 
-            <h2 id="models">5. Models</h2>
+            <h2 id="models">5. Models<a class="anchor" href="#models" aria-label="Link to this section">#</a></h2>
             <table>
                 <thead><tr><th>Model</th><th>Suited to</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
                 <tbody>
@@ -112,7 +123,7 @@
             </table>
             <p>A sensible rule is to begin with the simplest model that could work and a trivial baseline (always predicting the mean, or a physical rule of thumb), and to add complexity only while the validation error keeps improving.</p>
 
-            <h2 id="validation">6. Validation</h2>
+            <h2 id="validation">6. Validation<a class="anchor" href="#validation" aria-label="Link to this section">#</a></h2>
             <p>The goal of a model is accuracy on <em>new</em> cases, not on the data it was trained on. A flexible model can fit its training data perfectly and still predict poorly, as the animation shows: a straight line is too simple (<em>underfitting</em>, high bias), a moderate polynomial captures the trend, and a high-degree polynomial threads through every noisy point but oscillates wildly in between (<em>overfitting</em>, high variance).</p>
             <figure>
                 <img src="../assets/animations/ml-overfitting.svg" alt="Animation showing a polynomial fit going from underfit to good fit to overfit as the degree increases">
@@ -128,10 +139,10 @@
             <h3>Metrics and diagnostics</h3>
             <p>Report mean absolute error (MAE, in the units of the property), RMSE and R<sup>2</sup>, and always compare with a baseline model; a parity plot (predicted against measured) shows where the errors are; a <strong>learning curve</strong> (error against training-set size) shows whether more data would help or whether the model or descriptors are the limit. Absolute accuracy matters less than accuracy relative to the spread in the data and to the difference you need to resolve.</p>
 
-            <h2 id="uncertainty">7. Uncertainty</h2>
+            <h2 id="uncertainty">7. Uncertainty<a class="anchor" href="#uncertainty" aria-label="Link to this section">#</a></h2>
             <p>A prediction without an uncertainty is hard to act on. Two kinds exist: <em>aleatoric</em> (noise in the data, irreducible) and <em>epistemic</em> (lack of data in this region, reducible). Methods include the predictive variance of Gaussian processes, the spread of an <strong>ensemble</strong> of models trained on resampled data or with different initialisations, dropout-based estimates, and <strong>conformal prediction</strong>, which gives intervals with a guaranteed coverage under mild assumptions. Check <em>calibration</em>: among predictions with 90% intervals, about 90% of true values should fall inside. The <strong>applicability domain</strong>, the region of descriptor space where training data exist, should be part of the model: a prediction far from all training points is a guess, whatever the number looks like.</p>
 
-            <h2 id="potentials">8. Machine-learned interatomic potentials</h2>
+            <h2 id="potentials">8. Machine-learned interatomic potentials<a class="anchor" href="#potentials" aria-label="Link to this section">#</a></h2>
             <p>The most successful use of ML in atomistic modelling is the <strong>machine-learned interatomic potential</strong> (MLIP). It writes the energy of a configuration as a sum of atomic contributions, each a learned function of the neighbourhood of an atom within a cutoff, and trains on DFT energies, forces and stresses:</p>
             <span class="eq">E = &Sigma;<sub>i</sub> &epsilon;( descriptor of the environment of atom i ), &nbsp;&nbsp; F<sub>i</sub> = &minus;&nabla;<sub>i</sub> E</span>
             <p>Because forces come from differentiating a single energy function, energy is conserved. The function must be invariant to translation, rotation and swapping identical atoms, which is built into the descriptors (SOAP, symmetry functions, atomic cluster expansion) or into the architecture (equivariant message-passing networks such as NequIP and MACE). Families include the Behler&ndash;Parrinello neural-network potentials, Gaussian approximation potentials, moment tensor potentials, SNAP, and equivariant graph networks.</p>
@@ -153,11 +164,11 @@
             </ul>
             <p><strong>Universal (foundation) potentials</strong> such as M3GNet, CHGNet and MACE-MP-0 were trained on large databases of DFT relaxations covering most of the periodic table, and give a reasonable first answer for almost any inorganic system. A known limitation is systematic softening of the energy surface (underestimated vibration frequencies and barriers), so results should be checked against DFT or the potential fine-tuned on a small set of system-specific calculations.</p>
 
-            <h2 id="active">9. Active learning and design</h2>
+            <h2 id="active">9. Active learning and design<a class="anchor" href="#active" aria-label="Link to this section">#</a></h2>
             <p>When evaluating the true function (an experiment, a DFT calculation) is expensive, ML can decide <em>what to evaluate next</em>. <strong>Bayesian optimisation</strong> fits a surrogate with uncertainty (typically a Gaussian process) to the data collected so far and picks the next point by maximising an <em>acquisition function</em> that balances exploitation (high predicted value) and exploration (high uncertainty), such as expected improvement or upper confidence bound. It can find good alloys or process settings in tens of experiments where a grid would need thousands. Multi-objective versions search for the <strong>Pareto front</strong> of trade-offs (for example strength against ductility). Combined with automation, these loops form &ldquo;self-driving laboratories&rdquo;. The same logic improves training sets for potentials and surrogates (Section 8).</p>
             <p>Design is an <em>extrapolation</em> task: the goal is a material better than those in the data. Treat the predictions as candidates to verify by experiment or by a physics-based calculation, not as results.</p>
 
-            <h2 id="physics">10. Combining with physics</h2>
+            <h2 id="physics">10. Combining with physics<a class="anchor" href="#physics" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Physics-based features</strong> (thermodynamic phase fractions, driving forces, computed diffusivities) as model inputs improve accuracy on small datasets.</li>
                 <li><strong>Hybrid models</strong> let ML correct the error of a physical model (a residual) or supply a term inside it, for example a flow stress inside a finite-element model, so the physical structure keeps the extrapolation sensible.</li>
@@ -166,7 +177,7 @@
                 <li><strong>Interpretation.</strong> Feature importances, partial-dependence plots and SHAP values indicate which inputs drive predictions. They show association learned from the data, not causation, and should be compared against known mechanisms.</li>
             </ul>
 
-            <h2 id="pitfalls">11. Common pitfalls</h2>
+            <h2 id="pitfalls">11. Common pitfalls<a class="anchor" href="#pitfalls" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Data leakage.</strong> Information from the test set influences training: near-duplicates across splits, normalisation computed on all data before splitting, features that are functions of the target.</li>
                 <li><strong>Tuning on the test set.</strong> Repeated peeking turns the test set into a validation set; keep a final untouched set.</li>
@@ -177,7 +188,7 @@
                 <li><strong>Irreproducibility.</strong> Unrecorded random seeds, software versions or data versions.</li>
             </ul>
 
-            <h2 id="code">12. A short program</h2>
+            <h2 id="code">12. A short program<a class="anchor" href="#code" aria-label="Link to this section">#</a></h2>
             <p>A random-forest regression validated with grouped cross-validation and compared with a mean-value baseline, using scikit-learn. <code>X</code>, <code>y</code> and <code>groups</code> come from your own dataset: <code>groups</code> gives the chemical family or alloy system of each row so that related samples are never split between training and testing.</p>
 <pre><code>import numpy as np
 from sklearn.ensemble import RandomForestRegressor
@@ -192,7 +203,7 @@ print("model MAE   :", mean_absolute_error(y, pred))
 print("baseline MAE:", mean_absolute_error(y, np.full_like(y, y.mean())))</code></pre>
             <p>Try replacing <code>GroupKFold</code> with ordinary shuffled k-fold and compare: if the error drops sharply, your data contain many near-duplicates, and the grouped score is the honest one.</p>
 
-            <h2 id="check">13. Check your understanding</h2>
+            <h2 id="check">13. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>A model trained on 50 000 database entries reports R<sup>2</sup> = 0.98 with a random 80/20 split. Why might it still fail on a new compound?</summary>
                 <p>The database contains many closely related compositions, so a random split puts similar entries in training and test sets, and the score measures interpolation among near-duplicates. A new chemical family lies outside the training distribution. Test with grouped or leave-one-cluster-out splits.</p>
@@ -206,7 +217,7 @@ print("baseline MAE:", mean_absolute_error(y, np.full_like(y, y.mean())))</code>
                 <p>The model is overfitting. Options: reduce model complexity, add regularisation, increase the amount of data, use better descriptors, stop training earlier, or average an ensemble.</p>
             </details>
 
-            <h2 id="refs">14. References and further reading</h2>
+            <h2 id="refs">14. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Butler, K. T., Davies, D. W., Cartwright, H., Isayev, O. and Walsh, A., Machine learning for molecular and materials science, <em>Nature</em> 559, 547 (2018).</li>
                 <li>Schmidt, J., Marques, M. R. G., Botti, S. and Marques, M. A. L., Recent advances and applications of machine learning in solid-state materials science, <em>npj Comput. Mater.</em> 5, 83 (2019).</li>
@@ -234,8 +245,9 @@ print("baseline MAE:", mean_absolute_error(y, np.full_like(y, y.mean())))</code>
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>

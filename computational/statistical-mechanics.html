@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistical Mechanics for Simulation - MiBeM</title>
     <meta name="description" content="Microstates, ensembles, the partition function, free energy, ergodicity and error estimation for atomistic simulation.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/statistical-mechanics.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Statistical Mechanics for Simulation - MiBeM">
+    <meta property="og:description" content="Microstates, ensembles, the partition function, free energy, ergodicity and error estimation for atomistic simulation.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/statistical-mechanics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a></nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="thermodynamics-and-calphad.html">Next topic</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -33,8 +44,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science &middot; Topic 3</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 3 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
             <h1>Statistical mechanics for simulation</h1>
             <p class="lead">A simulation follows a few thousand atoms; a material has 10<sup>23</sup>. Statistical mechanics is the bridge: it says which averages over the small system reproduce the temperature, pressure, free energy and transport coefficients of the large one.</p>
 
@@ -49,13 +60,13 @@
                 </ul>
             </div>
 
-            <h2 id="bridge">1. From atoms to properties</h2>
+            <h2 id="bridge">1. From atoms to properties<a class="anchor" href="#bridge" aria-label="Link to this section">#</a></h2>
             <p>A <strong>microstate</strong> is a complete specification of the system at the atomic level: all positions and momenta for a classical system, or a full quantum state. A <strong>macrostate</strong> is what an experiment sees: a few variables such as temperature <em>T</em>, pressure <em>p</em>, volume <em>V</em>, number of atoms <em>N</em> and composition. Enormously many microstates correspond to one macrostate, and the macroscopic property is the average of the microscopic quantity over those microstates, weighted by how probable each is.</p>
             <p>For <em>N</em> classical atoms the microstate is a point in <strong>phase space</strong> of 6<em>N</em> dimensions, (<strong>r</strong><sub>1</sub>, &hellip;, <strong>r</strong><sub><em>N</em></sub>, <strong>p</strong><sub>1</sub>, &hellip;, <strong>p</strong><sub><em>N</em></sub>). The total energy as a function of that point is the Hamiltonian,</p>
             <span class="eq">H(r, p) = &Sigma;<sub>i</sub> |p<sub>i</sub>|&sup2; / 2m<sub>i</sub> + U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
             <p>Two kinds of average appear in simulation. An <strong>ensemble average</strong> &lang;<em>A</em>&rang; weights every phase-space point by its probability. A <strong>time average</strong> follows one trajectory and averages over time. Molecular dynamics produces time averages; Monte Carlo produces samples that estimate ensemble averages directly. The two agree if the system is <em>ergodic</em> (Section 8).</p>
 
-            <h2 id="ensembles">2. Ensembles</h2>
+            <h2 id="ensembles">2. Ensembles<a class="anchor" href="#ensembles" aria-label="Link to this section">#</a></h2>
             <p>An <strong>ensemble</strong> is the set of microstates consistent with a set of fixed macroscopic conditions. Which one to use depends on what the experiment holds constant and what the algorithm can impose.</p>
             <table>
                 <thead><tr><th>Ensemble</th><th>Fixed</th><th>Fluctuates</th><th>Potential that is minimised at equilibrium</th><th>Typical use</th></tr></thead>
@@ -68,7 +79,7 @@
             </table>
             <p>In the thermodynamic limit (large <em>N</em>) the ensembles give the same averages. Fluctuations of an extensive quantity scale as 1/&radic;<em>N</em> relative to its mean, so they are tiny for a macroscopic sample but visible in a box of a few hundred atoms, and they differ between ensembles. A well-posed simulation states which ensemble it samples.</p>
 
-            <h2 id="boltzmann">3. The Boltzmann distribution</h2>
+            <h2 id="boltzmann">3. The Boltzmann distribution<a class="anchor" href="#boltzmann" aria-label="Link to this section">#</a></h2>
             <p>For a system in contact with a heat bath at temperature <em>T</em> (canonical ensemble), the probability of finding it in a microstate of energy <em>E</em><sub><em>i</em></sub> is</p>
             <span class="eq">p<sub>i</sub> = exp(&minus;E<sub>i</sub> / k<sub>B</sub>T) / Z, &nbsp;&nbsp; Z = &Sigma;<sub>i</sub> exp(&minus;E<sub>i</sub> / k<sub>B</sub>T)</span>
             <p>This single formula underlies Metropolis Monte Carlo, thermostatted molecular dynamics, transition-state theory and the equilibrium populations of defects and phases. Lower-energy states are more probable, but the number of states at each energy (the degeneracy) also counts: a high-energy level with many states can hold more total probability than a low-energy level with few. The balance between these two effects is the balance between energy and entropy.</p>
@@ -77,7 +88,7 @@
                 <figcaption>Populations of six equally spaced energy levels as temperature changes. The scale of &ldquo;hot&rdquo; and &ldquo;cold&rdquo; is set by the spacing &epsilon; compared with k<sub>B</sub>T.</figcaption>
             </figure>
 
-            <h2 id="partition">4. Partition function and examples</h2>
+            <h2 id="partition">4. Partition function and examples<a class="anchor" href="#partition" aria-label="Link to this section">#</a></h2>
             <p>The <strong>partition function</strong> <em>Z</em> is the sum above, and it generates the thermodynamics. With &beta; = 1/<em>k</em><sub>B</sub><em>T</em>:</p>
             <span class="eq">F = &minus;k<sub>B</sub>T ln Z, &nbsp; &lang;E&rang; = &minus;&part;(ln Z)/&part;&beta;, &nbsp; S = &minus;&part;F/&part;T, &nbsp; p = &minus;&part;F/&part;V</span>
             <p>If <em>Z</em> can be computed, everything follows. It can be computed exactly only for simple models, which are nevertheless the building blocks of larger ones.</p>
@@ -90,7 +101,7 @@
             <span class="eq">&lang;K&rang; = &frac12; N<sub>f</sub> k<sub>B</sub>T, &nbsp;&nbsp; N<sub>f</sub> = 3N &minus; 3 (for fixed total momentum; subtract further constraints)</span>
             <p>The instantaneous kinetic temperature fluctuates by a relative amount of order &radic;(2/<em>N</em><sub>f</sub>) in a small box, so a reading of a few percent away from the target in a 200-atom cell is normal, not an error.</p>
 
-            <h2 id="free-energy">5. Free energy and entropy</h2>
+            <h2 id="free-energy">5. Free energy and entropy<a class="anchor" href="#free-energy" aria-label="Link to this section">#</a></h2>
             <p>Phase stability, defect concentrations, solubility, nucleation barriers and reaction equilibria are governed by <em>free energies</em>, not energies. Free energies are harder to compute because they depend on the <em>volume</em> of phase space accessible, not just on averages of observables. In a simulation, regions of high entropy are visited often and are easy to see, but the free energy needs the absolute probability, which is ln <em>Z</em>, and <em>Z</em> is not an average of anything that is directly sampled.</p>
             <p>Contributions to the entropy of a material include <em>vibrational</em> (the main finite-temperature term in most solids), <em>configurational</em> (arrangement of atoms or vacancies on a lattice), <em>electronic</em> (important in metals) and <em>magnetic</em> (important in iron and its alloys, where it changes the relative stability of bcc and fcc). Neglecting the right one is a common reason that a 0 K energy ranking fails at the temperature of interest.</p>
             <h3>Methods for free-energy differences</h3>
@@ -102,18 +113,18 @@
                 <li><strong>Coexistence methods.</strong> Simulate two phases in one box and watch the interface move or stay still; the temperature at which it is stationary is the transition temperature.</li>
             </ul>
 
-            <h2 id="fluctuations">6. Properties from fluctuations</h2>
+            <h2 id="fluctuations">6. Properties from fluctuations<a class="anchor" href="#fluctuations" aria-label="Link to this section">#</a></h2>
             <p>Response functions are determined by fluctuations of the corresponding quantities at equilibrium. For example in the canonical ensemble,</p>
             <span class="eq">C<sub>V</sub> = ( &lang;E&sup2;&rang; &minus; &lang;E&rang;&sup2; ) / (k<sub>B</sub> T&sup2;)</span>
             <p>and in the isothermal&ndash;isobaric ensemble the isothermal compressibility follows from the variance of the volume, &kappa;<sub><em>T</em></sub> = (&lang;<em>V</em>&sup2;&rang; &minus; &lang;<em>V</em>&rang;&sup2;)/(<em>k</em><sub>B</sub><em>T</em>&lang;<em>V</em>&rang;). Thermal expansion comes from the cross-fluctuation of enthalpy and volume, and elastic constants from stress fluctuations. These formulae let one run produce several properties, but they converge slowly because they are variances; direct perturbation (apply a small strain and measure the response) is often more efficient.</p>
 
-            <h2 id="correlation">7. Correlation functions and transport</h2>
+            <h2 id="correlation">7. Correlation functions and transport<a class="anchor" href="#correlation" aria-label="Link to this section">#</a></h2>
             <p><strong>Structure.</strong> The radial distribution function <em>g</em>(<em>r</em>) is the probability, relative to a uniform gas, of finding an atom a distance <em>r</em> from another. Crystals give sharp peaks, liquids give damped oscillations that decay to 1, and amorphous solids lie between. Its Fourier transform is the structure factor <em>S</em>(<em>q</em>), directly comparable with diffraction. The coordination number is the integral of 4&pi;<em>r</em>&sup2;&rho;<em>g</em>(<em>r</em>) up to the first minimum.</p>
             <p><strong>Dynamics.</strong> Time-correlation functions measure how quickly the system forgets a state. Transport coefficients follow from them. The diffusion coefficient has two equivalent forms:</p>
             <span class="eq">Einstein: D = lim<sub>t&rarr;&infin;</sub> &lang;|r(t) &minus; r(0)|&sup2;&rang; / (6t) &nbsp;&nbsp;&nbsp; Green&ndash;Kubo: D = (1/3) &int;<sub>0</sub><sup>&infin;</sup> &lang;v(0)&middot;v(t)&rang; dt</span>
             <p>The mean-squared displacement (MSD) must be computed from unwrapped coordinates, and the slope fitted only in the linear (diffusive) regime, not the early ballistic regime where MSD &prop; <em>t</em>&sup2;. Viscosity and thermal conductivity have analogous Green&ndash;Kubo expressions (from stress and heat-current correlations), and these converge slowly.</p>
 
-            <h2 id="ergodicity">8. Ergodicity and sampling</h2>
+            <h2 id="ergodicity">8. Ergodicity and sampling<a class="anchor" href="#ergodicity" aria-label="Link to this section">#</a></h2>
             <p>A system is <strong>ergodic</strong> if, given enough time, a trajectory visits all accessible regions of phase space in proportion to their probability. Then the time average equals the ensemble average. Real simulations are finite, and several situations break this in practice:</p>
             <ul>
                 <li><strong>Rare events.</strong> A system with an energy barrier much larger than <em>k</em><sub>B</sub><em>T</em> can sit in one basin for longer than the run, so the average describes only that basin. With a typical attempt frequency of 10<sup>13</sup> s<sup>&minus;1</sup>, an atomic hop over a 1 eV barrier at 300 K occurs about once every 10<sup>4</sup> seconds (hours), compared with MD runs of nanoseconds, a gap of some thirteen orders of magnitude.</li>
@@ -122,7 +133,7 @@
             </ul>
             <p>Remedies are: run longer; start from several independent configurations and compare; use methods that sample differently (Monte Carlo with swap moves, replica exchange, which exchanges configurations between temperatures; metadynamics; accelerated dynamics); or use kinetic methods that model rare events explicitly (see the <a href="monte-carlo-methods.html">Monte Carlo</a> page).</p>
 
-            <h2 id="errors">9. Statistical error</h2>
+            <h2 id="errors">9. Statistical error<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
             <p>A simulated average is an estimate with an uncertainty, and a number without an error bar is incomplete. Successive configurations in an MD or MC run are <em>correlated</em>, so the number of independent samples is much smaller than the number of recorded frames. For <em>M</em> frames with correlation time &tau; (in units of the sampling interval), the standard error of the mean is approximately</p>
             <span class="eq">&sigma;<sub>mean</sub> &asymp; &sigma; &radic;( 2&tau; / M )</span>
             <p>where &sigma; is the standard deviation of the quantity. Practical ways to get it:</p>
@@ -133,7 +144,7 @@
             </ul>
             <p>Systematic errors (a poor potential, finite box, neglected quantum effects) are not reduced by longer runs and are usually larger than the statistical error. Report both kinds.</p>
 
-            <h2 id="check">10. Check your understanding</h2>
+            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>At what temperature is the excited state of a two-level defect with &epsilon; = 1 eV populated at 1%?</summary>
                 <p>Solve exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)/(1 + exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)) = 0.01, which gives &epsilon;/<em>k</em><sub>B</sub><em>T</em> &asymp; 4.6, so <em>T</em> &asymp; 11 600 K / 4.6 &asymp; 2 500 K (using 1 eV/<em>k</em><sub>B</sub> &asymp; 11 600 K). Even at high temperature the excited state stays rare for such a large gap.</p>
@@ -147,7 +158,7 @@
                 <p>Roughly <em>M</em>/(2&tau;) = 10<sup>6</sup>/(2&times;10<sup>3</sup>) = 500 independent samples, so the standard error is about &sigma;/&radic;500, not &sigma;/&radic;10<sup>6</sup>.</p>
             </details>
 
-            <h2 id="refs">11. References and further reading</h2>
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Chandler, D., <em>Introduction to Modern Statistical Mechanics</em>, Oxford University Press.</li>
                 <li>McQuarrie, D. A., <em>Statistical Mechanics</em>, University Science Books.</li>
@@ -167,8 +178,9 @@
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>

@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Introduction to Computational Materials Science - MiBeM</title>
     <meta name="description" content="Scales, methods, workflow, validation, software and data resources in computational materials science.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/introduction.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Introduction to Computational Materials Science - MiBeM">
+    <meta property="og:description" content="Scales, methods, workflow, validation, software and data resources in computational materials science.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/introduction.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav>
-            <a href="../index.html#topics">Topics</a>
-        </nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="crystal-structure-and-periodic-cells.html">Next topic</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -47,8 +56,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 1 of 11</span><span>&middot;</span><span>about 19 min read</span></p>
             <h1>Introduction to computational materials science</h1>
             <p class="lead">Computational materials science uses physical models and numerical methods to predict, explain and design the structure, processing and properties of materials. No single model covers every scale, so the field is a toolbox of methods, each valid over a limited range of length, time and chemistry.</p>
 
@@ -63,7 +72,7 @@
                 </ul>
             </div>
 
-            <h2 id="scope">1. Scope and purpose</h2>
+            <h2 id="scope">1. Scope and purpose<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
             <p>The central problem of materials science is the <em>processing&ndash;structure&ndash;properties&ndash;performance</em> chain: how a material is made determines its structure at every scale, structure determines properties, and properties determine how it performs in service. Computation can be applied to any link in this chain. In the forward direction it predicts properties from a given structure or composition. In the inverse direction it searches for compositions and processes that deliver a target property.</p>
 
             <h3>What simulation adds to experiment</h3>
@@ -80,7 +89,7 @@
             <h3>Integrated computational materials engineering</h3>
             <p><strong>ICME</strong> is the practice of linking models across scales, together with experiments and databases, to shorten the path from composition and process to component performance. The US Materials Genome Initiative (launched 2011) pushed the related idea of combining computation, experiment and data to cut the time needed to bring new materials to use.</p>
 
-            <h2 id="scales">2. Length and time scales</h2>
+            <h2 id="scales">2. Length and time scales<a class="anchor" href="#scales" aria-label="Link to this section">#</a></h2>
             <p>Material behaviour arises from structure at many scales at once: electrons bond atoms, atoms form defects, defects interact to form microstructure, and microstructure controls the bulk response. Cost grows steeply as a model resolves finer detail, so a method covers only a window of scales. The table summarises the windows; values are order-of-magnitude and depend on hardware and implementation.</p>
             <table>
                 <thead>
@@ -101,9 +110,9 @@
             </figure>
             <p>Two gaps matter in practice. First, atomistic time scales (up to microseconds) are many orders of magnitude shorter than the time scales of diffusion-controlled processing (seconds to hours). Second, atomistic strain rates are typically 10<sup>7</sup> s<sup>&minus;1</sup> or higher, against about 10<sup>&minus;3</sup> s<sup>&minus;1</sup> in a tensile test. Bridging these gaps is a main reason for coarse-grained, mesoscale and accelerated-dynamics methods.</p>
 
-            <h2 id="methods">3. Method families</h2>
+            <h2 id="methods">3. Method families<a class="anchor" href="#methods" aria-label="Link to this section">#</a></h2>
 
-            <h3 id="dft">3.1 Density functional theory (DFT)</h3>
+            <h3 id="dft">3.1 Density functional theory (DFT)<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h3>
             <p><strong>Basis.</strong> The Hohenberg&ndash;Kohn theorems (1964) show that the ground-state energy of an interacting electron system is a unique functional of the electron density, and the Kohn&ndash;Sham approach (1965) replaces the many-body problem by non-interacting electrons moving in an effective potential:</p>
             <span class="eq">[ &minus;&frac12;&nabla;&sup2; + v<sub>ext</sub>(r) + v<sub>H</sub>(r) + v<sub>xc</sub>(r) ] &psi;<sub>i</sub>(r) = &epsilon;<sub>i</sub> &psi;<sub>i</sub>(r),&nbsp;&nbsp; n(r) = &Sigma;<sub>i</sub> |&psi;<sub>i</sub>(r)|&sup2;</span>
             <p>Here <em>v</em><sub>ext</sub> is the nuclear potential, <em>v</em><sub>H</sub> the classical electron&ndash;electron (Hartree) term, and <em>v</em><sub>xc</sub> the exchange&ndash;correlation potential, which contains all the remaining many-body physics and is the one quantity that must be approximated. The equations are solved self-consistently because <em>n</em>(r) enters the potential that determines it.</p>
@@ -111,7 +120,7 @@
             <p><strong>Outputs.</strong> Total energies (hence formation energies, defect energies, surface and interface energies, migration barriers by nudged elastic band), forces and stresses (hence relaxed structures, elastic constants, phonons), electronic density of states and band structure, magnetic moments.</p>
             <p><strong>Cost and limits.</strong> Conventional Kohn&ndash;Sham DFT scales roughly with the cube of the system size, which limits cells to hundreds or a few thousand atoms. Standard GGA tends to underestimate band gaps of semiconductors and insulators, and treats strongly correlated systems poorly. Results are normally at 0 K and for perfect periodic cells, so finite-temperature and long-time behaviour need additional steps. Magnetism can decide the answer: LDA famously predicts the wrong ground-state structure of iron, which GGA corrects.</p>
 
-            <h3 id="md">3.2 Molecular dynamics (MD)</h3>
+            <h3 id="md">3.2 Molecular dynamics (MD)<a class="anchor" href="#md" aria-label="Link to this section">#</a></h3>
             <p><strong>Basis.</strong> Atoms are treated as classical particles that move according to Newton&rsquo;s equations under forces derived from an <em>interatomic potential</em> <em>U</em>:</p>
             <span class="eq">m<sub>i</sub> d&sup2;r<sub>i</sub>/dt&sup2; = F<sub>i</sub> = &minus;&nabla;<sub>i</sub> U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
             <p>The equations are integrated in small time steps (typically about 1 fs, shorter if light atoms such as hydrogen are involved; the step must resolve the fastest vibration). Statistical-mechanical ensembles are imposed with thermostats and barostats: NVE (constant energy), NVT (constant temperature) and NPT (constant temperature and pressure). Properties are time or ensemble averages over the trajectory.</p>
@@ -119,38 +128,38 @@
             <p><strong>Outputs.</strong> Diffusion coefficients from mean-squared displacement, thermal expansion, melting point, free-energy differences, elastic and thermal properties, dislocation and crack mechanisms, grain boundary structure and energy, radiation damage cascades.</p>
             <p><strong>Limits.</strong> The result is only as good as the potential, which may be wrong outside the data it was fitted to. Time scales stop at microseconds and strain rates are extreme. Electrons are absent, so electronic and magnetic effects are missing unless built into the potential.</p>
 
-            <h3 id="mc">3.3 Monte Carlo methods</h3>
+            <h3 id="mc">3.3 Monte Carlo methods<a class="anchor" href="#mc" aria-label="Link to this section">#</a></h3>
             <p>Monte Carlo (MC) samples configurations randomly instead of following physical trajectories. In <strong>Metropolis MC</strong> (1953), a trial change from state <em>a</em> to state <em>b</em> is accepted with probability</p>
             <span class="eq">P(a&rarr;b) = min[ 1, exp( &minus;(E<sub>b</sub> &minus; E<sub>a</sub>) / k<sub>B</sub>T ) ]</span>
             <p>so that the configurations visited follow the Boltzmann distribution. Because moves need not be physical, MC can equilibrate quantities that MD reaches too slowly, such as chemical ordering, segregation of solutes to interfaces, or composition in multicomponent alloys (swap moves). <strong>Kinetic Monte Carlo</strong> (kMC) instead picks events, such as an atom hopping into a vacancy, with rates from transition-state theory, and advances a physically meaningful clock; it reaches seconds or longer but needs a catalogue of possible events and their barriers, often taken from DFT. Lattice models such as the Ising model and cluster expansions, fitted to DFT energies, provide the energy function for many alloy MC studies.</p>
 
-            <h3 id="calphad">3.4 CALPHAD</h3>
+            <h3 id="calphad">3.4 CALPHAD<a class="anchor" href="#calphad" aria-label="Link to this section">#</a></h3>
             <p><strong>Basis.</strong> The CALPHAD (CALculation of PHAse Diagrams) method models the molar Gibbs energy of every phase as a function of temperature, pressure and composition, and finds equilibrium by minimising the total Gibbs energy of the system. A typical solution-phase model has the form</p>
             <span class="eq">G<sub>m</sub> = G<sup>ref</sup> + G<sup>ideal</sup> + G<sup>excess</sup> + G<sup>mag</sup>, &nbsp; G<sup>ideal</sup> = RT &Sigma; x<sub>i</sub> ln x<sub>i</sub></span>
             <p>where the excess term is commonly written as a Redlich&ndash;Kister polynomial in composition, and phases with distinct sublattices (carbides, intermetallics, interstitial solutions) use the compound energy formalism. Model parameters are fitted simultaneously to phase-diagram data, thermochemical measurements and first-principles results, and collected into thermodynamic databases (often distributed as <code>.tdb</code> files). Binary and ternary descriptions are extrapolated to multicomponent systems.</p>
             <p><strong>Outputs.</strong> Phase diagrams and isopleths, equilibrium phase amounts and compositions, solidus and liquidus, solvus lines, transformation temperatures, activities, driving forces for precipitation, and (with the Scheil&ndash;Gulliver model) solidification paths under limited diffusion.</p>
             <p><strong>Limits.</strong> It is a <em>bulk equilibrium</em> method with no geometry, no interfaces and no time unless coupled to a kinetic model. Accuracy depends on how well the database covers the composition and temperature region of interest, which is a common source of error for unusual compositions. Coupling with diffusion mobility databases allows simulation of diffusion-controlled transformations in one dimension and supplies the thermodynamic input to phase-field models.</p>
 
-            <h3 id="phasefield">3.5 Phase-field modelling</h3>
+            <h3 id="phasefield">3.5 Phase-field modelling<a class="anchor" href="#phasefield" aria-label="Link to this section">#</a></h3>
             <p><strong>Basis.</strong> Interfaces are represented as diffuse transition layers, so the interface need not be tracked explicitly. One or more continuous <em>order parameters</em> &phi;(<strong>r</strong>, <em>t</em>) distinguish phases or grains, and the free energy of the whole microstructure is a functional</p>
             <span class="eq">F = &int; [ f(&phi;, c, T) + &frac12; &kappa;<sub>&phi;</sub>|&nabla;&phi;|&sup2; + &frac12; &kappa;<sub>c</sub>|&nabla;c|&sup2; + f<sub>el</sub> ] dV</span>
             <p>Evolution follows by relaxation toward lower free energy. For a <em>non-conserved</em> order parameter (grain orientation, phase identity) this is the Allen&ndash;Cahn equation, &part;&phi;/&part;<em>t</em> = &minus;<em>L</em> &delta;<em>F</em>/&delta;&phi;. For a <em>conserved</em> quantity such as composition it is the Cahn&ndash;Hilliard equation, &part;<em>c</em>/&part;<em>t</em> = &nabla;&middot;(<em>M</em>&nabla;&delta;<em>F</em>/&delta;<em>c</em>). Elastic, magnetic and electrostatic energies can be added to the functional.</p>
             <p><strong>Typical applications.</strong> Dendritic and cellular solidification, grain growth, spinodal decomposition and precipitation, martensitic and diffusional solid-state transformations, ferroelectric domain evolution, fracture and corrosion fronts.</p>
             <p><strong>Practical points.</strong> The numerical grid must resolve the interface width, which makes large domains and long times expensive; thin-interface formulations relax this. Inputs are free-energy densities (often from CALPHAD), mobilities, interface energies and anisotropies, many of which are poorly known and must be taken from atomistic work or calibrated.</p>
 
-            <h3 id="cp">3.6 Dislocation dynamics and crystal plasticity</h3>
+            <h3 id="cp">3.6 Dislocation dynamics and crystal plasticity<a class="anchor" href="#cp" aria-label="Link to this section">#</a></h3>
             <p><strong>Discrete dislocation dynamics</strong> (DDD) follows individual dislocation lines, moving each under the Peach&ndash;Koehler force from applied stress and from other dislocations, with rules for reactions such as junction formation and cross-slip. It reaches micrometre-scale volumes and addresses hardening and size effects.</p>
             <p><strong>Crystal plasticity</strong> treats each grain as a single crystal that deforms by slip on defined systems. Slip on system &alpha; begins when the resolved shear stress, &tau;<sup>&alpha;</sup> = <strong>m</strong><sup>&alpha;</sup>&middot;&sigma;&middot;<strong>n</strong><sup>&alpha;</sup> (Schmid&rsquo;s law), reaches a critical value, and the shear rate follows a flow rule with hardening laws. Implemented in a finite-element or spectral solver (crystal plasticity finite element method, CPFEM; spectral solvers such as DAMASK), it predicts texture evolution, anisotropy, grain-level strain partitioning and the response of polycrystals and multiphase aggregates, using a representative volume element (RVE) built from measured or synthetic microstructure.</p>
 
-            <h3 id="continuum">3.7 Continuum methods</h3>
+            <h3 id="continuum">3.7 Continuum methods<a class="anchor" href="#continuum" aria-label="Link to this section">#</a></h3>
             <p>Continuum models treat the material as a smooth medium and solve conservation laws as partial differential equations: heat conduction, mass and momentum balance (fluid flow), species transport, and mechanical equilibrium with a constitutive law linking stress to strain and strain rate. The <strong>finite element method</strong> (FEM) divides the domain into elements and solves a weak form of the equations; the <strong>finite volume method</strong> is common in computational fluid dynamics (CFD). They are used for casting and welding thermal fields, forging, rolling and forming, heat treatment distortion, residual stress, fatigue and fracture assessment, and component-level design.</p>
             <p>Accuracy rests on the constitutive law and on boundary conditions, such as heat-transfer coefficients and friction, which are often the dominant uncertainty. Mesh convergence and time-step control are essential.</p>
 
-            <h3 id="ml">3.8 Machine learning</h3>
+            <h3 id="ml">3.8 Machine learning<a class="anchor" href="#ml" aria-label="Link to this section">#</a></h3>
             <p>Machine learning (ML) fits flexible models to data instead of deriving them from physics. In materials work it appears in four roles: (i) property prediction from composition or structure descriptors, (ii) interatomic potentials fitted to DFT, (iii) surrogate models that replace expensive simulations, and (iv) inverse design and active learning, where the model proposes the next experiment or calculation (for example by Bayesian optimisation).</p>
             <p>Key issues are data quantity and quality (materials datasets are small and biased toward successful experiments), the choice of <em>descriptors</em> or learned representations, the reliability of predictions outside the training domain (extrapolation), uncertainty estimates, and interpretability. Proper cross-validation matters: random splits of related compounds leak information, and splitting by composition family or by time is a stricter and more honest test. Physics-informed models, which embed symmetries or known constraints, generally need less data.</p>
 
-            <h2 id="multiscale">4. Linking scales</h2>
+            <h2 id="multiscale">4. Linking scales<a class="anchor" href="#multiscale" aria-label="Link to this section">#</a></h2>
             <p>Multiscale modelling connects the methods above. Two coupling strategies are common.</p>
             <ul>
                 <li><strong>Hierarchical (sequential, parameter passing):</strong> a finer model computes a quantity that is passed as a parameter to a coarser model. Example: DFT gives defect and interface energies; MD or kMC gives diffusivities and mobilities; CALPHAD supplies free energies; a phase-field model then uses all of these to predict microstructure; the microstructure feeds a crystal-plasticity or continuum model for properties.</li>
@@ -158,7 +167,7 @@
             </ul>
             <p>Information also flows downward: a continuum thermal model provides the temperature history that a microstructure model needs. Along every interface of the chain, errors propagate, so each link should be validated on its own before the chain is trusted.</p>
 
-            <h2 id="workflow">5. A typical workflow</h2>
+            <h2 id="workflow">5. A typical workflow<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
             <ol>
                 <li><strong>Define the question</strong> in measurable terms: which property, which condition, what accuracy is needed.</li>
                 <li><strong>Select the model</strong> from the smallest feature and longest time that matter (section 7).</li>
@@ -170,7 +179,7 @@
                 <li><strong>Document</strong> versions, input files and random seeds so the work can be reproduced.</li>
             </ol>
 
-            <h2 id="vv">6. Verification, validation and uncertainty</h2>
+            <h2 id="vv">6. Verification, validation and uncertainty<a class="anchor" href="#vv" aria-label="Link to this section">#</a></h2>
             <p>These three terms are often confused.</p>
             <dl class="glossary">
                 <dt>Verification</dt>
@@ -182,7 +191,7 @@
             </dl>
             <p>Typical sources of error include the exchange&ndash;correlation functional in DFT, the potential in MD, database coverage in CALPHAD, the neglect of defects and impurities, finite-size and finite-time effects, discretisation error, and poorly known input parameters. A model that reproduces its own training data has been fitted, not validated.</p>
 
-            <h2 id="choosing">7. Choosing a method</h2>
+            <h2 id="choosing">7. Choosing a method<a class="anchor" href="#choosing" aria-label="Link to this section">#</a></h2>
             <p>Start from the question, not the tool. Three questions usually narrow the choice quickly:</p>
             <ol>
                 <li><strong>What is the smallest feature that controls the answer?</strong> Bond energies and electronic effects point to DFT; defect cores and interfaces point to atomistics; grains and precipitates point to mesoscale; whole components point to continuum models.</li>
@@ -204,7 +213,7 @@
             </table>
             <p>Often the cheapest useful step is a thermodynamic calculation, because it reveals which phases can exist before heavier modelling is attempted.</p>
 
-            <h2 id="software">8. Software</h2>
+            <h2 id="software">8. Software<a class="anchor" href="#software" aria-label="Link to this section">#</a></h2>
             <p>The list is a starting map, not an endorsement; availability and licences change.</p>
             <table>
                 <thead><tr><th>Category</th><th>Open source</th><th>Commercial</th></tr></thead>
@@ -220,7 +229,7 @@
             </table>
             <p>Python is the usual glue language: scripting inputs, running jobs, parsing outputs and plotting. Large jobs run on high-performance computing (HPC) clusters through a scheduler such as Slurm, with parallelism by MPI, threads or GPUs.</p>
 
-            <h2 id="data">9. Databases and data</h2>
+            <h2 id="data">9. Databases and data<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Materials Project</strong>, <strong>AFLOW</strong>, <strong>OQMD</strong> and <strong>JARVIS</strong>: large collections of DFT-computed structures and properties.</li>
                 <li><strong>NOMAD</strong>: repository and archive for computational materials data from many codes.</li>
@@ -230,7 +239,7 @@
             </ul>
             <p>Computed values in public databases carry the approximations of their method (typically GGA), so treat them as consistent comparisons rather than exact numbers.</p>
 
-            <h2 id="habits">10. Good practice</h2>
+            <h2 id="habits">10. Good practice<a class="anchor" href="#habits" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Converge before you compute.</strong> Vary the plane-wave cutoff and <em>k</em>-point mesh in DFT, the cell size and time step in MD, the grid spacing and time step in phase-field, and the mesh in FEM, until the quantity of interest stops changing within the accuracy you need.</li>
                 <li><strong>Check the size effects.</strong> Periodic cells that are too small interact with their own images; MD boxes must be large compared with the defect or correlation length.</li>
@@ -240,7 +249,7 @@
                 <li><strong>Keep it reproducible.</strong> Store inputs, versions and seeds under version control, and archive the data that supports a published figure.</li>
             </ul>
 
-            <h2 id="glossary">11. Glossary</h2>
+            <h2 id="glossary">11. Glossary<a class="anchor" href="#glossary" aria-label="Link to this section">#</a></h2>
             <dl class="glossary">
                 <dt>Ab initio</dt><dd>&ldquo;From first principles&rdquo;: methods that use no fitted parameters for the material of interest, such as DFT.</dd>
                 <dt>Ensemble</dt><dd>The set of conditions held fixed in a statistical-mechanics simulation (NVE, NVT, NPT).</dd>
@@ -253,7 +262,7 @@
                 <dt>Transition-state theory</dt><dd>A theory that gives the rate of a thermally activated event from the energy barrier between two states.</dd>
             </dl>
 
-            <h2 id="refs">12. References and further reading</h2>
+            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <p class="meta">Check each citation against the original before relying on it in your own work.</p>
             <ul>
                 <li>Hohenberg, P. and Kohn, W., Inhomogeneous electron gas, <em>Phys. Rev.</em> 136, B864 (1964).</li>
@@ -281,8 +290,9 @@
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>

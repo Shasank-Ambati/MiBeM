@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monte Carlo and Kinetic Monte Carlo - MiBeM</title>
     <meta name="description" content="Importance sampling, the Metropolis algorithm, lattice models, cluster expansions and kinetic Monte Carlo for materials.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html">
+    <meta name="theme-color" content="#b4491f">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Monte Carlo and Kinetic Monte Carlo - MiBeM">
+    <meta property="og:description" content="Importance sampling, the Metropolis algorithm, lattice models, cluster expansions and kinetic Monte Carlo for materials.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
     <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-    <header class="site">
-        <a class="brand" href="../index.html">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a></nav>
-    </header>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
+        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="diffusion-and-kinetics.html">Next topic</a></nav>
+    </div></header>
 
     <div class="wrap">
     <div class="layout">
@@ -34,8 +45,8 @@
             </ol>
         </aside>
 
-        <article>
-            <p class="meta">Computational materials science &middot; Topic 7</p>
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 7 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
             <h1>Monte Carlo and kinetic Monte Carlo</h1>
             <p class="lead">Where molecular dynamics follows real motion, Monte Carlo (MC) takes a shortcut: it proposes random changes and keeps or rejects them with rules that guarantee the right statistics. Because moves need not be physical, MC reaches equilibrium states that dynamics would take far too long to find, and its kinetic variant reaches seconds and beyond.</p>
 
@@ -49,7 +60,7 @@
                 </ul>
             </div>
 
-            <h2 id="why">1. Why sample randomly</h2>
+            <h2 id="why">1. Why sample randomly<a class="anchor" href="#why" aria-label="Link to this section">#</a></h2>
             <p>An equilibrium average in the canonical ensemble is an integral over all configurations:</p>
             <span class="eq">&lang;A&rang; = &int; A(x) exp[&minus;U(x)/k<sub>B</sub>T] dx / &int; exp[&minus;U(x)/k<sub>B</sub>T] dx</span>
             <p>The space is enormously high-dimensional (3<em>N</em> coordinates, or 2<sup><em>N</em></sup> states for <em>N</em> two-state sites), so grids are impossible. Sampling configurations uniformly at random fails as well: nearly all random configurations (atoms overlapping, or a random jumble of A and B) have very high energy and negligible Boltzmann weight, so the average is dominated by rare lucky samples. <strong>Importance sampling</strong> draws configurations with probability proportional to their Boltzmann weight, so that the average is simply the mean of the samples, &lang;<em>A</em>&rang; &asymp; (1/<em>M</em>)&Sigma;<sub><em>m</em></sub> <em>A</em>(<em>x</em><sub><em>m</em></sub>).</p>
@@ -57,7 +68,7 @@
             <span class="eq">&pi;(a) P(a&rarr;b) = &pi;(b) P(b&rarr;a), &nbsp;&nbsp; &pi;(a) &prop; exp[&minus;U(a)/k<sub>B</sub>T]</span>
             <p>(and the chain can reach every state, which is ergodicity), then the chain converges to the Boltzmann distribution.</p>
 
-            <h2 id="metropolis">2. Metropolis algorithm</h2>
+            <h2 id="metropolis">2. Metropolis algorithm<a class="anchor" href="#metropolis" aria-label="Link to this section">#</a></h2>
             <p>The simplest rule satisfying detailed balance is due to Metropolis and co-workers (1953). Given a symmetric proposal (the probability of proposing <em>a</em>&rarr;<em>b</em> equals that of <em>b</em>&rarr;<em>a</em>):</p>
             <ol>
                 <li>Pick a trial move (for example, flip one spin).</li>
@@ -68,7 +79,7 @@
             <span class="eq">P<sub>acc</sub>(a&rarr;b) = min[ 1, exp(&minus;&Delta;E / k<sub>B</sub>T) ]</span>
             <p>Hastings (1970) generalised this to asymmetric proposals by multiplying by the ratio of proposal probabilities. Two practical points: moves that change energy locally can be evaluated cheaply, by recomputing only the affected neighbours, so each step costs <em>O</em>(1) on a lattice; and the acceptance rate should be tuned (often 20 to 50%) by adjusting step sizes, because very high acceptance means moves are too small and very low means they are too large. One <em>sweep</em> is <em>N</em> attempted moves, and sweeps are the natural unit of MC &ldquo;time&rdquo;.</p>
 
-            <h2 id="ising">3. The Ising model</h2>
+            <h2 id="ising">3. The Ising model<a class="anchor" href="#ising" aria-label="Link to this section">#</a></h2>
             <p>The <strong>Ising model</strong> places a spin <em>s</em><sub><em>i</em></sub> = &plusmn;1 on each lattice site, with energy</p>
             <span class="eq">E = &minus;J &Sigma;<sub>&lang;ij&rang;</sub> s<sub>i</sub> s<sub>j</sub> &minus; h &Sigma;<sub>i</sub> s<sub>i</sub></span>
             <p>summed over nearest-neighbour pairs. For <em>J</em> &gt; 0 neighbours prefer to align. It is the minimal model of a phase transition: on the two-dimensional square lattice it has an exact solution (Onsager, 1944) with critical temperature <em>k</em><sub>B</sub><em>T</em><sub>c</sub> = 2<em>J</em>/ln(1 + &radic;2) &asymp; 2.269 <em>J</em>. Below <em>T</em><sub>c</sub> a spontaneous magnetisation appears; above it, thermal disorder wins. The model maps directly to <em>binary alloys</em> and lattice gases, where the spin is the species on a site (A or B, or atom and vacancy) and <em>J</em> is built from pair energies; its ordering transition is the same mathematics as ordering in &beta;-brass.</p>
@@ -78,7 +89,7 @@
             </figure>
             <p>Near <em>T</em><sub>c</sub> the correlation length diverges and Metropolis single-spin flips suffer <strong>critical slowing down</strong>: large domains change very slowly. Cluster algorithms (Swendsen&ndash;Wang, Wolff) flip whole correlated clusters and remove most of the problem for such models.</p>
 
-            <h2 id="moves">4. Moves for materials</h2>
+            <h2 id="moves">4. Moves for materials<a class="anchor" href="#moves" aria-label="Link to this section">#</a></h2>
             <p>The power of MC for materials is the freedom to design moves. Any set of moves that satisfies detailed balance and reaches the whole state space is allowed, whether or not it resembles real dynamics.</p>
             <table>
                 <thead><tr><th>Move</th><th>Ensemble</th><th>What it does</th><th>Used for</th></tr></thead>
@@ -92,13 +103,13 @@
                 </tbody>
             </table>
 
-            <h2 id="lattice">5. Lattice models and cluster expansion</h2>
+            <h2 id="lattice">5. Lattice models and cluster expansion<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
             <p>Real alloys are not Ising models, but their configurational energy can be mapped onto one. A <strong>cluster expansion</strong> (Sanchez, Ducastelle and Gratias, 1984) writes the energy of any arrangement &sigma; of species on a fixed parent lattice as a sum over clusters of sites (single sites, pairs, triplets, &hellip;):</p>
             <span class="eq">E(&sigma;) = &Sigma;<sub>&alpha;</sub> m<sub>&alpha;</sub> J<sub>&alpha;</sub> &lang;&Phi;<sub>&alpha;</sub>(&sigma;)&rang;</span>
             <p>where &Phi;<sub>&alpha;</sub> are products of site variables over cluster &alpha;, <em>m</em><sub>&alpha;</sub> is a multiplicity and <em>J</em><sub>&alpha;</sub> are the <em>effective cluster interactions</em> (ECIs). The ECIs are fitted to a set of DFT energies of ordered structures (typically tens to hundreds of them), and the fit is checked by cross-validation. The expansion is exact if all clusters are included; in practice it is truncated, and the truncation error determines accuracy. Once fitted, the energy of any configuration costs a few operations, so MC can simulate millions of atoms over many sweeps with <em>ab initio</em> energetics. Typical outputs are order&ndash;disorder transition temperatures, solvus lines, ground-state structures, short-range order and its temperature dependence, and (with vibrational and electronic free energies added) first-principles phase diagrams. Software packages include ATAT, CASM and icet.</p>
             <p>The same framework handles interstitial ordering (carbon in iron), vacancies and magnetic degrees of freedom by adding more site variables.</p>
 
-            <h2 id="advanced">6. Better sampling</h2>
+            <h2 id="advanced">6. Better sampling<a class="anchor" href="#advanced" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li><strong>Parallel tempering (replica exchange).</strong> Several copies run at different temperatures and periodically swap configurations with acceptance min[1, exp((&beta;<sub><em>i</em></sub> &minus; &beta;<sub><em>j</em></sub>)(<em>E</em><sub><em>i</em></sub> &minus; <em>E</em><sub><em>j</em></sub>))]. High-temperature replicas cross barriers, low-temperature replicas refine; the combination escapes metastable states.</li>
                 <li><strong>Flat-histogram methods (Wang&ndash;Landau, multicanonical).</strong> Estimate the density of states <em>g</em>(<em>E</em>) by a random walk that visits all energies equally. From <em>g</em>(<em>E</em>), all thermodynamic quantities at all temperatures follow from one run, including free energies and latent heats.</li>
@@ -106,7 +117,7 @@
                 <li><strong>Biased moves</strong> that propose chemically sensible changes more often, corrected by Hastings ratios.</li>
             </ul>
 
-            <h2 id="kmc">7. Kinetic Monte Carlo</h2>
+            <h2 id="kmc">7. Kinetic Monte Carlo<a class="anchor" href="#kmc" aria-label="Link to this section">#</a></h2>
             <p>Metropolis MC samples equilibrium but its &ldquo;time&rdquo; is not physical. <strong>Kinetic Monte Carlo</strong> (kMC) instead chooses real <em>events</em> with real rates and advances a physical clock. It rests on the picture of a system that sits in a potential-energy basin, vibrates for a long time and then hops (a diffusive jump, a reaction, a dislocation depinning) to another basin; the hops are rare, independent, random events (a Poisson process). Rather than simulating the vibrations, kMC jumps straight from hop to hop.</p>
             <p>Each possible event <em>i</em> has a rate, typically from harmonic transition-state theory:</p>
             <span class="eq">k<sub>i</sub> = &nu;<sub>i</sub> exp( &minus;E<sub>a,i</sub> / k<sub>B</sub>T )</span>
@@ -124,10 +135,10 @@
             <h3>Typical uses</h3>
             <p>Vacancy-mediated diffusion and clustering of solutes in alloys; precipitate nucleation and coarsening; irradiation-damage evolution in reactor steels; thin-film and crystal growth; catalytic surface reactions; point-defect evolution in semiconductors.</p>
 
-            <h2 id="potts">8. Grain growth with the Potts model</h2>
+            <h2 id="potts">8. Grain growth with the Potts model<a class="anchor" href="#potts" aria-label="Link to this section">#</a></h2>
             <p>The <strong>Potts model</strong> generalises Ising to <em>Q</em> states: each site carries an integer (a grain orientation) and neighbouring sites of different orientation cost energy <em>J</em>. Domains of equal integer represent grains, and the boundary between them has an energy proportional to its length. Metropolis dynamics reduces the boundary energy, so grains grow by boundary migration. Studies by Anderson, Srolovitz and co-workers (1984) used this to study normal grain growth, where the classical parabolic law predicts mean size &prop; <em>t</em><sup>1/2</sup>, and to examine the grain-size distribution; fitted growth exponents in these models are usually somewhat below one half. The relationship to physical time must be calibrated, boundary mobility and energy are simple functions of misorientation in the basic model, and anisotropy or particle pinning require extensions; the model is nevertheless a popular tool for exploring grain growth and recrystallisation topologically.</p>
 
-            <h2 id="compare">9. MC compared with MD</h2>
+            <h2 id="compare">9. MC compared with MD<a class="anchor" href="#compare" aria-label="Link to this section">#</a></h2>
             <table>
                 <thead><tr><th></th><th>Molecular dynamics</th><th>Metropolis Monte Carlo</th><th>Kinetic Monte Carlo</th></tr></thead>
                 <tbody>
@@ -139,7 +150,7 @@
                 </tbody>
             </table>
 
-            <h2 id="code">10. A minimal code</h2>
+            <h2 id="code">10. A minimal code<a class="anchor" href="#code" aria-label="Link to this section">#</a></h2>
             <p>A complete Metropolis sweep for the 2D Ising model, in units where <em>J</em> = <em>k</em><sub>B</sub> = 1, is only a few lines of Python:</p>
 <pre><code>import numpy as np
 rng = np.random.default_rng(1)
@@ -159,7 +170,7 @@ for _ in range(500):
 print("magnetisation per spin:", s.mean())</code></pre>
             <p>Below <em>T</em><sub>c</sub> the magnetisation per spin ends near &plusmn;1; above it, it fluctuates near zero. Try <em>T</em> = 3 and compare; then plot energy against sweeps to see equilibration.</p>
 
-            <h2 id="check">11. Check your understanding</h2>
+            <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>Why is a rejected move still counted in the averages?</summary>
                 <p>Because the Markov chain must stay in state <em>a</em> with the probability 1 &minus; &Sigma;<sub><em>b</em></sub> <em>P</em>(<em>a</em>&rarr;<em>b</em>) for detailed balance to hold. Repeated states carry weight, which is how low-probability states are visited less often. Dropping rejected steps would bias the average toward high-energy states.</p>
@@ -173,7 +184,7 @@ print("magnetisation per spin:", s.mean())</code></pre>
                 <p>In MD, atoms must diffuse to rearrange, which at ordinary temperatures takes times far beyond what MD can reach. A swap move exchanges two atoms directly regardless of distance and barrier, so the arrangement can sample the equilibrium distribution of chemical order in a small number of sweeps.</p>
             </details>
 
-            <h2 id="refs">12. References and further reading</h2>
+            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Landau, D. P. and Binder, K., <em>A Guide to Monte Carlo Simulations in Statistical Physics</em>, Cambridge University Press.</li>
                 <li>Newman, M. E. J. and Barkema, G. T., <em>Monte Carlo Methods in Statistical Physics</em>, Oxford University Press (1999).</li>
@@ -197,8 +208,9 @@ print("magnetisation per spin:", s.mean())</code></pre>
     </div>
     </div>
 
-    <footer class="site">
-        MiBeM &middot; <a href="../index.html#topics">All topics</a>
-    </footer>
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+    </div></footer>
 </body>
 </html>
