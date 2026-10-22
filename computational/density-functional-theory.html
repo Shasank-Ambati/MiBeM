@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=6614869d">
+    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
 </head>
 <body data-topic="5">
     <a class="skip" href="#main">Skip to content</a>
@@ -120,7 +120,7 @@
             <h2 id="scf">6. The self-consistency cycle<a class="anchor" href="#scf" aria-label="Link to this section">#</a></h2>
             <p>The Kohn&ndash;Sham equations are non-linear: the potential depends on the density, which depends on the orbitals, which depend on the potential. They are solved by iteration. Guess a density, build the potential, solve for orbitals, form a new density, and repeat until input and output densities agree.</p>
             <figure>
-                <img src="../assets/animations/scf-loop.svg" alt="Animated diagram of the self-consistent field cycle">
+                <img src="../assets/animations/scf-loop.svg" alt="Animated diagram of the self-consistent field cycle" width="720" height="320" loading="lazy" decoding="async">
                 <figcaption>The self-consistent field cycle. The dot follows one pass around the loop; each pass costs a diagonalisation of the Hamiltonian.</figcaption>
             </figure>
             <p>Simply replacing the old density with the new one oscillates or diverges, so a <strong>mixing</strong> scheme (Pulay/DIIS or Broyden) combines the history of densities. Convergence is declared when the change in energy or density drops below a tolerance (for example 10<sup>&minus;6</sup> eV in VASP for routine work, tighter for phonons). Slow or failed convergence usually has a physical cause: a metallic system with too little smearing, an incorrect magnetic starting guess, a nearly degenerate state, or a bad structure. Once the electronic problem is converged, forces and stress follow from the Hellmann&ndash;Feynman theorem, and the structure can be relaxed by moving atoms (and the cell) downhill in energy.</p>
@@ -233,6 +233,6 @@
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
     <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=42f5948e" defer></script>
+    <script src="../assets/site.js?v=9188817f" defer></script>
 </body>
 </html>

@@ -551,3 +551,62 @@ pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
 @media print {
     .icon-btn, .search-overlay, .backtop, .copy-btn, .demo { display: none !important; }
 }
+
+
+/* ================= review fixes: phone header, collapsible contents, table hints, motion control ================= */
+header.site nav a.cta { white-space: nowrap; }
+.menu-btn { display: none; }
+.menu-panel { display: none; }
+
+@media (max-width: 960px) {
+    .menu-btn { display: inline-flex; }
+    header.site.menu-open .menu-panel { display: flex; flex-direction: column; max-width: 1360px; margin: 0 auto; padding: 2px 16px 12px; }
+    .menu-panel a { padding: 13px 6px; text-decoration: none; color: var(--ink); font: 600 1rem var(--sans); border-top: 1px solid var(--border); }
+    .menu-panel a:first-child { border-top: 0; }
+    .menu-panel a:hover { color: var(--accent-strong); }
+}
+
+@media (max-width: 560px) {
+    header.site .bar { padding: 10px 12px; gap: 8px; }
+    header.site nav { gap: 6px; }
+    header.site nav a.cta { padding: 7px 13px; font-size: .86rem; }
+    .brand { font-size: 1.05rem; gap: 8px; }
+    .brand img { width: 26px; height: 26px; }
+    .icon-btn .lbl, .icon-btn kbd { display: none; }
+    .icon-btn { padding: 0; width: 36px; }
+    .hero-fig { display: none; }
+}
+
+/* contents list: collapsible on small screens (site.js moves it below the introduction) */
+.toc .toc-toggle { display: none; }
+.toc.collapsible { margin: 22px 0 6px; }
+.toc.collapsible > strong { display: none; }
+.toc.collapsible .toc-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; background: none; border: 0; color: var(--ink); font: 700 .95rem var(--sans); padding: 2px 0; cursor: pointer; }
+.toc.collapsible .toc-toggle::after { content: "\25BE"; color: var(--accent); transition: transform .15s; }
+.toc.collapsible:not(.collapsed) .toc-toggle::after { transform: rotate(180deg); }
+.toc.collapsible.collapsed > ol { display: none; }
+.toc.collapsible:not(.collapsed) > ol { margin-top: 10px; }
+
+/* wide tables: show shadows at the edges that can still be scrolled */
+table {
+    background:
+        linear-gradient(to right, var(--surface) 30%, transparent) left center / 36px 100% no-repeat local,
+        linear-gradient(to left, var(--surface) 30%, transparent) right center / 36px 100% no-repeat local,
+        radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, .28), transparent) left center / 12px 100% no-repeat scroll,
+        radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, .28), transparent) right center / 12px 100% no-repeat scroll,
+        var(--surface);
+}
+
+/* animated figures: dim a little in dark mode, and a pause control */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) figure img { filter: brightness(.9); } }
+:root[data-theme="dark"] figure img { filter: brightness(.9); }
+.motion-btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font: 600 .76rem var(--sans); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); cursor: pointer; }
+.motion-btn:hover { color: var(--ink); border-color: var(--accent); }
+
+@media print { .menu-btn, .menu-panel, .motion-btn { display: none !important; } }
+
+.toc.collapsible .toc-toggle span { margin: 0 auto 0 10px; font-weight: 500; color: var(--muted); font-size: .85rem; }
+@media (max-width: 560px) {
+    th, td { min-width: 8.5rem; }
+    th:first-child, td:first-child { min-width: 6.5rem; }
+}

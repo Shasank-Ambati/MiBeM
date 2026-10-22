@@ -52,6 +52,32 @@ def ver(rel):
     return hashlib.md5((ROOT / rel).read_bytes()).hexdigest()[:8]
 
 
+def img_size(path):
+    """Width and height of a GIF or SVG, read without extra libraries."""
+    if path.suffix == ".gif":
+        b = path.read_bytes()[:10]
+        return int.from_bytes(b[6:8], "little"), int.from_bytes(b[8:10], "little")
+    if path.suffix == ".svg":
+        m = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', path.read_text(encoding="utf-8"))
+        if m:
+            return int(float(m.group(1))), int(float(m.group(2)))
+    return None
+
+
+def add_img_attrs(s, page_dir, lazy=True):
+    """Give animation images explicit sizes (no layout jump) and, below the fold, lazy loading."""
+    def fix(m):
+        src, alt = m.group(1), m.group(2)
+        p = (page_dir / src).resolve()
+        if not p.exists():
+            return m.group(0)
+        size = img_size(p)
+        dims = f' width="{size[0]}" height="{size[1]}"' if size else ""
+        lz = ' loading="lazy" decoding="async"' if lazy else ""
+        return f'<img src="{src}" alt="{alt}"{dims}{lz}>'
+    return re.sub(r'<img src="([^"]*assets/animations/[^"]+)" alt="([^"]*)"[^>]*>', fix, s)
+
+
 # ----------------------------------------------------------------- templates
 def head(rel, title, desc, url, og_type="article"):
     return f"""<head>
@@ -194,6 +220,7 @@ def build_topic(t, i):
 
     s = re.sub(r"<footer class=\"site\">.*?</footer>.*?</body>",
                lambda m: footer(rel) + "\n    " + scripts(rel, demos='class="demo"' in s) + "\n</body>", s, count=1, flags=re.S)
+    s = add_img_attrs(s, path.parent)
     path.write_text(s, encoding="utf-8")
 
 
@@ -229,6 +256,7 @@ def build_index():
     s = replace_region(s, "cards", '        <ul class="topic-grid">\n' + cards() + "\n        </ul>")
     s = replace_region(s, "map", '        <div id="topic-map">' + fallback_list("") + "</div>")
     s = re.sub(r"<footer class=\"site\">.*?</footer>.*?</body>", lambda m: footer("") + "\n    " + scripts("") + "\n</body>", s, count=1, flags=re.S)
+    s = add_img_attrs(s, ROOT, lazy=False)
     path.write_text(s, encoding="utf-8")
 
 
@@ -263,6 +291,34 @@ def build_map():
 </html>
 """
     (ROOT / "map.html").write_text(page, encoding="utf-8")
+
+
+def build_404():
+    """Served by GitHub Pages for any address that does not exist. Uses absolute URLs so it works at any depth."""
+    rel = BASE
+    hdr = header(rel, [(BASE + "index.html#topics", "Topics"), (BASE + "map.html", "Map")], None)
+    h = head(rel, "Page not found - MiBeM", "That page does not exist.", BASE + "404.html", "website")
+    h = h.replace('<meta name="description"', '<meta name="robots" content="noindex">\n    <meta name="description"', 1)
+    page = f"""<!DOCTYPE html>
+<html lang="en">
+{h}
+<body>
+    {hdr}
+
+    <main class="wrap" id="main">
+        <p class="crumbs"><span>Error 404</span></p>
+        <h1>That page is not here</h1>
+        <p class="lead">The address may be mistyped, or the page may have moved. These will get you back on track.</p>
+        <p><a class="btn" href="{BASE}index.html#topics">Browse all topics</a> <a class="btn ghost" href="{BASE}map.html">Open the topic map</a></p>
+        <p class="meta">You can also search every topic: press <strong>/</strong> on your keyboard.</p>
+    </main>
+
+    {footer(rel)}
+    {scripts(rel)}
+</body>
+</html>
+"""
+    (ROOT / "404.html").write_text(page, encoding="utf-8")
 
 
 # ----------------------------------------------------------------- search index + sitemap
@@ -381,8 +437,9 @@ if __name__ == "__main__":
         build_topic(t, i)
     build_index()
     build_map()
+    build_404()
     build_sitemap()
     write_manifest()
     n, size = build_search()
-    print(f"built {len(TOPICS)} topic pages, index.html, map.html, sitemap.xml, site.webmanifest")
+    print(f"built {len(TOPICS)} topic pages, index.html, map.html, 404.html, sitemap.xml, site.webmanifest")
     print(f"search index: {n} sections, {size // 1024} KB")

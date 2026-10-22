@@ -22,3 +22,7 @@ Open `index.html` in a browser, or publish the repository with GitHub Pages. The
 3. Run `python tools/build.py`. It regenerates the header, footer, previous/next links, the "builds on / leads to" strip, the takeaways box, the landing cards, the topic map, the sitemap and the search index, and refreshes reading times.
 
 Commit the generated files together with the page.
+
+## Animations
+
+Figures in `assets/animations/` are GIFs or animated SVGs. Each has a still `*.poster.png` used by the "Pause animation" button and by visitors who ask their system to reduce motion. After adding or changing an animation, run `python tools/make_posters.py` (needs Pillow and Edge or Chrome), then `python tools/build.py`.

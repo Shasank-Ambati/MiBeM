@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=6614869d">
+    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
 </head>
 <body data-topic="11">
     <a class="skip" href="#main">Skip to content</a>
@@ -140,7 +140,7 @@
             <h2 id="validation">6. Validation<a class="anchor" href="#validation" aria-label="Link to this section">#</a></h2>
             <p>The goal of a model is accuracy on <em>new</em> cases, not on the data it was trained on. A flexible model can fit its training data perfectly and still predict poorly, as the animation shows: a straight line is too simple (<em>underfitting</em>, high bias), a moderate polynomial captures the trend, and a high-degree polynomial threads through every noisy point but oscillates wildly in between (<em>overfitting</em>, high variance).</p>
             <figure>
-                <img src="../assets/animations/ml-overfitting.svg" alt="Animation showing a polynomial fit going from underfit to good fit to overfit as the degree increases">
+                <img src="../assets/animations/ml-overfitting.svg" alt="Animation showing a polynomial fit going from underfit to good fit to overfit as the degree increases" width="720" height="340" loading="lazy" decoding="async">
                 <figcaption>Fits of increasing flexibility to the same twelve noisy points. The error on the training points keeps falling as the degree rises, but the error against the true underlying curve is smallest for the moderate model and explodes for the most flexible one.</figcaption>
             </figure>
             <h3>Splits and cross-validation</h3>
@@ -277,6 +277,6 @@ print("baseline MAE:", mean_absolute_error(y, np.full_like(y, y.mean())))</code>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
     <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=42f5948e" defer></script>
+    <script src="../assets/site.js?v=9188817f" defer></script>
 </body>
 </html>

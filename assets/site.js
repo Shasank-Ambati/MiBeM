@@ -391,9 +391,99 @@
     clearFocus();
   }
 
+  /* ---------------- phone menu ---------------- */
+  function initMenu() {
+    var header = doc.querySelector("header.site");
+    var nav = header && header.querySelector("nav");
+    if (!nav) return;
+    var links = Array.prototype.slice.call(nav.querySelectorAll("a:not(.cta)"));
+    if (!links.length) return;
+    var panel = el("div", "menu-panel");
+    panel.id = "menu-panel";
+    links.forEach(function (a) { var c = a.cloneNode(true); panel.appendChild(c); c.addEventListener("click", close); });
+    header.appendChild(panel);
+    var btn = el("button", "icon-btn menu-btn", '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>');
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Menu");
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", "menu-panel");
+    var cta = nav.querySelector("a.cta");
+    nav.insertBefore(btn, cta);
+    function close() { header.classList.remove("menu-open"); btn.setAttribute("aria-expanded", "false"); }
+    btn.addEventListener("click", function () {
+      var open = header.classList.toggle("menu-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    doc.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+  }
+
+  /* ---------------- contents list: collapsible and placed below the introduction on small screens ---------------- */
+  function initTocMobile() {
+    var toc = doc.querySelector(".toc"), art = doc.querySelector("article");
+    if (!toc || !art || !window.matchMedia) return;
+    var mq = matchMedia("(max-width: 960px)");
+    var marker = doc.createComment("toc-home");
+    toc.parentNode.insertBefore(marker, toc);
+    var count = toc.querySelectorAll("ol > li").length;
+    var toggle = el("button", "toc-toggle", "Contents <span>" + count + " sections</span>");
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", "false");
+    toc.insertBefore(toggle, toc.firstChild);
+    toggle.addEventListener("click", function () {
+      var collapsed = toc.classList.toggle("collapsed");
+      toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    });
+    toc.addEventListener("click", function (e) {
+      if (e.target.closest && e.target.closest("a") && mq.matches) { toc.classList.add("collapsed"); toggle.setAttribute("aria-expanded", "false"); }
+    });
+    function apply() {
+      if (mq.matches) {
+        var h = art.querySelector("h2");
+        if (h) art.insertBefore(toc, h);
+        toc.classList.add("collapsible", "collapsed");
+        toggle.setAttribute("aria-expanded", "false");
+      } else {
+        marker.parentNode.insertBefore(toc, marker.nextSibling);
+        toc.classList.remove("collapsible", "collapsed");
+      }
+    }
+    apply();
+    if (mq.addEventListener) mq.addEventListener("change", apply); else if (mq.addListener) mq.addListener(apply);
+  }
+
+  /* ---------------- pause control for animated figures ---------------- */
+  function initMotion() {
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    doc.querySelectorAll("figure img[src*='animations/']").forEach(function (img) {
+      var live = img.getAttribute("src");
+      var still = live.replace(/\.(gif|svg)(\?.*)?$/, ".poster.png");
+      if (still === live) return;
+      var btn = el("button", "motion-btn", "Pause animation");
+      btn.type = "button";
+      var fig = img.closest("figure");
+      var paused = false;
+      function set(p) {
+        paused = p;
+        img.setAttribute("src", p ? still : live);
+        btn.textContent = p ? "Play animation" : "Pause animation";
+        btn.setAttribute("aria-pressed", p ? "true" : "false");
+      }
+      var probe = new Image();
+      probe.onload = function () {
+        fig.appendChild(btn);
+        if (reduce) set(true);
+      };
+      probe.src = still;
+      btn.addEventListener("click", function () { set(!paused); });
+    });
+  }
+
   /* ---------------- boot ---------------- */
   function boot() {
     addHeaderButtons();
+    initMenu();
+    initTocMobile();
+    initMotion();
     initScrollSpy();
     initCopy();
     initBackTop();
