@@ -6,7 +6,7 @@
     <title>Monte Carlo and Kinetic Monte Carlo - MiBeM</title>
     <meta name="description" content="Importance sampling, the Metropolis algorithm, lattice models, cluster expansions and kinetic Monte Carlo for materials.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Monte Carlo and Kinetic Monte Carlo - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="7">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="diffusion-and-kinetics.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="diffusion-and-kinetics.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -46,9 +51,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 7 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 7</span></p>
             <h1>Monte Carlo and kinetic Monte Carlo</h1>
             <p class="lead">Where molecular dynamics follows real motion, Monte Carlo (MC) takes a shortcut: it proposes random changes and keeps or rejects them with rules that guarantee the right statistics. Because moves need not be physical, MC reaches equilibrium states that dynamics would take far too long to find, and its kinetic variant reaches seconds and beyond.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Category</dt><dd>Atoms</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -87,6 +101,8 @@
                 <img src="../assets/animations/ising-monte-carlo.gif" alt="Animation of Metropolis Monte Carlo on a two-dimensional Ising lattice coarsening from a random start">
                 <figcaption>Metropolis Monte Carlo on a 64&times;64 Ising lattice at <em>T</em> = 1.6 (critical temperature 2.27, in units of <em>J</em>/k<sub>B</sub>), starting from a random arrangement. Domains of each orientation form and coarsen; the sweep count is shown in the title.</figcaption>
             </figure>
+            <div class="demo" data-demo="ising"><div class="demo-body"><p class="demo-note">This interactive simulation needs JavaScript to run.</p></div></div>
+
             <p>Near <em>T</em><sub>c</sub> the correlation length diverges and Metropolis single-spin flips suffer <strong>critical slowing down</strong>: large domains change very slowly. Cluster algorithms (Swendsen&ndash;Wang, Wolff) flip whole correlated clusters and remove most of the problem for such models.</p>
 
             <h2 id="moves">4. Moves for materials<a class="anchor" href="#moves" aria-label="Link to this section">#</a></h2>
@@ -170,6 +186,17 @@ for _ in range(500):
 print("magnetisation per spin:", s.mean())</code></pre>
             <p>Below <em>T</em><sub>c</sub> the magnetisation per spin ends near &plusmn;1; above it, it fluctuates near zero. Try <em>T</em> = 3 and compare; then plot energy against sweeps to see equilibration.</p>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Importance sampling with detailed balance produces Boltzmann-distributed samples; the Metropolis rule accepts with probability min(1, exp(-dE/kT)).</li>
+<li>Moves need not be physical: swap moves equilibrate chemical order far faster than dynamics can.</li>
+<li>Lattice models and cluster expansions carry DFT energetics into alloy thermodynamics at large size.</li>
+<li>Kinetic Monte Carlo advances physical time, dt = -ln(u)/R, using rates built from barriers.</li>
+<li>kMC is only as good as its event catalogue and barriers.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>Why is a rejected move still counted in the averages?</summary>
@@ -199,10 +226,12 @@ print("magnetisation per spin:", s.mean())</code></pre>
                 <li>Anderson, M. P., Srolovitz, D. J., Grest, G. S. and Sahni, P. S., Computer simulation of grain growth, <em>Acta Metall.</em> 32, 783 (1984).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="molecular-dynamics.html"><span class="dir">Previous topic</span>Molecular dynamics</a>
-                <a class="next" href="diffusion-and-kinetics.html"><span class="dir">Next topic</span>Diffusion and kinetics</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="molecular-dynamics.html"><span class="dir">Previous topic</span>Molecular dynamics</a>
+<a class="next" href="diffusion-and-kinetics.html"><span class="dir">Next topic</span>Diffusion and kinetics</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -210,7 +239,10 @@ print("magnetisation per spin:", s.mean())</code></pre>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/demos.js" defer></script>
 </body>
 </html>

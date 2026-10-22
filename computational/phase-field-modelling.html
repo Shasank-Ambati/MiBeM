@@ -6,7 +6,7 @@
     <title>Phase-Field Modelling - MiBeM</title>
     <meta name="description" content="Diffuse interfaces, free-energy functionals, Allen-Cahn and Cahn-Hilliard dynamics, spinodal decomposition, parameters and numerics of phase-field models.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/phase-field-modelling.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Phase-Field Modelling - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="9">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="finite-element-method.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="finite-element-method.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -45,9 +50,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Microstructure</span><span>Topic 9 of 11</span><span>&middot;</span><span>about 11 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Microstructure</span><span>Topic 9</span></p>
             <h1>Phase-field modelling</h1>
             <p class="lead">Microstructure is made of interfaces: grain boundaries, phase boundaries, solidification fronts. Tracking each one explicitly through merging, splitting and branching is a bookkeeping nightmare. Phase-field models sidestep it by describing the whole microstructure with smooth fields and letting the interfaces take care of themselves.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a><br><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Category</dt><dd>Microstructure</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -156,6 +170,17 @@ print("mean c is conserved:", c.mean())</code></pre>
             <p><strong>Strengths.</strong> No front tracking; arbitrary topology; the free-energy structure makes it easy to couple thermodynamics, elasticity, electromagnetism and other physics; results are visual, with morphology directly comparable with micrographs.</p>
             <p><strong>Limits.</strong> Cost grows quickly with domain size and with the need to resolve the interface; quantitative accuracy depends on how well the interface energy, mobility and (especially) anisotropy are known; many parameters are poorly known and are calibrated; the diffuse interface can create artefacts (solute trapping, spurious interface effects) unless the model is formulated carefully; and the result is a continuum description, so atomic-scale features (dislocation cores, interface structure) must be supplied from below. Three dimensions and long times are expensive. Phase-field is best used with a clear question about morphology or kinetics, in a regime where the microstructure scale (tens of nanometres to millimetres) is what matters.</p>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Interfaces are smooth transitions of an order parameter, so topology changes need no special treatment.</li>
+<li>Allen-Cahn (non-conserved) gives curvature-driven motion; Cahn-Hilliard (conserved) gives spinodal decomposition and t to the 1/3 coarsening.</li>
+<li>Interface energy and width fix the model parameters: gamma = (2 sqrt 2 / 3) sqrt(kappa A) and width ~ sqrt(2 kappa / A).</li>
+<li>Inputs come from CALPHAD (free energy), diffusion databases (mobility) and atomistics (interface energy); results must not depend on the interface width or the grid.</li>
+<li>Resolve the interface with about 4 to 8 grid points; explicit steps are tightly limited, so use semi-implicit spectral or adaptive finite elements.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>For the double well <em>f</em> = (<em>A</em>/4)(&phi;&sup2; &minus; 1)&sup2;, what happens to the interface width and interface energy if &kappa; is quadrupled?</summary>
@@ -185,10 +210,12 @@ print("mean c is conserved:", c.mean())</code></pre>
                 <li>Chen, L. Q. and Shen, J., Applications of semi-implicit Fourier-spectral method to phase field equations, <em>Comput. Phys. Commun.</em> 108, 147 (1998).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="diffusion-and-kinetics.html"><span class="dir">Previous topic</span>Diffusion and kinetics</a>
-                <a class="next" href="finite-element-method.html"><span class="dir">Next topic</span>The finite element method</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="diffusion-and-kinetics.html"><span class="dir">Previous topic</span>Diffusion and kinetics</a>
+<a class="next" href="finite-element-method.html"><span class="dir">Next topic</span>The finite element method</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -196,7 +223,9 @@ print("mean c is conserved:", c.mean())</code></pre>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
 </body>
 </html>

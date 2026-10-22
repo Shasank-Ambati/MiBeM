@@ -6,7 +6,7 @@
     <title>Crystal Structures, Supercells and Periodic Boundaries - MiBeM</title>
     <meta name="description" content="Lattices, unit cells, defects, supercell construction and periodic boundary conditions for atomistic simulation.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Crystal Structures, Supercells and Periodic Boundaries - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="2">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="statistical-mechanics.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="statistical-mechanics.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -45,9 +50,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 2 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 2</span></p>
             <h1>Crystal structures, supercells and periodic boundaries</h1>
             <p class="lead">Almost every atomistic simulation starts by writing down where the atoms are. For crystals, a handful of numbers describes an infinite solid; for defects, the same description is stretched into a finite, repeating box that must be chosen with care.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="introduction.html">1. Introduction</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="density-functional-theory.html">5. Density functional theory</a><br><a href="molecular-dynamics.html">6. Molecular dynamics</a></dd></div>
+<div><dt>Category</dt><dd>Foundations</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -163,6 +177,17 @@ print(len(cell), cell.get_volume())</code></pre>
                 <li><strong>Symmetry analysis:</strong> spglib (used inside ASE and pymatgen) identifies space groups and primitive cells from coordinates.</li>
             </ul>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A crystal is a lattice plus a basis. Count atoms and neighbours to sanity-check a structure: fcc has 4 atoms per cubic cell and 12 neighbours, bcc has 2 and 8.</li>
+<li>Miller indices label planes and directions; the reciprocal lattice links real-space cells to diffraction and to k-point sampling.</li>
+<li>Defects are the subject of most simulations. Supercell size is a convergence parameter, and one vacancy in an N-atom cell is a concentration of 1/N.</li>
+<li>Periodic boundaries remove walls but make a defect interact with its own images; every cutoff must be smaller than half the box.</li>
+<li>Surfaces use slabs with vacuum; a grain boundary in a fully periodic cell always comes as a pair.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>How many atoms are in a 5&times;5&times;5 bcc supercell, and what is the concentration from one vacancy?</summary>
@@ -188,10 +213,12 @@ print(len(cell), cell.get_volume())</code></pre>
                 <li>Stukowski, A., Visualization and analysis of atomistic simulation data with OVITO, <em>Modelling Simul. Mater. Sci. Eng.</em> 18, 015012 (2010).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="introduction.html"><span class="dir">Previous topic</span>Introduction to computational materials science</a>
-                <a class="next" href="statistical-mechanics.html"><span class="dir">Next topic</span>Statistical mechanics for simulation</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="introduction.html"><span class="dir">Previous topic</span>Introduction to computational materials science</a>
+<a class="next" href="statistical-mechanics.html"><span class="dir">Next topic</span>Statistical mechanics for simulation</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -199,7 +226,9 @@ print(len(cell), cell.get_volume())</code></pre>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
 </body>
 </html>

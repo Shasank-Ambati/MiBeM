@@ -6,7 +6,7 @@
     <title>Molecular Dynamics - MiBeM</title>
     <meta name="description" content="Integrators, interatomic potentials, thermostats, workflow and analysis in classical molecular dynamics of materials.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/molecular-dynamics.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Molecular Dynamics - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="6">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="monte-carlo-methods.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="monte-carlo-methods.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -46,9 +51,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 6 of 11</span><span>&middot;</span><span>about 11 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Atoms</span><span>Topic 6</span></p>
             <h1>Molecular dynamics</h1>
             <p class="lead">Molecular dynamics (MD) is the closest thing to a movie of matter: place atoms in a box, compute the force on each from an interatomic potential, move them a tiny step, and repeat a few million times. Averages over the trajectory give thermodynamic and transport properties, and the pictures show mechanisms.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 11 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">11. Machine learning</a></dd></div>
+<div><dt>Category</dt><dd>Atoms</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -79,6 +93,8 @@
             <h2 id="potentials">3. Interatomic potentials<a class="anchor" href="#potentials" aria-label="Link to this section">#</a></h2>
             <p>The potential is a model of the Born&ndash;Oppenheimer energy surface (see <a href="density-functional-theory.html">DFT</a>). The faster the potential, the simpler its functional form and the more physics it leaves out. The simplest, the <strong>Lennard-Jones</strong> pair potential, is a good model for noble gases and a useful teaching and testing tool:</p>
             <span class="eq">U(r) = 4&epsilon; [ (&sigma;/r)<sup>12</sup> &minus; (&sigma;/r)<sup>6</sup> ], &nbsp;&nbsp; minimum at r = 2<sup>1/6</sup>&sigma;, depth &epsilon;</span>
+            <div class="demo" data-demo="lj"><div class="demo-body"><p class="demo-note">This interactive explorer needs JavaScript to run.</p></div></div>
+
             <table>
                 <thead><tr><th>Class</th><th>Idea</th><th>Used for</th><th>Cautions</th></tr></thead>
                 <tbody>
@@ -172,6 +188,17 @@ thermo          100
 run             10000</code></pre>
             <p>In LAMMPS &ldquo;metal&rdquo; units, distance is in &Aring;, energy in eV, time in ps and pressure in bar. The numbers 0.1 and 1.0 on the <code>npt</code> line are the temperature and pressure damping times in ps.</p>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>MD integrates Newton&#x27;s equations with velocity-Verlet. Use a time step of about a tenth to a twentieth of the shortest vibrational period and check energy conservation in NVE.</li>
+<li>The potential defines the accuracy, so validate it on the property you need.</li>
+<li>Use canonical thermostats and proper barostats (Nose-Hoover, stochastic velocity rescaling, Parrinello-Rahman) for production runs.</li>
+<li>The workflow is build, minimise, equilibrate, produce and analyse, with error bars from independent runs.</li>
+<li>Limits: nanoseconds to microseconds, very high strain rates, classical nuclei and no electrons.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>A NVE run shows the total energy rising steadily. List three things to check.</summary>
@@ -201,10 +228,12 @@ run             10000</code></pre>
                 <li>Stukowski, A., Visualization and analysis of atomistic simulation data with OVITO, <em>Modelling Simul. Mater. Sci. Eng.</em> 18, 015012 (2010).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="density-functional-theory.html"><span class="dir">Previous topic</span>Density functional theory in practice</a>
-                <a class="next" href="monte-carlo-methods.html"><span class="dir">Next topic</span>Monte Carlo and kinetic Monte Carlo</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="density-functional-theory.html"><span class="dir">Previous topic</span>Density functional theory in practice</a>
+<a class="next" href="monte-carlo-methods.html"><span class="dir">Next topic</span>Monte Carlo and kinetic Monte Carlo</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -212,7 +241,10 @@ run             10000</code></pre>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/demos.js" defer></script>
 </body>
 </html>

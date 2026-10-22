@@ -6,7 +6,7 @@
     <title>Diffusion and Kinetics - MiBeM</title>
     <meta name="description" content="Fick's laws, thermodynamic driving force, atomistic mechanisms, Arrhenius behaviour, computing diffusion coefficients and solving the diffusion equation numerically.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/diffusion-and-kinetics.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Diffusion and Kinetics - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="8">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="phase-field-modelling.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="phase-field-modelling.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -44,9 +49,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Kinetics</span><span>Topic 8 of 11</span><span>&middot;</span><span>about 13 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Kinetics</span><span>Topic 8</span></p>
             <h1>Diffusion and kinetics</h1>
             <p class="lead">Thermodynamics says where a material is heading; diffusion usually decides how fast it gets there. Homogenisation, carburising, precipitation, oxidation, sintering, creep and grain growth are all limited by how quickly atoms move.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="phase-field-modelling.html">9. Phase-field</a><br><a href="finite-element-method.html">10. Finite elements</a></dd></div>
+<div><dt>Category</dt><dd>Kinetics</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -140,6 +154,8 @@ while t &lt; 3600:                         # one hour
     c[0], c[-1] = 1.0, c[-2]            # fixed surface, zero flux at the far end
     t += dt</code></pre>
             <p>Compare the result with the error-function solution c = 1 &minus; erf(<em>x</em>/2&radic;(<em>Dt</em>)) as a first verification, then change <em>r</em> to 0.6 and watch the solution blow up.</p>
+            <div class="demo" data-demo="diffusion"><div class="demo-body"><p class="demo-note">This interactive solver needs JavaScript to run.</p></div></div>
+
 
             <h2 id="multi">7. Multicomponent diffusion<a class="anchor" href="#multi" aria-label="Link to this section">#</a></h2>
             <p>In an alloy with several solutes, the flux of each element depends on the gradient of all the others:</p>
@@ -155,6 +171,17 @@ while t &lt; 3600:                         # one hour
                 <li><strong>Overall transformation kinetics.</strong> The Johnson&ndash;Mehl&ndash;Avrami&ndash;Kolmogorov equation, <em>f</em> = 1 &minus; exp(&minus;<em>kt</em><sup><em>n</em></sup>), combines nucleation and growth into a sigmoidal fraction-transformed curve; the exponent <em>n</em> hints at the mechanism.</li>
             </ul>
             <p>Models that resolve the microstructure itself, such as <a href="phase-field-modelling.html">phase-field</a>, solve diffusion and interface motion together.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Diffusion distance grows as the square root of Dt, so the time needed scales with the square of the length.</li>
+<li>The real driving force is the chemical-potential gradient; diffusion can run uphill, and Darken and Kirkendall effects follow from unequal mobilities.</li>
+<li>D = D0 exp(-Q/RT). For vacancy diffusion Q is formation plus migration energy; for interstitials it is the migration energy alone.</li>
+<li>D can come from MD (fast species), DFT with transition-state theory, or kinetic Monte Carlo, and should be checked against experiment.</li>
+<li>An explicit finite-difference scheme is stable only for r = D dt/dx squared of at most one half in one dimension.</li>
+</ul></div>
+<!-- takeaways:end -->
 
             <h2 id="check">9. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
@@ -183,10 +210,12 @@ while t &lt; 3600:                         # one hour
                 <li>Andersson, J.-O. and &Aring;gren, J., Models for numerical treatment of multicomponent diffusion in simple phases, <em>J. Appl. Phys.</em> 72, 1350 (1992).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="monte-carlo-methods.html"><span class="dir">Previous topic</span>Monte Carlo and kinetic Monte Carlo</a>
-                <a class="next" href="phase-field-modelling.html"><span class="dir">Next topic</span>Phase-field modelling</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="monte-carlo-methods.html"><span class="dir">Previous topic</span>Monte Carlo and kinetic Monte Carlo</a>
+<a class="next" href="phase-field-modelling.html"><span class="dir">Next topic</span>Phase-field modelling</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -194,7 +223,10 @@ while t &lt; 3600:                         # one hour
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/demos.js" defer></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <title>The Finite Element Method - MiBeM</title>
     <meta name="description" content="Governing equations, weak form, shape functions, meshing, convergence, nonlinear and transient problems, and applications of finite elements to materials processing and mechanics.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/finite-element-method.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="The Finite Element Method - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="10">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="machine-learning-for-materials.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="machine-learning-for-materials.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -47,9 +52,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Continuum</span><span>Topic 10 of 11</span><span>&middot;</span><span>about 13 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Continuum</span><span>Topic 10</span></p>
             <h1>The finite element method</h1>
             <p class="lead">At the scale of components and processes, a material is treated as a continuum and its behaviour is governed by partial differential equations for heat, stress and flow. The finite element method (FEM) is the standard way to solve them on real geometries, and it is where the microstructure and properties computed at finer scales finally meet engineering use.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Category</dt><dd>Continuum</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -175,6 +189,17 @@ exact = x * (L - x / 2)
 print("max nodal error:", np.max(np.abs(u - exact)))</code></pre>
             <p>The nodal error is at the level of rounding error: for this equation, linear elements in one dimension give exact nodal values. Change the load or the coefficient (for example a stiffness that varies with <em>x</em>) and the nodal values stop being exact; then compare the error for <em>n</em> = 4, 8, 16 to see the convergence rate directly.</p>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>The weak form with shape functions turns a PDE into a sparse linear system, K u = f, assembled element by element.</li>
+<li>A mesh convergence study is mandatory. Displacement error falls as h to the p+1 for smooth solutions, while stress singularities never converge.</li>
+<li>Nonlinear problems use Newton-Raphson with load steps; time-dependent ones use explicit or implicit integration.</li>
+<li>The constitutive law and boundary conditions (heat transfer, friction) usually dominate the uncertainty.</li>
+<li>Verify against analytic cases (the Kirsch plate gives a factor of 3, the patch test) and validate against measurements.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">12. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>Why is the peak stress at a sharp internal corner not a reliable result?</summary>
@@ -201,10 +226,12 @@ print("max nodal error:", np.max(np.abs(u - exact)))</code></pre>
                 <li>Roters, F. et al., DAMASK: the D&uuml;sseldorf Advanced Material Simulation Kit, <em>Comput. Mater. Sci.</em> 158, 420 (2019).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="phase-field-modelling.html"><span class="dir">Previous topic</span>Phase-field modelling</a>
-                <a class="next" href="machine-learning-for-materials.html"><span class="dir">Next topic</span>Machine learning for materials</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="phase-field-modelling.html"><span class="dir">Previous topic</span>Phase-field modelling</a>
+<a class="next" href="machine-learning-for-materials.html"><span class="dir">Next topic</span>Machine learning for materials</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -212,7 +239,9 @@ print("max nodal error:", np.max(np.abs(u - exact)))</code></pre>
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
 </body>
 </html>

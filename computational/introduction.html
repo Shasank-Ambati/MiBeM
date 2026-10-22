@@ -6,7 +6,7 @@
     <title>Introduction to Computational Materials Science - MiBeM</title>
     <meta name="description" content="Scales, methods, workflow, validation, software and data resources in computational materials science.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/introduction.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Introduction to Computational Materials Science - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="1">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="crystal-structure-and-periodic-cells.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="crystal-structure-and-periodic-cells.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -51,15 +56,25 @@
                 <li><a href="#software">8. Software</a></li>
                 <li><a href="#data">9. Databases and data</a></li>
                 <li><a href="#habits">10. Good practice</a></li>
-                <li><a href="#glossary">11. Glossary</a></li>
-                <li><a href="#refs">12. References</a></li>
+                <li><a href="#check">11. Check your understanding</a></li>
+                <li><a href="#glossary">12. Glossary</a></li>
+                <li><a href="#refs">13. References</a></li>
             </ol>
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 1 of 11</span><span>&middot;</span><span>about 19 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 1</span></p>
             <h1>Introduction to computational materials science</h1>
             <p class="lead">Computational materials science uses physical models and numerical methods to predict, explain and design the structure, processing and properties of materials. No single model covers every scale, so the field is a toolbox of methods, each valid over a limited range of length, time and chemistry.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 20 min</dd></div>
+<div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
+<div><dt>Leads to</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Category</dt><dd>Foundations</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -249,7 +264,32 @@
                 <li><strong>Keep it reproducible.</strong> Store inputs, versions and seeds under version control, and archive the data that supports a published figure.</li>
             </ul>
 
-            <h2 id="glossary">11. Glossary<a class="anchor" href="#glossary" aria-label="Link to this section">#</a></h2>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Methods are specialised by length and time scale; no single model covers every scale, so multiscale linking is the norm.</li>
+<li>Start from the question: the smallest feature that matters, the longest time that matters, and whether the answer is an equilibrium or a rate.</li>
+<li>A simulation is a prediction to be tested. Verification, validation and uncertainty quantification are three different checks.</li>
+<li>The cheapest useful step is often a thermodynamic (CALPHAD) calculation, before heavier modelling is attempted.</li>
+<li>Inputs and approximations bound accuracy: trends and rankings are usually more reliable than absolute numbers.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>Which method would you reach for first to estimate the vacancy formation energy of copper, and why?</summary>
+                <p>Density functional theory: the quantity is an energy difference between a small cell with and without the defect, which needs electronic accuracy rather than a long trajectory. If a validated embedded-atom potential exists, molecular dynamics or static relaxation with that potential gives a much cheaper first estimate that can be checked against a few DFT calculations.</p>
+            </details>
+            <details>
+                <summary>Why can plain molecular dynamics not follow the homogenisation of a segregated alloy?</summary>
+                <p>Homogenisation is diffusion over micrometres lasting seconds to hours, while molecular dynamics reaches tens of nanometres and nanoseconds to microseconds. A kinetic Monte Carlo, phase-field or continuum diffusion model covers the relevant scales, with diffusivities and thermodynamics supplied by finer-scale methods.</p>
+            </details>
+            <details>
+                <summary>What is the difference between verification and validation?</summary>
+                <p>Verification asks whether the equations are solved correctly (convergence tests, benchmarks, code checks). Validation asks whether the right equations and inputs are being used, by comparing predictions with independent experiments that were not used to fit the model.</p>
+            </details>
+
+            <h2 id="glossary">12. Glossary<a class="anchor" href="#glossary" aria-label="Link to this section">#</a></h2>
             <dl class="glossary">
                 <dt>Ab initio</dt><dd>&ldquo;From first principles&rdquo;: methods that use no fitted parameters for the material of interest, such as DFT.</dd>
                 <dt>Ensemble</dt><dd>The set of conditions held fixed in a statistical-mechanics simulation (NVE, NVT, NPT).</dd>
@@ -262,7 +302,7 @@
                 <dt>Transition-state theory</dt><dd>A theory that gives the rate of a thermally activated event from the energy barrier between two states.</dd>
             </dl>
 
-            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="refs">13. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <p class="meta">Check each citation against the original before relying on it in your own work.</p>
             <ul>
                 <li>Hohenberg, P. and Kohn, W., Inhomogeneous electron gas, <em>Phys. Rev.</em> 136, B864 (1964).</li>
@@ -281,10 +321,12 @@
                 <li>Jain, A. et al., Commentary: The Materials Project, <em>APL Materials</em> 1, 011002 (2013).</li>
             </ul>
 
-            <nav class="pager">
-                <span class="spacer"></span>
-                <a class="next" href="crystal-structure-and-periodic-cells.html"><span class="dir">Next topic</span>Crystal structures, supercells and periodic boundaries</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<span class="spacer"></span>
+<a class="next" href="crystal-structure-and-periodic-cells.html"><span class="dir">Next topic</span>Crystal structures, supercells and periodic boundaries</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -292,7 +334,9 @@
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
 </body>
 </html>

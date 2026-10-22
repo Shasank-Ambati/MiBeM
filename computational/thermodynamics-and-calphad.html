@@ -6,7 +6,7 @@
     <title>Thermodynamics and CALPHAD - MiBeM</title>
     <meta name="description" content="Gibbs energy, solution models, phase equilibrium and the CALPHAD method for computing phase diagrams.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/thermodynamics-and-calphad.html">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Thermodynamics and CALPHAD - MiBeM">
@@ -15,13 +15,18 @@
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css">
 </head>
-<body>
+<body data-topic="4">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="../index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav><a href="../index.html#topics">All topics</a><a class="cta" href="density-functional-theory.html">Next topic</a></nav>
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="density-functional-theory.html">Next topic</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -45,9 +50,18 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Thermodynamics</span><span>Topic 4 of 11</span><span>&middot;</span><span>about 12 min read</span></p>
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Thermodynamics</span><span>Topic 4</span></p>
             <h1>Thermodynamics and CALPHAD</h1>
             <p class="lead">Before asking how fast anything happens, ask what is stable. The CALPHAD method turns measured and computed thermodynamic data into models of the Gibbs energy of every phase, and from those models any equilibrium can be calculated for any composition.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a><br><a href="phase-field-modelling.html">9. Phase-field</a></dd></div>
+<div><dt>Category</dt><dd>Thermodynamics</dd></div>
+</dl>
+<!-- facts:end -->
 
             <div class="callout">
                 <strong>After reading this page you should be able to:</strong>
@@ -78,6 +92,8 @@
                 <img src="../assets/animations/gibbs-temperature.svg" alt="Animated Gibbs energy curve changing from one well to two wells as the solution cools">
                 <figcaption>Regular-solution Gibbs energy of mixing as temperature falls (hot to cool, gauge on the right). Below the critical temperature, the dashed line is the common tangent and the composition range between its touching points is the miscibility gap.</figcaption>
             </figure>
+            <div class="demo" data-demo="gibbs"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <p>For a regular solution the critical (consolute) temperature, above which the gap closes, is</p>
             <span class="eq">T<sub>c</sub> = &Omega; / (2R)</span>
             <p>Below <em>T</em><sub>c</sub> an alloy of intermediate composition lowers its Gibbs energy by splitting into two phases. The compositions of the two phases are found by the <strong>common tangent construction</strong>: draw the line that touches the curve at two points. The tangent condition is exactly equal chemical potentials in the two phases (the intercepts of the tangent with the pure-component axes <em>are</em> &mu;<sub>A</sub> and &mu;<sub>B</sub>). For a binary mixture of overall composition <em>x</em><sub>0</sub> splitting into phases of compositions <em>x</em><sub>&alpha;</sub> and <em>x</em><sub>&beta;</sub>, the <strong>lever rule</strong> gives the fractions:</p>
@@ -157,6 +173,17 @@ eq = equilibrium(
             </ul>
             <p>Coupling extends what CALPHAD can do. <em>Diffusion mobility databases</em> assessed in the same way as thermodynamics (used in DICTRA and similar programs) enable one-dimensional simulation of diffusion-controlled transformations and homogenisation. Phase-field models take their free-energy densities, driving forces and chemical potentials from CALPHAD. DFT supplies formation energies of compounds and end-member energies. The thermodynamic input of larger models is therefore often a CALPHAD calculation.</p>
 
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Equilibrium means minimum Gibbs energy, equivalently equal chemical potentials. The common tangent gives phase compositions and the lever rule gives amounts.</li>
+<li>For a regular solution the miscibility gap closes at Tc = Omega/2R; the spinodal lies inside the binodal.</li>
+<li>CALPHAD fits a Gibbs energy model to every phase (Redlich-Kister terms, sublattices, magnetism) and stores the parameters in a database.</li>
+<li>It delivers equilibria, solidification paths and driving forces. It does not deliver kinetics or geometry.</li>
+<li>Database coverage limits accuracy, and multicomponent extrapolation from binary data needs checking.</li>
+</ul></div>
+<!-- takeaways:end -->
+
             <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <details>
                 <summary>A regular solution has &Omega; = 20 kJ/mol. At what temperature does the miscibility gap close?</summary>
@@ -184,10 +211,12 @@ eq = equilibrium(
                 <li>Bocklund, B. et al., ESPEI for efficient thermodynamic database development, modification and uncertainty quantification, <em>MRS Commun.</em> 9, 618 (2019).</li>
             </ul>
 
-            <nav class="pager">
-                <a class="prev" href="statistical-mechanics.html"><span class="dir">Previous topic</span>Statistical mechanics for simulation</a>
-                <a class="next" href="density-functional-theory.html"><span class="dir">Next topic</span>Density functional theory in practice</a>
-            </nav>
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="statistical-mechanics.html"><span class="dir">Previous topic</span>Statistical mechanics for simulation</a>
+<a class="next" href="density-functional-theory.html"><span class="dir">Next topic</span>Density functional theory in practice</a>
+</nav>
+<!-- pager:end -->
         </article>
 
     </div>
@@ -195,7 +224,10 @@ eq = equilibrium(
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="#main">Back to top</a></nav>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="../assets/topics.js"></script>
+    <script src="../assets/site.js" defer></script>
+    <script src="../assets/demos.js" defer></script>
 </body>
 </html>

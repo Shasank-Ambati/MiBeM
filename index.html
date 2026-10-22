@@ -6,27 +6,27 @@
     <title>MiBeM - Computational Materials Science, Explained with Animations</title>
     <meta name="description" content="A free reading series on computational materials science: DFT, molecular dynamics, Monte Carlo, CALPHAD, phase-field, finite elements and machine learning, with animated figures.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/">
-    <meta name="theme-color" content="#b4491f">
+    <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="MiBeM - Computational Materials Science, Explained with Animations">
-    <meta property="og:description" content="A free reading series on DFT, molecular dynamics, Monte Carlo, CALPHAD, phase-field, finite elements and machine learning for materials.">
+    <meta property="og:description" content="A free reading series on computational materials science: DFT, molecular dynamics, Monte Carlo, CALPHAD, phase-field, finite elements and machine learning, with animated figures.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
-        <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span>MiBeM</a>
-        <nav>
-            <a href="#start">Where to start</a>
-            <a href="#topics">Topics</a>
-            <a href="#about">About</a>
-            <a class="cta" href="computational/introduction.html">Start reading</a>
-        </nav>
+        <a class="brand" href="index.html"><img src="assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="#start">Where to start</a><a href="#map">Map</a><a href="#topics">Topics</a><a href="#about">About</a><a class="cta" href="computational/introduction.html">Start reading</a></nav>
     </div></header>
 
     <main class="wrap" id="main">
@@ -39,12 +39,6 @@
                 <div class="actions">
                     <a class="btn" href="computational/introduction.html">Start with Topic 1</a>
                     <a class="btn ghost" href="#topics">Browse all topics</a>
-                </div>
-                <div class="stats">
-                    <div><b>11</b><span>topics</span></div>
-                    <div><b>13</b><span>animated figures</span></div>
-                    <div><b>2.4 h</b><span>of reading in total</span></div>
-                    <div><b>0</b><span>trackers or sign-ups</span></div>
                 </div>
             </div>
             <figure class="hero-fig">
@@ -70,65 +64,74 @@
             <a class="path" href="computational/finite-element-method.html"><b>I care about components and data</b><span>Processes and parts at engineering scale, and learning from data.</span><em>Topics 10 &rarr; 11</em></a>
         </div>
 
+        <h2 class="section-title" id="map">How the topics connect</h2>
+        <p class="section-sub">Each topic builds on a few others. Hover or tab through the map to see what a topic needs and what it unlocks; click to open it.</p>
+        <!-- map:start -->
+        <div id="topic-map"><ol><li><a href="computational/introduction.html">1. Introduction to computational materials science</a></li><li><a href="computational/crystal-structure-and-periodic-cells.html">2. Crystal structures, supercells and periodic boundaries</a> <span class="meta">builds on 1</span></li><li><a href="computational/statistical-mechanics.html">3. Statistical mechanics for simulation</a> <span class="meta">builds on 1</span></li><li><a href="computational/thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a> <span class="meta">builds on 3</span></li><li><a href="computational/density-functional-theory.html">5. Density functional theory in practice</a> <span class="meta">builds on 2</span></li><li><a href="computational/molecular-dynamics.html">6. Molecular dynamics</a> <span class="meta">builds on 2, 3</span></li><li><a href="computational/monte-carlo-methods.html">7. Monte Carlo and kinetic Monte Carlo</a> <span class="meta">builds on 3</span></li><li><a href="computational/diffusion-and-kinetics.html">8. Diffusion and kinetics</a> <span class="meta">builds on 4</span></li><li><a href="computational/phase-field-modelling.html">9. Phase-field modelling</a> <span class="meta">builds on 4, 8</span></li><li><a href="computational/finite-element-method.html">10. The finite element method</a> <span class="meta">builds on 8</span></li><li><a href="computational/machine-learning-for-materials.html">11. Machine learning for materials</a> <span class="meta">builds on 5, 6</span></li></ol></div>
+<!-- map:end -->
+        <p class="section-sub"><a href="map.html">Open the map on its own page &rarr;</a></p>
+
         <h2 class="section-title" id="topics">All topics</h2>
         <p class="section-sub">Numbered in a sensible reading order. Reading times are approximate.</p>
+        <!-- cards:start -->
         <ul class="topic-grid">
-            <li><a class="topic-card" href="computational/introduction.html">
+            <li><a class="topic-card" data-id="1" href="computational/introduction.html">
                 <span class="num">1</span>
                 <span class="title">Introduction to computational materials science</span>
                 <span class="desc">Scales, method families, multiscale linking, validation, software and data resources.</span>
-                <span class="tags"><span class="chip">Foundations</span>19 min read</span></a></li>
-            <li><a class="topic-card" href="computational/crystal-structure-and-periodic-cells.html">
+                <span class="tags"><span class="chip">Foundations</span>20 min read</span></a></li>
+            <li><a class="topic-card" data-id="2" href="computational/crystal-structure-and-periodic-cells.html">
                 <span class="num">2</span>
                 <span class="title">Crystal structures, supercells and periodic boundaries</span>
                 <span class="desc">Lattices, Miller indices, defects, building simulation cells and periodic boundary conditions.</span>
                 <span class="tags"><span class="chip">Foundations</span>12 min read</span></a></li>
-            <li><a class="topic-card" href="computational/statistical-mechanics.html">
+            <li><a class="topic-card" data-id="3" href="computational/statistical-mechanics.html">
                 <span class="num">3</span>
                 <span class="title">Statistical mechanics for simulation</span>
                 <span class="desc">Microstates, ensembles, the partition function, free energy, ergodicity and error bars.</span>
                 <span class="tags"><span class="chip">Foundations</span>12 min read</span></a></li>
-            <li><a class="topic-card" href="computational/thermodynamics-and-calphad.html">
+            <li><a class="topic-card" data-id="4" href="computational/thermodynamics-and-calphad.html">
                 <span class="num">4</span>
                 <span class="title">Thermodynamics and CALPHAD</span>
                 <span class="desc">Gibbs energy, the common tangent, solution models, phase diagrams and equilibrium calculation.</span>
                 <span class="tags"><span class="chip blue">Thermodynamics</span>12 min read</span></a></li>
-            <li><a class="topic-card" href="computational/density-functional-theory.html">
+            <li><a class="topic-card" data-id="5" href="computational/density-functional-theory.html">
                 <span class="num">5</span>
                 <span class="title">Density functional theory in practice</span>
-                <span class="desc">The Kohn&ndash;Sham scheme, functionals, the SCF cycle, convergence and what to compute.</span>
+                <span class="desc">The Kohn-Sham scheme, functionals, the SCF cycle, convergence and what to compute.</span>
                 <span class="tags"><span class="chip blue">Electrons</span>13 min read</span></a></li>
-            <li><a class="topic-card" href="computational/molecular-dynamics.html">
+            <li><a class="topic-card" data-id="6" href="computational/molecular-dynamics.html">
                 <span class="num">6</span>
                 <span class="title">Molecular dynamics</span>
                 <span class="desc">Integrators, interatomic potentials, thermostats, workflow and analysis.</span>
                 <span class="tags"><span class="chip blue">Atoms</span>11 min read</span></a></li>
-            <li><a class="topic-card" href="computational/monte-carlo-methods.html">
+            <li><a class="topic-card" data-id="7" href="computational/monte-carlo-methods.html">
                 <span class="num">7</span>
                 <span class="title">Monte Carlo and kinetic Monte Carlo</span>
                 <span class="desc">Importance sampling, Metropolis, the Ising model, cluster expansions and rejection-free kinetics.</span>
                 <span class="tags"><span class="chip blue">Atoms</span>12 min read</span></a></li>
-            <li><a class="topic-card" href="computational/diffusion-and-kinetics.html">
+            <li><a class="topic-card" data-id="8" href="computational/diffusion-and-kinetics.html">
                 <span class="num">8</span>
                 <span class="title">Diffusion and kinetics</span>
-                <span class="desc">Fick&rsquo;s laws, driving forces, atomistic mechanisms, computing D and solving the equation.</span>
+                <span class="desc">Fick&#x27;s laws, driving forces, atomistic mechanisms, computing D and solving the equation.</span>
                 <span class="tags"><span class="chip">Kinetics</span>13 min read</span></a></li>
-            <li><a class="topic-card" href="computational/phase-field-modelling.html">
+            <li><a class="topic-card" data-id="9" href="computational/phase-field-modelling.html">
                 <span class="num">9</span>
                 <span class="title">Phase-field modelling</span>
-                <span class="desc">Diffuse interfaces, Allen&ndash;Cahn and Cahn&ndash;Hilliard, spinodal decomposition and numerics.</span>
-                <span class="tags"><span class="chip blue">Microstructure</span>11 min read</span></a></li>
-            <li><a class="topic-card" href="computational/finite-element-method.html">
+                <span class="desc">Diffuse interfaces, Allen-Cahn and Cahn-Hilliard, spinodal decomposition and numerics.</span>
+                <span class="tags"><span class="chip blue">Microstructure</span>12 min read</span></a></li>
+            <li><a class="topic-card" data-id="10" href="computational/finite-element-method.html">
                 <span class="num">10</span>
                 <span class="title">The finite element method</span>
                 <span class="desc">Weak form, shape functions, meshing, convergence, nonlinear problems and materials applications.</span>
                 <span class="tags"><span class="chip">Continuum</span>13 min read</span></a></li>
-            <li><a class="topic-card" href="computational/machine-learning-for-materials.html">
+            <li><a class="topic-card" data-id="11" href="computational/machine-learning-for-materials.html">
                 <span class="num">11</span>
                 <span class="title">Machine learning for materials</span>
                 <span class="desc">Data, descriptors, models, honest validation, machine-learned potentials and active learning.</span>
                 <span class="tags"><span class="chip blue">Data</span>15 min read</span></a></li>
         </ul>
+<!-- cards:end -->
 
         <h2 class="section-title" id="about">About</h2>
         <p class="section-sub">MiBeM is written for anyone who studies, makes or tests materials: students, researchers and engineers working with metals, ceramics, polymers, semiconductors or composites. Pages assume a materials-science background (thermodynamics, crystal structure, mechanical behaviour) but not prior experience with simulation software.</p>
@@ -137,7 +140,9 @@
 
     <footer class="site"><div class="inner">
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="#topics">All topics</a><a href="#start">Where to start</a><a href="#main">Back to top</a></nav>
+        <nav><a href="index.html#topics">All topics</a><a href="map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
+    <script src="assets/topics.js"></script>
+    <script src="assets/site.js" defer></script>
 </body>
 </html>
