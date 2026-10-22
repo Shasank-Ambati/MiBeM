@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computational Materials Science for the Metallurgist - MiBeM</title>
+    <link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+    <header class="site">
+        <a class="brand" href="../index.html">MiBeM</a>
+        <nav>
+            <a href="../index.html#path">Learning path</a>
+        </nav>
+    </header>
+
+    <main>
+        <p class="meta">Computational materials science &middot; Day 1</p>
+        <h1>Computational materials science for the metallurgist</h1>
+        <p class="lead">Simulation is not one technique but a ladder of them. The skill is knowing which rung answers the question in front of you.</p>
+
+        <div class="callout">
+            <strong>After this page you should be able to:</strong>
+            <ul>
+                <li>Name the main families of computational methods and the length and time scales each covers.</li>
+                <li>Match a steel R&amp;D question to a sensible first method.</li>
+                <li>Explain why scales are usually linked rather than simulated all at once.</li>
+            </ul>
+        </div>
+
+        <h2>Why simulate at all?</h2>
+        <p>Experiments on steel are slow and costly: a trial heat, a rolling campaign, a heat-treatment matrix, then metallography and testing. Simulation does not replace that work. It narrows the search, so that fewer trials are needed, and it explains results that the microscope can only show after the fact.</p>
+        <p>A simulation is only as good as its inputs and assumptions. Treat every result as a prediction to be checked against measurement, not as a measurement.</p>
+
+        <h2>The scale ladder</h2>
+        <p>Material behaviour comes from structure at many scales at once. A single computation cannot cover all of them, so methods are specialised by the scale they handle.</p>
+        <table>
+            <thead>
+                <tr><th>Scale</th><th>Typical method</th><th>What it resolves</th><th>Steel example</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Electrons and atoms (about 0.1 to 1 nm)</td>
+                    <td>Density functional theory (DFT)</td>
+                    <td>Bonding, energies, small cells of tens to hundreds of atoms</td>
+                    <td>How strongly a solute atom binds to a grain boundary or to a dislocation core in iron</td>
+                </tr>
+                <tr>
+                    <td>Atomistic (nm to tens of nm, up to nanoseconds)</td>
+                    <td>Molecular dynamics, Monte Carlo</td>
+                    <td>Atom motion with model interatomic forces; millions of atoms</td>
+                    <td>Dislocation motion, grain boundary migration, diffusion of carbon in ferrite</td>
+                </tr>
+                <tr>
+                    <td>Thermodynamic (no spatial scale)</td>
+                    <td>CALPHAD</td>
+                    <td>Equilibrium phases and their compositions from assessed free energy models</td>
+                    <td>Phase fractions and transformation temperatures for a given steel composition</td>
+                </tr>
+                <tr>
+                    <td>Mesoscale (about 0.1 to 100 &micro;m)</td>
+                    <td>Phase-field, crystal plasticity, dislocation dynamics</td>
+                    <td>Evolving microstructure, grains and phases</td>
+                    <td>Austenite-to-ferrite transformation, precipitate growth, grain-level deformation in multiphase steels</td>
+                </tr>
+                <tr>
+                    <td>Continuum (mm to m)</td>
+                    <td>Finite element and computational fluid dynamics</td>
+                    <td>Stress, strain, temperature and flow in whole components or processes</td>
+                    <td>Hot rolling, forming of a sheet part, heat flow in a cooling strip</td>
+                </tr>
+                <tr>
+                    <td>Data-driven (any scale)</td>
+                    <td>Machine learning</td>
+                    <td>Statistical relationships between composition, processing and properties</td>
+                    <td>Predicting strength from composition and coiling temperature using plant data</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Linking scales</h2>
+        <p>The practical strategy is multiscale: use a finer method to produce a number that a coarser method needs. For example, an atomistic calculation can supply a diffusion coefficient or a boundary energy, a phase-field model can use it to predict how a microstructure evolves during cooling, and a continuum model can use the resulting microstructure to estimate the strength of the strip.</p>
+        <p>Information flows both ways in practice. A continuum model of a cooling strip gives the temperature history that a mesoscale model then takes as its input.</p>
+
+        <h2>Choosing a method for a question</h2>
+        <p>Start from the question, not the tool. A useful habit is to ask three things before picking a method:</p>
+        <ol>
+            <li><strong>What is the smallest feature that matters?</strong> That sets the finest scale you need.</li>
+            <li><strong>What is the longest time that matters?</strong> Atomistic methods reach nanoseconds to microseconds, so slow processes need a coarser model or an accelerated technique.</li>
+            <li><strong>Is the answer about equilibrium or about kinetics?</strong> Equilibrium questions can often be settled with thermodynamics alone, which is cheap. Kinetic questions need a model of how fast things happen.</li>
+        </ol>
+        <p>Often the cheapest useful step is a thermodynamic calculation. It tells you which phases can exist before you invest in anything heavier.</p>
+
+        <h2>Common software, by category</h2>
+        <p>Names change over time, so treat this as a starting map rather than a recommendation.</p>
+        <ul>
+            <li><strong>Electronic structure:</strong> VASP (commercial), Quantum ESPRESSO (open source).</li>
+            <li><strong>Atomistic:</strong> LAMMPS (open source).</li>
+            <li><strong>CALPHAD:</strong> Thermo-Calc and FactSage (commercial), pycalphad (open source).</li>
+            <li><strong>Mesoscale:</strong> MICRESS (commercial), MOOSE and OpenPhase (open source), DAMASK for crystal plasticity (open source).</li>
+            <li><strong>Continuum:</strong> Abaqus and Ansys (commercial), OpenFOAM and CalculiX (open source).</li>
+            <li><strong>Data-driven:</strong> Python with scikit-learn, PyTorch and pandas.</li>
+        </ul>
+
+        <h2>Try it yourself</h2>
+        <p>Pick one open problem from your own work, such as a property that varies between heats or a defect that appears in one process route. Write down, in a few lines:</p>
+        <ul>
+            <li>the question in one sentence,</li>
+            <li>the smallest feature and longest time that matter,</li>
+            <li>whether it is mainly equilibrium or kinetics, and</li>
+            <li>which row of the table above you would try first.</li>
+        </ul>
+        <p>Keep this note. Later pages return to it as each method is introduced.</p>
+
+        <h2>Next</h2>
+        <p>Day 2 starts at the cheapest rung: thermodynamics and CALPHAD, and how to read an equilibrium phase diagram for a real steel composition.</p>
+
+        <h2>References and further reading</h2>
+        <ul>
+            <li>Lukas, H., Fries, S. G. and Sundman, B., <em>Computational Thermodynamics: The Calphad Method</em>, Cambridge University Press.</li>
+            <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press.</li>
+            <li>Martin, R. M., <em>Electronic Structure: Basic Theory and Practical Methods</em>, Cambridge University Press.</li>
+            <li>Bhadeshia, H. K. D. H. and Honeycombe, R., <em>Steels: Microstructure and Properties</em>, Butterworth-Heinemann.</li>
+        </ul>
+    </main>
+
+    <footer class="site">
+        MiBeM &middot; <a href="../index.html">Back to the learning path</a>
+    </footer>
+</body>
+</html>
