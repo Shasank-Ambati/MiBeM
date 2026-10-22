@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="3">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="thermodynamics-and-calphad.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -57,7 +57,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="introduction.html">1. Introduction</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="introduction.html">1. Introduction</a><br><a href="physics-for-simulation.html">B2. Physics</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a><br><a href="molecular-dynamics.html">6. Molecular dynamics</a><br><a href="monte-carlo-methods.html">7. Monte Carlo and kMC</a></dd></div>
 <div><dt>Category</dt><dd>Foundations</dd></div>
 </dl>
@@ -82,7 +82,7 @@
 
             <h2 id="ensembles">2. Ensembles<a class="anchor" href="#ensembles" aria-label="Link to this section">#</a></h2>
             <p>An <strong>ensemble</strong> is the set of microstates consistent with a set of fixed macroscopic conditions. Which one to use depends on what the experiment holds constant and what the algorithm can impose.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="2. Ensembles (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Ensemble</th><th>Fixed</th><th>Fluctuates</th><th>Potential that is minimised at equilibrium</th><th>Typical use</th></tr></thead>
                 <tbody>
                     <tr><td>Microcanonical (NVE)</td><td>N, V, E</td><td>T, p</td><td>Entropy S is maximised (S = k<sub>B</sub> ln &Omega;)</td><td>Plain MD without a thermostat; testing energy conservation</td></tr>
@@ -90,7 +90,7 @@
                     <tr><td>Isothermal&ndash;isobaric (NPT)</td><td>N, p, T</td><td>E, V</td><td>Gibbs free energy G = H &minus; TS</td><td>Matching laboratory conditions; thermal expansion; phase stability</td></tr>
                     <tr><td>Grand canonical (&mu;VT)</td><td>&mu;, V, T</td><td>E, N</td><td>Grand potential &Omega; = F &minus; &mu;N</td><td>Adsorption, segregation, chemical equilibrium with a reservoir</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>In the thermodynamic limit (large <em>N</em>) the ensembles give the same averages. Fluctuations of an extensive quantity scale as 1/&radic;<em>N</em> relative to its mean, so they are tiny for a macroscopic sample but visible in a box of a few hundred atoms, and they differ between ensembles. A well-posed simulation states which ensemble it samples.</p>
 
             <h2 id="boltzmann">3. The Boltzmann distribution<a class="anchor" href="#boltzmann" aria-label="Link to this section">#</a></h2>
@@ -98,7 +98,7 @@
             <span class="eq">p<sub>i</sub> = exp(&minus;E<sub>i</sub> / k<sub>B</sub>T) / Z, &nbsp;&nbsp; Z = &Sigma;<sub>i</sub> exp(&minus;E<sub>i</sub> / k<sub>B</sub>T)</span>
             <p>This single formula underlies Metropolis Monte Carlo, thermostatted molecular dynamics, transition-state theory and the equilibrium populations of defects and phases. Lower-energy states are more probable, but the number of states at each energy (the degeneracy) also counts: a high-energy level with many states can hold more total probability than a low-energy level with few. The balance between these two effects is the balance between energy and entropy.</p>
             <figure>
-                <img src="../assets/animations/boltzmann-distribution.svg" alt="Animated bars showing level populations broadening as temperature increases" width="720" height="330" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/boltzmann-distribution.poster.png"><img src="../assets/animations/boltzmann-distribution.svg" alt="Animated bars showing level populations broadening as temperature increases" width="720" height="330" loading="lazy" decoding="async"></picture>
                 <figcaption>Populations of six equally spaced energy levels as temperature changes. The scale of &ldquo;hot&rdquo; and &ldquo;cold&rdquo; is set by the spacing &epsilon; compared with k<sub>B</sub>T.</figcaption>
             </figure>
             <div class="demo" data-demo="boltzmann"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
@@ -211,8 +211,8 @@
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
-    <script src="../assets/demos.js?v=849f173f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+    <script src="../assets/demos.js?v=4dc21ea9" defer></script>
 </body>
 </html>

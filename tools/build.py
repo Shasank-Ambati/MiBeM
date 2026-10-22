@@ -41,6 +41,17 @@ TOPICS = load_topics()
 BY_ID = {t["id"]: t for t in TOPICS}
 for t in TOPICS:
     t["path"] = f"computational/{t['slug']}.html"
+    t.setdefault("label", str(t["id"]))
+    t.setdefault("series", "core")
+
+
+def lab(t):
+    """Short label used in the number slot: 1..11 for core topics, B1..B5 for background pages."""
+    return t["label"]
+
+
+def label_text(t):
+    return ("Background " + t["label"].lstrip("B")) if t["series"] == "background" else "Topic " + t["label"]
 
 
 def esc(s):
@@ -64,8 +75,34 @@ def img_size(path):
     return None
 
 
+def wrap_tables(s):
+    """Put every table in a focusable, labelled scroll region so keyboard users can scroll it."""
+    s = re.sub(r'<div class="table-scroll"[^>]*>(<table.*?</table>)</div>', r'\1', s, flags=re.S)
+    heads = [(m.start(), re.sub(r"<[^>]+>|#", "", m.group(2)).strip()) for m in re.finditer(r"<(h2|h3)[^>]*>(.*?)</\1>", s, re.S)]
+
+    def fix(m):
+        label = "Table"
+        for hp, ht in heads:
+            if hp < m.start():
+                label = html.unescape(ht)
+        return f'<div class="table-scroll" role="region" aria-label="{esc(label)} (scrollable table)" tabindex="0">{m.group(0)}</div>'
+    return re.sub(r"<table.*?</table>", fix, s, flags=re.S)
+
+
+def add_anchors(s):
+    """Add a hover link (#) to every h2/h3 that has an id and does not already have one."""
+    def fix(m):
+        tag, hid, inner = m.group(1), m.group(2), m.group(3)
+        if 'class="anchor"' in inner:
+            return m.group(0)
+        return f'<{tag} id="{hid}">{inner}<a class="anchor" href="#{hid}" aria-label="Link to this section">#</a></{tag}>'
+    return re.sub(r'<(h2|h3) id="([^"]+)">(.*?)</\1>', fix, s, flags=re.S)
+
+
 def add_img_attrs(s, page_dir, lazy=True):
     """Give animation images explicit sizes (no layout jump) and, below the fold, lazy loading."""
+    s = re.sub(r'<picture><source[^>]*>(<img[^>]*>)</picture>', r'\1', s)  # idempotent: unwrap first
+
     def fix(m):
         src, alt = m.group(1), m.group(2)
         p = (page_dir / src).resolve()
@@ -74,7 +111,11 @@ def add_img_attrs(s, page_dir, lazy=True):
         size = img_size(p)
         dims = f' width="{size[0]}" height="{size[1]}"' if size else ""
         lz = ' loading="lazy" decoding="async"' if lazy else ""
-        return f'<img src="{src}" alt="{alt}"{dims}{lz}>'
+        img = f'<img src="{src}" alt="{alt}"{dims}{lz}>'
+        poster_src = re.sub(r"\.(gif|svg)$", ".poster.png", src)
+        if (page_dir / poster_src).resolve().exists():
+            return f'<picture><source media="(prefers-reduced-motion: reduce)" srcset="{poster_src}">{img}</picture>'
+        return img
     return re.sub(r'<img src="([^"]*assets/animations/[^"]+)" alt="([^"]*)"[^>]*>', fix, s)
 
 
@@ -133,7 +174,7 @@ def scripts(rel, demos=False):
 def links_html(ids, rel_prefix="", empty="none"):
     if not ids:
         return empty
-    return "<br>".join(f'<a href="{rel_prefix}{BY_ID[i]["slug"]}.html">{i}. {esc(BY_ID[i]["short"])}</a>' for i in ids)
+    return "<br>".join(f'<a href="{rel_prefix}{BY_ID[i]["slug"]}.html">{lab(BY_ID[i])}. {esc(BY_ID[i]["short"])}</a>' for i in ids)
 
 
 def region(name, content):
@@ -174,12 +215,12 @@ def build_topic(t, i):
 
     s = re.sub(r"<head>.*?</head>", lambda m: head(rel, title, desc, url), s, count=1, flags=re.S)
     s = re.sub(r"<body[^>]*>", f'<body data-topic="{t["id"]}">', s, count=1)
-    cta = (next_t["slug"] + ".html", "Next topic") if next_t else None
+    cta = None
     hdr = header(rel, [(rel + "index.html#topics", "Topics"), (rel + "map.html", "Map")], cta)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
 
     crumbs = (f'<p class="crumbs"><a href="{rel}index.html#topics">Topics</a><span>/</span>'
-              f'<span class="chip{" blue" if t["tone"] == "b" else ""}">{esc(t["part"])}</span><span>Topic {t["id"]}</span></p>')
+              f'<span class="chip{" blue" if t["tone"] == "b" else ""}">{esc(t["part"])}</span><span>{label_text(t)}</span></p>')
     s, n = re.subn(r'<p class="crumbs">.*?</p>', lambda m: crumbs, s, count=1, flags=re.S)
     assert n == 1, f"no breadcrumb in {t['slug']}"
     s = s.replace("<article>", '<article id="main">', 1)
@@ -221,18 +262,29 @@ def build_topic(t, i):
     s = re.sub(r"<footer class=\"site\">.*?</footer>.*?</body>",
                lambda m: footer(rel) + "\n    " + scripts(rel, demos='class="demo"' in s) + "\n</body>", s, count=1, flags=re.S)
     s = add_img_attrs(s, path.parent)
+    s = add_anchors(s)
+    s = wrap_tables(s)
     path.write_text(s, encoding="utf-8")
 
 
 # ----------------------------------------------------------------- landing + map
-def cards():
-    out = []
-    for t in TOPICS:
-        out.append(f'''            <li><a class="topic-card" data-id="{t["id"]}" href="{t["path"]}">
-                <span class="num">{t["id"]}</span>
+def card_html(t):
+    bg = " bg" if t["series"] == "background" else ""
+    chip = " blue" if t["tone"] == "b" else ""
+    return f'''            <li><a class="topic-card" data-id="{t["id"]}" href="{t["path"]}">
+                <span class="num{bg}">{lab(t)}</span>
                 <span class="title">{esc(t["title"])}</span>
                 <span class="desc">{esc(t["blurb"])}</span>
-                <span class="tags"><span class="chip{" blue" if t["tone"] == "b" else ""}">{esc(t["part"])}</span>{t["minutes"]} min read</span></a></li>''')
+                <span class="tags"><span class="chip{chip}">{esc(t["part"])}</span>{t["minutes"]} min read</span></a></li>'''
+
+
+def cards():
+    groups = [("Background: what to know first", "background", "Refreshers on the maths, physics, materials science, numerical methods and programming that the core topics rely on."),
+              ("Core topics", "core", "The methods themselves, in a sensible reading order.")]
+    out = []
+    for title, series, sub in groups:
+        items = "\n".join(card_html(x) for x in TOPICS if x["series"] == series)
+        out.append(f'        <h3 class="group-title">{title}</h3>\n        <p class="section-sub">{sub}</p>\n        <ul class="topic-grid">\n{items}\n        </ul>')
     return "\n".join(out)
 
 
@@ -240,7 +292,7 @@ def fallback_list(rel_prefix):
     items = []
     for t in TOPICS:
         b = f' <span class="meta">builds on {", ".join(str(x) for x in t["builds"])}</span>' if t["builds"] else ""
-        items.append(f'<li><a href="{rel_prefix}{t["path"]}">{t["id"]}. {esc(t["title"])}</a>{b}</li>')
+        items.append(f'<li><a href="{rel_prefix}{t["path"]}">{lab(t)}. {esc(t["title"])}</a>{b}</li>')
     return "<ol>" + "".join(items) + "</ol>"
 
 
@@ -251,9 +303,9 @@ def build_index():
     desc = re.search(r'<meta name="description" content="(.*?)">', s).group(1)
     s = re.sub(r"<head>.*?</head>", lambda m: head("", title, desc, BASE, "website"), s, count=1, flags=re.S)
     links = [("#start", "Where to start"), ("#map", "Map"), ("#topics", "Topics"), ("#about", "About")]
-    hdr = header("", links, ("computational/introduction.html", "Start reading"))
+    hdr = header("", links, None)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
-    s = replace_region(s, "cards", '        <ul class="topic-grid">\n' + cards() + "\n        </ul>")
+    s = replace_region(s, "cards", cards())
     s = replace_region(s, "map", '        <div id="topic-map">' + fallback_list("") + "</div>")
     s = re.sub(r"<footer class=\"site\">.*?</footer>.*?</body>", lambda m: footer("") + "\n    " + scripts("") + "\n</body>", s, count=1, flags=re.S)
     s = add_img_attrs(s, ROOT, lazy=False)
@@ -263,7 +315,7 @@ def build_index():
 def build_map():
     title = "Topic Map - MiBeM"
     desc = "How the topics build on each other: prerequisites and what each topic leads to."
-    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map")], ("computational/introduction.html", "Start reading"))
+    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map")], None)
     page = f"""<!DOCTYPE html>
 <html lang="en">
 {head("", title, desc, BASE + "map.html", "website")}
@@ -281,7 +333,7 @@ def build_map():
         <ul>
             <li><strong>Orange lines</strong> lead from a topic back to what it builds on; <strong>blue lines</strong> lead forward to what it unlocks.</li>
             <li><strong>Dashed related links</strong> mark topics that connect without being required.</li>
-            <li>A tick on a topic means you have read most of that page on this device. The record stays in your browser and can be cleared below the map.</li>
+            <li>A tick on a topic means you have read most of that page on this device. The record stays in your browser only, and can be cleared with the link in the footer.</li>
         </ul>
     </main>
 
@@ -322,6 +374,10 @@ def build_404():
 
 
 # ----------------------------------------------------------------- search index + sitemap
+BLOCK = {"p", "li", "td", "th", "dt", "dd", "summary", "tr", "div", "h1", "h2", "h3", "h4", "figcaption", "br", "ul", "ol", "table", "details", "pre", "aside", "dl", "figure"}
+SKIP_CLASSES = ("crumbs", "facts", "demo")
+
+
 class Sections(HTMLParser):
     def __init__(self, topic):
         super().__init__(convert_charrefs=True)
@@ -333,14 +389,25 @@ class Sections(HTMLParser):
         self.skip = 0
         self.anchor = 0
         self.page = topic["path"]
+        self.skip_tag = None
+        self.skip_depth = 0
 
     def start(self, h, hid):
         if self.cur and self.cur["x"].strip():
             self.items.append(self.cur)
-        self.cur = {"n": self.topic["id"], "t": self.topic["title"], "h": h, "u": self.page + (f"#{hid}" if hid else ""), "x": ""}
+        self.cur = {"n": self.topic["id"], "l": label_text(self.topic), "t": self.topic["title"], "h": h, "u": self.page + (f"#{hid}" if hid else ""), "x": ""}
 
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
+        if self.skip_tag:
+            if tag == self.skip_tag:
+                self.skip_depth += 1
+            return
+        if self.in_article and any(c in (a.get("class") or "").split() for c in SKIP_CLASSES):
+            self.skip_tag, self.skip_depth = tag, 1
+            return
+        if self.in_article and tag in BLOCK and self.cur is not None and self.heading is None:
+            self.cur["x"] += " "
         if tag == "article":
             self.in_article = True
             self.start(self.topic["title"], "")
@@ -357,6 +424,14 @@ class Sections(HTMLParser):
             pass
 
     def handle_endtag(self, tag):
+        if self.skip_tag:
+            if tag == self.skip_tag:
+                self.skip_depth -= 1
+                if self.skip_depth == 0:
+                    self.skip_tag = None
+            return
+        if self.in_article and tag in BLOCK and self.cur is not None and self.heading is None:
+            self.cur["x"] += " "
         if not self.in_article:
             return
         if tag in ("script", "style") and self.skip:
@@ -378,7 +453,7 @@ class Sections(HTMLParser):
         if self.heading is not None:
             self.heading["text"] += data
         elif self.cur is not None:
-            self.cur["x"] += " " + data
+            self.cur["x"] += data
 
 
 def build_search():

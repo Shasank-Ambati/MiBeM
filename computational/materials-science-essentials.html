@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials Science Essentials - MiBeM</title>
+    <meta name="description" content="Bonding, structure, defects, strengthening, phase transformations, mechanical behaviour, processing and characterisation: the materials science that simulations model and are tested against.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/materials-science-essentials.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Materials Science Essentials - MiBeM">
+    <meta property="og:description" content="Bonding, structure, defects, strengthening, phase transformations, mechanical behaviour, processing and characterisation: the materials science that simulations model and are tested against.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/materials-science-essentials.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
+</head>
+<body data-topic="14">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#framework">1. The framework</a></li>
+                <li><a href="#bonding">2. Bonding</a></li>
+                <li><a href="#structure">3. Structure at many scales</a></li>
+                <li><a href="#defects">4. Defects and strengthening</a></li>
+                <li><a href="#transformations">5. Phases and transformations</a></li>
+                <li><a href="#mechanical">6. Mechanical behaviour</a></li>
+                <li><a href="#functional">7. Other properties</a></li>
+                <li><a href="#processing">8. Processing routes</a></li>
+                <li><a href="#characterisation">9. Characterisation</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Background</span><span>Background 3</span></p>
+            <h1>Materials science essentials</h1>
+            <p class="lead">Simulation models materials, so it helps to be fluent in what they are and how they are described. This page is a compact refresher of the core ideas (bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments used to test materials), always pointing to where a simulation method connects.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
+<div><dt>Leads to</dt><dd><a href="introduction.html">1. Introduction</a></dd></div>
+<div><dt>Category</dt><dd>Background</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Relate bonding type to typical properties and to the interatomic model or electronic method that suits it.</li>
+                    <li>Describe the hierarchy of structure from atoms to grains and say which defects control strength and diffusion.</li>
+                    <li>Distinguish equilibrium from transformation kinetics and name the main strengthening mechanisms.</li>
+                    <li>Read a stress&ndash;strain curve, and name the experiment that measures each quantity a simulation predicts.</li>
+                </ul>
+            </div>
+
+            <h2 id="framework">1. The framework<a class="anchor" href="#framework" aria-label="Link to this section">#</a></h2>
+            <p>Materials science is organised around one chain: <strong>processing</strong> (how a material is made and treated) determines its <strong>structure</strong> (arrangement of atoms, defects, grains and phases at every scale); structure determines <strong>properties</strong> (strength, conductivity, corrosion resistance and so on); and properties determine <strong>performance</strong> in service. A steel sheet is a good illustration: composition and the thermomechanical schedule (rolling temperature, cooling rate, coiling temperature) set the mix of ferrite, bainite and martensite; that microstructure sets the yield strength and formability; and those set how the part forms and how it absorbs energy in a crash.</p>
+            <div class="table-scroll" role="region" aria-label="1. The framework (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Link in the chain</th><th>Typical question</th><th>Simulation that addresses it</th></tr></thead>
+                <tbody>
+                    <tr><td>Processing &rarr; structure</td><td>Which phases and grain size result from this schedule?</td><td><a href="thermodynamics-and-calphad.html">CALPHAD</a>, <a href="diffusion-and-kinetics.html">diffusion models</a>, <a href="phase-field-modelling.html">phase-field</a>, <a href="finite-element-method.html">process finite elements</a></td></tr>
+                    <tr><td>Structure &rarr; properties</td><td>How strong is this microstructure? How does a defect move?</td><td>Crystal plasticity, <a href="molecular-dynamics.html">molecular dynamics</a>, <a href="density-functional-theory.html">DFT</a></td></tr>
+                    <tr><td>Properties &rarr; performance</td><td>Will the component survive the load, heat or environment?</td><td>Continuum finite elements</td></tr>
+                    <tr><td>All links, in reverse</td><td>Which composition and process would give this property?</td><td><a href="machine-learning-for-materials.html">Machine learning</a> and optimisation</td></tr>
+                </tbody>
+            </table></div>
+
+            <h2 id="bonding">2. Bonding<a class="anchor" href="#bonding" aria-label="Link to this section">#</a></h2>
+            <p>Everything starts with how atoms hold together. The bond type largely decides the properties and, importantly for simulation, which interatomic model or electronic method is appropriate.</p>
+            <div class="table-scroll" role="region" aria-label="2. Bonding (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Bond</th><th>Nature</th><th>Examples and cohesive energy</th><th>Typical consequences</th><th>Suitable models</th></tr></thead>
+                <tbody>
+                    <tr><td>Metallic</td><td>Valence electrons delocalised over all atoms, non-directional</td><td>Cu 3.5, Fe 4.3, W 8.9 eV/atom</td><td>Ductile, conducting, usually close-packed or body-centred cubic structures</td><td>Embedded-atom potentials; DFT</td></tr>
+                    <tr><td>Covalent</td><td>Electrons shared in directional bonds</td><td>Si 4.6, diamond 7.4 eV/atom</td><td>Hard, brittle, open structures, semiconducting</td><td>Tersoff and Stillinger&ndash;Weber potentials; DFT</td></tr>
+                    <tr><td>Ionic</td><td>Electron transfer; electrostatic attraction between ions</td><td>NaCl, MgO, Al<sub>2</sub>O<sub>3</sub> (lattice energy of NaCl about 8 eV per ion pair)</td><td>Hard, brittle, insulating, high melting points</td><td>Coulomb plus short-range potentials; DFT+U</td></tr>
+                    <tr><td>van der Waals</td><td>Weak attraction from fluctuating dipoles</td><td>Noble gases, graphite interlayers, polymer chain packing; 0.01&ndash;0.1 eV</td><td>Low melting points, soft, layered sliding</td><td>Lennard-Jones; dispersion-corrected DFT</td></tr>
+                    <tr><td>Hydrogen bond</td><td>Attraction between H and an electronegative atom</td><td>Water, proteins, polyamides; 0.1&ndash;0.4 eV</td><td>Structure of water and many polymers</td><td>Specialised force fields</td></tr>
+                </tbody>
+            </table></div>
+            <p>All bonds share one shape of energy curve: repulsion at short distance, attraction at long, and a minimum at the equilibrium spacing <em>r</em><sub>0</sub> with depth equal to the bond energy. The curvature at the minimum is the bond stiffness <em>k</em>, so macroscopic stiffness follows from it: Young&rsquo;s modulus is roughly <em>E</em> &asymp; <em>k</em>/<em>r</em><sub>0</sub>, giving about 80 GPa for <em>k</em> = 20 N/m and <em>r</em><sub>0</sub> = 0.25 nm, the right order for metals. The asymmetry of the curve (it is steeper on the repulsive side) is the origin of thermal expansion, and deeper wells mean higher melting points and stiffer solids.</p>
+
+            <h2 id="structure">3. Structure at many scales<a class="anchor" href="#structure" aria-label="Link to this section">#</a></h2>
+            <p>Properties depend on structure at every scale from the atomic to the component, so simulations are matched to the scale that controls the property.</p>
+            <div class="table-scroll" role="region" aria-label="3. Structure at many scales (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Scale</th><th>Features</th><th>Typical size</th></tr></thead>
+                <tbody>
+                    <tr><td>Atomic</td><td>Crystal lattice or amorphous arrangement; point defects; dislocation cores</td><td>0.1&ndash;2 nm</td></tr>
+                    <tr><td>Nano</td><td>Precipitates, clusters, solute atmospheres, thin films</td><td>1&ndash;100 nm</td></tr>
+                    <tr><td>Micro</td><td>Grains, phases, inclusions, pores, dislocation networks</td><td>0.1&ndash;100 &micro;m (steel sheet grains: 5&ndash;20 &micro;m)</td></tr>
+                    <tr><td>Macro</td><td>Component, weld, casting, residual-stress field</td><td>mm&ndash;m</td></tr>
+                </tbody>
+            </table></div>
+            <p>Most engineering materials are <strong>polycrystals</strong>: aggregates of crystalline grains with different orientations separated by grain boundaries. The distribution of grain orientations is the <em>texture</em>, which makes properties direction-dependent (anisotropy): rolled sheet forms differently along and across the rolling direction. Other classes differ in structure. <strong>Glasses</strong> (and metallic glasses) lack long-range order but keep a regular short-range arrangement; <strong>polymers</strong> are long chain molecules, with crystalline and amorphous regions and a glass transition temperature; <strong>ceramics</strong> are mostly ionic or covalent compounds, usually made by sintering powders into polycrystals; <strong>composites</strong> combine phases (fibres in a matrix) to get properties neither has alone.</p>
+            <p>A central empirical result links scales: the yield strength of a polycrystal rises as the grain size <em>d</em> falls, as described by the <strong>Hall&ndash;Petch relation</strong>:</p>
+            <span class="eq">&sigma;<sub>y</sub> = &sigma;<sub>0</sub> + k d<sup>&minus;1/2</sup></span>
+            <p>where &sigma;<sub>0</sub> is the friction stress for dislocation motion and <em>k</em> measures how hard it is to pass slip across a boundary. For steels <em>k</em> is of order 0.5&ndash;0.7 MPa m<sup>1/2</sup>.</p>
+
+            <h2 id="defects">4. Defects and strengthening<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
+            <p>A perfect crystal is a poor model of a real material: the useful properties of metals come largely from their defects.</p>
+            <ul>
+                <li><strong>Point defects</strong> (vacancies, interstitials, substitutional solutes) exist in equilibrium at a concentration that rises exponentially with temperature (see <a href="crystal-structure-and-periodic-cells.html">crystal structures</a>); vacancies are what lets substitutional atoms diffuse.</li>
+                <li><strong>Dislocations</strong> are line defects, characterised by the Burgers vector <strong>b</strong> (the magnitude and direction of the lattice distortion), with edge, screw and mixed character. Plastic deformation is the glide of dislocations on close-packed planes under shear stress, at stresses far below the theoretical shear strength of a perfect crystal. The dislocation density &rho; (line length per volume) is about 10<sup>10</sup>&ndash;10<sup>12</sup> m<sup>&minus;2</sup> in annealed metals and 10<sup>14</sup>&ndash;10<sup>16</sup> m<sup>&minus;2</sup> in heavily deformed ones.</li>
+                <li><strong>Planar defects</strong>: grain boundaries, stacking faults, twin boundaries, phase boundaries and free surfaces.</li>
+                <li><strong>Volume defects</strong>: pores, inclusions and second-phase particles.</li>
+            </ul>
+            <p>Strengthening a metal means hindering dislocation motion. The main mechanisms are summarised below.</p>
+            <div class="table-scroll" role="region" aria-label="4. Defects and strengthening (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Mechanism</th><th>How it works</th><th>Scaling</th></tr></thead>
+                <tbody>
+                    <tr><td>Solid-solution strengthening</td><td>Solute atoms distort the lattice and interact with dislocations</td><td>Increases with solute concentration (roughly as a power of 1/2 to 2/3)</td></tr>
+                    <tr><td>Grain-boundary strengthening</td><td>Boundaries block slip</td><td>Hall&ndash;Petch: &prop; <em>d</em><sup>&minus;1/2</sup></td></tr>
+                    <tr><td>Work (strain) hardening</td><td>Dislocations multiply and obstruct each other</td><td>Taylor: &Delta;&sigma; = &alpha;<em>MGb</em>&radic;&rho;, with &alpha; &asymp; 0.2&ndash;0.5 and Taylor factor <em>M</em> &asymp; 3</td></tr>
+                    <tr><td>Precipitation (dispersion) strengthening</td><td>Fine particles are cut by or bowed around by dislocations</td><td>Orowan bowing: &Delta;&tau; &asymp; <em>Gb</em>/<em>L</em>, with <em>L</em> the particle spacing</td></tr>
+                    <tr><td>Transformation strengthening</td><td>Hard, fine product phases such as martensite or bainite</td><td>Depends on carbon content and transformation temperature</td></tr>
+                </tbody>
+            </table></div>
+            <p>Here <em>G</em> is the shear modulus. These mechanisms combine, which is the basis of alloy design, and each ties to a modelling scale: solute&ndash;dislocation binding by DFT, dislocation mobility by <a href="molecular-dynamics.html">molecular dynamics</a>, precipitate evolution by <a href="phase-field-modelling.html">phase-field</a> and grain-level plasticity by crystal plasticity.</p>
+
+            <h2 id="transformations">5. Phases and transformations<a class="anchor" href="#transformations" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>phase</strong> is a region of uniform composition and structure. The equilibrium phases for a given composition and temperature are what a phase diagram shows (the calculation is in <a href="thermodynamics-and-calphad.html">thermodynamics and CALPHAD</a>), but real processing is rarely at equilibrium, so which microstructure forms depends on <em>kinetics</em>. The main transformation types are:</p>
+            <ul>
+                <li><strong>Nucleation and growth (diffusional).</strong> A new phase forms as small nuclei that need to overcome an energy barrier, then grows by atoms moving across the interface; the rate is set by diffusion and by the driving force. Examples: precipitation, pearlite, ferrite growth from austenite.</li>
+                <li><strong>Diffusionless (displacive).</strong> The lattice changes by a coordinated shear faster than atoms can diffuse, so composition is unchanged. The classic example is martensite in steel, formed on rapid cooling, which is hard because carbon remains trapped.</li>
+                <li><strong>Spinodal decomposition.</strong> A solution inside the spinodal separates continuously, with no barrier (see <a href="phase-field-modelling.html">phase-field modelling</a>).</li>
+                <li><strong>Order&ndash;disorder and magnetic transitions.</strong> Changes in the arrangement of species or spins with no change of lattice.</li>
+            </ul>
+            <p>Because outcomes depend on the cooling path, engineers use <strong>time&ndash;temperature&ndash;transformation (TTT)</strong> and <strong>continuous-cooling transformation (CCT)</strong> diagrams, which show how long a transformation takes to start and finish at each temperature or cooling rate; a critical cooling rate must be exceeded to produce martensite. The overall kinetics are often described by the Johnson&ndash;Mehl&ndash;Avrami&ndash;Kolmogorov equation (see <a href="diffusion-and-kinetics.html">diffusion and kinetics</a>). Heat treatment exploits all of this: <em>annealing</em> softens by recovery, recrystallisation and grain growth; <em>normalising</em> refines grains; <em>quenching</em> traps non-equilibrium phases; <em>tempering</em> relaxes quenched structures by precipitating carbides; <em>ageing</em> forms fine precipitates, as in the Al&ndash;Cu system, where the sequence of Guinier&ndash;Preston zones and metastable precipitates gives peak strength before the equilibrium phase coarsens.</p>
+
+            <h2 id="mechanical">6. Mechanical behaviour<a class="anchor" href="#mechanical" aria-label="Link to this section">#</a></h2>
+            <h3 id="stress-strain">Stress and strain<a class="anchor" href="#stress-strain" aria-label="Link to this section">#</a></h3>
+            <p>Engineering stress is &sigma; = <em>F</em>/<em>A</em><sub>0</sub> (force over the original area) and engineering strain &epsilon; = &Delta;<em>L</em>/<em>L</em><sub>0</sub>. When strains are large, true quantities account for the changing size: &sigma;<sub>true</sub> = &sigma;(1 + &epsilon;) and &epsilon;<sub>true</sub> = ln(1 + &epsilon;), valid until necking. A tensile test produces the curve from which most properties are read.</p>
+            <ul>
+                <li><strong>Elastic region.</strong> Reversible; &sigma; = <em>E</em>&epsilon; (Hooke&rsquo;s law). The Poisson ratio &nu; = &minus;&epsilon;<sub>transverse</sub>/&epsilon;<sub>axial</sub> (about 0.3 for metals) links the moduli: <em>G</em> = <em>E</em>/[2(1 + &nu;)] and <em>K</em> = <em>E</em>/[3(1 &minus; 2&nu;)].</li>
+                <li><strong>Yield and plasticity.</strong> Permanent deformation starts at the yield strength. Afterwards the flow stress rises by strain hardening, often described by &sigma; = <em>K</em>&epsilon;<sup><em>n</em></sup> (Hollomon), up to the ultimate tensile strength, where necking begins (Consid&egrave;re criterion: at a true strain equal to <em>n</em> for a power law). Ductility is the strain to fracture.</li>
+                <li><strong>Hardness</strong>, resistance to local indentation, is roughly three times the yield strength for most metals.</li>
+            </ul>
+            <h3 id="failure">Fracture, fatigue and creep<a class="anchor" href="#failure" aria-label="Link to this section">#</a></h3>
+            <ul>
+                <li><strong>Fracture.</strong> Brittle fracture occurs when a crack grows at stresses below yield; the Griffith/Irwin result is &sigma;<sub>f</sub> = <em>K</em><sub>Ic</sub>/(<em>Y</em>&radic;(&pi;<em>a</em>)) for a crack of length <em>a</em>, with fracture toughness <em>K</em><sub>Ic</sub> a material property and <em>Y</em> a geometry factor. BCC metals show a ductile&ndash;brittle transition with temperature.</li>
+                <li><strong>Fatigue.</strong> Failure under repeated loading at stresses well below yield; described by S&ndash;N curves and the Paris law for crack growth, d<em>a</em>/d<em>N</em> = <em>C</em>(&Delta;<em>K</em>)<sup><em>m</em></sup>.</li>
+                <li><strong>Creep.</strong> Slow deformation under constant load at high temperature, controlled by diffusion, with steady-state rate &epsilon;&#775; = <em>A</em>&sigma;<sup><em>n</em></sup>exp(&minus;<em>Q</em>/<em>RT</em>).</li>
+            </ul>
+            <h3 id="typical">Typical values<a class="anchor" href="#typical" aria-label="Link to this section">#</a></h3>
+            <p>Approximate room-temperature values give a feel for the range; real values depend strongly on composition and processing.</p>
+            <div class="table-scroll" role="region" aria-label="Typical values (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Material</th><th>Young&rsquo;s modulus (GPa)</th><th>Yield strength (MPa)</th><th>Density (g/cm<sup>3</sup>)</th></tr></thead>
+                <tbody>
+                    <tr><td>Pure aluminium, annealed</td><td>70</td><td>20&ndash;35</td><td>2.70</td></tr>
+                    <tr><td>Aluminium alloy 7075-T6</td><td>71</td><td>about 500</td><td>2.81</td></tr>
+                    <tr><td>Mild steel</td><td>about 210</td><td>about 250</td><td>7.85</td></tr>
+                    <tr><td>Advanced high-strength steels</td><td>about 210</td><td>700 to over 1000</td><td>7.85</td></tr>
+                    <tr><td>Titanium alloy Ti&ndash;6Al&ndash;4V</td><td>about 114</td><td>about 880</td><td>4.43</td></tr>
+                    <tr><td>Copper, annealed</td><td>about 120</td><td>about 70</td><td>8.96</td></tr>
+                    <tr><td>Alumina ceramic</td><td>about 370</td><td>brittle (bending strength 300&ndash;400)</td><td>3.9</td></tr>
+                    <tr><td>Nylon (polymer)</td><td>2&ndash;3</td><td>about 50&ndash;80</td><td>1.14</td></tr>
+                </tbody>
+            </table></div>
+            <p>Note that the modulus of a given material class barely changes with processing (it is set by bonding), whereas yield strength changes by an order of magnitude (it is set by microstructure). That contrast is why DFT is good at moduli and why strength needs multiscale modelling.</p>
+
+            <h2 id="functional">7. Other properties<a class="anchor" href="#functional" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li><strong>Electrical.</strong> Set by the band structure (see <a href="physics-for-simulation.html#bands">physics for simulation</a>): metals conduct (copper resistivity about 1.7 &times; 10<sup>&minus;8</sup> &Omega;&middot;m), semiconductors have a gap of order 1 eV that doping controls, insulators have gaps above about 3 eV.</li>
+                <li><strong>Thermal.</strong> Heat is carried by electrons and phonons: conductivity is about 400 W/(m&middot;K) for copper, 235 for aluminium, 50 for typical steels and above 1000 for diamond. Thermal expansion coefficients are about 12 &times; 10<sup>&minus;6</sup> K<sup>&minus;1</sup> for steel, 23 &times; 10<sup>&minus;6</sup> for aluminium and about 1.2 &times; 10<sup>&minus;6</sup> for Invar, an iron&ndash;nickel alloy whose magnetism cancels the expansion.</li>
+                <li><strong>Magnetic.</strong> Ferromagnets (Fe, Co, Ni) have aligned moments below their Curie temperatures; soft magnets are easy to magnetise and used in transformers, hard magnets resist demagnetisation.</li>
+                <li><strong>Corrosion and oxidation.</strong> Electrochemical or chemical reactions with the environment, governed by thermodynamic stability (Pourbaix and Ellingham diagrams) and by the kinetics of transport through any surface film.</li>
+            </ul>
+
+            <h2 id="processing">8. Processing routes<a class="anchor" href="#processing" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="8. Processing routes (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Route</th><th>What it controls</th><th>Where simulation enters</th></tr></thead>
+                <tbody>
+                    <tr><td>Casting and solidification</td><td>Grain structure, segregation, porosity</td><td>Heat flow and solidification path (<a href="finite-element-method.html">FEM</a> with <a href="thermodynamics-and-calphad.html">CALPHAD</a>); dendrite growth by phase-field</td></tr>
+                    <tr><td>Wrought processing (rolling, forging, extrusion)</td><td>Shape, texture, dislocation density, recrystallisation</td><td>Large-strain finite elements, crystal plasticity</td></tr>
+                    <tr><td>Heat treatment</td><td>Phases, precipitates, hardness</td><td>Diffusion and transformation models, thermal&ndash;mechanical FEM</td></tr>
+                    <tr><td>Powder metallurgy and sintering</td><td>Density, grain size</td><td>Diffusion, kinetic Monte Carlo, phase-field</td></tr>
+                    <tr><td>Additive manufacturing</td><td>Rapid solidification, residual stress, defects</td><td>Moving-heat-source FEM, solidification models</td></tr>
+                    <tr><td>Welding and joining</td><td>Heat-affected zone, distortion, residual stress</td><td>Thermal&ndash;metallurgical&ndash;mechanical FEM</td></tr>
+                    <tr><td>Coatings and thin films</td><td>Thickness, texture, stress, interfaces</td><td>Kinetic Monte Carlo, molecular dynamics</td></tr>
+                </tbody>
+            </table></div>
+
+            <h2 id="characterisation">9. Characterisation<a class="anchor" href="#characterisation" aria-label="Link to this section">#</a></h2>
+            <p>Simulations earn trust by being compared with measurements, so know what each technique reports.</p>
+            <div class="table-scroll" role="region" aria-label="9. Characterisation (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Technique</th><th>What it measures</th><th>Scale</th><th>Compare with</th></tr></thead>
+                <tbody>
+                    <tr><td>X-ray and neutron diffraction</td><td>Phases, lattice parameters, texture, strain</td><td>Average over a volume</td><td>Computed diffraction patterns, lattice constants from DFT</td></tr>
+                    <tr><td>SEM and EBSD</td><td>Grain size, orientation, phase maps</td><td>0.1 &micro;m&ndash;mm</td><td>Phase-field and crystal-plasticity microstructures</td></tr>
+                    <tr><td>TEM and STEM</td><td>Dislocations, precipitates, interfaces at atomic resolution</td><td>0.1&ndash;100 nm</td><td>Atomistic defect and interface structures</td></tr>
+                    <tr><td>Atom probe tomography</td><td>Three-dimensional composition, segregation, clusters</td><td>atomic to 100 nm</td><td>Monte Carlo segregation, precipitation models</td></tr>
+                    <tr><td>Tensile and compression tests</td><td>Modulus, yield, hardening, ductility</td><td>Specimen</td><td>Finite elements, crystal plasticity</td></tr>
+                    <tr><td>Nanoindentation and hardness</td><td>Local modulus and hardness</td><td>nm&ndash;&micro;m</td><td>Molecular dynamics, finite elements</td></tr>
+                    <tr><td>Calorimetry and dilatometry</td><td>Transformation temperatures, latent heat, expansion</td><td>Specimen</td><td>CALPHAD and transformation kinetics</td></tr>
+                    <tr><td>Tracer and couple diffusion experiments</td><td>Diffusion coefficients, activation energies</td><td>&micro;m</td><td>DFT with transition-state theory, kinetic Monte Carlo</td></tr>
+                </tbody>
+            </table></div>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Processing sets structure, structure sets properties, and properties set performance; simulation can enter at every link.</li>
+<li>Bonding type (metallic, covalent, ionic, van der Waals) decides which interatomic model or electronic method is appropriate.</li>
+<li>Defects control most useful properties: dislocations govern strength, vacancies govern diffusion, and boundaries govern grain-size effects.</li>
+<li>Phase diagrams give the equilibrium; transformation kinetics (nucleation, growth, diffusion) decide which microstructure actually forms.</li>
+<li>Know what each experiment measures (diffraction, microscopy, tensile tests, calorimetry), because that is what a simulation must be compared with.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>Why are metals usually ductile and covalent solids such as silicon brittle at room temperature?</summary>
+                <p>Metallic bonding is non-directional, so atoms can slip past each other and dislocations glide easily. Covalent bonds are directional, so moving a dislocation requires breaking strong bonds and the material cracks first.</p>
+            </details>
+            <details>
+                <summary>A steel obeys Hall&ndash;Petch with <em>k</em> = 0.6 MPa m<sup>1/2</sup>. How much stronger does refining the grain size from 20 &micro;m to 5 &micro;m make it?</summary>
+                <p>&Delta;&sigma; = <em>k</em>(5 &times; 10<sup>&minus;6</sup>)<sup>&minus;1/2</sup> &minus; <em>k</em>(20 &times; 10<sup>&minus;6</sup>)<sup>&minus;1/2</sup> = 0.6 &times; (447 &minus; 224) &asymp; 134 MPa, roughly 130 MPa stronger.</p>
+            </details>
+            <details>
+                <summary>Which simulation method would you use first to estimate the driving force for precipitating a carbide at 500 &deg;C, and why?</summary>
+                <p>CALPHAD: it gives the Gibbs energy change for forming the phase from the current matrix composition at that temperature, which is the thermodynamic input to nucleation and growth models, at a tiny cost compared with atomistic methods.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Callister, W. D. and Rethwisch, D. G., <em>Materials Science and Engineering: An Introduction</em>, Wiley.</li>
+                <li>Ashby, M. F. and Jones, D. R. H., <em>Engineering Materials 1: An Introduction to Properties, Applications and Design</em>, Butterworth-Heinemann.</li>
+                <li>Porter, D. A., Easterling, K. E. and Sherif, M. Y., <em>Phase Transformations in Metals and Alloys</em>, CRC Press.</li>
+                <li>Bhadeshia, H. K. D. H. and Honeycombe, R., <em>Steels: Microstructure and Properties</em>, Butterworth-Heinemann.</li>
+                <li>Hull, D. and Bacon, D. J., <em>Introduction to Dislocations</em>, Butterworth-Heinemann.</li>
+                <li>Courtney, T. H., <em>Mechanical Behavior of Materials</em>, Waveland Press.</li>
+                <li>Dieter, G. E., <em>Mechanical Metallurgy</em>, McGraw-Hill.</li>
+                <li>Hall, E. O., The deformation and ageing of mild steel, <em>Proc. Phys. Soc. B</em> 64, 747 (1951); Petch, N. J., The cleavage strength of polycrystals, <em>J. Iron Steel Inst.</em> 174, 25 (1953).</li>
+                <li>Taylor, G. I., The mechanism of plastic deformation of crystals, <em>Proc. R. Soc. A</em> 145, 362 (1934).</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="physics-for-simulation.html"><span class="dir">Previous topic</span>Physics for simulation</a>
+<a class="next" href="numerical-methods-essentials.html"><span class="dir">Next topic</span>Numerical methods essentials</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+</body>
+</html>

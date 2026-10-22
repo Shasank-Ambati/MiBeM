@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="5">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="molecular-dynamics.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -58,7 +58,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 13 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="physics-for-simulation.html">B2. Physics</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">11. Machine learning</a></dd></div>
 <div><dt>Category</dt><dd>Electrons</dd></div>
 </dl>
@@ -87,7 +87,7 @@
 
             <h2 id="xc">3. Exchange&ndash;correlation functionals<a class="anchor" href="#xc" aria-label="Link to this section">#</a></h2>
             <p>Everything not computed exactly is in <em>E</em><sub>xc</sub>, which must be approximated. The choice of approximation is the main modelling decision in a DFT calculation, climbing a ladder of increasing ingredients and cost.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="3. Exchange–correlation functionals (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Level</th><th>Depends on</th><th>Examples</th><th>Typical behaviour</th></tr></thead>
                 <tbody>
                     <tr><td>Local density (LDA)</td><td>Density at a point</td><td>Ceperley&ndash;Alder / PZ</td><td>Lattice parameters too small by 1&ndash;3%; bonds too strong; wrong ground state for iron</td></tr>
@@ -96,7 +96,7 @@
                     <tr><td>Hybrid</td><td>Mixes in a fraction of exact exchange</td><td>PBE0, HSE06</td><td>Much better band gaps and localised-state description; 10 to 100 times the cost of GGA in plane-wave codes</td></tr>
                     <tr><td>Beyond</td><td>Many-body perturbation</td><td>GW, random-phase approximation</td><td>Quasiparticle band gaps, van der Waals; very expensive</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <h3>Common corrections</h3>
             <ul>
                 <li><strong>Spin polarisation.</strong> Magnetic materials such as Fe, Co, Ni and many oxides need separate spin-up and spin-down densities. The starting magnetic moments and the magnetic configuration (ferromagnetic, antiferromagnetic) must be chosen deliberately, and different starting guesses can converge to different local solutions.</li>
@@ -120,14 +120,14 @@
             <h2 id="scf">6. The self-consistency cycle<a class="anchor" href="#scf" aria-label="Link to this section">#</a></h2>
             <p>The Kohn&ndash;Sham equations are non-linear: the potential depends on the density, which depends on the orbitals, which depend on the potential. They are solved by iteration. Guess a density, build the potential, solve for orbitals, form a new density, and repeat until input and output densities agree.</p>
             <figure>
-                <img src="../assets/animations/scf-loop.svg" alt="Animated diagram of the self-consistent field cycle" width="720" height="320" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/scf-loop.poster.png"><img src="../assets/animations/scf-loop.svg" alt="Animated diagram of the self-consistent field cycle" width="720" height="320" loading="lazy" decoding="async"></picture>
                 <figcaption>The self-consistent field cycle. The dot follows one pass around the loop; each pass costs a diagonalisation of the Hamiltonian.</figcaption>
             </figure>
             <p>Simply replacing the old density with the new one oscillates or diverges, so a <strong>mixing</strong> scheme (Pulay/DIIS or Broyden) combines the history of densities. Convergence is declared when the change in energy or density drops below a tolerance (for example 10<sup>&minus;6</sup> eV in VASP for routine work, tighter for phonons). Slow or failed convergence usually has a physical cause: a metallic system with too little smearing, an incorrect magnetic starting guess, a nearly degenerate state, or a bad structure. Once the electronic problem is converged, forces and stress follow from the Hellmann&ndash;Feynman theorem, and the structure can be relaxed by moving atoms (and the cell) downhill in energy.</p>
 
             <h2 id="convergence">7. Convergence<a class="anchor" href="#convergence" aria-label="Link to this section">#</a></h2>
             <p>Every numerical parameter must be tested, because a result that has not converged is a result of the parameters, not of the material. The method is the same each time: vary one parameter while holding the others fixed and watch the <em>quantity of interest</em> (not just the total energy).</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="7. Convergence (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Parameter</th><th>What it controls</th><th>Typical test</th><th>Comment</th></tr></thead>
                 <tbody>
                     <tr><td>Plane-wave cutoff</td><td>Basis completeness</td><td>Raise until energy differences change by under about 1 meV per atom</td><td>Stress converges more slowly than energy; relaxing a cell needs a higher cutoff or a fixed-basis re-run</td></tr>
@@ -137,7 +137,7 @@
                     <tr><td>Vacuum thickness, slab thickness</td><td>Surface and interface models</td><td>Increase until the surface energy stops changing</td><td>Both matter</td></tr>
                     <tr><td>Force and SCF tolerances</td><td>Relaxation accuracy</td><td>Tighten until structure and energy stop changing</td><td>Typical force tolerance 0.01 eV/&Aring;; phonons need much smaller</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>When comparing energies of different structures, use the <em>same</em> cutoff, pseudopotentials and equivalent <em>k</em>-point density in all of them, so that errors cancel. Test with differences, not absolute energies.</p>
 
             <h2 id="calc">8. What to compute<a class="anchor" href="#calc" aria-label="Link to this section">#</a></h2>
@@ -162,7 +162,7 @@
 
             <h2 id="inputs">10. Inputs in common codes<a class="anchor" href="#inputs" aria-label="Link to this section">#</a></h2>
             <p>The parameters above appear under different names in each program. The table maps a few widely used ones.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="10. Inputs in common codes (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Concept</th><th>VASP</th><th>Quantum ESPRESSO</th></tr></thead>
                 <tbody>
                     <tr><td>Cutoff energy</td><td><code>ENCUT</code> (eV)</td><td><code>ecutwfc</code> (Ry), <code>ecutrho</code></td></tr>
@@ -172,7 +172,7 @@
                     <tr><td>Spin polarisation</td><td><code>ISPIN = 2</code>, <code>MAGMOM</code></td><td><code>nspin = 2</code>, <code>starting_magnetization</code></td></tr>
                     <tr><td>Relaxation</td><td><code>IBRION</code>, <code>ISIF</code>, <code>NSW</code>, <code>EDIFFG</code></td><td><code>calculation = 'relax'</code> or <code>'vc-relax'</code></td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Units differ (eV against Rydberg), as do conventions for the functional and pseudopotential: record these exactly, since they are part of the result.</p>
 
             <!-- takeaways:start -->
@@ -232,7 +232,7 @@
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
 </body>
 </html>

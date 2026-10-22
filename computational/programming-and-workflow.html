@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programming and Workflow - MiBeM</title>
+    <meta name="description" content="The command line, Python for science, data formats, version control, running on clusters, reproducibility and testing your own code.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/programming-and-workflow.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Programming and Workflow - MiBeM">
+    <meta property="og:description" content="The command line, Python for science, data formats, version control, running on clusters, reproducibility and testing your own code.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/programming-and-workflow.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
+</head>
+<body data-topic="16">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#scope">1. What you need</a></li>
+                <li><a href="#shell">2. The command line</a></li>
+                <li><a href="#python">3. Python for science</a></li>
+                <li><a href="#data">4. Units and data formats</a></li>
+                <li><a href="#git">5. Version control</a></li>
+                <li><a href="#cluster">6. Running on a cluster</a></li>
+                <li><a href="#workflow">7. Workflows and reproducibility</a></li>
+                <li><a href="#testing">8. Testing your code</a></li>
+                <li><a href="#habits">9. Debugging and habits</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Background</span><span>Background 5</span></p>
+            <h1>Programming and workflow</h1>
+            <p class="lead">Computational work is as much about organisation as about equations: running many calculations, keeping track of what produced which result, and being able to repeat it months later. This page covers the practical skills that make that routine: the command line, a scripting language, version control, clusters and testing.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 11 min</dd></div>
+<div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
+<div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">11. Machine learning</a></dd></div>
+<div><dt>Category</dt><dd>Background</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Move around and automate tasks from the command line, including simple loops and pipes.</li>
+                    <li>Read data, fit and plot it in Python with NumPy, SciPy and Matplotlib.</li>
+                    <li>Keep a project under version control and describe a reproducible folder layout.</li>
+                    <li>Submit and manage jobs on a cluster scheduler, and test a piece of your own code.</li>
+                </ul>
+            </div>
+
+            <h2 id="scope">1. What you need<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
+            <p>You do not need to be a software engineer. A modest, well-chosen set of tools covers nearly all work in this series.</p>
+            <div class="table-scroll" role="region" aria-label="1. What you need (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Skill</th><th>Why</th><th>Typical tools</th></tr></thead>
+                <tbody>
+                    <tr><td>Command line</td><td>Simulation codes and clusters are driven from a text terminal</td><td>bash or zsh, ssh, rsync</td></tr>
+                    <tr><td>A scripting language</td><td>Build inputs, run sweeps, analyse and plot output</td><td>Python with NumPy, SciPy, Matplotlib</td></tr>
+                    <tr><td>Version control</td><td>History, collaboration, recovery from mistakes</td><td>git with GitHub or GitLab</td></tr>
+                    <tr><td>Cluster use</td><td>Large runs need many cores</td><td>Slurm or PBS, MPI, modules</td></tr>
+                    <tr><td>Reproducibility habits</td><td>Results must be repeatable and traceable</td><td>Environments, containers, notes, seeds</td></tr>
+                </tbody>
+            </table></div>
+
+            <h2 id="shell">2. The command line<a class="anchor" href="#shell" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>shell</strong> reads commands, runs programs and glues them together. On Linux and macOS it is built in; on Windows, the Windows Subsystem for Linux (WSL) provides one. Everything is addressed by <em>paths</em>: absolute paths start at the root (<code>/home/you/project</code>), relative ones from the current directory, with <code>.</code> for the current and <code>..</code> for the parent directory. The most useful commands:</p>
+            <div class="table-scroll" role="region" aria-label="2. The command line (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Task</th><th>Commands</th></tr></thead>
+                <tbody>
+                    <tr><td>Navigate and list</td><td><code>pwd</code>, <code>cd</code>, <code>ls -l</code></td></tr>
+                    <tr><td>Create, copy, move, delete</td><td><code>mkdir</code>, <code>cp</code>, <code>mv</code>, <code>rm</code> (deletion is permanent: there is no recycle bin)</td></tr>
+                    <tr><td>Look at files</td><td><code>cat</code>, <code>less</code>, <code>head</code>, <code>tail</code>, <code>wc -l</code></td></tr>
+                    <tr><td>Search</td><td><code>grep</code> (text inside files), <code>find</code> (files by name or date)</td></tr>
+                    <tr><td>Compare</td><td><code>diff</code>, <code>sort</code>, <code>uniq</code></td></tr>
+                    <tr><td>Remote machines</td><td><code>ssh</code> to log in; <code>scp</code> and <code>rsync</code> to copy files</td></tr>
+                    <tr><td>Processes</td><td><code>top</code>, <code>ps</code>, <code>kill</code></td></tr>
+                </tbody>
+            </table></div>
+            <p>Two ideas give the shell its power. A <strong>pipe</strong> sends the output of one command into the next, and <code>&gt;</code> redirects output to a file. A <strong>loop</strong> repeats a command for many cases. Together they turn a morning of clicking into a line:</p>
+<pre><code># last total energy printed in a VASP OUTCAR file
+grep "free  energy   TOTEN" OUTCAR | tail -1
+
+# make one folder per temperature
+for T in 300 600 900; do mkdir T$T; done</code></pre>
+            <p><strong>Environment variables</strong> (such as <code>PATH</code>, the list of places searched for programs) and <strong>modules</strong> (<code>module load lammps</code> on most clusters) control which software versions you get. Python and other packages are managed in isolated <em>environments</em> (<code>python -m venv</code>, or <code>conda</code> / <code>mamba</code>), so that one project&rsquo;s libraries do not break another&rsquo;s.</p>
+
+            <h2 id="python">3. Python for science<a class="anchor" href="#python" aria-label="Link to this section">#</a></h2>
+            <p>Python is the usual glue language: readable, with a large scientific ecosystem. The core is small. Lists and dictionaries hold data, loops and functions structure the work, and f-strings format output. The scientific stack adds:</p>
+            <ul>
+                <li><strong>NumPy</strong>: fast arrays with <em>vectorised</em> operations (apply a formula to a million numbers without writing a loop), slicing and <em>broadcasting</em> (arrays of different shapes combine by stretching the smaller one).</li>
+                <li><strong>SciPy</strong>: linear algebra, optimisation, integration, interpolation, statistics and ODE solvers (see <a href="numerical-methods-essentials.html">numerical methods</a>).</li>
+                <li><strong>Matplotlib</strong>: plots; <strong>pandas</strong>: tables of mixed data; <strong>Jupyter</strong> notebooks for exploring and documenting.</li>
+                <li>Materials-specific libraries: ASE and pymatgen (structures and workflows), pycalphad (thermodynamics), matminer and scikit-learn (<a href="machine-learning-for-materials.html">machine learning</a>).</li>
+            </ul>
+            <p>A typical job reads data, computes, writes a result and plots it. This script fits the Arrhenius law (see <a href="diffusion-and-kinetics.html">diffusion and kinetics</a>) to tabulated diffusivities and then evaluates it:</p>
+<pre><code>import numpy as np
+
+kB = 8.617333e-5                 # eV/K
+D0, Q = 2.0e-6, 0.87             # m^2/s, eV (illustrative values)
+T = np.linspace(500, 1000, 6)    # K
+D = D0 * np.exp(-Q / (kB * T))   # vectorised: no loop needed
+
+for t, d in zip(T, D):
+    print(f"{t:6.0f} K   D = {d:.2e} m^2/s")
+
+# fit ln D against 1/T: the slope is -Q/kB
+slope, intercept = np.polyfit(1 / T, np.log(D), 1)
+print("recovered Q =", -slope * kB, "eV")</code></pre>
+            <p>And turning a molecular-dynamics mean-squared displacement into a diffusion coefficient (see <a href="molecular-dynamics.html">molecular dynamics</a>) takes four lines. Conversions are a classic source of mistakes: 1 &Aring;&sup2;/ps = 10<sup>&minus;8</sup> m&sup2;/s.</p>
+<pre><code>import numpy as np
+
+data = np.loadtxt("msd.dat")                 # columns: time (ps), MSD (A^2)
+t, msd = data[:, 0], data[:, 1]
+slope, intercept = np.polyfit(t, msd, 1)     # MSD = 6 D t  in three dimensions
+print(f"D = {slope / 6 * 1e-8:.3e} m^2/s")</code></pre>
+
+            <h2 id="data">4. Units and data formats<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
+            <p>Unit systems differ between programs (see <a href="physics-for-simulation.html#units">physics for simulation</a>), so write the unit next to every number: in column headers, variable names and file comments. File formats matter for exchange and long-term use.</p>
+            <div class="table-scroll" role="region" aria-label="4. Units and data formats (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Format</th><th>Holds</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td>CIF</td><td>Crystal structures from databases and journals</td><td>Text; the standard for experimental structures</td></tr>
+                    <tr><td>POSCAR, XYZ and extended XYZ</td><td>Atomic positions (and cell, forces, energies in extended XYZ)</td><td>Simple text; ASE converts between formats</td></tr>
+                    <tr><td>LAMMPS data and dump files</td><td>Starting structures and trajectories for molecular dynamics</td><td>Text; large trajectories use binary or compressed formats</td></tr>
+                    <tr><td>CSV and plain columns</td><td>Tables of numbers</td><td>Easy to read anywhere; add a header with units</td></tr>
+                    <tr><td>JSON and YAML</td><td>Settings, parameters and metadata</td><td>Human-readable, structured; ideal for configuration</td></tr>
+                    <tr><td>HDF5 and NetCDF</td><td>Large numerical arrays with attributes</td><td>Binary, self-describing, fast; used for big simulation output</td></tr>
+                </tbody>
+            </table></div>
+
+            <h2 id="git">5. Version control<a class="anchor" href="#git" aria-label="Link to this section">#</a></h2>
+            <p><strong>Git</strong> records the history of a project as a series of snapshots (<em>commits</em>), each with a message saying why it changed. It lets you return to any earlier state, try ideas on separate <em>branches</em>, compare versions with <code>git diff</code>, and share work through a remote such as GitHub or GitLab. A basic session:</p>
+<pre><code>git init                      # start tracking this folder
+git add run.py in.lammps      # choose what goes in the next snapshot
+git commit -m "Add vacancy-formation input and run script"
+git status                    # what has changed
+git log --oneline             # the history
+git switch -c larger-cell     # try something on a new branch
+git push                      # share it</code></pre>
+            <p>What to track: scripts, input files, notes, small data and the instructions to rebuild the rest. What to leave out: large outputs (trajectories, wavefunctions), temporary files, binaries and anything secret such as passwords or access keys; list them in a <code>.gitignore</code> file and describe how to regenerate them in the README. Write commit messages that say <em>why</em>, make commits small and focused, and tag the commit that produced each published figure.</p>
+
+            <h2 id="cluster">6. Running on a cluster<a class="anchor" href="#cluster" aria-label="Link to this section">#</a></h2>
+            <p>You log in to a <em>login node</em> to prepare and submit work (never run heavy calculations there) and a <strong>scheduler</strong>, most often Slurm, places your job on <em>compute nodes</em> when resources are free. A job is described by a batch script whose <code>#SBATCH</code> lines request resources:</p>
+<pre><code>#!/bin/bash
+#SBATCH --job-name=cu_vac
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=32
+#SBATCH --time=02:00:00
+#SBATCH --output=%x_%j.out
+
+module load lammps
+srun lmp -in in.vacancy</code></pre>
+            <p>Submit it with <code>sbatch job.sh</code>, watch it with <code>squeue -u $USER</code>, cancel with <code>scancel &lt;jobid&gt;</code> and review finished jobs with <code>sacct</code>. A <strong>job array</strong> runs the same script for many parameter values, for example ten temperatures:</p>
+<pre><code>#SBATCH --array=0-9
+T=$((300 + 100 * SLURM_ARRAY_TASK_ID))     # 300, 400, ... 1200 K
+srun lmp -in in.melt -var T $T</code></pre>
+            <p>Good practice on shared machines:</p>
+            <ul>
+                <li><strong>Test small first</strong>, then measure how the run time scales with core count before requesting hundreds of cores (see <a href="numerical-methods-essentials.html#performance">parallel scaling</a>).</li>
+                <li><strong>Ask for what you need.</strong> Requests far above the need wait longer in the queue; a time limit set too short kills the job. Allow a safety margin of 20&ndash;30% on measured run time.</li>
+                <li><strong>Checkpoint long runs</strong> (write restart files regularly) so a failure costs hours, not days.</li>
+                <li><strong>Mind the file systems.</strong> Fast scratch storage is for running jobs and is often purged; home or project storage is for keeping results. Copy what matters off scratch, and compress or delete bulky intermediate files.</li>
+                <li><strong>Read the error first.</strong> The usual failures are out of memory, exceeded time limit, a missing module or a wrong path, and the scheduler and program logs say which.</li>
+            </ul>
+
+            <h2 id="workflow">7. Workflows and reproducibility<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>reproducible</strong> result is one that you, or someone else, can regenerate from recorded inputs. That needs organisation more than clever tools.</p>
+            <ul>
+                <li><strong>A predictable folder layout</strong>, one project per directory with separate places for inputs, scripts, raw output and results. A common structure: <code>inputs/</code>, <code>scripts/</code>, <code>runs/&lt;case&gt;/</code>, <code>results/</code>, <code>notes.md</code>.</li>
+                <li><strong>Scripts, not clicks.</strong> Generate input files and run sweeps from a script, so changing a parameter and re-running is one command. Notebooks are excellent for exploring; move stable steps into scripts.</li>
+                <li><strong>Record the environment</strong>: code versions, library versions (<code>pip freeze</code>, <code>conda env export</code>), the potential or pseudopotential files used, the random seeds, and the units. Containers (Docker, Apptainer) freeze a whole software stack.</li>
+                <li><strong>Name things consistently</strong>, with parameters in directory names (<code>Cu_vac_4x4x4_T300</code>) or, better, recorded in a metadata file next to the output.</li>
+                <li><strong>Workflow managers</strong> (Snakemake, AiiDA, signac, jobflow) automate dependencies between steps and store provenance; they pay off once a project has hundreds of calculations.</li>
+                <li><strong>Share and archive</strong> the inputs and scripts behind a paper in a repository that issues a persistent identifier (Zenodo, Materials Cloud). Data that are findable, accessible, interoperable and reusable (the <em>FAIR</em> principles) are worth more than data that are merely posted.</li>
+            </ul>
+
+            <h2 id="testing">8. Testing your code<a class="anchor" href="#testing" aria-label="Link to this section">#</a></h2>
+            <p>Research code is easy to get quietly wrong. Cheap checks catch most errors before they reach a paper:</p>
+            <ul>
+                <li><strong>Test against known answers</strong>: analytic solutions, limiting cases, textbook numbers, a published benchmark.</li>
+                <li><strong>Check invariants</strong>: conserved energy or mass, symmetry, correct units, results that must be positive or monotonic.</li>
+                <li><strong>Automate it</strong> with unit tests that run in one command, so a later change that breaks something is noticed at once. With <code>pytest</code>, a test is a function whose name starts with <code>test_</code>:</li>
+            </ul>
+<pre><code>import numpy as np
+
+def arrhenius(T, D0, Q, kB=8.617333e-5):
+    return D0 * np.exp(-Q / (kB * T))
+
+def test_arrhenius_limits():
+    assert np.isclose(arrhenius(1e12, 2.0, 0.9), 2.0, rtol=1e-6)   # very high T gives D0
+    assert arrhenius(300, 2.0, 0.9) &lt; arrhenius(600, 2.0, 0.9)      # rises with temperature</code></pre>
+            <p>Compare floating-point numbers with a tolerance, never with <code>==</code>. Keep a small <em>regression test</em> that reruns a quick case and compares with a stored result, so changes in a library version or a refactor that alter results are flagged.</p>
+
+            <h2 id="habits">9. Debugging and habits<a class="anchor" href="#habits" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li><strong>Read the error message from the bottom up.</strong> The last line says what failed, the lines above say where.</li>
+                <li><strong>Make a minimal example</strong> that reproduces the problem; half the time the bug is found while shrinking it.</li>
+                <li><strong>Print, log or plot intermediate values</strong> and look at them; use a debugger (<code>pdb</code>, or the one in your editor) for harder cases.</li>
+                <li><strong>Change one thing at a time</strong>, and keep the working version in version control.</li>
+                <li><strong>Profile before optimising</strong> (<code>python -m cProfile</code>): the slow part is rarely where you expect.</li>
+                <li><strong>Write for the next reader</strong>: clear names, short functions, a README that says how to run the project and what each file is. The next reader is usually you, six months later.</li>
+                <li><strong>Back up</strong> anything that cannot be regenerated, on more than one machine.</li>
+            </ul>
+            <p>For viewing results, common tools are VESTA and OVITO (structures and defects), ParaView (fields and meshes) and Matplotlib (plots), with VS Code, PyCharm or a terminal editor for writing code.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A scripting language (Python with NumPy, SciPy and Matplotlib) plus the command line covers most day-to-day computational work.</li>
+<li>Keep inputs, scripts and notes under version control; keep large outputs elsewhere and record how they were made.</li>
+<li>On a cluster, test small, request only the resources you need, use job arrays for parameter sweeps and checkpoint long runs.</li>
+<li>Reproducibility means recorded versions, seeds, units and inputs so that someone else, or you in a year, can rerun the work.</li>
+<li>Test your own code against analytic solutions and simple limits before trusting it on real problems.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>What does <code>grep "TOTEN" OUTCAR | tail -1</code> do?</summary>
+                <p><code>grep</code> prints every line of the file <code>OUTCAR</code> containing &ldquo;TOTEN&rdquo;; the pipe passes those lines to <code>tail -1</code>, which keeps only the last one, here the final total energy of a calculation.</p>
+            </details>
+            <details>
+                <summary>A calculation takes about 3 hours when measured. What time limit would you request, and why not 48 hours?</summary>
+                <p>About 4 hours: a margin of 20&ndash;30% protects against variation without wasting the allocation. A 48-hour request would wait much longer in the queue, block resources and can be rejected by queue limits, and it gives no benefit.</p>
+            </details>
+            <details>
+                <summary>Which files belong in a git repository for a simulation project, and which do not?</summary>
+                <p>Track scripts, input files, notes and small reference data, plus instructions to regenerate everything else. Leave out large outputs such as trajectories and wavefunctions, temporary files, binaries and secrets; record in the README how to recreate them.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Wilson, G. et al., Best practices for scientific computing, <em>PLoS Biol.</em> 12, e1001745 (2014).</li>
+                <li>Wilson, G. et al., Good enough practices in scientific computing, <em>PLoS Comput. Biol.</em> 13, e1005510 (2017).</li>
+                <li>Harris, C. R. et al., Array programming with NumPy, <em>Nature</em> 585, 357 (2020).</li>
+                <li>Virtanen, P. et al., SciPy 1.0: fundamental algorithms for scientific computing in Python, <em>Nat. Methods</em> 17, 261 (2020).</li>
+                <li>Hunter, J. D., Matplotlib: a 2D graphics environment, <em>Comput. Sci. Eng.</em> 9, 90 (2007).</li>
+                <li>Larsen, A. H. et al., The Atomic Simulation Environment, <em>J. Phys.: Condens. Matter</em> 29, 273002 (2017).</li>
+                <li>Wilkinson, M. D. et al., The FAIR guiding principles for scientific data management and stewardship, <em>Sci. Data</em> 3, 160018 (2016).</li>
+                <li>Chacon, S. and Straub, B., <em>Pro Git</em> (free online).</li>
+                <li>Shotts, W., <em>The Linux Command Line</em>, No Starch Press.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="numerical-methods-essentials.html"><span class="dir">Previous topic</span>Numerical methods essentials</a>
+<a class="next" href="introduction.html"><span class="dir">Next topic</span>Introduction to computational materials science</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+</body>
+</html>

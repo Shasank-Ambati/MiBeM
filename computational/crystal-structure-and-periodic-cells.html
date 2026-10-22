@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="2">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="statistical-mechanics.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -82,7 +82,7 @@
             <p>Often a <em>conventional</em> cell larger than the primitive cell is used because it shows the symmetry more clearly. The face-centred cubic conventional cell holds 4 lattice points, the body-centred cubic one holds 2.</p>
 
             <h2 id="structures">2. Common structures<a class="anchor" href="#structures" aria-label="Link to this section">#</a></h2>
-            <table>
+            <div class="table-scroll" role="region" aria-label="2. Common structures (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Structure</th><th>Lattice</th><th>Atoms per conventional cell</th><th>Nearest neighbours</th><th>Packing fraction</th><th>Examples</th></tr></thead>
                 <tbody>
                     <tr><td>Face-centred cubic (fcc)</td><td>cubic F</td><td>4</td><td>12</td><td>0.74</td><td>Al, Cu, Ni, Au, austenite (&gamma;-Fe)</td></tr>
@@ -92,7 +92,7 @@
                     <tr><td>Rock salt (B1)</td><td>fcc, 2-atom basis</td><td>8 (4 cation + 4 anion)</td><td>6 (unlike ions)</td><td>depends on radii</td><td>NaCl, MgO, TiC</td></tr>
                     <tr><td>Perovskite (ABO<sub>3</sub>)</td><td>simple cubic (ideal)</td><td>5</td><td>B: 6 O; A: 12 O</td><td>&mdash;</td><td>SrTiO<sub>3</sub>, BaTiO<sub>3</sub></td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Close packing arises from stacking triangular layers. The sequence ABAB&hellip; gives hcp and ABCABC&hellip; gives fcc, which explains why the two structures have the same density and coordination but different symmetry, and why stacking faults in fcc metals locally look like hcp. Bcc is less densely packed and has no single close-packed slip plane; the mobility of its screw dislocations depends strongly on temperature, which is the origin of the ductile-to-brittle transition that bcc metals show and fcc metals do not.</p>
             <p>Lattice parameters at room temperature are the first numbers to check against any model: Cu fcc <em>a</em> &asymp; 3.61 &Aring;, Al fcc 4.05 &Aring;, &alpha;-Fe bcc 2.87 &Aring;, Si diamond 5.43 &Aring;. If a calculation or potential reproduces these to within a percent or two, the basic bonding description is plausible; if not, nothing downstream can be trusted.</p>
 
@@ -110,7 +110,7 @@
 
             <h2 id="defects">5. Defects<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
             <p>Real materials are defined as much by their defects as by their ideal structure, and most of the interesting simulation questions concern them. Defects are classified by dimension.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="5. Defects (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Dimension</th><th>Defect</th><th>Typical simulation question</th></tr></thead>
                 <tbody>
                     <tr><td>0D (point)</td><td>Vacancy, self-interstitial, substitutional or interstitial solute, antisite</td><td>Formation energy, migration barrier, binding to other defects, concentration at equilibrium</td></tr>
@@ -118,7 +118,7 @@
                     <tr><td>2D (planar)</td><td>Grain boundaries, stacking faults, twin boundaries, phase boundaries, free surfaces</td><td>Interface energy, segregation, sliding and migration, fracture energy</td></tr>
                     <tr><td>3D (volume)</td><td>Voids, precipitates, inclusions</td><td>Nucleation barrier, coherency strain, growth rate</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>A point defect&rsquo;s equilibrium concentration follows from the competition between the energy it costs and the configurational entropy it gains:</p>
             <span class="eq">c<sub>v</sub> &asymp; exp( &minus;E<sub>f</sub> / k<sub>B</sub>T ) &nbsp; (times a vibrational-entropy factor)</span>
             <p>Because the formation energy <em>E</em><sub>f</sub> of a vacancy is of order 1 eV in many metals, equilibrium vacancy fractions near the melting point are about 10<sup>&minus;4</sup> to 10<sup>&minus;3</sup> and fall steeply on cooling. Computing <em>E</em><sub>f</sub> from DFT or an interatomic potential is one of the most common first tasks in atomistic modelling.</p>
@@ -126,7 +126,7 @@
             <h2 id="supercell">6. Building supercells<a class="anchor" href="#supercell" aria-label="Link to this section">#</a></h2>
             <p>A simulation cell cannot be infinite, so a <strong>supercell</strong> is built by repeating the unit cell <em>n</em><sub>1</sub>&times;<em>n</em><sub>2</sub>&times;<em>n</em><sub>3</sub> times and then modifying it, for example by removing one atom to create a vacancy. Because the supercell is itself periodically repeated, the defect interacts with its own periodic images. The artefact shrinks as the cell grows, and the cost grows too, so supercell size is a convergence parameter (see the convergence section of the <a href="density-functional-theory.html">density functional theory</a> page).</p>
             <p>The defect concentration implied by a single vacancy in a <em>n</em>&times;<em>n</em>&times;<em>n</em> fcc supercell is 1/(4<em>n</em>&sup3;):</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="6. Building supercells (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>fcc supercell</th><th>Atoms (before removing one)</th><th>Vacancy concentration</th></tr></thead>
                 <tbody>
                     <tr><td>2&times;2&times;2</td><td>32</td><td>3.1%</td></tr>
@@ -134,7 +134,7 @@
                     <tr><td>4&times;4&times;4</td><td>256</td><td>0.39%</td></tr>
                     <tr><td>6&times;6&times;6</td><td>864</td><td>0.12%</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>These are far above the equilibrium concentration, so the vacancies are strongly interacting in small cells: elastic strain fields overlap and the computed formation energy drifts with size. The standard remedy is to repeat the calculation in several sizes and extrapolate, or to use a cell large enough that the result changes by less than the accuracy required. For charged defects in insulators, long-range Coulomb interactions converge very slowly and need explicit correction schemes.</p>
             <p>A supercell does not have to be a simple multiple. A general transformation matrix <strong>M</strong> (integer entries) gives new lattice vectors <strong>a</strong>&prime; = <strong>M</strong><strong>a</strong>, which allows a nearly cubic cell to be built from a hexagonal or primitive fcc cell, or a cell oriented along a chosen crystallographic direction. For dislocations and grain boundaries, the cell axes are chosen along specific directions so that the periodic boundary can accommodate the defect geometry.</p>
             <p>Here is how a 4&times;4&times;4 copper cell with one vacancy looks in the Atomic Simulation Environment (ASE), a Python library:</p>
@@ -147,7 +147,7 @@ print(len(cell), cell.get_volume())</code></pre>
             <h2 id="pbc">7. Periodic boundary conditions<a class="anchor" href="#pbc" aria-label="Link to this section">#</a></h2>
             <p>With <strong>periodic boundary conditions</strong> (PBC) the cell is surrounded by an infinite array of copies of itself. An atom that leaves through one face re-enters through the opposite face, so the simulation has no surfaces and a small number of atoms mimics bulk. Follow the highlighted atom in the figure: it leaves on the right and reappears on the left.</p>
             <figure>
-                <img src="../assets/animations/periodic-boundary.svg" alt="Animation showing atoms leaving a simulation cell on one side and re-entering on the opposite side" width="720" height="270" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/periodic-boundary.poster.png"><img src="../assets/animations/periodic-boundary.svg" alt="Animation showing atoms leaving a simulation cell on one side and re-entering on the opposite side" width="720" height="270" loading="lazy" decoding="async"></picture>
                 <figcaption>The simulation cell (solid outline) and two of its periodic images (dashed). The same atoms appear in every image.</figcaption>
             </figure>
             <h3>Minimum image convention</h3>
@@ -228,7 +228,7 @@ print(len(cell), cell.get_volume())</code></pre>
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
 </body>
 </html>

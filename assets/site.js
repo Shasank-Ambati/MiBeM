@@ -15,6 +15,7 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
   };
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function tLabel(t) { return t.series === "background" ? "Background " + String(t.label).replace(/^B/, "") : "Topic " + (t.label || t.id); }
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
 
   var ICON = {
@@ -113,7 +114,7 @@
 
   function showHome() {
     var items = TOPICS.map(function (t) {
-      return '<li role="option"><a href="' + esc(ROOT + "computational/" + t.slug + ".html") + '"><div class="sr-where">Topic ' + t.id + " &middot; " + esc(t.part) + '</div><div class="sr-title">' + esc(t.title) + "</div></a></li>";
+      return '<li role="option"><a href="' + esc(ROOT + "computational/" + t.slug + ".html") + '"><div class="sr-where">' + tLabel(t) + " &middot; " + esc(t.part) + '</div><div class="sr-title">' + esc(t.title) + "</div></a></li>";
     }).join("");
     list.innerHTML = items || '<li class="search-empty">Type to search.</li>';
     status.textContent = "";
@@ -170,7 +171,7 @@
     if (!rs.length) { list.innerHTML = '<li class="search-empty">No matches. Try fewer or different words.</li>'; status.textContent = "0 results"; sel = -1; return; }
     list.innerHTML = rs.map(function (r, i) {
       var e = r.e;
-      return '<li role="option" id="sr-' + i + '"><a href="' + esc(ROOT + e.u) + '"><div class="sr-where">Topic ' + e.n + " &middot; " + esc(e.t) + '</div><div class="sr-title">' + mark(e.h, terms) + '</div><div class="sr-snip">' + snippet(e.x, terms) + "</div></a></li>";
+      return '<li role="option" id="sr-' + i + '"><a href="' + esc(ROOT + e.u) + '"><div class="sr-where">' + esc(e.l || ("Topic " + e.n)) + " &middot; " + esc(e.t) + '</div><div class="sr-title">' + mark(e.h, terms) + '</div><div class="sr-snip">' + snippet(e.x, terms) + "</div></a></li>";
     }).join("");
     status.textContent = rs.length + (rs.length === 1 ? " result" : " results");
     sel = 0; paintSel();
@@ -246,7 +247,8 @@
     b.type = "button"; b.setAttribute("aria-label", "Back to top");
     b.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: "smooth" }); });
     doc.body.appendChild(b);
-    window.addEventListener("scroll", function () { b.classList.toggle("show", window.scrollY > 700); }, { passive: true });
+    var lastY = window.scrollY;
+    window.addEventListener("scroll", function () { var y = window.scrollY; b.classList.toggle("show", y > 700 && y < lastY); lastY = y; }, { passive: true });
   }
 
   /* ---------------- reading progress (stored on this device only) ---------------- */
@@ -260,15 +262,16 @@
         if (marked) return;
         var h = doc.documentElement;
         var p = (window.scrollY + window.innerHeight) / h.scrollHeight;
-        if (p > 0.82) { marked = true; var v = readList(); if (v.indexOf(tid) < 0) { v.push(tid); store.set(VKEY, JSON.stringify(v)); } }
+        if (p > 0.82) { marked = true; var v = readList(); if (v.indexOf(tid) < 0) { v.push(tid); store.set(VKEY, JSON.stringify(v)); } ensureClearButton(); }
       }, { passive: true });
     }
     var r = readList();
     doc.querySelectorAll(".topic-card[data-id]").forEach(function (c) { if (r.indexOf(parseInt(c.getAttribute("data-id"), 10)) >= 0) c.classList.add("visited"); });
+    ensureClearButton();
   }
 
   /* ---------------- topic map (tree graph) ---------------- */
-  function initMap() {
+  function drawTree() {
     var host = doc.getElementById("topic-map");
     if (!host || !TOPICS.length) return;
     var byId = {};
@@ -331,9 +334,9 @@
       var ty = lines.length === 1 ? 31 : 25;
       var tspans = lines.map(function (ln, i) { return '<text class="ttl" x="50" y="' + (ty + i * 15) + '">' + esc(ln) + "</text>"; }).join("");
       nodes += '<g class="' + cls + '" data-id="' + t.id + '" transform="translate(' + p.x + " " + p.y + ')">' +
-        '<a href="' + esc(ROOT + "computational/" + t.slug + ".html") + '" aria-label="Topic ' + t.id + ": " + esc(t.title) + '">' +
+        '<a href="' + esc(ROOT + "computational/" + t.slug + ".html") + '" aria-label="' + tLabel(t) + ": " + esc(t.title) + '">' +
         '<rect class="box" width="' + NW + '" height="' + NH + '" rx="12"/><rect class="bar" width="7" height="' + NH + '" rx="3"/>' +
-        '<text class="num" x="30" y="40" text-anchor="middle">' + t.id + "</text>" + tspans +
+        '<text class="num' + (String(t.label).length > 1 ? " two" : "") + '" x="30" y="40" text-anchor="middle">' + esc(t.label) + "</text>" + tspans +
         '<text class="sub" x="50" y="' + (NH - 9) + '">' + esc(t.part) + " &middot; " + t.minutes + " min</text>" +
         (read.indexOf(t.id) >= 0 ? '<text class="tick" x="' + (NW - 18) + '" y="22">&#10003;</text>' : "") +
         "</a></g>";
@@ -345,18 +348,18 @@
       '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" style="color:var(--muted)"/></marker></defs>' +
       edges + nodes + "</svg>" +
       '<div class="tree-panel" id="tree-panel" aria-live="polite"></div></div>' +
-      '<p class="map-note">Hover or tab to a topic to see what it builds on (orange) and what it leads to (blue). Click a topic to open it. <button type="button" id="clear-read">Clear my reading progress</button></p>';
+      '<p class="map-note">Hover or tab to a topic to see what it builds on (orange) and what it leads to (blue). Click a topic to open it.</p>';
 
     var svg = host.querySelector("svg"), panel = host.querySelector("#tree-panel");
     var nodeEls = {}; svg.querySelectorAll(".node").forEach(function (n) { nodeEls[n.getAttribute("data-id")] = n; });
     var edgeEls = svg.querySelectorAll(".edge");
     var pinned = currentId || 0;
 
-    function names(ids) { return ids.length ? ids.map(function (i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + i + ". " + esc(byId[i].short) + "</a>"; }).join(", ") : "&mdash;"; }
+    function names(ids) { return ids.length ? ids.map(function (i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + byId[i].label + ". " + esc(byId[i].short) + "</a>"; }).join(", ") : "&mdash;"; }
     function showPanel(id) {
       var t = byId[id];
       var leads = TOPICS.filter(function (x) { return x.builds.indexOf(id) >= 0; }).map(function (x) { return x.id; });
-      panel.innerHTML = '<b>' + t.id + ". " + esc(t.title) + '</b><div>' + esc(t.blurb) + '</div><div class="meta2">' + esc(t.part) + " &middot; about " + t.minutes + " min &middot; builds on: " + names(t.builds) + " &middot; leads to: " + names(leads) + '</div><a class="go" href="' + esc(ROOT + "computational/" + t.slug + ".html") + '">Open this topic &rarr;</a>';
+      panel.innerHTML = '<b>' + t.label + ". " + esc(t.title) + '</b><div>' + esc(t.blurb) + '</div><div class="meta2">' + esc(t.part) + " &middot; about " + t.minutes + " min &middot; builds on: " + names(t.builds) + " &middot; leads to: " + names(leads) + '</div><a class="go" href="' + esc(ROOT + "computational/" + t.slug + ".html") + '">Open this topic &rarr;</a>';
     }
     function focusNode(id) {
       var A = up(id, {}), D = down(id, {});
@@ -387,8 +390,46 @@
       n.addEventListener("focusout", clearFocus);
     });
     host.querySelector("#rel-toggle").addEventListener("change", function (e) { host.classList.toggle("show-related", e.target.checked); });
-    host.querySelector("#clear-read").addEventListener("click", function () { store.set(VKEY, "[]"); doc.querySelectorAll(".tick").forEach(function (t) { t.remove(); }); doc.querySelectorAll(".topic-card.visited").forEach(function (c) { c.classList.remove("visited"); }); });
     clearFocus();
+  }
+
+  function drawList() {
+    var host = doc.getElementById("topic-map");
+    var byId = {}; TOPICS.forEach(function (t) { byId[t.id] = t; });
+    var read = readList();
+    function link(i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + esc(byId[i].label) + ". " + esc(byId[i].short) + "</a>"; }
+    host.innerHTML = '<ol class="map-list">' + TOPICS.map(function (t) {
+      var b = t.builds.length ? "Builds on: " + t.builds.map(link).join(", ") : "A place to start";
+      return '<li class="tone-' + t.tone + (read.indexOf(t.id) >= 0 ? " read" : "") + '"><span class="ml-num">' + esc(t.label) + '</span>' +
+        '<a class="ml-title" href="' + esc(ROOT + "computational/" + t.slug + ".html") + '">' + esc(t.title) + '</a>' +
+        '<span class="ml-meta">' + esc(t.part) + " &middot; about " + t.minutes + ' min</span><span class="ml-meta">' + b + "</span></li>";
+    }).join("") + "</ol>";
+  }
+
+  function initMap() {
+    var host = doc.getElementById("topic-map");
+    if (!host || !TOPICS.length) return;
+    var mq = window.matchMedia ? matchMedia("(max-width: 700px)") : null;
+    function draw() { if (mq && mq.matches) drawList(); else drawTree(); }
+    draw();
+    if (mq) { if (mq.addEventListener) mq.addEventListener("change", draw); else if (mq.addListener) mq.addListener(draw); }
+  }
+
+  /* ---------------- clear reading progress (footer, with confirmation) ---------------- */
+  function ensureClearButton() {
+    var nav = doc.querySelector("footer.site nav");
+    if (!nav || nav.querySelector(".linklike") || !readList().length) return;
+    var b = el("button", "linklike", "Clear reading progress");
+    b.type = "button";
+    b.addEventListener("click", function () {
+      if (!window.confirm("Clear the record of which topics you have read? It is stored only on this device.")) return;
+      store.set(VKEY, "[]");
+      doc.querySelectorAll(".tick").forEach(function (t) { t.remove(); });
+      doc.querySelectorAll(".topic-card.visited").forEach(function (c) { c.classList.remove("visited"); });
+      doc.querySelectorAll(".map-list li.read").forEach(function (c) { c.classList.remove("read"); });
+      b.remove();
+    });
+    nav.appendChild(b);
   }
 
   /* ---------------- phone menu ---------------- */
@@ -455,27 +496,63 @@
   function initMotion() {
     var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     doc.querySelectorAll("figure img[src*='animations/']").forEach(function (img) {
+      var pic = img.parentNode && img.parentNode.tagName === "PICTURE" ? img.parentNode : null;
+      var source = pic ? pic.querySelector("source") : null;
       var live = img.getAttribute("src");
-      var still = live.replace(/\.(gif|svg)(\?.*)?$/, ".poster.png");
-      if (still === live) return;
+      var still = source ? source.getAttribute("srcset") : live.replace(/\.(gif|svg)(\?.*)?$/, ".poster.png");
+      if (!still || still === live) return;
+      var fig = img.closest("figure");
       var btn = el("button", "motion-btn", "Pause animation");
       btn.type = "button";
-      var fig = img.closest("figure");
-      var paused = false;
-      function set(p) {
-        paused = p;
-        img.setAttribute("src", p ? still : live);
-        btn.textContent = p ? "Play animation" : "Pause animation";
-        btn.setAttribute("aria-pressed", p ? "true" : "false");
+      var paused = !!(source && reduce);
+      function paint() {
+        if (source) source.media = paused ? "all" : "not all";
+        else img.setAttribute("src", paused ? still : live);
+        btn.textContent = paused ? "Play animation" : "Pause animation";
+        btn.setAttribute("aria-pressed", paused ? "true" : "false");
       }
-      var probe = new Image();
-      probe.onload = function () {
-        fig.appendChild(btn);
-        if (reduce) set(true);
-      };
-      probe.src = still;
-      btn.addEventListener("click", function () { set(!paused); });
+      btn.addEventListener("click", function () { paused = !paused; paint(); });
+      if (source) { fig.appendChild(btn); paint(); }
+      else {
+        var probe = new Image();
+        probe.onload = function () { fig.appendChild(btn); if (reduce) { paused = true; } paint(); };
+        probe.src = still;
+      }
     });
+  }
+
+  /* ---------------- click or tap a figure to enlarge it ---------------- */
+  function initLightbox() {
+    var imgs = doc.querySelectorAll("figure img");
+    if (!imgs.length) return;
+    var box = null, lastFocus = null;
+    function build() {
+      box = el("div", "lightbox");
+      box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Enlarged figure");
+      box.innerHTML = '<div class="lb-bar"><span class="lb-cap"></span><button type="button">Close</button></div><div class="lb-body"><img alt=""></div>';
+      doc.body.appendChild(box);
+      box.addEventListener("click", function (e) { if (e.target === box || e.target.classList.contains("lb-body") || e.target.tagName === "BUTTON") close(); });
+    }
+    function open(img) {
+      if (!box) build();
+      lastFocus = doc.activeElement;
+      var big = box.querySelector("img");
+      big.src = img.currentSrc || img.src; big.alt = img.alt;
+      var cap = img.closest("figure") && img.closest("figure").querySelector("figcaption");
+      box.querySelector(".lb-cap").textContent = cap ? cap.textContent : img.alt;
+      box.classList.add("open");
+      box.querySelector("button").focus();
+    }
+    function close() { if (!box) return; box.classList.remove("open"); if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+    imgs.forEach(function (img) {
+      img.classList.add("zoomable");
+      img.setAttribute("tabindex", "0");
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", "Enlarge figure: " + img.alt);
+      img.addEventListener("click", function () { open(img); });
+      img.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(img); } });
+    });
+    doc.addEventListener("keydown", function (e) { if (e.key === "Escape" && box && box.classList.contains("open")) close(); });
   }
 
   /* ---------------- boot ---------------- */
@@ -484,6 +561,7 @@
     initMenu();
     initTocMobile();
     initMotion();
+    initLightbox();
     initScrollSpy();
     initCopy();
     initBackTop();

@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="8">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="phase-field-modelling.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -56,7 +56,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 13 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a><br><a href="numerical-methods-essentials.html">B4. Numerical methods</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="phase-field-modelling.html">9. Phase-field</a><br><a href="finite-element-method.html">10. Finite elements</a></dd></div>
 <div><dt>Category</dt><dd>Kinetics</dd></div>
 </dl>
@@ -80,7 +80,7 @@
             <p>Two closed-form solutions cover many practical problems. For a diffusion couple or a surface held at fixed concentration, the solution involves the error function; for a thin film of total amount <em>M</em> per unit area spreading into a large body, it is a Gaussian:</p>
             <span class="eq">Couple (step initial profile): c(x,t) = &frac12; (c<sub>1</sub> + c<sub>2</sub>) &minus; &frac12; (c<sub>1</sub> &minus; c<sub>2</sub>) erf( x / 2&radic;(Dt) )<br>Surface at c<sub>s</sub> (carburising): c(x,t) = c<sub>s</sub> &minus; (c<sub>s</sub> &minus; c<sub>0</sub>) erf( x / 2&radic;(Dt) )<br>Thin film: c(x,t) = M / &radic;(4&pi;Dt) &middot; exp( &minus;x&sup2; / 4Dt )</span>
             <figure>
-                <img src="../assets/animations/diffusion-profile.svg" alt="Animation of a sharp concentration step spreading into a smooth profile over time" width="720" height="320" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/diffusion-profile.poster.png"><img src="../assets/animations/diffusion-profile.svg" alt="Animation of a sharp concentration step spreading into a smooth profile over time" width="720" height="320" loading="lazy" decoding="async"></picture>
                 <figcaption>A diffusion couple: a sharp step smears out, with the width growing as &radic;(Dt). The curve is the error-function solution with the time shown by the bar below.</figcaption>
             </figure>
             <p>All three depend on <em>x</em>/&radic;(<em>Dt</em>), so the affected distance grows as the <strong>square root of time</strong>, and a rule of thumb is the diffusion length &asymp; 2&radic;(<em>Dt</em>) (or &radic;(<em>Dt</em>)). Doubling the distance takes four times as long. This is why the time to homogenise a segregated structure scales with the square of the segregation spacing: halving the dendrite arm spacing cuts the required time by four.</p>
@@ -103,7 +103,7 @@
                 <li><strong>Others.</strong> Interstitialcy (a displaced pair), ring and exchange mechanisms matter in some systems, for example in covalent semiconductors.</li>
             </ul>
             <figure>
-                <img src="../assets/animations/vacancy-hop.svg" alt="Animation of atoms hopping into a vacancy on a lattice" width="720" height="300" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/vacancy-hop.poster.png"><img src="../assets/animations/vacancy-hop.svg" alt="Animation of atoms hopping into a vacancy on a lattice" width="720" height="300" loading="lazy" decoding="async"></picture>
                 <figcaption>The vacancy mechanism. The dashed ring is the vacancy; the highlighted atom is displaced each time the vacancy passes it. The hop sequence in the animation is illustrative and is replayed in reverse to loop.</figcaption>
             </figure>
 
@@ -117,7 +117,7 @@
 
             <h2 id="compute">5. Computing D<a class="anchor" href="#compute" aria-label="Link to this section">#</a></h2>
             <p>Several complementary routes exist, matched to how fast the species moves.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="5. Computing D (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Method</th><th>What it gives</th><th>Strength</th><th>Limit</th></tr></thead>
                 <tbody>
                     <tr><td>Molecular dynamics</td><td><em>D</em> from the mean-squared displacement, <em>D</em> = lim MSD/(6<em>t</em>); or from the velocity autocorrelation integral</td><td>Direct, includes all anharmonicity; ideal for liquids, fast ionic conductors, grain boundaries at high <em>T</em></td><td>Only practical for <em>D</em> above roughly 10<sup>&minus;11</sup> m&sup2; s<sup>&minus;1</sup> within nanoseconds, so lattice diffusion in solids is out of reach well below the melting point</td></tr>
@@ -126,7 +126,7 @@
                     <tr><td>Kinetic Monte Carlo</td><td><em>D</em> from the MSD of tracer atoms in a lattice with environment-dependent barriers</td><td>Reaches physical time for slow diffusion; handles concentrated alloys and correlations</td><td>Needs the barrier model (see <a href="monte-carlo-methods.html">Monte Carlo</a>)</td></tr>
                     <tr><td>Databases and assessment</td><td>Mobility parameters fitted to experiments</td><td>Directly usable in diffusion codes with thermodynamic data</td><td>Only for systems already assessed</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Whichever route is used, results should be compared with experiments at one or more temperatures. Agreement within a factor of two in <em>D</em> is considered good, because a 0.1 eV error in the barrier changes <em>D</em> by a factor of about 3 at 1000 K and by about 10 at 500 K.</p>
 
             <h2 id="numerics">6. Solving the equation numerically<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
@@ -225,8 +225,8 @@ while t &lt; 3600:                         # one hour
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
-    <script src="../assets/demos.js?v=849f173f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+    <script src="../assets/demos.js?v=4dc21ea9" defer></script>
 </body>
 </html>

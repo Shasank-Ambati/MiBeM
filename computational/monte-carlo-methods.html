@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="7">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="diffusion-and-kinetics.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -58,7 +58,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="statistical-mechanics.html">3. Statistical mechanics</a><br><a href="numerical-methods-essentials.html">B4. Numerical methods</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Atoms</dd></div>
 </dl>
@@ -98,7 +98,7 @@
             <span class="eq">E = &minus;J &Sigma;<sub>&lang;ij&rang;</sub> s<sub>i</sub> s<sub>j</sub> &minus; h &Sigma;<sub>i</sub> s<sub>i</sub></span>
             <p>summed over nearest-neighbour pairs. For <em>J</em> &gt; 0 neighbours prefer to align. It is the minimal model of a phase transition: on the two-dimensional square lattice it has an exact solution (Onsager, 1944) with critical temperature <em>k</em><sub>B</sub><em>T</em><sub>c</sub> = 2<em>J</em>/ln(1 + &radic;2) &asymp; 2.269 <em>J</em>. Below <em>T</em><sub>c</sub> a spontaneous magnetisation appears; above it, thermal disorder wins. The model maps directly to <em>binary alloys</em> and lattice gases, where the spin is the species on a site (A or B, or atom and vacancy) and <em>J</em> is built from pair energies; its ordering transition is the same mathematics as ordering in &beta;-brass.</p>
             <figure>
-                <img src="../assets/animations/ising-monte-carlo.gif" alt="Animation of Metropolis Monte Carlo on a two-dimensional Ising lattice coarsening from a random start" width="384" height="408" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/ising-monte-carlo.poster.png"><img src="../assets/animations/ising-monte-carlo.gif" alt="Animation of Metropolis Monte Carlo on a two-dimensional Ising lattice coarsening from a random start" width="384" height="408" loading="lazy" decoding="async"></picture>
                 <figcaption>Metropolis Monte Carlo on a 64&times;64 Ising lattice at <em>T</em> = 1.6 (critical temperature 2.27, in units of <em>J</em>/k<sub>B</sub>), starting from a random arrangement. Domains of each orientation form and coarsen; the sweep count is shown in the title.</figcaption>
             </figure>
             <div class="demo" data-demo="ising"><div class="demo-body"><p class="demo-note">This interactive simulation needs JavaScript to run.</p></div></div>
@@ -107,7 +107,7 @@
 
             <h2 id="moves">4. Moves for materials<a class="anchor" href="#moves" aria-label="Link to this section">#</a></h2>
             <p>The power of MC for materials is the freedom to design moves. Any set of moves that satisfies detailed balance and reaches the whole state space is allowed, whether or not it resembles real dynamics.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="4. Moves for materials (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Move</th><th>Ensemble</th><th>What it does</th><th>Used for</th></tr></thead>
                 <tbody>
                     <tr><td>Displacement</td><td>NVT</td><td>Shifts one atom by a small random vector</td><td>Off-lattice equilibrium; relaxation</td></tr>
@@ -117,7 +117,7 @@
                     <tr><td>Species change</td><td>Semi-grand canonical</td><td>Changes the identity of a site at fixed chemical-potential difference &Delta;&mu;</td><td>Composition as a function of &Delta;&mu;, phase boundaries of alloys</td></tr>
                     <tr><td>Hybrid MC/MD</td><td>NVT or NPT</td><td>Alternates MD steps (relaxing local strain) with swap moves</td><td>Segregation to grain boundaries, ordering in multicomponent alloys with realistic potentials</td></tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <h2 id="lattice">5. Lattice models and cluster expansion<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
             <p>Real alloys are not Ising models, but their configurational energy can be mapped onto one. A <strong>cluster expansion</strong> (Sanchez, Ducastelle and Gratias, 1984) writes the energy of any arrangement &sigma; of species on a fixed parent lattice as a sum over clusters of sites (single sites, pairs, triplets, &hellip;):</p>
@@ -155,7 +155,7 @@
             <p>The <strong>Potts model</strong> generalises Ising to <em>Q</em> states: each site carries an integer (a grain orientation) and neighbouring sites of different orientation cost energy <em>J</em>. Domains of equal integer represent grains, and the boundary between them has an energy proportional to its length. Metropolis dynamics reduces the boundary energy, so grains grow by boundary migration. Studies by Anderson, Srolovitz and co-workers (1984) used this to study normal grain growth, where the classical parabolic law predicts mean size &prop; <em>t</em><sup>1/2</sup>, and to examine the grain-size distribution; fitted growth exponents in these models are usually somewhat below one half. The relationship to physical time must be calibrated, boundary mobility and energy are simple functions of misorientation in the basic model, and anisotropy or particle pinning require extensions; the model is nevertheless a popular tool for exploring grain growth and recrystallisation topologically.</p>
 
             <h2 id="compare">9. MC compared with MD<a class="anchor" href="#compare" aria-label="Link to this section">#</a></h2>
-            <table>
+            <div class="table-scroll" role="region" aria-label="9. MC compared with MD (scrollable table)" tabindex="0"><table>
                 <thead><tr><th></th><th>Molecular dynamics</th><th>Metropolis Monte Carlo</th><th>Kinetic Monte Carlo</th></tr></thead>
                 <tbody>
                     <tr><td>Output</td><td>Trajectory with real dynamics</td><td>Equilibrium samples</td><td>Evolution with physical time</td></tr>
@@ -164,7 +164,7 @@
                     <tr><td>Needs</td><td>Forces (potential)</td><td>Energies only</td><td>Event catalogue and barriers</td></tr>
                     <tr><td>Best for</td><td>Mechanisms, short-time dynamics, transport</td><td>Ordering, segregation, phase equilibrium</td><td>Slow diffusion-controlled evolution</td></tr>
                 </tbody>
-            </table>
+            </table></div>
 
             <h2 id="code">10. A minimal code<a class="anchor" href="#code" aria-label="Link to this section">#</a></h2>
             <p>A complete Metropolis sweep for the 2D Ising model, in units where <em>J</em> = <em>k</em><sub>B</sub> = 1, is only a few lines of Python:</p>
@@ -241,8 +241,8 @@ print("magnetisation per spin:", s.mean())</code></pre>
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
-    <script src="../assets/demos.js?v=849f173f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+    <script src="../assets/demos.js?v=4dc21ea9" defer></script>
 </body>
 </html>

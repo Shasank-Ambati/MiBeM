@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Methods Essentials - MiBeM</title>
+    <meta name="description" content="Floating point, error and stability, differentiation and integration, root finding and optimisation, linear algebra, ODE and PDE solvers, random numbers and parallel scaling.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Numerical Methods Essentials - MiBeM">
+    <meta property="og:description" content="Floating point, error and stability, differentiation and integration, root finding and optimisation, linear algebra, ODE and PDE solvers, random numbers and parallel scaling.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
+</head>
+<body data-topic="15">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#floating">1. Finite-precision arithmetic</a></li>
+                <li><a href="#errors">2. Errors, order, stability</a></li>
+                <li><a href="#calculus">3. Differentiation and integration</a></li>
+                <li><a href="#roots">4. Roots and optimisation</a></li>
+                <li><a href="#linear">5. Linear algebra in practice</a></li>
+                <li><a href="#ode">6. Integrating ODEs</a></li>
+                <li><a href="#pde">7. Discretising PDEs</a></li>
+                <li><a href="#random">8. Random numbers</a></li>
+                <li><a href="#performance">9. Cost, parallelism, scaling</a></li>
+                <li><a href="#check">10. Check your understanding</a></li>
+                <li><a href="#refs">11. References</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Background</span><span>Background 4</span></p>
+            <h1>Numerical methods essentials</h1>
+            <p class="lead">Every simulation is a numerical approximation to a mathematical model. This page covers the ideas that decide whether the numbers a program prints can be trusted: how computers do arithmetic, how errors arise and grow, how to choose steps and grids, and what scales badly.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="mathematics-for-simulation.html">B1. Mathematics</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="molecular-dynamics.html">6. Molecular dynamics</a><br><a href="monte-carlo-methods.html">7. Monte Carlo and kMC</a><br><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a><br><a href="finite-element-method.html">10. Finite elements</a></dd></div>
+<div><dt>Category</dt><dd>Background</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After reading this page you should be able to:</strong>
+                <ul>
+                    <li>Explain machine precision, round-off and cancellation, and when they matter.</li>
+                    <li>Distinguish discretisation, round-off and iteration error, and measure the order of convergence of a method.</li>
+                    <li>Choose among root-finding, optimisation, linear-solver and time-integration methods for a given problem.</li>
+                    <li>Estimate cost and parallel speed-up before launching a large run.</li>
+                </ul>
+            </div>
+
+            <h2 id="floating">1. Finite-precision arithmetic<a class="anchor" href="#floating" aria-label="Link to this section">#</a></h2>
+            <p>Computers store real numbers as <strong>floating-point</strong> values: a sign, an exponent and a fixed number of significant bits. Most scientific code uses IEEE 754 double precision: 64 bits, of which 52 are the stored fraction (53 significant bits with the implicit leading one), giving about 16 decimal digits and a range of roughly 10<sup>&minus;308</sup> to 10<sup>308</sup>. The spacing of numbers near 1 is the <em>machine epsilon</em>, &epsilon;<sub>mach</sub> = 2<sup>&minus;52</sup> &asymp; 2.2 &times; 10<sup>&minus;16</sup>; single precision has about 7 digits (&epsilon; &asymp; 1.2 &times; 10<sup>&minus;7</sup>), which is much faster on GPUs but needs care.</p>
+            <p>Three consequences appear constantly:</p>
+            <ul>
+                <li><strong>Most decimals are not exact.</strong> 0.1 has no finite binary expansion, so 0.1 + 0.2 evaluates to 0.30000000000000004 and equality tests between floating-point numbers should use a tolerance (for example <code>numpy.isclose</code>).</li>
+                <li><strong>Catastrophic cancellation.</strong> Subtracting nearly equal numbers loses leading digits: (1 + 10<sup>&minus;16</sup>) &minus; 1 evaluates to 0. Formulas that subtract close quantities (small energy differences, variances computed as &lang;<em>x</em>&sup2;&rang; &minus; &lang;<em>x</em>&rang;&sup2;) should be rearranged.</li>
+                <li><strong>Order of summation matters.</strong> Adding a tiny number to a large one drops it; summing millions of terms accumulates error, so parallel and serial runs can differ in the last digits. Algorithms such as pairwise or compensated (Kahan) summation reduce the error.</li>
+            </ul>
+            <p>A result should therefore never be trusted beyond about 16 digits, and usually far fewer after many operations. Overflow and underflow (exponents leaving the representable range) are rare in physical units but common in exponentials such as exp(&minus;<em>E</em>/<em>k</em><sub>B</sub><em>T</em>) at large arguments, where working with logarithms avoids them.</p>
+
+            <h2 id="errors">2. Errors, order and stability<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <p>Four kinds of error separate the model from the number on the screen:</p>
+            <div class="table-scroll" role="region" aria-label="2. Errors, order and stability (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Error</th><th>Source</th><th>How to reduce or test it</th></tr></thead>
+                <tbody>
+                    <tr><td>Modelling error</td><td>The equations or potential do not describe reality exactly</td><td>Validation against experiment</td></tr>
+                    <tr><td>Discretisation (truncation) error</td><td>Replacing derivatives, integrals and continuous fields by finite steps and grids</td><td>Refine the step or mesh and watch the result converge</td></tr>
+                    <tr><td>Round-off error</td><td>Finite-precision arithmetic</td><td>Reformulate; use higher precision; check sensitivity</td></tr>
+                    <tr><td>Iteration error</td><td>Stopping an iterative solver before it has converged</td><td>Tighten tolerances; monitor residuals</td></tr>
+                </tbody>
+            </table></div>
+            <p>A method has <strong>order of accuracy</strong> <em>p</em> if its discretisation error scales as <em>h</em><sup><em>p</em></sup> with the step <em>h</em>. Halving <em>h</em> then cuts the error by 2<sup><em>p</em></sup>, and the order can be measured from two runs: <em>p</em> &asymp; log(<em>e</em><sub>h</sub>/<em>e</em><sub>h/2</sub>)/log 2. If the measured order is lower than the theory says, there is usually a bug or a non-smooth feature. <strong>Richardson extrapolation</strong> combines runs at two step sizes to estimate the converged value and the remaining error.</p>
+            <p>Accuracy is not enough: two further properties matter. <strong>Stability</strong> means errors do not grow without bound as the calculation proceeds (an explicit scheme with too large a time step does not converge to anything). <strong>Conditioning</strong> is a property of the problem itself: a problem is ill-conditioned if small changes in the input cause large changes in the answer. For a linear system <strong>A</strong><em>x</em> = <em>b</em>, the condition number &kappa;(<strong>A</strong>) = &Vert;<strong>A</strong>&Vert;&Vert;<strong>A</strong><sup>&minus;1</sup>&Vert; bounds the amplification of relative errors, and one loses roughly log<sub>10</sub>&kappa; digits. A well-posed problem needs a solution that exists, is unique and depends continuously on the data.</p>
+
+            <h2 id="calculus">3. Differentiation and integration<a class="anchor" href="#calculus" aria-label="Link to this section">#</a></h2>
+            <h3 id="diff">Finite differences<a class="anchor" href="#diff" aria-label="Link to this section">#</a></h3>
+            <p>Taylor series (see <a href="mathematics-for-simulation.html#taylor">mathematics for simulation</a>) give difference formulas for derivatives with known error:</p>
+            <span class="eq">forward: f&prime;(x) &asymp; [f(x+h) &minus; f(x)]/h, error &asymp; &frac12; h f&Prime; (first order)<br>central: f&prime;(x) &asymp; [f(x+h) &minus; f(x&minus;h)]/2h, error &asymp; &#8537; h&sup2; f&prime;&prime;&prime; (second order)</span>
+            <p>Reducing <em>h</em> shrinks this truncation error, but the numerator involves subtracting nearly equal numbers, so round-off error grows as &epsilon;<sub>mach</sub>/<em>h</em>. The total error therefore has a minimum at an intermediate step: about &radic;&epsilon;<sub>mach</sub> &asymp; 10<sup>&minus;8</sup> for forward differences and &epsilon;<sub>mach</sub><sup>1/3</sup> &asymp; 6 &times; 10<sup>&minus;6</sup> for central differences in double precision. The plot shows the characteristic V shape; switch to single precision to see the whole curve shift.</p>
+            <div class="demo" data-demo="fdstep"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <h3 id="quad">Integration<a class="anchor" href="#quad" aria-label="Link to this section">#</a></h3>
+            <p>Numerical quadrature replaces an integral by a weighted sum. The trapezoid rule is second order, Simpson&rsquo;s rule fourth order, and Gauss&ndash;Legendre quadrature with <em>n</em> points integrates polynomials up to degree 2<em>n</em> &minus; 1 exactly; the latter is what finite-element codes use inside each element. For high-dimensional integrals (such as ensemble averages over 3<em>N</em> coordinates) grids fail, but Monte Carlo integration converges as &sigma;/&radic;<em>N</em> regardless of dimension (see <a href="monte-carlo-methods.html">Monte Carlo methods</a>).</p>
+
+            <h2 id="roots">4. Roots and optimisation<a class="anchor" href="#roots" aria-label="Link to this section">#</a></h2>
+            <h3 id="rootfind">Solving f(x) = 0<a class="anchor" href="#rootfind" aria-label="Link to this section">#</a></h3>
+            <ul>
+                <li><strong>Bisection</strong> halves a bracketing interval each step; slow (linear convergence) but guaranteed if the function changes sign.</li>
+                <li><strong>Newton&rsquo;s method</strong>, <em>x</em><sub><em>n</em>+1</sub> = <em>x</em><sub><em>n</em></sub> &minus; <em>f</em>(<em>x</em><sub><em>n</em></sub>)/<em>f</em>&prime;(<em>x</em><sub><em>n</em></sub>), roughly squares the error at each step near a simple root (quadratic convergence: 3 digits, then 6, then 12), but needs a good starting guess and fails where <em>f</em>&prime; is near zero. In many dimensions the derivative becomes the Jacobian matrix and each step solves a linear system; this is the Newton&ndash;Raphson iteration of nonlinear finite elements.</li>
+                <li><strong>Secant</strong> and <strong>Brent</strong> methods avoid derivatives; Brent combines bisection&rsquo;s safety with fast convergence and is the usual library choice.</li>
+            </ul>
+            <h3 id="optimise">Minimising a function<a class="anchor" href="#optimise" aria-label="Link to this section">#</a></h3>
+            <p>Finding structures (relaxation to a minimum of the energy), fitting parameters and training models are all optimisation. Gradient descent steps along &minus;&nabla;<em>f</em>; for an ill-conditioned landscape (a long narrow valley) it zigzags and converges slowly at a rate set by the condition number. <strong>Conjugate gradients</strong> and quasi-Newton methods (BFGS, and its limited-memory form L-BFGS) use information from previous steps and converge much faster; for atomic relaxation, the damped-dynamics method FIRE is popular because it is robust and cheap. All of them find a <em>local</em> minimum. Global searches (basin hopping, simulated annealing, evolutionary algorithms, random structure search) run many local optimisations from different starting points.</p>
+
+            <h2 id="linear">5. Linear algebra in practice<a class="anchor" href="#linear" aria-label="Link to this section">#</a></h2>
+            <p>Most numerical methods eventually reduce to a linear system or an eigenvalue problem, so the cost of linear algebra decides what is feasible.</p>
+            <div class="table-scroll" role="region" aria-label="5. Linear algebra in practice (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Task</th><th>Method</th><th>Cost for <em>n</em> unknowns</th><th>Notes</th></tr></thead>
+                <tbody>
+                    <tr><td>Solve <strong>A</strong><em>x</em> = <em>b</em>, dense</td><td>LU factorisation (Cholesky if symmetric positive definite)</td><td>about (2/3)<em>n</em><sup>3</sup> operations (half for Cholesky)</td><td>Use library routines (LAPACK), never invert a matrix explicitly</td></tr>
+                    <tr><td>Solve, sparse</td><td>Sparse direct solvers</td><td>Depends on structure; much less than <em>n</em><sup>3</sup></td><td>Finite-element and finite-difference matrices are sparse</td></tr>
+                    <tr><td>Solve, large sparse</td><td>Conjugate gradients (symmetric positive definite), GMRES (general), with preconditioning, or multigrid</td><td>Per iteration, about the cost of one matrix&ndash;vector product</td><td>Convergence depends on the condition number; a good preconditioner is crucial</td></tr>
+                    <tr><td>All eigenpairs, dense</td><td>QR algorithm</td><td>order <em>n</em><sup>3</sup></td><td>Limits dense diagonalisation to a few thousand dimensions</td></tr>
+                    <tr><td>A few eigenpairs, large</td><td>Lanczos, Davidson, LOBPCG</td><td>Many matrix&ndash;vector products</td><td>What plane-wave DFT codes use for the lowest bands</td></tr>
+                </tbody>
+            </table></div>
+            <p>The <em>n</em><sup>3</sup> growth of dense algorithms is why conventional <a href="density-functional-theory.html">DFT</a> is limited to hundreds or a few thousand atoms: doubling the system multiplies the cost of the dense steps by eight.</p>
+
+            <h2 id="ode">6. Integrating ODEs<a class="anchor" href="#ode" aria-label="Link to this section">#</a></h2>
+            <p>To advance d<em>y</em>/d<em>t</em> = <em>f</em>(<em>y</em>, <em>t</em>) in time:</p>
+            <ul>
+                <li><strong>Explicit Euler</strong>, <em>y</em><sub><em>n</em>+1</sub> = <em>y</em><sub><em>n</em></sub> + <em>h f</em>(<em>y</em><sub><em>n</em></sub>), is first order and unstable for oscillations (it adds energy to a harmonic oscillator at every step), so it is a teaching tool, not a production one.</li>
+                <li><strong>Runge&ndash;Kutta methods</strong>, in particular the classic fourth-order RK4 and adaptive embedded pairs (such as Dormand&ndash;Prince, used by <code>scipy.integrate.solve_ivp</code>), give high accuracy for smooth problems.</li>
+                <li><strong>Verlet and leapfrog</strong> integrators are second order and <em>symplectic</em>: they preserve the structure of Hamiltonian dynamics, so the energy error stays bounded over very long runs. They are the standard for <a href="molecular-dynamics.html">molecular dynamics</a>.</li>
+                <li><strong>Implicit methods</strong> (backward Euler, BDF) solve an equation at every step but are stable for much larger steps, which is essential for <em>stiff</em> problems with widely separated time scales, such as carbon diffusing millions of times faster than manganese.</li>
+            </ul>
+            <p>For the test equation d<em>y</em>/d<em>t</em> = &minus;&lambda;<em>y</em>, explicit Euler is stable only if <em>h</em>&lambda; &le; 2, so the largest stable step is set by the fastest process in the system, however little that process matters to the answer.</p>
+
+            <h2 id="pde">7. Discretising PDEs<a class="anchor" href="#pde" aria-label="Link to this section">#</a></h2>
+            <p>A PDE is turned into algebra by sampling space on a grid or mesh (see <a href="diffusion-and-kinetics.html#numerics">diffusion</a> and <a href="finite-element-method.html">finite elements</a>). The main families:</p>
+            <ul>
+                <li><strong>Finite differences</strong> replace derivatives by differences on a regular grid: simple and fast, best for simple geometry.</li>
+                <li><strong>Finite volumes</strong> balance fluxes across the faces of cells, so conserved quantities are conserved exactly; the standard for fluid flow and transport.</li>
+                <li><strong>Finite elements</strong> use a weak form and piecewise polynomial functions on unstructured meshes; the standard for solid mechanics and complex geometry.</li>
+                <li><strong>Spectral methods</strong> expand in Fourier or polynomial modes; extremely accurate for smooth periodic problems (see <a href="mathematics-for-simulation.html#fourier">Fourier analysis</a>).</li>
+            </ul>
+            <p>Time stepping adds stability limits. For explicit diffusion the dimensionless number <em>r</em> = <em>D</em>&Delta;<em>t</em>/&Delta;<em>x</em>&sup2; must not exceed 1/2 in one dimension (1/4 in two, 1/6 in three); for wave and advection problems the <strong>Courant&ndash;Friedrichs&ndash;Lewy (CFL)</strong> condition requires that the numerical domain of dependence contains the physical one, <em>c</em>&Delta;<em>t</em>/&Delta;<em>x</em> &le; 1 with <em>c</em> the wave speed. Implicit schemes remove these limits at the price of solving a linear system each step, and the Crank&ndash;Nicolson scheme is second order in time. Always run a <strong>mesh-convergence</strong> and a <strong>time-step convergence</strong> study; and test against a problem with a known analytic solution (the <em>method of manufactured solutions</em> constructs one for any equation).</p>
+
+            <h2 id="random">8. Random numbers<a class="anchor" href="#random" aria-label="Link to this section">#</a></h2>
+            <p>Computers produce <em>pseudo</em>-random numbers with deterministic algorithms: the Mersenne Twister (period 2<sup>19937</sup> &minus; 1) and the PCG family (NumPy&rsquo;s default) are good for scientific use. Fixing the <strong>seed</strong> makes a run reproducible, which is essential for debugging and for reporting results; different seeds provide the independent replicas used for error bars. For parallel runs, give each process its own independent stream (for example with NumPy&rsquo;s <code>SeedSequence.spawn</code>), never the same seed.</p>
+            <p>Other distributions come from uniform numbers. The <em>inverse-transform</em> method maps a uniform value <em>u</em> through the inverse of the cumulative distribution (an exponential waiting time is &minus;ln(<em>u</em>)/<em>R</em>, the step of kinetic Monte Carlo); the <em>Box&ndash;Muller</em> transform produces Gaussian pairs from two uniform values; <em>rejection</em> sampling draws from a simple envelope and keeps points under the target curve.</p>
+
+            <h2 id="performance">9. Cost, parallelism and scaling<a class="anchor" href="#performance" aria-label="Link to this section">#</a></h2>
+            <p>Before a large calculation, estimate its cost from how it scales with size: a pair-force loop without neighbour lists scales as <em>N</em><sup>2</sup>, with cell lists as <em>N</em>; the FFT as <em>N</em> log <em>N</em>; dense diagonalisation as <em>N</em><sup>3</sup>. A code may be limited by arithmetic (compute-bound) or by moving data from memory (memory-bound, typical of sparse and grid-based codes), and optimising the wrong one wastes effort. Vectorised library calls (NumPy, BLAS and LAPACK) are far faster than explicit loops in interpreted languages.</p>
+            <p>Parallel machines combine threads within a node (OpenMP), message passing between nodes (MPI) and GPUs. Two scaling tests describe how well a code uses them: <em>strong scaling</em> (fixed problem, more processors) and <em>weak scaling</em> (problem grows with the processor count). <strong>Amdahl&rsquo;s law</strong> limits strong scaling: if a fraction <em>p</em> of the work parallelises perfectly,</p>
+            <span class="eq">S(N) = 1 / [ (1 &minus; p) + p/N ] &nbsp;&nbsp; &rarr; &nbsp; 1/(1 &minus; p) as N &rarr; &infin;</span>
+            <p>so a code that is 95% parallel can never run more than 20 times faster, however many processors are used. Measure with a profiler before optimising, test on a small case first, and note that communication and input/output often dominate at large processor counts.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Computers use finite-precision arithmetic: double precision keeps about 16 digits, and subtracting nearly equal numbers destroys most of them.</li>
+<li>Every numerical answer has modelling, discretisation, round-off and iteration error; convergence tests separate them.</li>
+<li>Stability and conditioning matter as much as accuracy: an explicit scheme can blow up, and an ill-conditioned problem amplifies small errors.</li>
+<li>Newton&#x27;s method converges quadratically near a root; optimisers find local, not global, minima.</li>
+<li>Cost scaling decides what is feasible: dense linear algebra grows as N cubed, and Amdahl&#x27;s law limits parallel speed-up.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <details>
+                <summary>Why does making the step <em>h</em> ever smaller eventually make a finite-difference derivative worse?</summary>
+                <p>The truncation error falls as a power of <em>h</em>, but the numerator subtracts nearly equal values, so round-off error grows like &epsilon;<sub>mach</sub>/<em>h</em>. Their sum has a minimum at an intermediate <em>h</em>, and shrinking <em>h</em> beyond it increases the total error.</p>
+            </details>
+            <details>
+                <summary>A solver gives an error of 10<sup>&minus;3</sup> at <em>h</em> = 0.1 and 2.5 &times; 10<sup>&minus;4</sup> at <em>h</em> = 0.05. What is its order?</summary>
+                <p>The error fell by a factor of 4 when <em>h</em> halved, so <em>p</em> = log<sub>2</sub>4 = 2: second order.</p>
+            </details>
+            <details>
+                <summary>A code is 95% parallelisable. What is the best possible speed-up, and what speed-up on 64 processors?</summary>
+                <p>The limit is 1/(1 &minus; 0.95) = 20. On 64 processors, <em>S</em> = 1/(0.05 + 0.95/64) &asymp; 15.4.</p>
+            </details>
+
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Heath, M. T., <em>Scientific Computing: An Introductory Survey</em>, SIAM.</li>
+                <li>Press, W. H., Teukolsky, S. A., Vetterling, W. T. and Flannery, B. P., <em>Numerical Recipes</em>, Cambridge University Press.</li>
+                <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM.</li>
+                <li>Golub, G. H. and Van Loan, C. F., <em>Matrix Computations</em>, Johns Hopkins University Press.</li>
+                <li>Higham, N. J., <em>Accuracy and Stability of Numerical Algorithms</em>, SIAM.</li>
+                <li>LeVeque, R. J., <em>Finite Difference Methods for Ordinary and Partial Differential Equations</em>, SIAM.</li>
+                <li>Hairer, E., Lubich, C. and Wanner, G., <em>Geometric Numerical Integration</em>, Springer.</li>
+                <li>Nocedal, J. and Wright, S. J., <em>Numerical Optimization</em>, Springer.</li>
+                <li>Goldberg, D., What every computer scientist should know about floating-point arithmetic, <em>ACM Comput. Surv.</em> 23, 5 (1991).</li>
+                <li>Bitzek, E. et al., Structural relaxation made simple, <em>Phys. Rev. Lett.</em> 97, 170201 (2006).</li>
+                <li>Matsumoto, M. and Nishimura, T., Mersenne Twister, <em>ACM Trans. Model. Comput. Simul.</em> 8, 3 (1998).</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="materials-science-essentials.html"><span class="dir">Previous topic</span>Materials science essentials</a>
+<a class="next" href="programming-and-workflow.html"><span class="dir">Next topic</span>Programming and workflow</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+    <script src="../assets/demos.js?v=4dc21ea9" defer></script>
+</body>
+</html>

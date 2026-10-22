@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="6">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="monte-carlo-methods.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -58,7 +58,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 11 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="statistical-mechanics.html">3. Statistical mechanics</a><br><a href="numerical-methods-essentials.html">B4. Numerical methods</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">11. Machine learning</a></dd></div>
 <div><dt>Category</dt><dd>Atoms</dd></div>
 </dl>
@@ -79,7 +79,7 @@
             <span class="eq">m<sub>i</sub> d&sup2;r<sub>i</sub>/dt&sup2; = F<sub>i</sub> = &minus;&nabla;<sub>i</sub> U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
             <p>There are three ingredients: a <strong>potential</strong> that supplies the forces, an <strong>integrator</strong> that advances the positions and velocities, and the <strong>conditions</strong> (cell, boundaries, temperature, pressure). Starting from initial positions and random velocities, the trajectory samples the ensemble defined by those conditions (see <a href="statistical-mechanics.html">statistical mechanics</a>). The following simulation shows a two-dimensional crystal of Lennard-Jones atoms being heated: atoms start vibrating about lattice sites, then the lattice loses order and atoms begin to wander.</p>
             <figure>
-                <img src="../assets/animations/md-melting.gif" alt="Animation of a two-dimensional crystal of atoms heating and losing order" width="492" height="450" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/md-melting.poster.png"><img src="../assets/animations/md-melting.gif" alt="Animation of a two-dimensional crystal of atoms heating and losing order" width="492" height="450" loading="lazy" decoding="async"></picture>
                 <figcaption>A real molecular dynamics run: 144 atoms interacting through the Lennard-Jones potential in two dimensions, periodic boundaries, temperature ramped from low to high (reduced units). Colour shows how far each atom has moved: blue atoms stay near their sites, red atoms have travelled.</figcaption>
             </figure>
 
@@ -95,7 +95,7 @@
             <span class="eq">U(r) = 4&epsilon; [ (&sigma;/r)<sup>12</sup> &minus; (&sigma;/r)<sup>6</sup> ], &nbsp;&nbsp; minimum at r = 2<sup>1/6</sup>&sigma;, depth &epsilon;</span>
             <div class="demo" data-demo="lj"><div class="demo-body"><p class="demo-note">This interactive explorer needs JavaScript to run.</p></div></div>
 
-            <table>
+            <div class="table-scroll" role="region" aria-label="3. Interatomic potentials (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Class</th><th>Idea</th><th>Used for</th><th>Cautions</th></tr></thead>
                 <tbody>
                     <tr><td>Pair (Lennard-Jones, Morse, Buckingham)</td><td>Energy is a sum over pairs</td><td>Noble gases, simple ionic and model systems</td><td>Cannot reproduce metals&rsquo; elastic anisotropy (forces C<sub>12</sub> = C<sub>44</sub>, the Cauchy relation)</td></tr>
@@ -106,7 +106,7 @@
                     <tr><td>Machine-learned (GAP, MTP, ACE, SNAP, neural-network)</td><td>Flexible functions of local atomic environments, fitted to DFT energies, forces and stresses</td><td>Complex chemistry at near-DFT accuracy</td><td>Valid only inside the training data; 10 to 1000 times slower than EAM</td></tr>
                     <tr><td>Universal / foundation models (for example M3GNet, CHGNet, MACE-MP)</td><td>Machine-learned potentials trained on very large DFT databases across the periodic table</td><td>Quick screening, initial exploration</td><td>Systematic softening of energy surfaces; validate before relying</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <h3>Validating a potential</h3>
             <p>A potential is a model that must pass tests <em>for the property you want</em>. A minimal checklist, compared with experiment or DFT:</p>
             <ul>
@@ -124,7 +124,7 @@
 
             <h2 id="control">5. Controlling temperature and pressure<a class="anchor" href="#control" aria-label="Link to this section">#</a></h2>
             <p>With no control the simulation conserves energy (NVE). To model an experiment at constant temperature or pressure, a thermostat or barostat is added. The algorithms differ in whether they produce the correct ensemble.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="5. Controlling temperature and pressure (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Method</th><th>Controls</th><th>Correct ensemble?</th><th>Note</th></tr></thead>
                 <tbody>
                     <tr><td>Velocity rescaling</td><td>T</td><td>No</td><td>Simple; used for quick equilibration only (the animation above uses it to ramp temperature)</td></tr>
@@ -134,7 +134,7 @@
                     <tr><td>Langevin</td><td>T</td><td>Yes, canonical</td><td>Adds friction and random forces; perturbs dynamics, so not for diffusion</td></tr>
                     <tr><td>Parrinello&ndash;Rahman, Martyna&ndash;Tobias&ndash;Klein</td><td>p (cell shape and size)</td><td>Yes, isothermal&ndash;isobaric</td><td>Allows shear and shape change, needed for solid&ndash;solid transformations</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Thermostat strength matters: strong coupling distorts the natural dynamics, so for transport coefficients the system is equilibrated with a thermostat and then run in NVE.</p>
 
             <h2 id="workflow">6. Workflow<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
@@ -243,8 +243,8 @@ run             10000</code></pre>
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
-    <script src="../assets/demos.js?v=849f173f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
+    <script src="../assets/demos.js?v=4dc21ea9" defer></script>
 </body>
 </html>

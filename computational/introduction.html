@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="1">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a class="cta" href="crystal-structure-and-periodic-cells.html">Next topic</a></nav>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -70,7 +70,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 20 min</dd></div>
-<div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
+<div><dt>Builds on</dt><dd><a href="materials-science-essentials.html">B3. Materials essentials</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="crystal-structure-and-periodic-cells.html">2. Crystals and cells</a><br><a href="statistical-mechanics.html">3. Statistical mechanics</a></dd></div>
 <div><dt>Category</dt><dd>Foundations</dd></div>
 </dl>
@@ -101,12 +101,15 @@
             <h3>What simulation cannot do</h3>
             <p>Every model contains approximations and needs inputs, and the output is no better than either. Models are usually most trustworthy for trends and for ranking candidates, and least trustworthy for absolute numbers on complex real material, which has defects, impurities, residual stress and a processing history the model may not represent. A prediction is a hypothesis to be tested, not a measurement.</p>
 
+            <h3 id="background">What to know first<a class="anchor" href="#background" aria-label="Link to this section">#</a></h3>
+            <p>The series assumes undergraduate-level familiarity with a handful of subjects. If any feel rusty, the Background pages refresh them with the simulation use in mind: <a href="mathematics-for-simulation.html">mathematics</a> (vector calculus, eigenvalues, differential equations, Fourier analysis, statistics), <a href="physics-for-simulation.html">physics</a> (mechanics, electrostatics, quantum mechanics, thermodynamics, units), <a href="materials-science-essentials.html">materials science essentials</a> (bonding, structure, defects, transformations, mechanical behaviour), <a href="numerical-methods-essentials.html">numerical methods</a> (precision, stability, solvers, scaling) and <a href="programming-and-workflow.html">programming and workflow</a> (command line, Python, git, clusters). The topic map shows which core topics lean on which background page.</p>
+
             <h3>Integrated computational materials engineering</h3>
             <p><strong>ICME</strong> is the practice of linking models across scales, together with experiments and databases, to shorten the path from composition and process to component performance. The US Materials Genome Initiative (launched 2011) pushed the related idea of combining computation, experiment and data to cut the time needed to bring new materials to use.</p>
 
             <h2 id="scales">2. Length and time scales<a class="anchor" href="#scales" aria-label="Link to this section">#</a></h2>
             <p>Material behaviour arises from structure at many scales at once: electrons bond atoms, atoms form defects, defects interact to form microstructure, and microstructure controls the bulk response. Cost grows steeply as a model resolves finer detail, so a method covers only a window of scales. The table summarises the windows; values are order-of-magnitude and depend on hardware and implementation.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="2. Length and time scales (scrollable table)" tabindex="0"><table>
                 <thead>
                     <tr><th>Level</th><th>Length</th><th>Time</th><th>Representative methods</th><th>Typical outputs</th></tr>
                 </thead>
@@ -118,9 +121,9 @@
                     <tr><td>Continuum</td><td>Micrometres to metres</td><td>Seconds to years</td><td>Finite element, finite volume, computational fluid dynamics</td><td>Temperature, flow, stress, strain, distortion, residual stress, component response</td></tr>
                     <tr><td>Data-driven</td><td>Any</td><td>Any</td><td>Regression, neural networks, Gaussian processes</td><td>Fast surrogate predictions, screening, inverse design</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <figure>
-                <img src="../assets/animations/scale-ladder.svg" alt="Animated bars showing the length scale each simulation method can resolve" width="720" height="360" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/scale-ladder.poster.png"><img src="../assets/animations/scale-ladder.svg" alt="Animated bars showing the length scale each simulation method can resolve" width="720" height="360" loading="lazy" decoding="async"></picture>
                 <figcaption>Length windows of the main methods on a logarithmic axis, with the time each can reach. The windows overlap, which is what makes linking them possible.</figcaption>
             </figure>
             <p>Two gaps matter in practice. First, atomistic time scales (up to microseconds) are many orders of magnitude shorter than the time scales of diffusion-controlled processing (seconds to hours). Second, atomistic strain rates are typically 10<sup>7</sup> s<sup>&minus;1</sup> or higher, against about 10<sup>&minus;3</sup> s<sup>&minus;1</sup> in a tensile test. Bridging these gaps is a main reason for coarse-grained, mesoscale and accelerated-dynamics methods.</p>
@@ -213,7 +216,7 @@
                 <li><strong>What is the longest time that matters?</strong> Microsecond limits rule out direct MD for diffusional processing; use kMC, phase-field or a continuum model.</li>
                 <li><strong>Is the answer an equilibrium state or a rate?</strong> Equilibrium is often settled by thermodynamics alone, which is cheap; rates need a kinetic model.</li>
             </ol>
-            <table>
+            <div class="table-scroll" role="region" aria-label="7. Choosing a method (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Question</th><th>Reasonable first method</th></tr></thead>
                 <tbody>
                     <tr><td>Which phases are stable at this composition and temperature?</td><td>CALPHAD</td></tr>
@@ -225,12 +228,12 @@
                     <tr><td>What temperature, stress and distortion arise in the process or part?</td><td>FEM or CFD</td></tr>
                     <tr><td>Which of thousands of candidates should be tried first?</td><td>High-throughput DFT or machine learning</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Often the cheapest useful step is a thermodynamic calculation, because it reveals which phases can exist before heavier modelling is attempted.</p>
 
             <h2 id="software">8. Software<a class="anchor" href="#software" aria-label="Link to this section">#</a></h2>
             <p>The list is a starting map, not an endorsement; availability and licences change.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="8. Software (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Category</th><th>Open source</th><th>Commercial</th></tr></thead>
                 <tbody>
                     <tr><td>Electronic structure</td><td>Quantum ESPRESSO, ABINIT, GPAW, CP2K</td><td>VASP, CASTEP, Gaussian</td></tr>
@@ -241,7 +244,7 @@
                     <tr><td>Workflow and analysis</td><td>ASE, pymatgen, AiiDA, OVITO, VESTA, ParaView</td><td>&mdash;</td></tr>
                     <tr><td>Machine learning</td><td>scikit-learn, PyTorch, JAX, matminer</td><td>&mdash;</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>Python is the usual glue language: scripting inputs, running jobs, parsing outputs and plotting. Large jobs run on high-performance computing (HPC) clusters through a scheduler such as Slurm, with parallelism by MPI, threads or GPUs.</p>
 
             <h2 id="data">9. Databases and data<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
@@ -323,7 +326,7 @@
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
-<span class="spacer"></span>
+<a class="prev" href="programming-and-workflow.html"><span class="dir">Previous topic</span>Programming and workflow</a>
 <a class="next" href="crystal-structure-and-periodic-cells.html"><span class="dir">Next topic</span>Crystal structures, supercells and periodic boundaries</a>
 </nav>
 <!-- pager:end -->
@@ -336,7 +339,7 @@
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
 </body>
 </html>

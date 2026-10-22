@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=fe23ebb6">
+    <link rel="stylesheet" href="../assets/style.css?v=bbdd60a0">
 </head>
 <body data-topic="11">
     <a class="skip" href="#main">Skip to content</a>
@@ -60,7 +60,7 @@
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 15 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="density-functional-theory.html">5. Density functional theory</a><br><a href="molecular-dynamics.html">6. Molecular dynamics</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="density-functional-theory.html">5. Density functional theory</a><br><a href="molecular-dynamics.html">6. Molecular dynamics</a><br><a href="programming-and-workflow.html">B5. Programming and workflow</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Data</dd></div>
 </dl>
@@ -111,7 +111,7 @@
 
             <h2 id="features">4. Descriptors<a class="anchor" href="#features" aria-label="Link to this section">#</a></h2>
             <p>A model needs each material as a fixed-length vector of numbers, the <strong>descriptor</strong> or <strong>feature</strong> vector. Good descriptors encode the physics that matters; they are the main way prior knowledge enters.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="4. Descriptors (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Descriptor type</th><th>Examples</th><th>When to use</th></tr></thead>
                 <tbody>
                     <tr><td>Composition-based</td><td>Statistics (mean, range, deviation) of elemental properties such as radius, electronegativity, valence electrons, melting point (the &ldquo;Magpie&rdquo; set)</td><td>When the structure is unknown, for example in alloy and glass composition screening</td></tr>
@@ -120,11 +120,11 @@
                     <tr><td>Process and microstructure</td><td>Composition, heating and cooling temperatures, times and rates, rolling reduction, grain size, phase fractions</td><td>Experimental property prediction for alloys and processes</td></tr>
                     <tr><td>Physics-derived</td><td>Quantities from CALPHAD or DFT, such as phase fractions, driving forces, stacking-fault energy, diffusivity</td><td>When the output is governed by thermodynamics or kinetics that a simulation can estimate</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>The libraries matminer, pymatgen and DScribe compute many of these. Two rules help: features must be <em>invariant</em> to things that should not matter (atom labelling, rotation, translation, choice of unit cell), and the number of features should be small compared with the number of samples, or regularisation must control it.</p>
 
             <h2 id="models">5. Models<a class="anchor" href="#models" aria-label="Link to this section">#</a></h2>
-            <table>
+            <div class="table-scroll" role="region" aria-label="5. Models (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Model</th><th>Suited to</th><th>Strengths</th><th>Weaknesses</th></tr></thead>
                 <tbody>
                     <tr><td>Linear, ridge, LASSO</td><td>Tens to thousands of samples</td><td>Simple, interpretable; LASSO selects a sparse set of features</td><td>Cannot capture strong nonlinearity</td></tr>
@@ -134,13 +134,13 @@
                     <tr><td>Graph and equivariant networks</td><td>Large structural datasets, potentials</td><td>Learn descriptors; built-in symmetries give data efficiency</td><td>Costly to train; need care with out-of-distribution structures</td></tr>
                     <tr><td>Symbolic regression and sparse models (for example SISSO)</td><td>Small data with physical intuition</td><td>Produce compact formulas that can be inspected</td><td>Search is expensive; results sensitive to the candidate features</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <p>A sensible rule is to begin with the simplest model that could work and a trivial baseline (always predicting the mean, or a physical rule of thumb), and to add complexity only while the validation error keeps improving.</p>
 
             <h2 id="validation">6. Validation<a class="anchor" href="#validation" aria-label="Link to this section">#</a></h2>
             <p>The goal of a model is accuracy on <em>new</em> cases, not on the data it was trained on. A flexible model can fit its training data perfectly and still predict poorly, as the animation shows: a straight line is too simple (<em>underfitting</em>, high bias), a moderate polynomial captures the trend, and a high-degree polynomial threads through every noisy point but oscillates wildly in between (<em>overfitting</em>, high variance).</p>
             <figure>
-                <img src="../assets/animations/ml-overfitting.svg" alt="Animation showing a polynomial fit going from underfit to good fit to overfit as the degree increases" width="720" height="340" loading="lazy" decoding="async">
+                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/ml-overfitting.poster.png"><img src="../assets/animations/ml-overfitting.svg" alt="Animation showing a polynomial fit going from underfit to good fit to overfit as the degree increases" width="720" height="340" loading="lazy" decoding="async"></picture>
                 <figcaption>Fits of increasing flexibility to the same twelve noisy points. The error on the training points keeps falling as the degree rises, but the error against the true underlying curve is smallest for the moderate model and explodes for the most flexible one.</figcaption>
             </figure>
             <h3>Splits and cross-validation</h3>
@@ -160,7 +160,7 @@
             <p>The most successful use of ML in atomistic modelling is the <strong>machine-learned interatomic potential</strong> (MLIP). It writes the energy of a configuration as a sum of atomic contributions, each a learned function of the neighbourhood of an atom within a cutoff, and trains on DFT energies, forces and stresses:</p>
             <span class="eq">E = &Sigma;<sub>i</sub> &epsilon;( descriptor of the environment of atom i ), &nbsp;&nbsp; F<sub>i</sub> = &minus;&nabla;<sub>i</sub> E</span>
             <p>Because forces come from differentiating a single energy function, energy is conserved. The function must be invariant to translation, rotation and swapping identical atoms, which is built into the descriptors (SOAP, symmetry functions, atomic cluster expansion) or into the architecture (equivariant message-passing networks such as NequIP and MACE). Families include the Behler&ndash;Parrinello neural-network potentials, Gaussian approximation potentials, moment tensor potentials, SNAP, and equivariant graph networks.</p>
-            <table>
+            <div class="table-scroll" role="region" aria-label="8. Machine-learned interatomic potentials (scrollable table)" tabindex="0"><table>
                 <thead><tr><th></th><th>Classical (EAM, Tersoff)</th><th>Machine-learned</th><th>DFT</th></tr></thead>
                 <tbody>
                     <tr><td>Cost per atom per step</td><td>&sim; 1 &micro;s</td><td>&sim; 10 &micro;s to 10 ms (depends on model)</td><td>&sim; 1 to 1000 s</td></tr>
@@ -168,7 +168,7 @@
                     <tr><td>Transferability</td><td>Limited by the functional form</td><td>Good inside training data; poor outside</td><td>General</td></tr>
                     <tr><td>Effort to build</td><td>Months of parameter fitting by experts</td><td>Generating training data and training</td><td>None</td></tr>
                 </tbody>
-            </table>
+            </table></div>
             <h3>Building one properly</h3>
             <ul>
                 <li><strong>Training data</strong> must span what the simulation will visit: perfect crystals, strained cells, defects, surfaces, liquid configurations, high-temperature MD snapshots, and saddle points if barriers matter.</li>
@@ -276,7 +276,7 @@ print("baseline MAE:", mean_absolute_error(y, np.full_like(y, y.mean())))</code>
         <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
         <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=22cb1b17"></script>
-    <script src="../assets/site.js?v=9188817f" defer></script>
+    <script src="../assets/topics.js?v=688395a6"></script>
+    <script src="../assets/site.js?v=e589e056" defer></script>
 </body>
 </html>

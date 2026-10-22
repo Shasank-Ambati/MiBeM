@@ -328,7 +328,139 @@
     redraws.push(draw); draw();
   }
 
-  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj };
+  /* ================= Fourier synthesis of a square wave ================= */
+  function fourier(host) {
+    var api = shell(host, "Fourier synthesis: building a square wave from sine waves",
+      "The square wave is the sum (4/&pi;)[sin x + sin 3x / 3 + sin 5x / 5 + &hellip;]. Each added term sharpens the edge, but near the jump the sum always overshoots by about 9% of the jump height (the Gibbs phenomenon), which is why sharp features cause ringing in plane-wave and spectral methods.");
+    var cv = api.addCanvas(640, 300);
+    var nsl = slider(api, "Number of terms", 1, 60, 1, 3, function (v) { return String(v); }, draw);
+    var showTarget = true;
+    checkbox(api, "Show the target square wave", function (v) { showTarget = v; draw(); }).checked = true;
+    api.finish();
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, N = nsl.get();
+      var p = { x0: 50, y0: 16, x1: W - 16, y1: H - 44 }, lo = -1.5, hi = 1.5;
+      var X = function (x) { return p.x0 + x / (2 * Math.PI) * (p.x1 - p.x0); }, Y = function (v) { return p.y1 - (v - lo) / (hi - lo) * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "x (one period, 0 to 2π)", "f(x)");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "right";
+      [-1, 0, 1].forEach(function (v) { ctx.fillText(v, p.x0 - 6, Y(v) + 4); });
+      ctx.strokeStyle = C.border; ctx.setLineDash([4, 4]);
+      [-1, 1].forEach(function (v) { ctx.beginPath(); ctx.moveTo(p.x0, Y(v)); ctx.lineTo(p.x1, Y(v)); ctx.stroke(); }); ctx.setLineDash([]);
+      if (showTarget) {
+        ctx.strokeStyle = C.blue; ctx.lineWidth = 2; ctx.beginPath();
+        ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(0), Y(1)); ctx.lineTo(X(Math.PI), Y(1)); ctx.lineTo(X(Math.PI), Y(-1)); ctx.lineTo(X(2 * Math.PI), Y(-1)); ctx.lineTo(X(2 * Math.PI), Y(0));
+        ctx.stroke(); ctx.lineWidth = 1;
+      }
+      var maxv = -9, steps = 4000;
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (var i = 0; i <= steps; i++) {
+        var x = 2 * Math.PI * i / steps, s = 0;
+        for (var k = 1; k <= 2 * N - 1; k += 2) s += Math.sin(k * x) / k;
+        s *= 4 / Math.PI; if (s > maxv) maxv = s;
+        if (i === 0) ctx.moveTo(X(x), Y(s)); else ctx.lineTo(X(x), Y(s));
+      }
+      ctx.stroke(); ctx.lineWidth = 1;
+      setRead(api, ["terms = <b>" + N + "</b> (highest harmonic " + (2 * N - 1) + ")", "peak value = <b>" + fmtN(maxv, 3) + "</b>", "overshoot = <b>" + fmtN((maxv - 1) / 2 * 100, 1) + "%</b> of the jump (limit about 9%)"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ================= Particle in a box ================= */
+  function box(host) {
+    var api = shell(host, "Particle in a box: confinement sets the energy scale",
+      "E<sub>n</sub> = n&sup2;h&sup2;/(8mL&sup2;) = n&sup2; &times; 37.6 eV&middot;&Aring;&sup2; / L&sup2; for an electron. Narrowing the box raises every level; higher states have more nodes in the wavefunction &psi;<sub>n</sub> = &radic;(2/L) sin(n&pi;x/L).");
+    var cv = api.addCanvas(640, 320);
+    var Lsl = slider(api, "Box width L", 2, 20, 0.5, 6, function (v) { return v.toFixed(1) + " Å"; }, draw);
+    var nsl = slider(api, "Level n", 1, 6, 1, 1, function (v) { return String(v); }, draw);
+    api.finish();
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, L = Lsl.get(), n = nsl.get();
+      var E1 = 37.61 / (L * L);
+      ctx.clearRect(0, 0, W, H);
+      // left: level diagram
+      var a = { x0: 52, y0: 20, x1: 250, y1: H - 30 };
+      ctx.strokeStyle = C.border; ctx.strokeRect(a.x0, a.y0, a.x1 - a.x0, a.y1 - a.y0);
+      ctx.fillStyle = C.muted; ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("energy levels", (a.x0 + a.x1) / 2, a.y1 + 20);
+      var Emax = 36 * E1;
+      for (var k = 1; k <= 6; k++) {
+        var y = a.y1 - (k * k * E1) / Emax * (a.y1 - a.y0 - 8) - 4;
+        ctx.strokeStyle = k === n ? C.accent : C.blue; ctx.lineWidth = k === n ? 3.5 : 2;
+        ctx.beginPath(); ctx.moveTo(a.x0 + 30, y); ctx.lineTo(a.x1 - 14, y); ctx.stroke();
+        ctx.fillStyle = k === n ? C.accent : C.ink; ctx.textAlign = "right"; ctx.font = (k === n ? "bold " : "") + "11px system-ui, sans-serif";
+        ctx.fillText("n=" + k, a.x0 + 26, y + 4);
+        if (k <= 4 || k === n) { ctx.textAlign = "left"; ctx.fillStyle = C.muted; ctx.fillText((k * k * E1).toFixed(2) + " eV", a.x1 - 70, y - 5); }
+      }
+      ctx.lineWidth = 1;
+      // right: wavefunction
+      var b = { x0: 300, y0: 20, x1: W - 16, y1: H - 30 };
+      ctx.strokeStyle = C.border; ctx.strokeRect(b.x0, b.y0, b.x1 - b.x0, b.y1 - b.y0);
+      var ymid = (b.y0 + b.y1) / 2, amp = (b.y1 - b.y0) * 0.38;
+      ctx.beginPath(); ctx.moveTo(b.x0, ymid); ctx.lineTo(b.x1, ymid); ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+      var bx0 = b.x0 + 24, bx1 = b.x1 - 24;
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(bx0, b.y0 + 6); ctx.lineTo(bx0, b.y1 - 6); ctx.moveTo(bx1, b.y0 + 6); ctx.lineTo(bx1, b.y1 - 6); ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = C.soft; ctx.beginPath(); ctx.moveTo(bx0, b.y1 - 6);
+      for (var i = 0; i <= 200; i++) { var x = i / 200, v = Math.pow(Math.sin(n * Math.PI * x), 2); ctx.lineTo(bx0 + x * (bx1 - bx0), b.y1 - 6 - v * amp * 1.3); }
+      ctx.lineTo(bx1, b.y1 - 6); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = C.accent; ctx.lineWidth = 2.8; ctx.beginPath();
+      for (var j = 0; j <= 200; j++) { var xx = j / 200, psi = Math.sin(n * Math.PI * xx); if (j === 0) ctx.moveTo(bx0, ymid - psi * amp); else ctx.lineTo(bx0 + xx * (bx1 - bx0), ymid - psi * amp); }
+      ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = C.muted; ctx.textAlign = "center"; ctx.font = "12px system-ui, sans-serif";
+      ctx.fillText("wavefunction ψ (line) and probability density |ψ|² (shaded), n = " + n, (b.x0 + b.x1) / 2, b.y1 + 20);
+      setRead(api, ["E<sub>1</sub> = <b>" + fmtN(E1, 3) + " eV</b>", "E<sub>" + n + "</sub> = <b>" + fmtN(n * n * E1, 3) + " eV</b>", "spacing E<sub>2</sub> &minus; E<sub>1</sub> = <b>" + fmtN(3 * E1, 3) + " eV</b>", "nodes inside the box = <b>" + (n - 1) + "</b>"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  /* ================= finite-difference step size: truncation versus round-off ================= */
+  function fdstep(host) {
+    var api = shell(host, "Finite-difference step size: truncation error versus round-off",
+      "Error in estimating the derivative of sin(x). For large h the truncation error dominates and falls as h (forward) or h&sup2; (central); for small h round-off error grows like &epsilon;/h. The best step is about &radic;&epsilon; for forward and &epsilon;<sup>1/3</sup> for central differences. Below about 10<sup>&minus;16</sup> the step vanishes (x + h = x) and the error plateaus at |cos x|.");
+    var cv = api.addCanvas(640, 340);
+    var xsl = slider(api, "Evaluation point x", 0.2, 3, 0.1, 1, function (v) { return v.toFixed(1); }, draw);
+    var single = false;
+    checkbox(api, "Single precision (float32)", function (v) { single = v; draw(); });
+    api.finish();
+    function draw() {
+      var C = colours(), ctx = cv.ctx, W = cv.w, H = cv.h, x0 = xsl.get();
+      var fr = single ? Math.fround : function (v) { return v; };
+      var f = function (x) { return fr(Math.sin(x)); };
+      var exact = Math.cos(x0);
+      var p = { x0: 56, y0: 18, x1: W - 16, y1: H - 50 }, lx0 = -16, lx1 = 0, ly0 = -17, ly1 = 1;
+      var X = function (e) { return p.x0 + (e - lx0) / (lx1 - lx0) * (p.x1 - p.x0); }, Y = function (e) { return p.y1 - (e - ly0) / (ly1 - ly0) * (p.y1 - p.y0); };
+      ctx.clearRect(0, 0, W, H);
+      axes(ctx, C, p, "step size h (log scale)", "error in derivative (log scale)");
+      ctx.font = "11px system-ui, sans-serif"; ctx.fillStyle = C.muted; ctx.textAlign = "center";
+      for (var e = lx0; e <= lx1; e += 2) ctx.fillText("1e" + e, X(e), p.y1 + 15);
+      ctx.textAlign = "right";
+      for (var q = -16; q <= 0; q += 4) { ctx.fillText("1e" + q, p.x0 - 6, Y(q) + 4); ctx.strokeStyle = C.border; ctx.globalAlpha = .35; ctx.beginPath(); ctx.moveTo(p.x0, Y(q)); ctx.lineTo(p.x1, Y(q)); ctx.stroke(); ctx.globalAlpha = 1; }
+      function curve(fn, colour) {
+        ctx.strokeStyle = colour; ctx.lineWidth = 2.5; ctx.beginPath();
+        var best = { le: 0, err: 9 };
+        for (var k = 0; k <= 320; k++) {
+          var le = lx0 + (lx1 - lx0) * k / 320, h = Math.pow(10, le);
+          var err = Math.abs(fn(h) - exact);
+          if (err < best.err) best = { le: le, err: err };
+          var yy = Y(Math.log10(Math.max(err, 1e-17)));
+          if (k === 0) ctx.moveTo(X(le), yy); else ctx.lineTo(X(le), yy);
+        }
+        ctx.stroke(); ctx.lineWidth = 1;
+        ctx.fillStyle = colour; ctx.beginPath(); ctx.arc(X(best.le), Y(Math.log10(Math.max(best.err, 1e-17))), 5, 0, 6.2832); ctx.fill();
+        return best;
+      }
+      var fwd = function (h) { var xh = fr(x0 + h); return fr(fr(f(xh) - f(x0)) / fr(h)); };
+      var cen = function (h) { var a = fr(x0 + h), b = fr(x0 - h); return fr(fr(f(a) - f(b)) / fr(2 * h)); };
+      var bf = curve(fwd, C.accent), bc = curve(cen, C.blue);
+      ctx.font = "12px system-ui, sans-serif"; ctx.textAlign = "left";
+      ctx.fillStyle = C.accent; ctx.fillText("forward difference", p.x0 + 10, p.y0 + 16);
+      ctx.fillStyle = C.blue; ctx.fillText("central difference", p.x0 + 10, p.y0 + 34);
+      setRead(api, ["forward: best h = <b>" + Math.pow(10, bf.le).toExponential(1) + "</b>, error <b>" + bf.err.toExponential(1) + "</b>", "central: best h = <b>" + Math.pow(10, bc.le).toExponential(1) + "</b>, error <b>" + bc.err.toExponential(1) + "</b>", "machine epsilon = <b>" + (single ? "1.2e-7" : "2.2e-16") + "</b>"]);
+    }
+    redraws.push(draw); draw();
+  }
+
+  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep };
   function boot() {
     doc.querySelectorAll(".demo[data-demo]").forEach(function (h) { var f = REG[h.getAttribute("data-demo")]; if (f) { try { f(h); } catch (e) { h.innerHTML = '<div class="demo-body"><p class="demo-note">This demo could not start in your browser.</p></div>'; if (window.console) console.error(e); } } });
     var redrawAll = function () { redraws.forEach(function (f) { f(); }); };
