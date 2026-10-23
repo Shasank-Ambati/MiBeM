@@ -1,0 +1,17 @@
+1. supercell size (relaxed Cu, frequencies at X in THz)
+   2 x 2 x 2  (  8 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+   3 x 3 x 3  ( 27 atoms)    5.546   5.546   8.157   lowest acoustic at Gamma: -0.000
+   4 x 4 x 4  ( 64 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: -0.000
+   5 x 5 x 5  (125 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+   6 x 6 x 6  (216 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+
+2. reference lattice constant (4x4x4 supercell; the relaxed value is 3.5898 A)
+   a = 3.5000 A   X:  6.425   6.425   9.649 THz
+   a = 3.5898 A   X:  5.530   5.530   8.142 THz
+   a = 3.7000 A   X:  4.461   4.461   6.328 THz
+
+3. dynamical stability: bcc copper (a = 2.85 A, relaxed) with the same potential
+   E(bcc) - E(fcc) = 32.7 meV/atom
+   H    7.672    7.672    7.672 THz
+   N   -1.138    5.435    8.105 THz
+   P    5.815    5.815    5.815 THz

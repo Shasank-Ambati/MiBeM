@@ -1,0 +1,24 @@
+relaxed lattice constant a = 3.5898 A
+number of displaced supercells: 1, atoms per supercell: 64
+
+frequencies (THz) of the three branches
+  Gamma  -0.000  -0.000  -0.000
+  X       5.530   5.530   8.141
+  L       3.549   3.549   8.067
+  K       4.974   6.544   7.504
+
+highest frequency in the DOS: about 8.34 THz = 34.5 meV = 278 cm^-1
+
+   T (K)   F_vib (kJ/mol)   S (J/K/mol)   C_v (J/K/mol)   C_v/3R
+     50        3.170          2.02          5.37        0.215
+    100        2.904          8.96         14.89        0.597
+    200        1.323         21.92         21.61        0.866
+    300       -1.351         31.08         23.37        0.937
+    500       -8.885         43.31         24.36        0.977
+   1000      -35.283         60.38         24.79        0.994
+
+T (K)   theta_D that reproduces C_v (K)
+    50      332
+   100      340
+   200      344
+   300      345

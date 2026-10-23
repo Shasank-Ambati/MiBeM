@@ -1,0 +1,34 @@
+$ Teaching database for a binary A-B eutectic system (NOT a real alloy).
+$ Energies in J/mol, T in K.  Reference state: the stable phase of each element at 0 K is zero.
+ELEMENT /-   ELECTRON_GAS              0.0000E+00  0.0000E+00  0.0000E+00 !
+ELEMENT VA   VACUUM                    0.0000E+00  0.0000E+00  0.0000E+00 !
+ELEMENT A    ALPHA_REF                 1.0000E+01  5.0000E+03  3.0000E+01 !
+ELEMENT B    BETA_REF                  1.0000E+01  5.0000E+03  3.0000E+01 !
+
+$ Gibbs energy of each element in each phase, relative to the stable solid (alpha for A, beta for B)
+FUNCTION GA_ALPHA 298.15   0;                                        6000 N !
+FUNCTION GA_BETA  298.15   5000;                                     6000 N !
+FUNCTION GA_LIQ   298.15   10000 - 10*T;                             6000 N !
+FUNCTION GB_ALPHA 298.15   4000;                                     6000 N !
+FUNCTION GB_BETA  298.15   0;                                        6000 N !
+FUNCTION GB_LIQ   298.15   14000 - 10*T;                             6000 N !
+
+TYPE_DEFINITION % SEQ * !
+PHASE LIQUID % 1 1.0 !
+  CONSTITUENT LIQUID :A,B: !
+PHASE ALPHA % 1 1.0 !
+  CONSTITUENT ALPHA :A,B: !
+PHASE BETA % 1 1.0 !
+  CONSTITUENT BETA :A,B: !
+
+PARAMETER G(LIQUID,A;0)  298.15 GA_LIQ;   6000 N !
+PARAMETER G(LIQUID,B;0)  298.15 GB_LIQ;   6000 N !
+PARAMETER L(LIQUID,A,B;0) 298.15 -6000;   6000 N !
+
+PARAMETER G(ALPHA,A;0)   298.15 GA_ALPHA; 6000 N !
+PARAMETER G(ALPHA,B;0)   298.15 GB_ALPHA; 6000 N !
+PARAMETER L(ALPHA,A,B;0) 298.15 +14000;   6000 N !
+
+PARAMETER G(BETA,A;0)    298.15 GA_BETA;  6000 N !
+PARAMETER G(BETA,B;0)    298.15 GB_BETA;  6000 N !
+PARAMETER L(BETA,A,B;0)  298.15 +14000;   6000 N !

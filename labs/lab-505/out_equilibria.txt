@@ -1,0 +1,22 @@
+alloy x_B = 0.20 on cooling
+   T (K)   phases (amount, x_B in the phase)
+   1100    LIQUID 1.000 (0.200)
+    900    LIQUID 1.000 (0.200)
+    850    LIQUID 1.000 (0.200)
+    800    ALPHA 0.185 (0.026)   LIQUID 0.815 (0.240)
+    700    ALPHA 0.483 (0.041)   LIQUID 0.517 (0.348)
+    680    ALPHA 0.522 (0.045)   LIQUID 0.478 (0.370)
+    660    ALPHA 0.832 (0.046)   BETA 0.168 (0.964)
+    600    ALPHA 0.821 (0.032)   BETA 0.179 (0.975)
+    400    ALPHA 0.803 (0.005)   BETA 0.197 (0.997)
+
+lever rule at 800 K: x_L = 0.2396, x_alpha = 0.0261 -> f_L = (0.20 - x_alpha)/(x_L - x_alpha) = 0.8145 ; pycalphad: 0.8145
+
+scan of the alloy x_B = 0.385 through the eutectic
+  T = 672.0   LIQUID 1.000
+  T = 670.0   LIQUID 1.000
+  T = 668.0   LIQUID 1.000
+  T = 666.0   LIQUID 1.000
+  T = 664.0   ALPHA 0.631   BETA 0.369
+  T = 662.0   ALPHA 0.631   BETA 0.369
+  T = 660.0   ALPHA 0.630   BETA 0.370

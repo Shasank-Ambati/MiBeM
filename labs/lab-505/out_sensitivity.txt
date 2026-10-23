@@ -1,0 +1,5 @@
+case                                            T_eut (K)   x_B,eut
+A: liquid ideal (L = 0), solids +14000                768     0.351
+B: base case (liquid -6000, solids +14000)            666     0.386
+C: liquid -12000, solids +14000                       566     0.408
+D: liquid -6000, solids 0 (ideal)                     856     0.429

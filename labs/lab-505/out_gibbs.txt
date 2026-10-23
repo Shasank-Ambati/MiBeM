@@ -1,0 +1,3 @@
+T = 900 K, overall x_B = 0.20: LIQUID x=0.200
+T = 700 K, overall x_B = 0.20: ALPHA x=0.041, LIQUID x=0.348
+T = 600 K, overall x_B = 0.50: ALPHA x=0.032, BETA x=0.975

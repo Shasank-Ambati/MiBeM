@@ -1070,6 +1070,33 @@ window.MIBEM_TOPICS = [
       "Always report an error bar that accounts for correlation (error = sigma*sqrt(2 tau / N)), start from several different initial states, and look at snapshots: a quench from a random state can get stuck in a striped state with two domains that has higher energy than the ground state."
     ],
     "katex": true
+  },
+  {
+    "id": 47,
+    "label": "LAB 505",
+    "code": "LAB 505",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-calphad-pycalphad",
+    "short": "CALPHAD: pycalphad",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 26,
+    "title": "Lab: Phase diagrams with CALPHAD and pycalphad",
+    "blurb": "Write a thermodynamic database, plot Gibbs-energy curves and the common tangent, compute a phase diagram, test the interaction parameters, and compare equilibrium solidification with the Scheil model.",
+    "builds": [
+      4,
+      38
+    ],
+    "related": [],
+    "takeaways": [
+      "A CALPHAD calculation needs a thermodynamic database (a TDB file): for every phase, the Gibbs energy of each element in that phase plus interaction (Redlich-Kister) parameters; the software then minimises the total Gibbs energy at given T, P and composition to find the stable phases, amounts and compositions.",
+      "The equilibrium compositions at a temperature are the points of the common tangent to the Gibbs-energy curves; in the teaching A-B system at 700 K and x_B = 0.20 the solid alpha (x = 0.041) and the liquid (x = 0.348) share one tangent, and the lever rule gives the liquid fraction 0.517 from compositions alone.",
+      "The phase diagram is the set of these results over T and x: the teaching system has a eutectic near 665 K and x_B = 0.385, with alpha dissolving up to x_B = 0.047 and beta up to 0.964; changing the liquid interaction parameter from 0 to -12000 J/mol moves the eutectic by hundreds of kelvin (table in Step 6).",
+      "Equilibrium is not what you get in a casting: for the alloy x_B = 0.10 the lever rule predicts 0.159 of eutectic and the Scheil model (no diffusion in the solid) 0.221, and the Scheil result is converged with respect to the temperature step (0.222 at 4 K, 0.221 at 1 K).",
+      "A database for a real alloy must be assessed from experimental data (diagrams, calorimetry, activities); copying a TDB file without checking the validity range, the phase list and the reference states gives plausible but wrong diagrams."
+    ],
+    "katex": true
   }
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
@@ -1121,7 +1148,8 @@ window.MIBEM_PATHPLAN = [
       "MATH 304",
       "PHYS 301",
       "PHYS 302",
-      "MSE 301"
+      "MSE 301",
+      "LAB 505"
     ]
   },
   {

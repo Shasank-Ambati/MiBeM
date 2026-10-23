@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab: Phase diagrams with CALPHAD and pycalphad - MiBeM</title>
+    <meta name="description" content="Hands-on CALPHAD thermodynamics in Python with pycalphad: read a thermodynamic database file, plot Gibbs-energy curves and the common tangent, calculate equilibria and a binary phase diagram, study the effect of the interaction parameters and compare equilibrium solidification with the Scheil model.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/lab-calphad-pycalphad.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Lab: Phase diagrams with CALPHAD and pycalphad - MiBeM">
+    <meta property="og:description" content="Hands-on CALPHAD thermodynamics in Python with pycalphad: read a thermodynamic database file, plot Gibbs-energy curves and the common tangent, calculate equilibria and a binary phase diagram, study the effect of the interaction parameters and compare equilibrium solidification with the Scheil model.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/lab-calphad-pycalphad.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="47">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#install">Step 1. Install</a></li>
+                <li><a href="#tdb">Step 2. A thermodynamic database written by hand</a></li>
+                <li><a href="#gibbs">Step 4. Gibbs-energy curves and the common tangent</a></li>
+                <li><a href="#diagram">Step 5. The phase diagram</a></li>
+                <li><a href="#sens">Step 6. How the parameters shape the diagram</a></li>
+                <li><a href="#scheil">Step 7. Solidification: equilibrium against Scheil</a></li>
+                <li><a href="#errors">Step 8. Typical problems</a></li>
+                <li><a href="#check">Exercises</a></li>
+                <li><a href="#refs">Going further and references</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 505</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a><a href="lab-ising-monte-carlo.html" title="LAB 504: Lab: Monte Carlo of the Ising model">504</a><a href="lab-calphad-pycalphad.html" class="here" aria-current="page" title="LAB 505: Lab: Phase diagrams with CALPHAD and pycalphad">505</a></nav>
+<!-- coursenav:end -->
+            <h1>Lab: Phase diagrams with CALPHAD and pycalphad</h1>
+            <p class="lead">CALPHAD (calculation of phase diagrams) is the method that metallurgists and ceramists use to compute phase equilibria for real multicomponent materials: steels, aluminium alloys, superalloys, solders, glasses. The idea is to write the Gibbs energy of every phase as a function of temperature and composition with a modest number of fitted parameters, and then to minimise the total Gibbs energy. This lab uses <strong>pycalphad</strong>, a free Python implementation, with a small database that we write ourselves for a fictitious A&ndash;B eutectic system. A database that you wrote yourself has the advantage that you can predict, from the parameters, every number the software returns.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 26 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">MSE 301: Thermodynamics and CALPHAD</a><br><a href="thermal-physics.html">PHYS 102: Thermal physics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>By the end of this lab you will be able to:</strong>
+                <ul>
+                    <li>Read the structure of a TDB file: elements, functions, phases and parameters.</li>
+                    <li>Compute and plot Gibbs-energy curves, and relate the stable phases to the common tangent.</li>
+                    <li>Calculate equilibria (phases, amounts, compositions) and check them with the lever rule.</li>
+                    <li>Plot a binary phase diagram and understand how it responds to the interaction parameters.</li>
+                    <li>Simulate solidification with the lever rule and the Scheil model, and say when each is appropriate.</li>
+                    <li>Avoid the common mistakes (wrong reference state, extrapolation, missing parameters).</li>
+                </ul>
+                <strong>Companion courses:</strong> <a href="thermodynamics-and-calphad.html">MSE 301</a> (the thermodynamics behind), <a href="thermal-physics.html">PHYS 102</a> (free energy), <a href="calculus-of-variations-and-optimisation.html">MATH 304</a> (minimisation). <strong>Before this lab:</strong> <a href="lab-structures-ase.html">LAB 201</a> (Python habits).
+            </div>
+            <div class="lab-meta"><div><b>Time</b>3 hours</div><div><b>Software</b>Python 3.9+, pycalphad, numpy, matplotlib</div><div><b>System</b>binary A&ndash;B, three phases</div><div><b>Run time</b>seconds to 2 minutes per script</div></div>
+            <h2 id="install">Step 1. Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+            <pre data-file="shell"><code>python3 -m venv ~/venvs/calphad &amp;&amp; source ~/venvs/calphad/bin/activate
+            pip install pycalphad matplotlib numpy
+            python -c &quot;import pycalphad; print(pycalphad.__version__)&quot;</code></pre>
+            <pre class="out"><code>0.11.2</code></pre>
+            <p>pycalphad reads standard TDB files, so the same database works in the commercial programs Thermo-Calc and FactSage (the syntax comes from the Thermo-Calc user community). Real databases are published for example by the NIMS and by the CALPHAD community (for instance the NIST and the TDBDB repositories); the open-source <strong>OpenCalphad</strong> is another free engine.</p>
+            <h2 id="tdb">Step 2. A thermodynamic database written by hand<a class="anchor" href="#tdb" aria-label="Link to this section">#</a></h2>
+            <p>The Gibbs energy per mole of atoms of a substitutional solution phase $\varphi$ with the elements A and B is
+            $$G^\varphi_m=x_A\,{}^0G^\varphi_A+x_B\,{}^0G^\varphi_B+RT\,(x_A\ln x_A+x_B\ln x_B)+x_Ax_B\,L^\varphi_{AB},$$
+            where &#36;{}^0G^\varphi_i$ is the Gibbs energy of the pure element $i$ in the structure $\varphi$ (the &ldquo;lattice stability&rdquo;),\allowbreak  the second term is the ideal entropy of mixing,\allowbreak  and $L_{AB}$ is the regular-solution interaction parameter (in general a Redlich&ndash;Kister polynomial in $x_A-x_B$ and temperature; &lt;a href="thermodynamics-and-calphad.html"&gt;MSE 301&lt;/a&gt;). A positive $L$ means that A&ndash;B bonds are less favourable than the average of A&ndash;A and B&ndash;B (a tendency to separate); a negative $L$ the opposite. The file <code>teach.tdb</code> contains the three phases LIQUID, ALPHA (the structure of A) and BETA (the structure of B):</p>
+            <pre data-file="teach.tdb"><code>$ Teaching database for a binary A-B eutectic system (NOT a real alloy).
+            $ Energies in J/mol, T in K.  Reference state: the stable phase of each element at 0 K is zero.
+            ELEMENT /-   ELECTRON_GAS              0.0000E+00  0.0000E+00  0.0000E+00 !
+            ELEMENT VA   VACUUM                    0.0000E+00  0.0000E+00  0.0000E+00 !
+            ELEMENT A    ALPHA_REF                 1.0000E+01  5.0000E+03  3.0000E+01 !
+            ELEMENT B    BETA_REF                  1.0000E+01  5.0000E+03  3.0000E+01 !
+
+            $ Gibbs energy of each element in each phase, relative to the stable solid (alpha for A, beta for B)
+            FUNCTION GA_ALPHA 298.15   0;                                        6000 N !
+            FUNCTION GA_BETA  298.15   5000;                                     6000 N !
+            FUNCTION GA_LIQ   298.15   10000 - 10*T;                             6000 N !
+            FUNCTION GB_ALPHA 298.15   4000;                                     6000 N !
+            FUNCTION GB_BETA  298.15   0;                                        6000 N !
+            FUNCTION GB_LIQ   298.15   14000 - 10*T;                             6000 N !
+
+            TYPE_DEFINITION % SEQ * !
+            PHASE LIQUID % 1 1.0 !
+              CONSTITUENT LIQUID :A,B: !
+            PHASE ALPHA % 1 1.0 !
+              CONSTITUENT ALPHA :A,B: !
+            PHASE BETA % 1 1.0 !
+              CONSTITUENT BETA :A,B: !
+
+            PARAMETER G(LIQUID,A;0)  298.15 GA_LIQ;   6000 N !
+            PARAMETER G(LIQUID,B;0)  298.15 GB_LIQ;   6000 N !
+            PARAMETER L(LIQUID,A,B;0) 298.15 -6000;   6000 N !
+
+            PARAMETER G(ALPHA,A;0)   298.15 GA_ALPHA; 6000 N !
+            PARAMETER G(ALPHA,B;0)   298.15 GB_ALPHA; 6000 N !
+            PARAMETER L(ALPHA,A,B;0) 298.15 +14000;   6000 N !
+
+            PARAMETER G(BETA,A;0)    298.15 GA_BETA;  6000 N !
+            PARAMETER G(BETA,B;0)    298.15 GB_BETA;  6000 N !
+            PARAMETER L(BETA,A,B;0)  298.15 +14000;   6000 N !</code></pre>
+            <p>Reading it line by line:</p>
+            <ul>
+            <li><code>ELEMENT</code> lines declare the elements (and the special entries <code>VA</code> for vacancies, used by interstitial models, and <code>/-</code> for electrons). The three numbers are the reference-state data; they are not used for equilibrium calculations.</li>
+            <li><code>FUNCTION name T_low expression; T_high N !</code> defines a reusable expression valid from $T_\mathrm{low}$ to $T_\mathrm{high}$ (here 298.15 to 6000 K). The functions are the Gibbs energies of the pure elements relative to the stable solid at 0 J: <code>GA_LIQ = 10000 - 10*T</code> means that melting of A has $\Delta H=10\,000$ J/mol and $\Delta S=10$ J/mol/K, so that $T_m^A=\Delta H/\Delta S=1000$ K; for B, $14\,000-10T$ gives $T_m^B=1400$ K. The metastable structures cost energy: B in the alpha structure $+4000$, A in the beta structure $+5000$ J/mol.</li>
+            <li><code>TYPE_DEFINITION % SEQ * !</code> and <code>PHASE name % 1 1.0 !</code> declare a phase with one sublattice of one site. <code>CONSTITUENT name :A,B: !</code> lists the species on that sublattice.</li>
+            <li><code>PARAMETER G(phase,element;0)</code> assigns the pure-element energy; <code>PARAMETER L(phase,A,B;0)</code> is the interaction parameter. The value is $-6000$ for the liquid (A&ndash;B attraction: stabilises the liquid, which lowers the melting temperature of both elements and creates the eutectic) and $+14\,000$ for the solids (a tendency to separate, so the solid solubilities are small).</li>
+            <li>Every line ends with <code>!</code>. Comments start with <code>$&lt;/code&gt;.&lt;/li&gt;
+            &lt;/ul&gt;
+            &lt;p&gt;If you omit the &lt;code&gt;TYPE_DEFINITION&lt;/code&gt; line,\allowbreak  pycalphad still loads the file but prints the warning &lt;em&gt;The type definition character `%` was defined in the following phases ...,\allowbreak  but no corresponding TYPE_DEFINITION line was found&lt;/em&gt;; it is harmless here,\allowbreak  but a missing type definition for a magnetic or ordering model makes the results wrong.&lt;/p&gt;
+            &lt;h2 id="eq"&gt;Step 3. The first equilibrium calculation&lt;/h2&gt;
+            &lt;p&gt;The function &lt;code&gt;equilibrium(db, components, phases, conditions)&lt;/code&gt; minimises the Gibbs energy under the conditions $T$, $P$, $N$ and the mole fraction. The helper <code>tools505.py</code> wraps it and returns the stable phases with their amounts and compositions:</p>
+            <pre data-file="tools505.py"><code>&quot;&quot;&quot;Small helpers around pycalphad used by the scripts of this lab.&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import numpy as np
+            from pycalphad import Database, equilibrium, variables as v
+
+            PHASES = [&quot;LIQUID&quot;, &quot;ALPHA&quot;, &quot;BETA&quot;]
+
+            def load(path=&quot;teach.tdb&quot;, subs=None):
+                text = open(path).read()
+                for old, new in (subs or {}).items():
+                    assert old in text, old
+                    text = text.replace(old, new)
+                return Database(text)
+
+            def state(db, xB, T):
+                &quot;&quot;&quot;Stable phases at (x_B, T): list of (phase, amount, x_B in that phase).&quot;&quot;&quot;
+                eq = equilibrium(db, [&quot;A&quot;, &quot;B&quot;, &quot;VA&quot;], PHASES, {v.X(&quot;B&quot;): xB, v.T: T, v.P: 101325, v.N: 1})
+                ph = eq.Phase.values.squeeze(); np_ = eq.NP.values.squeeze(); xs = eq.X.sel(component=&quot;B&quot;).values.squeeze()
+                out = []
+                for p, n, x in zip(np.atleast_1d(ph), np.atleast_1d(np_), np.atleast_1d(xs)):
+                    if p != &quot;&quot; and not np.isnan(n) and n &gt; 1e-6: out.append((str(p), float(n), float(x)))
+                return out</code></pre>
+            <pre data-file="equilibria.py"><code>&quot;&quot;&quot;Equilibrium calculations: phases, amounts and compositions; the lever rule; and the eutectic point.&quot;&quot;&quot;
+            import numpy as np
+            from tools505 import *
+
+            db = load()
+            print(&quot;alloy x_B = 0.20 on cooling&quot;)
+            print(&quot;   T (K)   phases (amount, x_B in the phase)&quot;)
+            for T in (1100, 900, 850, 800, 700, 680, 660, 600, 400):
+                s = state(db, 0.20, T)
+                print(&quot;  %5d    &quot; % T + &quot;   &quot;.join(&quot;%s %.3f (%.3f)&quot; % (p, n, x) for p, n, x in s))
+
+            # lever rule check at 800 K
+            s = state(db, 0.20, 800); d = {p: (n, x) for p, n, x in s}
+            xl, xa = d[&quot;LIQUID&quot;][1], d[&quot;ALPHA&quot;][1]
+            print(&quot;\nlever rule at 800 K: x_L = %.4f, x_alpha = %.4f -&gt; f_L = (0.20 - x_alpha)/(x_L - x_alpha) = %.4f ; pycalphad: %.4f&quot;
+                  % (xl, xa, (0.20 - xa) / (xl - xa), d[&quot;LIQUID&quot;][0]))
+
+            # eutectic temperature: lowest T at which the liquid is stable for x_B = 0.385 (scan down)
+            print(&quot;\nscan of the alloy x_B = 0.385 through the eutectic&quot;)
+            for T in np.arange(672, 658, -2.0):
+                s = state(db, 0.385, T)
+                print(&quot;  T = %5.1f   &quot; % T + &quot;   &quot;.join(&quot;%s %.3f&quot; % (p, n) for p, n, x in s))</code></pre>
+            <pre class="out"><code>alloy x_B = 0.20 on cooling
+               T (K)   phases (amount, x_B in the phase)
+               1100    LIQUID 1.000 (0.200)
+                900    LIQUID 1.000 (0.200)
+                850    LIQUID 1.000 (0.200)
+                800    ALPHA 0.185 (0.026)   LIQUID 0.815 (0.240)
+                700    ALPHA 0.483 (0.041)   LIQUID 0.517 (0.348)
+                680    ALPHA 0.522 (0.045)   LIQUID 0.478 (0.370)
+                660    ALPHA 0.832 (0.046)   BETA 0.168 (0.964)
+                600    ALPHA 0.821 (0.032)   BETA 0.179 (0.975)
+                400    ALPHA 0.803 (0.005)   BETA 0.197 (0.997)
+
+            lever rule at 800 K: x_L = 0.2396, x_alpha = 0.0261 -&gt; f_L = (0.20 - x_alpha)/(x_L - x_alpha) = 0.8145 ; pycalphad: 0.8145
+
+            scan of the alloy x_B = 0.385 through the eutectic
+              T = 672.0   LIQUID 1.000
+              T = 670.0   LIQUID 1.000
+              T = 668.0   LIQUID 1.000
+              T = 666.0   LIQUID 1.000
+              T = 664.0   ALPHA 0.631   BETA 0.369
+              T = 662.0   ALPHA 0.631   BETA 0.369
+              T = 660.0   ALPHA 0.630   BETA 0.370</code></pre>
+            <p>Follow the alloy $x_B=0.20$ as it cools: it is liquid at $850$ K and above; at $800$ K the solid alpha ($x_B=0.026$, $18.5\%$) coexists with the liquid ($x_B=0.240$); the liquid becomes richer in B as the temperature falls ($0.348$ at $700$ K, $0.370$ at $680$ K) while alpha takes in more B. Just below $665$ K the liquid has disappeared and the alloy is alpha $+$ beta. Below this the solubility of B in alpha falls from $0.046$ at $660$ K to $0.005$ at $400$ K, and the fraction of beta rises (retrograde solubility: the precipitation of beta from supersaturated alpha, the basis of age hardening).</p>
+            <p>The <strong>lever rule</strong> is not an extra approximation, it follows from mass balance: with $x_0$ the overall composition and $x_\alpha$, $x_L$ the compositions of the two phases, $f_L=(x_0-x_\alpha)/(x_L-x_\alpha)$. At $800$ K, $(0.20-0.0261)/(0.2396-0.0261)=0.8145$, identical to the amount that the minimiser reports. The last block shows the eutectic reaction: at $666$ K the alloy $x_B=0.385$ is entirely liquid and at $664$ K it is $63\%$ alpha $+$ $37\%$ beta with no liquid, so the eutectic temperature lies between $664$ and $666$ K; in the next step the same temperature appears in the diagram.</p>
+            <h2 id="gibbs">Step 4. Gibbs-energy curves and the common tangent<a class="anchor" href="#gibbs" aria-label="Link to this section">#</a></h2>
+            <p>The function <code>calculate</code> evaluates $G_m$ of one phase on a grid of compositions without minimising anything. Plotting the three curves and drawing the tangent shared by the phases that are present reproduces the textbook construction:</p>
+            <pre data-file="gibbs_curves.py"><code>&quot;&quot;&quot;Gibbs energy curves of the three phases and the common tangent construction at three temperatures.&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from pycalphad import calculate
+            from tools505 import load, state, PHASES
+
+            db = load()
+            fig, axes = plt.subplots(1, 3, figsize=(10, 3.4))
+            for ax, T in zip(axes, (900, 700, 600)):
+                curves = {}
+                for ph, c in zip(PHASES, (&quot;tab:red&quot;, &quot;tab:blue&quot;, &quot;tab:orange&quot;)):
+                    r = calculate(db, [&quot;A&quot;, &quot;B&quot;, &quot;VA&quot;], ph, T=T, P=101325, N=1, pdens=400)
+                    x = r.X.sel(component=&quot;B&quot;).values.squeeze(); G = r.GM.values.squeeze(); o = np.argsort(x)
+                    curves[ph] = (x[o], G[o]); ax.plot(x[o], G[o], color=c, label=ph)
+                xo = 0.2 if T &gt; 650 else 0.5                       # an overall composition inside the two-phase region
+                s = state(db, xo, T)
+                print(&quot;T = %d K, overall x_B = %.2f: %s&quot; % (T, xo, &quot;, &quot;.join(&quot;%s x=%.3f&quot; % (p, x) for p, n, x in s)))
+                if len(s) == 2:                                    # common tangent through the two equilibrium compositions
+                    pts = [(x, np.interp(x, *curves[p])) for p, n, x in s]
+                    ax.plot([pts[0][0], pts[1][0]], [pts[0][1], pts[1][1]], &quot;k--&quot;, lw=1); ax.plot(*zip(*pts), &quot;ko&quot;, ms=4)
+                ax.set_title(f&quot;T = {T} K&quot;); ax.set_xlabel(&quot;$x_B$&quot;); ax.set_ylabel(&quot;G (J/mol)&quot;)
+            axes[0].legend(); fig.tight_layout(); fig.savefig(&quot;gibbs.png&quot;, dpi=130)</code></pre>
+            <pre class="out"><code>T = 900 K, overall x_B = 0.20: LIQUID x=0.200
+            T = 700 K, overall x_B = 0.20: ALPHA x=0.041, LIQUID x=0.348
+            T = 600 K, overall x_B = 0.50: ALPHA x=0.032, BETA x=0.975</code></pre>
+            <figure class="lab-fig"><img src="../assets/labs/lab-505/gibbs.png" alt="Gibbs energy of liquid, alpha and beta against composition at 900, 700 and 600 K with the common tangent" loading="lazy"><figcaption>Molar Gibbs energy curves of the three phases at three temperatures. Dashed line: the common tangent; its contact points are the equilibrium compositions.</figcaption></figure>
+            <p>At $900$ K the liquid curve lies below the other two from near pure A up to $x_B\approx0.8$, so the liquid is the stable phase there; only close to pure B does the beta curve go below it. At $700$ K the alpha and liquid curves have a common tangent between $x_B=0.041$ and $0.348$; an alloy with overall composition in that range minimises its energy by splitting into those two phases (the dashed line is below both curves). At $600$ K the liquid has left the stage: the common tangent now connects alpha ($0.032$) and beta ($0.975$). The slopes of the tangent are the chemical potentials, equal in both phases ($\mu_A$ and $\mu_B$ are the intercepts at $x_B=0$ and $1$): that is the condition of equilibrium.</p>
+            <h2 id="diagram">Step 5. The phase diagram<a class="anchor" href="#diagram" aria-label="Link to this section">#</a></h2>
+            <p>The phase diagram is just the common-tangent construction repeated on a grid of temperatures, and pycalphad does it with <code>binplot</code>:</p>
+            <pre data-file="diagram.py"><code>&quot;&quot;&quot;Binary phase diagram of the teaching database with pycalphad.&quot;&quot;&quot;
+            import matplotlib; matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from pycalphad import Database, binplot, variables as v
+
+            db = Database(&quot;teach.tdb&quot;)
+            ax = binplot(db, [&quot;A&quot;, &quot;B&quot;, &quot;VA&quot;], [&quot;LIQUID&quot;, &quot;ALPHA&quot;, &quot;BETA&quot;], {v.X(&quot;B&quot;): (0, 1, 0.01), v.T: (300, 1500, 10), v.P: 101325, v.N: 1})
+            ax.set_xlabel(&quot;mole fraction B&quot;); ax.set_ylabel(&quot;T (K)&quot;)
+            ax.figure.set_size_inches(6, 4.5); ax.figure.tight_layout(); ax.figure.savefig(&quot;diagram.png&quot;, dpi=130)
+            print(&quot;saved diagram.png&quot;)</code></pre>
+            <figure class="lab-fig"><img src="../assets/labs/lab-505/diagram.png" alt="Binary phase diagram of the teaching A-B system" loading="lazy"><figcaption>Phase diagram computed from <code>teach.tdb</code>: a eutectic at about 665 K and $x_B=0.385$ between two terminal solid solutions.</figcaption></figure>
+            <p>Read the diagram: the liquidus descends from $1000$ K (melting of A) and $1400$ K (melting of B) to the <strong>eutectic point</strong> at about $665$ K and $x_B\approx0.385$, where liquid, alpha and beta coexist (a horizontal line, three phases: zero degrees of freedom at fixed pressure by the Gibbs phase rule). The solid solutions are narrow because the solid interaction parameter is large and positive: alpha dissolves up to $x_B=0.046$ and beta up to $0.964$ at the eutectic temperature; the solvus lines bend toward the pure elements as the temperature falls. The eutectic temperature ($665$ K) is $335$ K lower than the melting point of A, a deep eutectic that comes from the combination of the negative liquid parameter and the positive solid ones. In the plotting call, the grid <code>(0, 1, 0.01)</code> and <code>(300, 1500, 10)</code> sets the resolution: a finer grid gives smoother lines at the cost of time.</p>
+            <div class="note warn"><strong>An empty plot</strong>
+            <p>In the version used here, <code>binplot</code> creates its own axes and ignores an <code>ax=</code> argument: passing your own axes gave a completely empty figure with no error message. Use the axes object that <code>binplot</code> returns and modify it (<code>ax = binplot(...)</code>). If a plot is empty, first check that a phase list and the components include <code>"VA"</code> as in the TDB, then print the returned object.</p>
+            </div>
+            <h2 id="sens">Step 6. How the parameters shape the diagram<a class="anchor" href="#sens" aria-label="Link to this section">#</a></h2>
+            <p>The most useful numerical experiment with a thermodynamic model is to change one parameter and look at the result. The script modifies the text of the TDB in memory (the file is not changed), finds the eutectic as the lowest temperature at which the liquid is stable on a grid of composition and temperature, and plots four diagrams:</p>
+            <pre data-file="sensitivity.py"><code>&quot;&quot;&quot;How the interaction parameters shape the diagram: eutectic temperature and composition for four parameter sets.&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import os
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from pycalphad import equilibrium, binplot, variables as v
+            from tools505 import load, PHASES
+
+            cases = {
+                &quot;A: liquid ideal (L = 0), solids +14000&quot;:      {&quot;L(LIQUID,A,B;0) 298.15 -6000&quot;: &quot;L(LIQUID,A,B;0) 298.15 0&quot;},
+                &quot;B: base case (liquid -6000, solids +14000)&quot;:  {},
+                &quot;C: liquid -12000, solids +14000&quot;:             {&quot;L(LIQUID,A,B;0) 298.15 -6000&quot;: &quot;L(LIQUID,A,B;0) 298.15 -12000&quot;},
+                &quot;D: liquid -6000, solids 0 (ideal)&quot;:           {&quot;L(ALPHA,A,B;0) 298.15 +14000&quot;: &quot;L(ALPHA,A,B;0) 298.15 0&quot;, &quot;L(BETA,A,B;0)  298.15 +14000&quot;: &quot;L(BETA,A,B;0)  298.15 0&quot;},
+            }
+            def eutectic(db):
+                &quot;&quot;&quot;Lowest temperature at which the liquid is stable on a grid of composition and temperature, and the composition of the liquid there.&quot;&quot;&quot;
+                xs, Ts = np.arange(0.20, 0.70, 0.01), np.arange(1000, 300, -2.0)
+                eq = equilibrium(db, [&quot;A&quot;, &quot;B&quot;, &quot;VA&quot;], PHASES, {v.X(&quot;B&quot;): xs, v.T: Ts, v.P: 101325, v.N: 1})
+                ph = eq.Phase.values.squeeze()                      # dimensions: (T, x, vertex)
+                xl = eq.X.sel(component=&quot;B&quot;).values.squeeze()       # composition of each stable phase, same dimensions
+                j = np.argwhere((ph == &quot;LIQUID&quot;).any(axis=-1))[:, 0].max()          # largest index = lowest T with liquid
+                sel = ph[j] == &quot;LIQUID&quot;
+                return Ts[j], np.nanmean(xl[j][sel])
+
+            print(&quot;%-46s %10s %9s&quot; % (&quot;case&quot;, &quot;T_eut (K)&quot;, &quot;x_B,eut&quot;))
+            imgs = []
+            for k, (name, subs) in enumerate(cases.items()):
+                db = load(subs=subs)
+                Te, xe = eutectic(db)
+                print(&quot;%-46s %10.0f %9.3f&quot; % (name, Te, xe), flush=True)
+                ax = binplot(db, [&quot;A&quot;, &quot;B&quot;, &quot;VA&quot;], PHASES, {v.X(&quot;B&quot;): (0, 1, 0.01), v.T: (300, 1500, 10), v.P: 101325, v.N: 1})
+                ax.set_title(name, fontsize=8)
+                if ax.get_legend(): ax.get_legend().remove()
+                ax.figure.set_size_inches(4, 3.2); ax.figure.tight_layout(); ax.figure.savefig(f&quot;_d{k}.png&quot;, dpi=110); plt.close(ax.figure)
+                imgs.append(f&quot;_d{k}.png&quot;)
+            fig, axes = plt.subplots(2, 2, figsize=(8, 6.4))
+            for a, f in zip(axes.flat, imgs): a.imshow(plt.imread(f)); a.axis(&quot;off&quot;)
+            fig.tight_layout(); fig.savefig(&quot;sensitivity.png&quot;, dpi=130)
+            for f in imgs: os.remove(f)</code></pre>
+            <pre class="out"><code>case                                            T_eut (K)   x_B,eut
+            A: liquid ideal (L = 0), solids +14000                768     0.351
+            B: base case (liquid -6000, solids +14000)            666     0.386
+            C: liquid -12000, solids +14000                       566     0.408
+            D: liquid -6000, solids 0 (ideal)                     856     0.429</code></pre>
+            <figure class="lab-fig"><img src="../assets/labs/lab-505/sensitivity.png" alt="Four phase diagrams for different interaction parameters" loading="lazy"><figcaption>Phase diagrams for four sets of interaction parameters (titles give the values in J/mol).</figcaption></figure>
+            <p>The table and the figure show four lessons. (1) <strong>The liquid parameter sets the eutectic temperature.</strong> Going from $L^\mathrm{liq}=0$ (ideal liquid) to $-6000$ to $-12000$ J/mol lowers the eutectic from $768$ to $666$ to $566$ K, about $100$ K per $6000$ J/mol. An estimate of the same order: the stabilisation of the liquid at $x_B\approx0.4$ is $|L|x_Ax_B=6000\times0.24=1440$ J/mol and the entropy of fusion is $10$ J/mol/K, which would give $144$ K; the actual lowering is less because the solids also adjust. (2) <strong>The eutectic composition moves</strong> toward the B-rich side ($0.351$, $0.386$, $0.408$) because the more negative liquid parameter favours mixing in the liquid near equal amounts of the two elements. (3) <strong>The solid parameter controls the solubility:</strong> in case D the two solids have no tendency to separate ($L=0$), and the eutectic moves up to $856$ K with wide solid solutions, which shrink with decreasing temperature into a large two-phase region. At $300$ K the solubilities are still $x_B\approx0.2$ in alpha and $0.9$ in beta, because the only energy penalty of putting B into alpha is the lattice stability $4000$ J/mol, $\exp(-4000/RT)=0.2$ at $300$ K. (4) <strong>The diagram is a prediction of the parameters alone:</strong> there is no extra information in the plot, which is the reason why assessing a database means finding the parameters that reproduce the measured diagram and thermodynamic data, not copying one.</p>
+            <h2 id="scheil">Step 7. Solidification: equilibrium against Scheil<a class="anchor" href="#scheil" aria-label="Link to this section">#</a></h2>
+            <p>A phase diagram describes equilibrium: infinitely slow cooling with complete diffusion in the solid. In a casting, diffusion in the solid is much slower than the growth of the solid, so the first solid keeps its composition and the liquid becomes richer in B than equilibrium predicts. The limiting model without diffusion in the solid and with a perfectly mixed liquid is the <strong>Scheil&ndash;Gulliver</strong> model: at every temperature step, the tie line at the current liquid composition gives the composition of the solid that forms, the solid is removed from the calculation, and the remaining liquid carries on. The script implements it with the same <code>state()</code> function (a step of $4$ K), for an alloy with $x_B=0.10$, which lies in the single-phase alpha region below the eutectic temperature:</p>
+            <pre data-file="scheil.py"><code>&quot;&quot;&quot;Solidification of an alloy with x_B = 0.10: equilibrium (lever rule) against Scheil-Gulliver (no diffusion in the solid).&quot;&quot;&quot;
+            import numpy as np
+            from tools505 import load, state
+
+            db = load()
+            x0, dT = 0.10, 4.0
+
+            # liquidus temperature of the alloy
+            T = 1000.0
+            while len(state(db, x0, T)) == 1: T -= 1.0
+            T_liq = T + 1.0
+            print(&quot;liquidus temperature of x_B = %.2f: about %.0f K&quot; % (x0, T_liq))
+
+            # equilibrium: just above the eutectic temperature the liquid has the eutectic composition, the solid alpha its limit
+            s = {p: (n, x) for p, n, x in state(db, x0, 668.0)}
+            print(&quot;equilibrium at 668 K:&quot;, {p: (round(n, 3), round(x, 3)) for p, (n, x) in s.items()})
+            f_eq = s[&quot;LIQUID&quot;][0] if &quot;LIQUID&quot; in s else 0.0
+            print(&quot;equilibrium fraction of liquid (which turns into eutectic) at 668 K: %.3f&quot; % f_eq)
+
+            # Scheil: remove the solid formed at every step; the liquid keeps the composition of the tie line
+            F, xL, T = 1.0, x0, T_liq - 1.0
+            print(&quot;\n  T (K)   liquid fraction   x_B in liquid   x_B in solid formed&quot;)
+            k = 0
+            while T &gt; 660:
+                s = state(db, xL, T)
+                d = {p: (n, x) for p, n, x in s}
+                if &quot;LIQUID&quot; not in d: break
+                if &quot;ALPHA&quot; in d:
+                    nL, xLnew = d[&quot;LIQUID&quot;]; xs = d[&quot;ALPHA&quot;][1]
+                    F *= nL; xL = xLnew
+                    if k % 5 == 0: print(&quot;  %5.0f    %.4f          %.4f           %.4f&quot; % (T, F, xL, xs))
+                    k += 1
+                T -= dT
+            print(&quot;last liquid before the eutectic: T = %.0f K, liquid fraction F = %.4f, x_B = %.3f&quot; % (T + dT, F, xL))
+            print(&quot;Scheil: eutectic constituent = %.3f of the alloy;   equilibrium: %.3f&quot; % (F, f_eq))</code></pre>
+            <pre class="out"><code>liquidus temperature of x_B = 0.10: about 921 K
+            equilibrium at 668 K: {&#x27;ALPHA&#x27;: (0.841, 0.047), &#x27;LIQUID&#x27;: (0.159, 0.382)}
+            equilibrium fraction of liquid (which turns into eutectic) at 668 K: 0.159
+
+              T (K)   liquid fraction   x_B in liquid   x_B in solid formed
+                920    0.9902          0.1009           0.0099
+                900    0.7811          0.1249           0.0125
+                880    0.6442          0.1484           0.0151
+                860    0.5477          0.1717           0.0178
+                840    0.4761          0.1946           0.0205
+                820    0.4208          0.2172           0.0233
+                800    0.3770          0.2396           0.0261
+                780    0.3413          0.2617           0.0290
+                760    0.3117          0.2837           0.0319
+                740    0.2868          0.3054           0.0350
+                720    0.2655          0.3270           0.0381
+                700    0.2470          0.3484           0.0413
+                680    0.2309          0.3697           0.0446
+            last liquid before the eutectic: T = 668 K, liquid fraction F = 0.2222, x_B = 0.382
+            Scheil: eutectic constituent = 0.222 of the alloy;   equilibrium: 0.159</code></pre>
+            <p>The alloy begins to solidify at $921$ K, where the first alpha has $x_B=0.0099$. The liquid becomes richer in B ($0.125$ at $900$ K, $0.248$ at $800$ K, $0.370$ at $680$ K), and the last liquid reaches the eutectic composition ($0.382$) at $668$ K, where it solidifies as alpha $+$ beta. The key result is the last line: in the equilibrium the fraction of liquid left at the eutectic temperature is $0.159$ (the lever rule between the eutectic composition $0.382$ and the alpha limit $0.047$: $(0.10-0.047)/(0.382-0.047)=0.158$), while in the Scheil model it is $0.222$: the cast structure contains $40\%$ more eutectic than the equilibrium one, as an inter-dendritic network of the brittle second phase. This difference is the origin of segregation, coring, and low-melting-point films that cause hot cracking in welds. The step of the temperature is not critical: with a $1$ K step the result is $0.221$.</p>
+            <div class="table-scroll" role="region" aria-label="Step 7. Solidification: equilibrium against Scheil (scrollable table)" tabindex="0"><table>
+            <thead><tr><th></th><th>Equilibrium (lever rule)</th><th>Scheil&ndash;Gulliver</th></tr></thead>
+            <tbody>
+            <tr><td>Diffusion in the solid</td><td>complete</td><td>none</td></tr>
+            <tr><td>Diffusion in the liquid</td><td>complete</td><td>complete</td></tr>
+            <tr><td>Eutectic fraction for $x_B=0.10$</td><td>0.159</td><td>0.222</td></tr>
+            <tr><td>Applies to</td><td>very slow cooling, long heat treatments</td><td>fast solidification of substitutional alloys</td></tr>
+            <tr><td>Fails for</td><td>castings</td><td>fast-diffusing solutes (carbon in steel), very slow cooling, strongly undercooled melts</td></tr>
+            </tbody></table></div>
+            <h2 id="errors">Step 8. Typical problems<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 8. Typical problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr><td>Warning about the type definition character</td><td>TDB without <code>TYPE_DEFINITION</code></td><td>Add <code>TYPE_DEFINITION % SEQ * !</code> (Step 2)</td></tr>
+            <tr><td>Empty phase diagram</td><td><code>ax=</code> ignored, or the phase list contains a phase without parameters</td><td>Use the returned axes; check each phase has <code>G</code> parameters for all constituents</td></tr>
+            <tr><td>Pure-element energies disagree with the textbook</td><td>wrong reference state: the functions are relative to a reference structure at 298.15 K, and databases differ</td><td>Never mix parameters from two databases</td></tr>
+            <tr><td>The result changes when the grid is refined</td><td>the minimiser misses a phase with a narrow stability range, or a miscibility gap</td><td>Use a finer composition grid, check with <code>calculate</code> curves</td></tr>
+            <tr><td>Strange results outside 298&ndash;6000 K</td><td>the expressions are only valid in their stated range</td><td>Stay inside the range of the functions</td></tr>
+            <tr><td>Fractions of phases are <code>nan</code></td><td>the phase is not stable at that point; pycalphad pads the arrays</td><td>Filter the entries with <code>NP &gt; 0</code> as in <code>state()</code></td></tr>
+            <tr><td>Calculations are slow</td><td>a large (x, T) grid, or too many phases</td><td>Compute the diagram in coarse steps first; vectorise over arrays of $T$ and $x$ as in the sensitivity script</td></tr>
+            </tbody></table></div>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A CALPHAD calculation needs a thermodynamic database (a TDB file): for every phase, the Gibbs energy of each element in that phase plus interaction (Redlich-Kister) parameters; the software then minimises the total Gibbs energy at given T, P and composition to find the stable phases, amounts and compositions.</li>
+<li>The equilibrium compositions at a temperature are the points of the common tangent to the Gibbs-energy curves; in the teaching A-B system at 700 K and x_B = 0.20 the solid alpha (x = 0.041) and the liquid (x = 0.348) share one tangent, and the lever rule gives the liquid fraction 0.517 from compositions alone.</li>
+<li>The phase diagram is the set of these results over T and x: the teaching system has a eutectic near 665 K and x_B = 0.385, with alpha dissolving up to x_B = 0.047 and beta up to 0.964; changing the liquid interaction parameter from 0 to -12000 J/mol moves the eutectic by hundreds of kelvin (table in Step 6).</li>
+<li>Equilibrium is not what you get in a casting: for the alloy x_B = 0.10 the lever rule predicts 0.159 of eutectic and the Scheil model (no diffusion in the solid) 0.221, and the Scheil result is converged with respect to the temperature step (0.222 at 4 K, 0.221 at 1 K).</li>
+<li>A database for a real alloy must be assessed from experimental data (diagrams, calorimetry, activities); copying a TDB file without checking the validity range, the phase list and the reference states gives plausible but wrong diagrams.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Work from the numbers above and from the TDB file; the solutions give the reasoning.</p>
+            <div class="problem" id="p505-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Evaluate by hand the molar Gibbs energies of the liquid and of alpha at $x_B=0.20$, $T=900$ K, using the formula of Step 2 and the TDB parameters, and decide which phase is more stable. (The software gives $G_\mathrm{liq}=-2904.5$ and $G_\alpha=-704.5$ J/mol.)</p>
+            <details class="hint"><summary>Hint</summary><p>Reference terms: &#36;{}^0G^\mathrm{liq}_A=10000-10T$,\allowbreak  &#36;{}^0G^\mathrm{liq}_B=14000-10T$, &#36;{}^0G^\alpha_A=0$, &#36;{}^0G^\alpha_B=4000$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Liquid: &#36;{}^0G_A=1000$, &#36;{}^0G_B=5000$ J/mol, so the reference term is $0.8\times1000+0.2\times5000=1800$. The ideal entropy term is $RT(0.8\ln0.8+0.2\ln0.2)=8.314\times900\times(-0.1785-0.3219)=-3744$. The excess term is $x_Ax_BL=0.16\times(-6000)=-960$. Sum: $1800-3744-960=-2904$ J/mol. Alpha: reference $0.8\times0+0.2\times4000=800$; the ideal term is the same, $-3744$; excess $0.16\times14\,000=+2240$; sum $800-3744+2240=-704$ J/mol. The liquid is lower by $2200$ J/mol, so it is the more stable phase at $900$ K (and as the alloy composition is also within the single-phase liquid region of the diagram, the common tangent does not touch alpha).</p>
+            <p class="answer">$G_\mathrm{liq}=-2904$, $G_\alpha=-704$ J/mol; liquid stable</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p505-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>At $700$ K the alloy $x_B=0.20$ contains alpha with $x_B=0.041$ and liquid with $x_B=0.348$. (a) Compute the fraction of liquid with the lever rule and compare it with the value of Step 3. (b) Compute the overall composition of the alloy from the amounts of Step 3 to check the mass balance. (c) At what composition would the alloy be entirely alpha at $700$ K?</p>
+            <details class="hint"><summary>Hint</summary><p>$f_L=(x_0-x_\alpha)/(x_L-x_\alpha)$ and $x_0=f_Lx_L+f_\alpha x_\alpha$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $f_L=(0.20-0.041)/(0.348-0.041)=0.159/0.307=0.518$; Step 3 gives $0.517$ (the difference is rounding of the compositions). (b) $0.517\times0.348+0.483\times0.041=0.180+0.0198=0.200$. (c) For all $x_B\le0.041$, the alloy is single-phase alpha at $700$ K: the solubility limit at that temperature.</p>
+            <p class="answer">(a) $0.518$  (b) $0.200$  (c) $x_B\le0.041$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p505-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>The solubility of B in alpha is $0.032$ at $600$ K and $0.005$ at $400$ K (Step 3). (a) Show from the TDB parameters that in the dilute limit the solubility in equilibrium with beta is $x_B\approx\exp[-(G^\alpha_B-G^\beta_B+L^\alpha)/RT]$, and evaluate it at $400$ and $600$ K. (b) Compare with the computed values. (c) What energy does the slope of $\ln x_B$ against $1/T$ give?</p>
+            <details class="hint"><summary>Hint</summary><p>In the dilute limit ($x_A\to1$), the chemical potential of B in alpha is &#36;{}^0G^\alpha_B+RT\ln x_B+L^\alpha$ and in pure beta it is &#36;{}^0G^\beta_B=0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Equality of the chemical potential of B: &#36;{}^0G^\alpha_B+L^\alpha+RT\ln x_B=G^\beta_B$, with &#36;{}^0G^\alpha_B=4000$, $L^\alpha=14\,000$, $G^\beta_B=0$, so $x_B=\exp[-18\,000/RT]$. At $600$ K: $\exp(-3.608)=0.027$; at $400$ K: $\exp(-5.412)=0.0045$. (b) Computed: $0.032$ and $0.005$: the dilute formula is within $15\%$ and $10\%$ (the difference comes from the second-order terms because $x_B$ is not negligible, and from the fact that beta is not pure B but contains a little A). (c) From the computed values: $\ln(0.032/0.005)=1.856$ over $1/400-1/600=8.33\times10^{-4}$ K$^{-1}$, so $\Delta H=8.314\times1.856/8.33\times10^{-4}=18\,\allowbreak 500$ J/mol, close to the $18\,000$ of the formula. The solubility curve is an Arrhenius law with the energy of dissolving B in A.</p>
+            <p class="answer">(a) $x_B=\exp(-18000/RT)$: $0.027$, $0.0045$  (b) within 15%  (c) $18.5$ kJ/mol</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p505-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Use the table of Step 6. (a) By how much does the eutectic temperature fall when the liquid parameter changes from $0$ to $-12\,000$ J/mol? (b) Case D has solid parameters $0$ and a eutectic $190$ K higher than the base case B. Explain why the higher solid interaction in B <em>lowers</em> the eutectic. (c) Predict (then run, by changing the numbers in <code>sensitivity.py</code>) what happens to the solubility limits of the base case if both solid parameters are increased from $+14\,000$ to $+30\,000$.</p>
+            <details class="hint"><summary>Hint</summary><p>The eutectic is where the liquid curve touches the common tangent of the solids; a solid with a large positive $L$ has a curve that is higher.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $768-566=202$ K. (b) The positive solid parameter raises the Gibbs energy of the mixed solids (they prefer to be pure), while the liquid is not changed. The liquid therefore stays stable down to a lower temperature before the tangent to the two solid curves gets below it: the eutectic temperature is $666$ K in case B, $856$ K in D where the solids mix freely and compete with the liquid at higher $T$. (c) A larger positive $L$ makes the solid solutions even less able to dissolve the other element: the solubility limits at the eutectic temperature fall below the $0.046$ and $0.036$ ($1-0.964$) of the base case and the eutectic temperature falls a bit more, because the solid curves rise relative to the liquid. The quantity to check in the output is the solubility from the formula of Exercise 3, $x\approx\exp[-(4000+L)/RT]$: at $665$ K it is $\exp(-(4000+30\,000)/(8.314\times665))=0.002$, down from $0.039$ for $L=14\,000$. Run it to see how well the dilute formula predicts the computed limit.</p>
+            <p class="answer">(a) $202$ K  (b) solids raised relative to the liquid  (c) solubility falls from $0.046$ to about $0.002$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p505-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
+            <p>(a) In the Scheil calculation of Step 7, explain why the liquid fraction at the eutectic is always larger than that of the lever rule (for $x_0&lt;0.382$). (b) Run <code>scheil.py</code> with $x_0=0.05$: is the eutectic fraction zero, as in equilibrium? (c) Which alloy compositions (if any) show no eutectic at all under Scheil conditions?</p>
+            <details class="hint"><summary>Hint</summary><p>In the lever rule the solid has the time to adjust and takes more B; in Scheil it does not. What happens to the average composition of the solid?</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) In equilibrium the solid alpha follows the solidus and becomes richer in B (up to $x_\alpha=0.047$) by diffusion, so it holds more of the solute and the liquid is depleted. In Scheil the solid retains the first, B-poor composition ($0.010$ at first), so more B stays in the liquid and enriches it until it reaches the eutectic composition, and the amount of liquid at that point is larger. (b) The lever-rule fraction is zero for $x_0\le0.047$, but the Scheil model has no such limit: because every increment of solid has a composition below the average, the liquid becomes richer in B without limit until the eutectic composition is reached, and a finite eutectic fraction forms for any $x_0&gt;0$. Running <code>scheil.py</code> with $x_0=0.05$ and a $2$ K step gives a eutectic fraction of $0.103$ (against $0.010$ from the lever rule): ten percent of the cast alloy is eutectic although the equilibrium diagram predicts a single-phase alloy. (c) Only the pure element ($x_B=0$) shows no eutectic; every alloy with $x_B&gt;0$ has a non-zero Scheil eutectic fraction, which is the reason why casting alloys always contain second-phase particles and why the &ldquo;solid solution alloys&rdquo; of equilibrium diagrams are not single-phase as cast.</p>
+            <p class="answer">(a) solid is B-poor, so more liquid is left  (b) $0.103$, not zero  (c) only the pure element</p>
+            </details>
+            </div>
+
+            <h2 id="refs">Going further and references<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Otis, R. and Liu, Z.-K., &ldquo;pycalphad: CALPHAD-based Computational Thermodynamics in Python&rdquo;, <em>Journal of Open Research Software</em> <strong>5</strong>, 1 (2017); the pycalphad documentation (<code>pycalphad.org</code>) with examples for ternary diagrams, isothermal sections and property diagrams.</li>
+                <li>Lukas, H. L., Fries, S. G. and Sundman, B., <em>Computational Thermodynamics: The Calphad Method</em>, Cambridge University Press: the standard book, with the models (Redlich&ndash;Kister, sublattices, magnetic contribution).</li>
+                <li>Saunders, N. and Miodownik, A. P., <em>CALPHAD: Calculation of Phase Diagrams</em>, Pergamon: an applied introduction.</li>
+                <li>Scheil, E., <em>Zeitschrift f&uuml;r Metallkunde</em> <strong>34</strong>, 70 (1942); Gulliver, G. H., <em>Journal of the Institute of Metals</em> <strong>9</strong>, 120 (1913): the original papers.</li>
+                <li>Next: combine the thermodynamic model with kinetics in <a href="phase-field-modelling.html">CMS 505</a> (the free energy of Step 2 is the bulk term of a phase-field model) and see diffusion in <a href="diffusion-and-kinetics.html">CMS 504</a>.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="lab-ising-monte-carlo.html"><span class="dir">Previous course</span>Lab: Monte Carlo of the Ising model</a>
+<span class="spacer"></span>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=2395c1ef"></script>
+    <script src="../assets/pathdata.js?v=9d91969e"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>
