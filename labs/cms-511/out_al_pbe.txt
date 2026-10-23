@@ -1,0 +1,10 @@
+1. convergence with the k mesh at a = 4.05 A, Fermi-Dirac smearing sigma = 0.02 Ha (0.54 eV):  energy per atom relative to the densest mesh
+    k mesh     k points    E_total (Ha)      E - E(k=10) (meV)   time (s)
+    4x 4x 4        64         -2.05006454          295.9             38.3
+    6x 6x 6       216         -2.06370117          -75.1            181.0
+    8x 8x 8       512         -2.06072113            6.0            366.1
+   10x10x10      1000         -2.06093979            0.0           1911.0
+2. effect of the smearing width at k = 6 (a = 4.05 A): total energy, free energy and entropy term
+    sigma (Ha)   sigma (eV)    E_total (Ha)      E_free (Ha)     -TS (meV)    E_free - E_total
+      0.010       0.272        -2.06955596      -2.07197023     -65.70
+      0.020       0.544        -2.06370117      -2.07632448    -343.50
