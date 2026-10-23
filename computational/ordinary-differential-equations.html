@@ -36,14 +36,15 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#basics">1. Basics: what an ODE is</a></li>
-                <li><a href="#first">2. First-order equations</a></li>
-                <li><a href="#second">3. Linear second-order equations: oscillators</a></li>
-                <li><a href="#systems">4. Systems of ODEs and the phase plane</a></li>
-                <li><a href="#numerics">5. Numerical solution</a></li>
-                <li><a href="#summary-m7">6. How the pieces fit together</a></li>
-                <li><a href="#check">7. Problems</a></li>
-                <li><a href="#refs">8. References and further reading</a></li>
+                <li><a href="#basics">Lecture 1. Basics: what an ODE is</a></li>
+                <li><a href="#first">Lecture 2. First-order equations</a></li>
+                <li><a href="#second">Lecture 3. Linear second-order equations: oscillators</a></li>
+                <li><a href="#systems">Lecture 4. Systems of ODEs and the phase plane</a></li>
+                <li><a href="#numerics">Lecture 5. Numerical solution</a></li>
+                <li><a href="#summary-m7">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -57,7 +58,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 23 min</dd></div>
+<div><dt>Reading time</dt><dd>about 27 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a><br><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="partial-differential-equations.html">M9. PDEs</a><br><a href="calculus-of-variations-and-optimisation.html">M12. Variational methods</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -76,7 +77,11 @@
                 <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> and <a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a>.
             </div>
 
-            <h2 id="basics">1. Basics: what an ODE is<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 5 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 3 (oscillators and resonance) and Lecture 5 (numerics) are the parts most used in simulation work. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="basics">Lecture 1. Basics: what an ODE is<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
             <p>An <strong>ordinary differential equation</strong> of order $n$ relates an unknown function $y(t)$ to its derivatives up to order $n$. It is <strong>linear</strong> if $y$ and its derivatives appear only to the first power and are not multiplied together, and <strong>autonomous</strong> if $t$ does not appear explicitly. An <strong>initial value problem</strong> (IVP) supplies $y,y',\ldots,y^{(n-1)}$ at $t=0$. Any $n$-th order equation is equivalent to a system of $n$ first-order equations (set $y_1=y$, $y_2=y'$, and so on), so the general form to keep in mind is
             $$\dot{\mathbf y}=\mathbf f(\mathbf y,t),\qquad\mathbf y(0)=\mathbf y_0 .$$
             For example Newton&rsquo;s law $m\ddot x=F(x)$ becomes $\dot x=v$, $\dot v=F(x)/m$.</p>
@@ -84,7 +89,13 @@
             <p>If $\mathbf f$ and its partial derivatives with respect to $\mathbf y$ are continuous near $(\mathbf y_0,0)$, the IVP has a unique solution for a short time. Without this smoothness, uniqueness can fail: $\dot y=\sqrt{|y|}$, $y(0)=0$ has the solutions $y=0$ and $y=t^2/4$. And solutions need not exist for all time: $\dot y=y^2$, $y(0)=1$ gives $y=1/(1-t)$, which blows up at $t=1$.</p>
             </div>
 
-            <h2 id="first">2. First-order equations<a class="anchor" href="#first" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 1.1: verifying and fixing constants</strong>
+                <p class="given">Show that $y=Ae^{-t}+Be^{-2t}$ solves $\ddot y+3\dot y+2y=0$ and find $A,B$ for $y(0)=1$, $\dot y(0)=0$.</p>
+                <p>Substituting, each exponential gives $r^2+3r+2=(r+1)(r+2)=0$ for $r=-1,-2$, so both terms satisfy the equation, and so does any combination (the equation is linear). The conditions give $A+B=1$ and $-A-2B=0$, so $B=-1$, $A=2$ and $y=2e^{-t}-e^{-2t}$. Check: $\dot y(0)=-2+2=0$ &check;. As a first-order system, $\mathbf y=(y,\dot y)$ obeys $\dot{\mathbf y}=\begin{pmatrix}0&amp;1\\-2&amp;-3\end{pmatrix}\mathbf y$ whose eigenvalues are the same $-1,-2$.</p>
+            </div>
+
+            <h2 id="first">Lecture 2. First-order equations<a class="anchor" href="#first" aria-label="Link to this section">#</a></h2>
             <h3 id="separable">Separable equations<a class="anchor" href="#separable" aria-label="Link to this section">#</a></h3>
             <p>If $\dot y=g(y)h(t)$, separate and integrate: $\int\dfrac{\mathrm{d}y}{g(y)}=\int h(t)\,\allowbreak \mathrm{d}t$. The most important case in kinetics is the <strong>rate law</strong> $\dot c=-kc^m$ (reaction order $m$). For $m=1$: $c=c_0e^{-kt}$, with half-life $t_{1/2}=\ln2/k$ independent of $c_0$. For $m=2$: $\dfrac{\mathrm{d}c}{c^2}=-k\,\allowbreak \mathrm{d}t\Rightarrow\dfrac1c=\dfrac1{c_0}+kt$, so $c=\dfrac{c_0}{1+kc_0t}$ and the half-life $t_{1/2}=1/(kc_0)$ <em>depends on</em> $c_0$: that dependence is how reaction orders are determined experimentally.</p>
             <div class="example">
@@ -102,7 +113,13 @@
             <p>Landau theory writes the free energy of an order parameter $\eta$ as $F=\tfrac12A\eta^2+\tfrac14b\eta^4$ with $A=a(T-T_c)$ and $b&gt;0$. The simplest relaxational dynamics is $\dot\eta=-\Gamma\,\allowbreak \partial F/\partial\eta=-\Gamma(A\eta+b\eta^3)$, the zero-dimensional form of the Allen&ndash;Cahn equation of the phase-field method. Above $T_c$ ($A&gt;0$) the only fixed point is $\eta=0$, stable with rate $\Gamma A$. Below $T_c$ ($A&lt;0$), $\eta=0$ becomes unstable and two stable fixed points $\eta=\pm\sqrt{|A|/b}$ appear (a pitchfork bifurcation). The relaxation rate vanishes as $T\to T_c$ from either side, so near the transition ordering becomes slower (Problem 4).</p>
             </div>
 
-            <h2 id="second">3. Linear second-order equations: oscillators<a class="anchor" href="#second" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.2: cooling of a quenched part</strong>
+                <p class="given">A steel part at $800^\circ$C is placed in a $25^\circ$C bath with $\dot T=-(T-T_\mathrm{b})/\tau$, $\tau=10$ min. How long until it reaches $100^\circ$C?</p>
+                <p>With $\theta=T-T_\mathrm b$ the equation is $\dot\theta=-\theta/\tau$, so $\theta=775\,e^{-t/\tau}$ and $T=25+775e^{-t/10}$. Setting $T=100$: $e^{-t/10}=75/775$, $t=10\ln(10.33)=23.4$ min. After one time constant the temperature excess has fallen to $37\%$, after three to $5\%$; the &ldquo;fast first minutes&rdquo; of a quench are all in the early part of the exponential. Real quenches also have a temperature-dependent $\tau$ (boiling at high $T$, convection at low $T$), which turns the problem nonlinear and is handled numerically in Lecture 5.</p>
+            </div>
+
+            <h2 id="second">Lecture 3. Linear second-order equations: oscillators<a class="anchor" href="#second" aria-label="Link to this section">#</a></h2>
             <p>The equation $a\ddot x+b\dot x+cx=0$ with constant coefficients is solved by trying $x=e^{rt}$, which gives the <strong>characteristic equation</strong> $ar^2+br+c=0$. With $r_{1,2}$ its roots:</p>
             <ul>
                 <li>distinct real roots: $x=C_1e^{r_1t}+C_2e^{r_2t}$;</li>
@@ -112,7 +129,7 @@
             <p>The general solution has two free constants, fixed by $x(0)$ and $\dot x(0)$. The equation $\ddot x+\gamma\dot x+\omega_0^2x=0$ is the <strong>damped harmonic oscillator</strong> ($\omega_0=\sqrt{k/m}$ the natural frequency, $\gamma=\eta/m$ the damping rate). Define the <strong>damping ratio</strong> $\zeta=\gamma/(2\omega_0)$. Then
             $$r=-\frac\gamma2\pm\sqrt{\frac{\gamma^2}4-\omega_0^2}.$$</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="3. Linear second-order equations: oscillators (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. Linear second-order equations: oscillators (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Case</th><th>Condition</th><th>Behaviour</th></tr></thead>
                 <tbody>
                     <tr><td>Underdamped</td><td>$\zeta&lt;1$ ($\gamma&lt;2\omega_0$)</td><td>$x=e^{-\gamma t/2}\bigl(A\cos\omega_dt+B\sin\omega_dt\bigr)$ with $\omega_d=\sqrt{\omega_0^2-\gamma^2/4}$: decaying oscillation</td></tr>
@@ -127,10 +144,22 @@
             $$X(\omega)=\frac{F}{\sqrt{(\omega_0^2-\omega^2)^2+\gamma^2\omega^2}},\qquad\tan\delta=\frac{\gamma\omega}{\omega_0^2-\omega^2}.$$
             The amplitude peaks near $\omega=\omega_0$ (exactly at $\omega_r=\sqrt{\omega_0^2-\gamma^2/2}$), where $X\approx F/(\gamma\omega_0)=Q\times F/\omega_0^2$: the static displacement magnified by $Q$. The width of the peak (full width at half maximum) is about $\gamma$. The phase lags by $\delta=\pi/2$ at resonance. Using complex exponentials, $F\cos\omega t=\operatorname{Re}\,\allowbreak Fe^{i\omega t}$ and $x_p=\operatorname{Re}\,\allowbreak \dfrac{Fe^{i\omega t}}{\omega_0^2-\omega^2+i\gamma\omega}$, which is the standard trick. This Lorentzian line shape is the shape of every spectral line broadened by damping: infrared and Raman absorption by lattice vibrations, ferromagnetic resonance, NMR.</p>
 
-            <h2 id="systems">4. Systems of ODEs and the phase plane<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.1: an underdamped solution</strong>
+                <p class="given">Solve $\ddot x+4\dot x+13x=0$, $x(0)=1$, $\dot x(0)=0$.</p>
+                <p>$r^2+4r+13=0$ gives $r=-2\pm3i$, so $x=e^{-2t}(C_1\cos3t+C_2\sin3t)$. $x(0)=1$ gives $C_1=1$; $\dot x(0)=-2C_1+3C_2=0$ gives $C_2=2/3$. The envelope $e^{-2t}$ decays with time constant $\tfrac12$ while the oscillation has angular frequency $3$ (period $2.09$): $\zeta=\gamma/(2\omega_0)=4/(2\sqrt{13})=0.55&lt;1$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.2: resonance of a cantilever</strong>
+                <p class="given">A cantilever has $\omega_0=10$ (in units of $10^3\,\mathrm{rad\,s^{-1}}$) and damping rate $\gamma=0.5$, driven with $F/\omega_0^2=0.01$ (static deflection). Find the quality factor and the peak amplitude.</p>
+                <p>$Q=\omega_0/\gamma=20$. At resonance $X=F/(\gamma\omega_0)=Q\,\allowbreak F/\omega_0^2=20\times0.01=0.2$, twenty times the static deflection. The full width of the peak is about $\gamma=0.5$, i.e. $5\%$ of $\omega_0$. A material with more internal friction (a lower $Q$) gives a lower and broader peak; measuring that width is how $Q^{-1}$ is read in a mechanical spectroscopy experiment.</p>
+            </div>
+
+            <h2 id="systems">Lecture 4. Systems of ODEs and the phase plane<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
             <p>A linear system $\dot{\mathbf y}=A\mathbf y$ with constant matrix $A$ is solved by the eigenvalue method of <a href="eigenvalues-and-decompositions.html">M5</a>: if $A\mathbf v_i=\lambda_i\mathbf v_i$ then $\mathbf y(t)=\sum_ic_ie^{\lambda_it}\mathbf v_i$, the $c_i$ fixed by $\mathbf y(0)$. For a two-variable system the behaviour near the origin is classified by the trace $\tau=\operatorname{tr}A$ and determinant $\Delta=\det A$, because $\lambda=\tfrac12\bigl(\tau\pm\sqrt{\tau^2-4\Delta}\bigr)$:</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="4. Systems of ODEs and the phase plane (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 4. Systems of ODEs and the phase plane (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Eigenvalues</th><th>Condition</th><th>Fixed point</th><th>Trajectories</th></tr></thead>
                 <tbody>
                     <tr><td>real, both negative</td><td>$\Delta&gt;0,\ \tau&lt;0,\ \tau^2&gt;4\Delta$</td><td>stable node</td><td>approach the origin along eigendirections</td></tr>
@@ -160,7 +189,13 @@
                 <p>The characteristic equation is $Dr^2=k$, so $r=\pm\sqrt{k/D}$. Decay at infinity excludes the growing exponential: $c(x)=c_0\exp\bigl(-x/\ell\bigr)$ with $\ell=\sqrt{D/k}$. The penetration depth $\ell=\sqrt{D/k}$ is the geometric mean of the diffusion and reaction scales: fast reaction or slow diffusion gives a thin layer. The same structure governs oxide scale growth, hydrogen trapping, and screening of charge in an electrolyte (the Debye length). Note this is a <em>boundary</em> value problem: conditions are given at two places, not at one time.</p>
             </div>
 
-            <h2 id="numerics">5. Numerical solution<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.3: a damped double well</strong>
+                <p class="given">A particle in the potential $U=-\tfrac12x^2+\tfrac14x^4$ with friction obeys $\dot x=v$, $\dot v=x-x^3-0.5v$. Find and classify the fixed points.</p>
+                <p>Setting $\dot x=\dot v=0$: $v=0$ and $x(1-x^2)=0$, so $(0,0)$ and $(\pm1,0)$. The Jacobian is $J=\begin{pmatrix}0&amp;1\\1-3x^2&amp;-0.5\end{pmatrix}$. At the origin, $\Delta=-1&lt;0$: a <strong>saddle</strong> (the hilltop between the wells), $\lambda=0.78,\,-1.28$. At $(\pm1,0)$, $\tau=-0.5$, $\Delta=2$, $\tau^2-4\Delta&lt;0$: <strong>stable spirals</strong> with $\lambda=-0.25\pm1.39i$ (the particle rings down into a well, $U''(\pm1)=2$). This is the phase-plane picture of a bistable material: two stable states, an unstable barrier top, and the stable manifold of the saddle separating their basins.</p>
+            </div>
+
+            <h2 id="numerics">Lecture 5. Numerical solution<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
             <p>Most nonlinear ODEs cannot be solved in closed form, and simulations integrate $\dot{\mathbf y}=\mathbf f(\mathbf y,t)$ in steps $h$. Everything here is the Taylor series of <a href="calculus-single-variable.html">M1</a>.</p>
             <h3 id="euler">Euler&rsquo;s method and its errors<a class="anchor" href="#euler" aria-label="Link to this section">#</a></h3>
             <p>Truncate $y(t+h)=y+hy'+\tfrac12h^2y''+\cdots$ after the first-derivative term: the <strong>explicit Euler method</strong> is
@@ -182,7 +217,19 @@
             <div class="demo" data-demo="integrators"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="summary-m7">6. How the pieces fit together<a class="anchor" href="#summary-m7" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.1: orders of accuracy</strong>
+                <p class="given">Integrate $\dot y=-y$, $y(0)=1$ to $t=1$ with $h=0.1$. Compare Euler and RK4 with $e^{-1}=0.367879$.</p>
+                <p>Euler multiplies by $1-h=0.9$ each step: $0.9^{10}=0.348678$, error $0.0192$. RK4 multiplies by $1-h+\tfrac{h^2}2-\tfrac{h^3}6+\tfrac{h^4}{24}=0.904837$ (the Taylor series of $e^{-h}$ to fourth order): $0.904837^{10}=0.367880$, error $3\times10^{-7}$. RK4 costs four times as many function evaluations and is about $60\,000$ times more accurate here. This is why Euler is a teaching tool rather than a production method.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: energy drift and stiffness</strong>
+                <p class="given">(a) Apply explicit Euler to an oscillator with $\omega=1$, $h=0.1$ for 100 steps. (b) A reaction network has $\lambda_\mathrm{fast}=1000\ \mathrm{s^{-1}}$ and $\lambda_\mathrm{slow}=1\ \mathrm{s^{-1}}$; how many explicit steps are needed for $10$ s?</p>
+                <p>(a) Euler multiplies the energy by $1+h^2\omega^2=1.01$ per step, so after 100 steps ($t=10$) the energy is $1.01^{100}=2.70$ times too high: a bound system that heats itself. Velocity Verlet keeps the energy within $O(h^2)$ of its initial value forever. (b) The stability limit is $h&lt;2/1000=2\times10^{-3}$ s, so $5000$ steps are needed to reach $10$ s, although the slow mode alone could be followed accurately with $h\approx0.1$ s (100 steps). An implicit method removes the limit at the price of solving a linear system per step.</p>
+            </div>
+
+            <h2 id="summary-m7">Summary of the unit<a class="anchor" href="#summary-m7" aria-label="Link to this section">#</a></h2>
             <p>First-order equations capture relaxation and kinetics; second-order linear ones capture oscillation, damping and resonance; systems unify both through eigenvalues and the phase plane; and linearisation extends the story to nonlinear problems, with the Jacobian playing the role the Hessian plays for energy minima. Numerically, the step size is set by accuracy (the order of the method) and by stability (the largest eigenvalue magnitude), and structure-preserving integrators win for long Hamiltonian runs. Time is only one variable; next we study functions as sums of waves, which will let us solve equations in space as well.</p>
 
             <!-- takeaways:start -->
@@ -196,7 +243,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">7. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -343,7 +390,40 @@
             </details>
             </div>
 
-            <h2 id="refs">8. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q7-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">First order</span></div>
+            <p>Solve $\dot y=-3y$, $y(0)=2$, and find when $y=0.5$.</p>
+            <details class="solution"><summary>Solution</summary><p>$y=2e^{-3t}$. Setting $2e^{-3t}=0.5$ gives $t=\ln4/3=0.462$.</p></details>
+            </div>
+            <div class="problem" id="q7-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Integrating factor</span></div>
+            <p>Solve $\dot y+y=t$ with $y(0)=0$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\mu=e^t$: $(ye^t)^\prime=te^t$, so $ye^t=(t-1)e^t+C$. $y(0)=0$ gives $C=1$, so $y=t-1+e^{-t}$. Check: $\dot y+y=(1-e^{-t})+(t-1+e^{-t})=t$ &check;.</p></details>
+            </div>
+            <div class="problem" id="q7-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Oscillator</span></div>
+            <p>An oscillator has $\omega_0=2$ and damping rate $\gamma=1$. Classify it and give the damped frequency.</p>
+            <details class="solution"><summary>Solution</summary><p>$\zeta=\gamma/(2\omega_0)=0.25&lt;1$: underdamped. $\omega_d=\sqrt{\omega_0^2-\gamma^2/4}=\sqrt{4-0.25}=1.936$. The amplitude decays as $e^{-t/2}$ and $Q=\omega_0/\gamma=2$.</p></details>
+            </div>
+            <div class="problem" id="q7-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Phase plane</span></div>
+            <p>Classify the fixed point of $\dot{\mathbf y}=\begin{pmatrix}0&amp;1\\-2&amp;-3\end{pmatrix}\mathbf y$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\tau=-3$, $\Delta=2$, $\tau^2-4\Delta=1&gt;0$: real eigenvalues $-1,-2$, both negative: a stable node (no oscillation; the slow mode $e^{-t}$ dominates at late times).</p></details>
+            </div>
+            <div class="problem" id="q7-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Stability limit</span></div>
+            <p>For a fastest mode with $\lambda=50\ \mathrm{s^{-1}}$, what is the largest stable explicit Euler step? What happens at $h=0.05$?</p>
+            <details class="solution"><summary>Solution</summary><p>$h&lt;2/\lambda=0.04$ s. At $h=0.05$ the factor is $1-\lambda h=-1.5$: the numerical solution flips sign and grows by $1.5$ each step.</p></details>
+            </div>
+            <div class="problem" id="q7-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Integrators</span></div>
+            <p>Why is velocity Verlet preferred to explicit Euler in MD? Quantify the Euler energy error for $\omega=2$, $h=0.05$, $100$ steps.</p>
+            <details class="solution"><summary>Solution</summary><p>Euler multiplies the energy by $1+h^2\omega^2=1.01$ per step, so $1.01^{100}=2.70$: the energy nearly triples. Velocity Verlet is symplectic and time-reversible: its energy oscillates within $O(h^2)$ and has no drift, at the same cost of one force evaluation per step.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Boyce, W. E. and DiPrima, R. C., <em>Elementary Differential Equations and Boundary Value Problems</em>, Wiley.</li>
                 <li>Strogatz, S. H., <em>Nonlinear Dynamics and Chaos</em>, Westview Press: phase planes, stability and bifurcations (with an excellent intuitive style).</li>
@@ -371,7 +451,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=296a61e3"></script>
+    <script src="../assets/topics.js?v=00ba2e79"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

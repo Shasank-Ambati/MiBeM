@@ -328,7 +328,7 @@ window.MIBEM_TOPICS = [
     "short": "Tensors",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 22,
+    "minutes": 26,
     "title": "Tensors: stress, strain and anisotropy",
     "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
     "builds": [
@@ -356,7 +356,7 @@ window.MIBEM_TOPICS = [
     "short": "ODEs",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 23,
+    "minutes": 27,
     "title": "Ordinary differential equations",
     "blurb": "First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.",
     "builds": [
@@ -383,7 +383,7 @@ window.MIBEM_TOPICS = [
     "short": "Fourier analysis",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 25,
+    "minutes": 30,
     "title": "Fourier series and transforms",
     "blurb": "Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.",
     "builds": [
@@ -411,7 +411,7 @@ window.MIBEM_TOPICS = [
     "short": "PDEs",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 26,
+    "minutes": 31,
     "title": "Partial differential equations",
     "blurb": "The diffusion, wave and Laplace equations: classification, boundary conditions, separation of variables, similarity solutions and Fourier methods.",
     "builds": [
@@ -441,7 +441,7 @@ window.MIBEM_TOPICS = [
     "short": "Probability",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 23,
+    "minutes": 28,
     "title": "Probability and distributions",
     "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
     "builds": [

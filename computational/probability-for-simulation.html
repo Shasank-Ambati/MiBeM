@@ -36,16 +36,17 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#basics">1. Probability basics</a></li>
-                <li><a href="#rv">2. Random variables</a></li>
-                <li><a href="#dists">3. The distributions you need</a></li>
-                <li><a href="#clt">4. Averages: the law of large numbers and the central limit theorem</a></li>
-                <li><a href="#boltz">5. The Boltzmann distribution and fluctuations</a></li>
-                <li><a href="#sampling">6. Generating random numbers</a></li>
-                <li><a href="#rw">7. Random walks and diffusion</a></li>
-                <li><a href="#summary-m10">8. How the pieces fit together</a></li>
-                <li><a href="#check">9. Problems</a></li>
-                <li><a href="#refs">10. References and further reading</a></li>
+                <li><a href="#basics">Lecture 1. Probability basics</a></li>
+                <li><a href="#rv">Lecture 2. Random variables</a></li>
+                <li><a href="#dists">Lecture 3. The distributions you need</a></li>
+                <li><a href="#clt">Lecture 4. Averages: the law of large numbers and the central limit theorem</a></li>
+                <li><a href="#boltz">Lecture 5. The Boltzmann distribution and fluctuations</a></li>
+                <li><a href="#sampling">Lecture 6. Generating random numbers</a></li>
+                <li><a href="#rw">Lecture 7. Random walks and diffusion</a></li>
+                <li><a href="#summary-m10">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -59,7 +60,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 23 min</dd></div>
+<div><dt>Reading time</dt><dd>about 28 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="statistics-and-data-fitting.html">M11. Statistics</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -78,7 +79,11 @@
                 <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> (integrals, Gaussians) and the multiple integrals of <a href="multivariable-calculus.html">M2</a>. A first look at the ideas is on the page <a href="chance-averages-and-error-bars.html">S5. Chance, averages and error bars</a>.
             </div>
 
-            <h2 id="basics">1. Probability basics<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 4 (averages and the central limit theorem) is the one on which all error bars in simulation rest. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="basics">Lecture 1. Probability basics<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
             <h3 id="axioms">Events and rules<a class="anchor" href="#axioms" aria-label="Link to this section">#</a></h3>
             <p>A random experiment has a <strong>sample space</strong> $\Omega$ of possible outcomes; an <strong>event</strong> $A$ is a set of outcomes, and its probability $P(A)\in[0,1]$ satisfies $P(\Omega)=1$ and, for disjoint events, $P(A\cup B)=P(A)+P(B)$. In general
             $$P(A\cup B)=P(A)+P(B)-P(A\cap B),\qquad P(\bar A)=1-P(A).$$
@@ -88,7 +93,13 @@
             $$P(A|B)=\frac{P(B|A)\,P(A)}{P(B)},\qquad P(B)=P(B|A)P(A)+P(B|\bar A)P(\bar A)\ \text{(total probability)}.$$
             <strong>Bayes&rsquo; theorem</strong> turns the probability of the evidence given a hypothesis into the probability of the hypothesis given the evidence. It is the logic of diagnostic testing, of inferring which phase is present from a measurement, and of Bayesian model fitting (<a href="statistics-and-data-fitting.html">M11</a>). Its lesson is that the <em>prior</em> $P(A)$ matters: if a condition is rare, most positive results are false alarms (Problem 1).</p>
 
-            <h2 id="rv">2. Random variables<a class="anchor" href="#rv" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 1.1: a rare phase and a positive test</strong>
+                <p class="given">A rare precipitate phase B is present in $2\%$ of samples. An XRD test detects it when present with probability $0.90$, and gives a false positive on $5\%$ of samples without it. A sample tests positive. What is the probability that B is present? Separately, a nucleation attempt succeeds with $p=10^{-3}$; what is the chance of at least one success in $2000$ attempts?</p>
+                <p>By total probability, $P(+)=0.90(0.02)+0.05(0.98)=0.018+0.049=0.067$. Bayes' theorem gives $P(B|+)=0.018/0.067=0.27$. Only about a quarter of the positives are real, because the phase is rare: a good test is not enough when the base rate is low, so a positive result should trigger a confirming measurement. For the second part, $1-(1-10^{-3})^{2000}=1-0.9990^{2000}=0.865$, which is very close to $1-e^{-np}=1-e^{-2}=0.865$, the Poisson form that will appear in Lecture 3.</p>
+            </div>
+
+            <h2 id="rv">Lecture 2. Random variables<a class="anchor" href="#rv" aria-label="Link to this section">#</a></h2>
             <p>A <strong>random variable</strong> $X$ assigns a number to each outcome. A <em>discrete</em> variable has a probability mass function $P(X=x_i)=p_i$ with $\sum p_i=1$. A <em>continuous</em> variable has a probability density $p(x)\ge0$ with $\int p(x)\,\mathrm dx=1$ and $P(a&lt;X&lt;b)=\int_a^bp(x)\,\mathrm dx$. The <strong>cumulative distribution function</strong> is $F(x)=P(X\le x)$, rising from $0$ to $1$ (so $p=F'$). Averages are sums or integrals over the distribution:
             $$\langle X\rangle=\mathbb E[X]=\sum_ix_ip_i\ \text{ or }\ \int xp(x)\,\mathrm dx,\qquad\langle g(X)\rangle=\int g(x)\,p(x)\,\mathrm dx .$$
             This is the &ldquo;ensemble average&rdquo; of statistical mechanics. Expectation is linear: $\langle aX+bY\rangle=a\langle X\rangle+b\langle Y\rangle$, always, even for dependent variables. The spread is measured by the <strong>variance</strong>
@@ -97,9 +108,19 @@
             $$\mathrm{Var}(X+Y)=\mathrm{Var}X+\mathrm{Var}Y+2\,\mathrm{Cov}(X,Y),$$
             so <strong>for independent variables variances add</strong>. A sum of $N$ independent copies of $X$ has mean $N\langle X\rangle$ and standard deviation $\sigma\sqrt N$; the <em>average</em> of the $N$ copies has mean $\langle X\rangle$ and standard deviation $\sigma/\sqrt N$: the origin of the standard error. <strong>Chebyshev&rsquo;s inequality</strong>, $P(|X-\mu|\ge n\sigma)\le1/n^2$, holds for any distribution with finite variance, a crude but safe bound. The covariance matrix of several variables is symmetric and positive semi-definite, and its eigenvectors are the principal components (<a href="eigenvalues-and-decompositions.html">M5</a>).</p>
 
-            <h2 id="dists">3. The distributions you need<a class="anchor" href="#dists" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why variances of independent variables add</strong>
+            <p>Let $X,Y$ have means $\mu_X,\mu_Y$. Then $\mathrm{Var}(X+Y)=\bigl\langle[(X-\mu_X)+(Y-\mu_Y)]^2\bigr\rangle=\mathrm{Var}X+\mathrm{Var}Y+2\langle(X-\mu_X)(Y-\mu_Y)\rangle$. For independent variables the expectation factorises, $\langle(X-\mu_X)(Y-\mu_Y)\rangle=\langle X-\mu_X\rangle\langle Y-\mu_Y\rangle=0\cdot0$, so the cross term vanishes. For $N$ independent copies, $\mathrm{Var}(\sum X_i)=N\sigma^2$, and since $\mathrm{Var}(aX)=a^2\mathrm{Var}X$ the average $\bar X$ has variance $N\sigma^2/N^2=\sigma^2/N$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.1: sums of dice</strong>
+                <p class="given">Find the mean and variance of one throw of a fair die, then the mean and standard deviation of the sum and of the average of $100$ throws.</p>
+                <p>$\langle X\rangle=\tfrac16(1+\dots+6)=3.5$ and $\langle X^2\rangle=\tfrac{91}6$, so $\mathrm{Var}X=\tfrac{91}6-\tfrac{49}4=\tfrac{35}{12}=2.917$, $\sigma=1.708$. The sum of $100$ throws has mean $350$ and standard deviation $\sigma\sqrt{100}=17.1$; the average has mean $3.5$ and standard deviation $1.708/10=0.171$. The sum becomes relatively sharper, $17.1/350=4.9\%$, while the standard deviation of the sum grows: only the <em>average</em> converges.</p>
+            </div>
+
+            <h2 id="dists">Lecture 3. The distributions you need<a class="anchor" href="#dists" aria-label="Link to this section">#</a></h2>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="3. The distributions you need (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. The distributions you need (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Distribution</th><th>Probability</th><th>Mean</th><th>Variance</th><th>Typical use</th></tr></thead>
                 <tbody>
                     <tr><td>Bernoulli($p$)</td><td>$P(1)=p$, $P(0)=1-p$</td><td>$p$</td><td>$p(1-p)$</td><td>site occupied or empty; Metropolis accept/reject</td></tr>
@@ -119,7 +140,13 @@
             <h3 id="gauss">The Gaussian<a class="anchor" href="#gauss" aria-label="Link to this section">#</a></h3>
             <p>The normal distribution is determined by its mean and variance, and any Gaussian variable $X$ is converted to a <em>standard normal</em> $Z=(X-\mu)/\sigma$ with density $\frac1{\sqrt{2\pi}}e^{-z^2/2}$. Its cumulative distribution $\Phi(z)=\tfrac12\bigl[1+\operatorname{erf}(z/\sqrt2)\bigr]$ is tabulated. The probabilities of lying within $1,2,3$ standard deviations of the mean are $68.3\%$, $95.4\%$ and $99.7\%$. The multivariate version for a vector $\mathbf x$ has density $\propto\exp\bigl[-\tfrac12(\mathbf x-\boldsymbol\mu)^TC^{-1}(\mathbf x-\boldsymbol\mu)\bigr]$ with covariance matrix $C$; the level sets are the ellipsoids of <a href="eigenvalues-and-decompositions.html">M5</a>, with axes along the principal components. Important Gaussians in physics: each Cartesian velocity component of an atom of mass $m$ at temperature $T$ has variance $k_\mathrm{B}T/m$ (Problem 8), and the displacement of an atom in a harmonic well has variance $k_\mathrm{B}T/k$ (Problem 1.11 of <a href="calculus-single-variable.html">M1</a>).</p>
 
-            <h2 id="clt">4. Averages: the law of large numbers and the central limit theorem<a class="anchor" href="#clt" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.1: choosing the right distribution</strong>
+                <p class="given">(a) Vacancies in a volume appear with mean $\lambda=10$ (Poisson). Find $P(0)$ and $P(10)$. (b) A kinetic Monte Carlo event has rate $k=2\ \mathrm{s^{-1}}$: find the mean waiting time and $P(T&gt;1\,\mathrm s)$. (c) A grain size is Gaussian with $\mu=100$ nm, $\sigma=5$ nm: find $P(X&gt;110\ \mathrm{nm})$.</p>
+                <p>(a) $P(k)=\lambda^ke^{-\lambda}/k!$ gives $P(0)=e^{-10}=4.5\times10^{-5}$ and $P(10)=10^{10}e^{-10}/10!=0.125$; the standard deviation is $\sqrt{10}=3.2$, so counts between $7$ and $13$ are typical. (b) The mean wait is $1/k=0.5$ s; $P(T&gt;1)=e^{-2}=0.135$. (c) $z=(110-100)/5=2$, so $P=1-\Phi(2)=0.0228$: about $2.3\%$ of grains are larger than $110$ nm, a Gaussian tail that a log-normal distribution (more realistic for grains) would make heavier.</p>
+            </div>
+
+            <h2 id="clt">Lecture 4. Averages: the law of large numbers and the central limit theorem<a class="anchor" href="#clt" aria-label="Link to this section">#</a></h2>
             <div class="note thm"><strong>Law of large numbers and central limit theorem</strong>
             <p>Let $X_1,\ldots,X_N$ be independent samples from a distribution with mean $\mu$ and finite variance $\sigma^2$, and $\bar X=\frac1N\sum X_i$. (i) <em>Law of large numbers:</em> $\bar X\to\mu$ as $N\to\infty$. (ii) <em>Central limit theorem:</em> the standardised average $\dfrac{\bar X-\mu}{\sigma/\sqrt N}$ tends to a standard normal distribution, whatever the shape of the original distribution.</p>
             </div>
@@ -129,14 +156,34 @@
             <div class="demo" data-demo="clt"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="boltz">5. The Boltzmann distribution and fluctuations<a class="anchor" href="#boltz" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why the average converges: a one-line proof</strong>
+            <p>By the variance rule above, $\mathrm{Var}\,\bar X=\sigma^2/N$. Chebyshev's inequality, $P(|Y-\langle Y\rangle|\ge\varepsilon)\le\mathrm{Var}Y/\varepsilon^2$, then gives $P(|\bar X-\mu|\ge\varepsilon)\le\sigma^2/(N\varepsilon^2)\to0$: the average is within any fixed tolerance with probability tending to $1$. (Chebyshev itself follows from $\langle(Y-\bar Y)^2\rangle\ge\varepsilon^2P(|Y-\bar Y|\ge\varepsilon)$.)</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.1: how many samples?</strong>
+                <p class="given">An energy per atom fluctuates with $\sigma=0.05$ eV in a simulation. Give the $95\%$ confidence interval from $N=400$ independent samples, and the $N$ needed for a standard error of $0.0005$ eV. What if the samples are correlated?</p>
+                <p>$\mathrm{SE}=\sigma/\sqrt N=0.05/20=0.0025$ eV and the $95\%$ interval is $\bar X\pm1.96(0.0025)=\bar X\pm0.0049$ eV. For $\mathrm{SE}=0.0005$ eV: $N=(0.05/0.0005)^2=10^4$, twenty-five times more samples for five times better precision. Consecutive MD frames are strongly correlated, so $N$ must be replaced by the number of <em>independent</em> samples, roughly $N/(2\tau)$ where $\tau$ is the correlation time in steps: with $\tau=10$, the $400$ frames are worth only about $20$ and the SE is $0.05/\sqrt{20}=0.011$ eV, four and a half times larger. Block averaging (M11) estimates this honestly.</p>
+            </div>
+
+            <h2 id="boltz">Lecture 5. The Boltzmann distribution and fluctuations<a class="anchor" href="#boltz" aria-label="Link to this section">#</a></h2>
             <p>A system in contact with a heat bath at temperature $T$ occupies state $i$ of energy $E_i$ with the <strong>canonical (Boltzmann) probability</strong> (derived by maximising entropy in <a href="multivariable-calculus.html">M2</a>, Example 6.1)
             $$p_i=\frac{e^{-\beta E_i}}{Z},\qquad Z=\sum_ie^{-\beta E_i},\qquad\beta=\frac1{k_\mathrm{B}T}.$$
             The <strong>partition function</strong> $Z$ is a generating function: all averages follow from $\ln Z$ by differentiation. Since $\partial_\beta\ln Z=-\sum E_ie^{-\beta E_i}/Z$,
             $$\langle E\rangle=-\frac{\partial\ln Z}{\partial\beta},\qquad\mathrm{Var}(E)=\frac{\partial^2\ln Z}{\partial\beta^2}=k_\mathrm{B}T^2C_V,\qquad F=-k_\mathrm{B}T\ln Z,$$
             the Helmholtz free energy. The second relation is a <strong>fluctuation&ndash;response relation</strong>: the spontaneous energy fluctuations of a system equal its response to a change in temperature, $C_V=\partial\langle E\rangle/\partial T$. This is the basis for computing heat capacities and compressibilities from fluctuations in a molecular dynamics run. Since the energy and $C_V$ are both extensive ($\propto N$), the <strong>relative fluctuation $\sigma_E/\langle E\rangle\propto1/\sqrt N$</strong>: $\sim10^{-12}$ for a macroscopic sample, but of order $1\%$ for a simulation of $10^3$ atoms. Ratios of probabilities are the simplest consequence: $p_i/p_j=e^{-(E_i-E_j)/k_\mathrm{B}T}$ is the origin of the Arrhenius law, the Metropolis acceptance rule $\min(1,e^{-\Delta E/k_\mathrm{B}T})$ (<a href="monte-carlo-methods.html">Monte Carlo methods</a>) and the equilibrium defect concentration $e^{-E_f/k_\mathrm{B}T}$. The two-level and harmonic-oscillator partition functions (<a href="calculus-single-variable.html">M1</a>, Problem 1.10) are the building blocks of the thermodynamics of solids.</p>
 
-            <h2 id="sampling">6. Generating random numbers<a class="anchor" href="#sampling" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why $\operatorname{Var}E=\partial^2\ln Z/\partial\beta^2$</strong>
+            <p>Differentiate $\ln Z$ twice. $\partial_\beta\ln Z=-\langle E\rangle$, and $\partial_\beta\langle E\rangle=-\bigl(\langle E^2\rangle-\langle E\rangle^2\bigr)$ (the derivative of $\sum E_ie^{-\beta E_i}/Z$ gives $-\sum E_i^2p_i+\bigl(\sum E_ip_i\bigr)^2$). Hence $\partial^2_\beta\ln Z=\mathrm{Var}E$. Converting $\beta=1/k_\mathrm BT$ gives $\partial\langle E\rangle/\partial T=\mathrm{Var}E/(k_\mathrm BT^2)=C_V$, so $\mathrm{Var}E=k_\mathrm BT^2C_V$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.1: a two-level defect</strong>
+                <p class="given">A defect has two levels, $0$ and $\Delta=0.1$ eV. At $300$ K ($k_\mathrm BT=0.02585$ eV) find the excited-state probability, $\langle E\rangle$ and $C_V$.</p>
+                <p>$Z=1+e^{-\beta\Delta}$ with $\beta\Delta=0.1/0.02585=3.868$ and $e^{-3.868}=0.0209$. Then $p_1=0.0209/1.0209=0.0205$: only about $2\%$ of defects are excited. $\langle E\rangle=\Delta p_1=2.05\times10^{-3}$ eV. The variance is $\Delta^2p_1(1-p_1)=2.0\times10^{-4}\ \mathrm{eV^2}$, so $C_V=\mathrm{Var}E/(k_\mathrm BT^2)=(\beta\Delta)^2p_1(1-p_1)\,\allowbreak k_\mathrm B=14.96\times0.02005\,\allowbreak k_\mathrm B=0.30\,\allowbreak k_\mathrm B$. This Schottky peak (a heat capacity maximum when $k_\mathrm BT\sim\Delta/2.4$) is how two-level systems show up in measured heat capacity.</p>
+            </div>
+
+            <h2 id="sampling">Lecture 6. Generating random numbers<a class="anchor" href="#sampling" aria-label="Link to this section">#</a></h2>
             <p>Computers produce <em>pseudo-random</em> numbers: deterministic sequences passing statistical tests of uniformity and independence; the generator&rsquo;s seed makes runs reproducible. Given uniform random numbers $U\in(0,1)$, other distributions follow by transformation.</p>
             <ul>
                 <li><strong>Inverse transform sampling.</strong> If $F$ is the cumulative distribution and $U$ is uniform, then $X=F^{-1}(U)$ has distribution $F$ (because $P(X\le x)=P(U\le F(x))=F(x)$). For the exponential distribution, $F(t)=1-e^{-kt}$, so $T=-\ln(1-U)/k$ or equivalently $T=-\ln(U)/k$: the waiting time in kinetic Monte Carlo.</li>
@@ -147,14 +194,26 @@
             <p>To start a molecular dynamics run at temperature $T$, assign each atom Cartesian velocity components drawn independently from a Gaussian with variance $k_\mathrm{B}T/m$, then remove the centre-of-mass drift and rescale to the exact target temperature. The speeds are then automatically Maxwell-distributed (<a href="multivariable-calculus.html">M2</a>, Example 7.3).</p>
             </div>
 
-            <h2 id="rw">7. Random walks and diffusion<a class="anchor" href="#rw" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.1: sampling for kinetic Monte Carlo and MD</strong>
+                <p class="given">(a) Three events have rates $3,5,2\ \mathrm{s^{-1}}$. With $U_1=0.37$ and $U_2=0.65$ choose the next event and the time step. (b) Box&ndash;Muller with $U_1=0.3$, $U_2=0.6$. (c) The Gaussian velocity width for argon at $300$ K.</p>
+                <p>(a) The total rate is $10\ \mathrm{s^{-1}}$, so $\Delta t=-\ln(U_1)/10=0.0994$ s. The cumulative fractions are $0.3,\,0.8,\,1.0$; since $U_2=0.65$ lies between $0.3$ and $0.8$, event 2 is chosen (probability proportional to its rate). (b) $r=\sqrt{-2\ln0.3}=1.552$ and $\theta=2\pi(0.6)$, so $z_1=r\cos\theta=-1.255$ and $z_2=r\sin\theta=-0.912$, two independent standard normals. (c) Each velocity component has variance $k_\mathrm BT/m$: $\sqrt{1.381\times10^{-23}\times300/(39.95\times1.661\times10^{-27})}=250$ m/s.</p>
+            </div>
+
+            <h2 id="rw">Lecture 7. Random walks and diffusion<a class="anchor" href="#rw" aria-label="Link to this section">#</a></h2>
             <p>An atom hops among lattice sites. Let it make a step $\Delta\mathbf r_i$ of fixed length $d$ in a random direction, independently, $N$ times. Then $\langle\Delta\mathbf r_i\rangle=0$ and the displacement $\mathbf R=\sum\Delta\mathbf r_i$ has $\langle\mathbf R\rangle=0$ and, since the cross terms of independent steps average to zero,
             $$\langle R^2\rangle=\sum_{i,j}\langle\Delta\mathbf r_i\cdot\Delta\mathbf r_j\rangle=N\,d^2 .$$
             The rms displacement grows as $\sqrt N$, and by the central limit theorem each Cartesian component of $\mathbf R$ is Gaussian with variance $Nd^2/3$. With a total hop rate $\Gamma$, $N=\Gamma t$, so $\langle R^2\rangle=\Gamma d^2t$. Compare this with the diffusion equation, whose point-source solution is a Gaussian of variance $2Dt$ per coordinate (<a href="vector-calculus.html">M3</a>, Problem 3.9), i.e. $\langle R^2\rangle=6Dt$ in three dimensions. The two descriptions coincide, giving the <strong>Einstein relation</strong> between microscopic jumps and macroscopic diffusion:
             $$\langle R^2\rangle=2d_\mathrm{dim}\,Dt,\qquad D=\frac{\Gamma d^2}{2\,d_\mathrm{dim}}=\frac{\Gamma d^2}{6}\ \text{(three dimensions)},$$
             where $d_\mathrm{dim}$ is the dimension. The same formula, with $\langle R^2\rangle$ measured from an MD trajectory of mean-square displacement, is the standard way to compute $D$ in simulation. With a thermally activated hop rate $\Gamma=z\nu_0e^{-E_m/k_\mathrm{B}T}$ ($z$ neighbours, attempt frequency $\nu_0$, migration barrier $E_m$) it explains the Arrhenius temperature dependence of diffusion (Problem 12; <a href="diffusion-and-kinetics.html">Diffusion and kinetics</a>).</p>
 
-            <h2 id="summary-m10">8. How the pieces fit together<a class="anchor" href="#summary-m10" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.1: a diffusion coefficient two ways</strong>
+                <p class="given">(a) An MD run gives $\langle R^2\rangle=0.6\ \mathrm{nm^2}$ after $100$ ps. Find $D$. (b) Predict $D$ from hopping: FCC metal, $a=0.36$ nm, $z=12$, $\nu_0=10^{13}\ \mathrm s^{-1}$, $E_m=0.7$ eV, $T=600$ K.</p>
+                <p>(a) In three dimensions $\langle R^2\rangle=6Dt$, so $D=0.6\times10^{-18}/(6\times10^{-10})=1.0\times10^{-9}\ \mathrm{m^2/s}$, typical of a liquid, not a solid: a crystal's MSD would saturate at the vibrational amplitude, so such a number signals melting or a superionic conductor. (b) $k_\mathrm BT=0.0517$ eV, $e^{-E_m/k_\mathrm BT}=e^{-13.54}=1.32\times10^{-6}$, so $\Gamma=12\times10^{13}\times1.32\times10^{-6}=1.58\times10^8\ \mathrm s^{-1}$. The hop distance is $d=a/\sqrt2=0.2546$ nm, so $D=\Gamma d^2/6=1.58\times10^{8}\times6.48\times10^{-20}/6=1.7\times10^{-12}\ \mathrm{m^2/s}$, a small number as expected for a solid-state process at $600$ K.</p>
+            </div>
+
+            <h2 id="summary-m10">Summary of the unit<a class="anchor" href="#summary-m10" aria-label="Link to this section">#</a></h2>
             <p>Probability supplies the language: distributions summarised by mean and variance, independence making variances add, and the central limit theorem making averages Gaussian with error $\sigma/\sqrt N$. The key distributions each answer a question about atoms: how many (binomial, Poisson), when (exponential), how large the fluctuation (Gaussian), which state (Boltzmann). Sampling methods turn uniform random numbers into these, and a random walk of hops turns into diffusion. The next module turns this machinery around: given noisy data, how do we estimate parameters, quote honest uncertainties and fit models?</p>
 
             <!-- takeaways:start -->
@@ -169,7 +228,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -315,7 +374,40 @@
             </details>
             </div>
 
-            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q10-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Bayes</span></div>
+            <p>A phase is present in $5\%$ of samples. A test detects it with probability $0.9$ and gives false positives on $10\%$. Find $P(\text{present}\,|\,+)$.</p>
+            <details class="solution"><summary>Solution</summary><p>$P(+)=0.9(0.05)+0.1(0.95)=0.14$, so $P=0.045/0.14=0.32$.</p></details>
+            </div>
+            <div class="problem" id="q10-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Variance</span></div>
+            <p>Find the mean and standard deviation of the sum of $100$ fair dice.</p>
+            <details class="solution"><summary>Solution</summary><p>Mean $350$; $\sigma=\sqrt{100\times35/12}=17.1$.</p></details>
+            </div>
+            <div class="problem" id="q10-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Poisson</span></div>
+            <p>Defects arrive at mean rate $\lambda=3$ per sample. Find $P(0)$ and $P(\ge1)$.</p>
+            <details class="solution"><summary>Solution</summary><p>$P(0)=e^{-3}=0.0498$ and $P(\ge1)=0.950$.</p></details>
+            </div>
+            <div class="problem" id="q10-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Standard error</span></div>
+            <p>Samples have $\sigma=0.05$ eV. Find the $95\%$ interval for $N=400$ independent samples, and $N$ for a tenfold smaller error.</p>
+            <details class="solution"><summary>Solution</summary><p>$\mathrm{SE}=0.0025$ eV and the interval is $\pm0.0049$ eV. A tenfold smaller error needs $100\times400=40\,000$ samples.</p></details>
+            </div>
+            <div class="problem" id="q10-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Boltzmann</span></div>
+            <p>A two-level defect has a gap of $0.1$ eV at $300$ K. Find the probability of the excited level.</p>
+            <details class="solution"><summary>Solution</summary><p>$e^{-3.868}/(1+e^{-3.868})=0.0205$, about $2\%$.</p></details>
+            </div>
+            <div class="problem" id="q10-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Sampling</span></div>
+            <p>Total rate $10\ \mathrm{s^{-1}}$ and $U=0.37$: find the kinetic Monte Carlo time step. If MD gives $\langle R^2\rangle=0.6\ \mathrm{nm^2}$ at $100$ ps, what is $D$?</p>
+            <details class="solution"><summary>Solution</summary><p>$\Delta t=-\ln(0.37)/10=0.099$ s. $D=\langle R^2\rangle/(6t)=10^{-9}\ \mathrm{m^2/s}$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Grinstead, C. M. and Snell, J. L., <em>Introduction to Probability</em>, American Mathematical Society (free online).</li>
                 <li>Ross, S., <em>A First Course in Probability</em>, Pearson.</li>
@@ -344,7 +436,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=296a61e3"></script>
+    <script src="../assets/topics.js?v=00ba2e79"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

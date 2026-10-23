@@ -36,16 +36,17 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#what">1. What a tensor is</a></li>
-                <li><a href="#index">2. Index notation</a></li>
-                <li><a href="#transform">3. Transformation under rotation</a></li>
-                <li><a href="#stress">4. Stress</a></li>
-                <li><a href="#strain">5. Strain</a></li>
-                <li><a href="#hooke">6. Hooke&rsquo;s law and elastic constants</a></li>
-                <li><a href="#symmetry">7. Crystal symmetry and property tensors</a></li>
-                <li><a href="#summary-m6">8. How the pieces fit together</a></li>
-                <li><a href="#check">9. Problems</a></li>
-                <li><a href="#refs">10. References and further reading</a></li>
+                <li><a href="#what">Lecture 1. What a tensor is</a></li>
+                <li><a href="#index">Lecture 2. Index notation</a></li>
+                <li><a href="#transform">Lecture 3. Transformation under rotation</a></li>
+                <li><a href="#stress">Lecture 4. Stress</a></li>
+                <li><a href="#strain">Lecture 5. Strain</a></li>
+                <li><a href="#hooke">Lecture 6. Hooke&rsquo;s law and elastic constants</a></li>
+                <li><a href="#symmetry">Lecture 7. Crystal symmetry and property tensors</a></li>
+                <li><a href="#summary-m6">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -59,7 +60,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 22 min</dd></div>
+<div><dt>Reading time</dt><dd>about 26 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a><br><a href="vector-calculus.html">M3. Vector calculus</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -78,7 +79,11 @@
                 <strong>You need:</strong> <a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a> (symmetric eigenproblems) and <a href="vector-calculus.html">M3. Vector calculus</a> (gradients).
             </div>
 
-            <h2 id="what">1. What a tensor is<a class="anchor" href="#what" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 4 (stress) and Lecture 6 (elastic constants) are the heart of the unit. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="what">Lecture 1. What a tensor is<a class="anchor" href="#what" aria-label="Link to this section">#</a></h2>
             <p>A <strong>scalar</strong> (temperature, density) has one value independent of axes. A <strong>vector</strong> (force, flux, displacement) has three components that change when you rotate the axes. A <strong>second-rank tensor</strong> has nine components $T_{ij}$ and connects two vectors linearly: if $\mathbf b=T\mathbf a$ then $b_i=T_{ij}a_j$. The central examples are:</p>
             <ul>
                 <li>the <strong>stress</strong> $\sigma_{ij}$, which maps a surface normal to the force per area on that surface;</li>
@@ -88,10 +93,14 @@
             </ul>
             <p>Higher-rank tensors link tensors to tensors: the elastic stiffness $C_{ijkl}$ (rank 4) links stress to strain, and the piezoelectric tensor $d_{ijk}$ (rank 3) links an electric field to strain. What makes an array a tensor is its behaviour under a change of axes (section 3).</p>
 
-            <h2 id="index">2. Index notation<a class="anchor" href="#index" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why the trace is an invariant</strong>
+            <p>Under a rotation $T'=QTQ^T$ with $Q^TQ=I$. Then $\operatorname{tr}T'=\operatorname{tr}(QTQ^T)=\operatorname{tr}(Q^TQT)=\operatorname{tr}T$, using the cyclic property of the trace. In index form, $T'_{ii}=Q_{ik}Q_{il}T_{kl}=\delta_{kl}T_{kl}=T_{kk}$. The same cyclic argument shows $\operatorname{tr}(T'^2)=\operatorname{tr}(T^2)$ and $\det T'=\det T$, which proves that $I_1,I_2,I_3$ are invariants.</p>
+            </div>
+
+            <h2 id="index">Lecture 2. Index notation<a class="anchor" href="#index" aria-label="Link to this section">#</a></h2>
             <p>The <strong>Einstein summation convention</strong>: an index repeated twice in a product is summed over $1,2,3$ and is called <em>dummy</em>; an index that appears once is <em>free</em> and labels a component. So $a_ib_i=a_1b_1+a_2b_2+a_3b_3=\mathbf a\cdot\mathbf b$; $T_{ij}a_j=\sum_jT_{ij}a_j$ is the $i$-th component of $T\mathbf a$; $T_{ii}=\operatorname{tr}T$; $A_{ik}B_{kj}$ is the $(ij)$ entry of $AB$. Two special objects make most manipulations short:</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="2. Index notation (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 2. Index notation (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Symbol</th><th>Definition</th><th>Properties and uses</th></tr></thead>
                 <tbody>
                     <tr><td>Kronecker delta $\delta_{ij}$</td><td>$1$ if $i=j$, else $0$ (the identity matrix)</td><td>$\delta_{ij}a_j=a_i$; $\delta_{ii}=3$; $\delta_{ij}\delta_{jk}=\delta_{ik}$</td></tr>
@@ -101,7 +110,7 @@
             </div>
             <p>The identity in the last cell (the &ldquo;$\varepsilon\varepsilon$ rule&rdquo;) proves vector identities in one line. Example: $\mathbf a\times(\mathbf b\times\mathbf c)$ has components $\varepsilon_{ijk}a_j\varepsilon_{klm}b_lc_m=(\delta_{il}\delta_{jm}-\delta_{im}\delta_{jl})a_jb_lc_m=b_i(\mathbf a\cdot\mathbf c)-c_i(\mathbf a\cdot\mathbf b)$, the &ldquo;BAC&ndash;CAB&rdquo; rule. The gradient operator joins in naturally: $(\nabla\cdot\mathbf F)=\partial_iF_i$, $(\nabla\times\mathbf F)_i=\varepsilon_{ijk}\partial_jF_k$, $\nabla^2=\partial_i\partial_i$. The <strong>double contraction</strong> $A:B=A_{ij}B_{ij}$ gives a scalar (it is the sum of all products of corresponding entries), used for energy densities.</p>
 
-            <h2 id="transform">3. Transformation under rotation<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
+            <h2 id="transform">Lecture 3. Transformation under rotation<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
             <p>Let a new set of axes $\mathbf e'_i$ be related to the old $\mathbf e_j$ by the <strong>direction cosines</strong> $Q_{ij}=\mathbf e'_i\cdot\mathbf e_j$, an orthogonal matrix ($QQ^T=I$). For a rotation of the axes by an angle $\theta$ anticlockwise about $z$,
             $$Q=\begin{pmatrix}\cos\theta&amp;\sin\theta&amp;0\\-\sin\theta&amp;\cos\theta&amp;0\\0&amp;0&amp;1\end{pmatrix}.$$
             The components of the same physical object in the new axes are
@@ -113,7 +122,17 @@
                 <p>With $c=\cos30^\circ=0.8660$, $s=\sin30^\circ=0.5$: $T'_{11}=c^2T_{11}+2csT_{12}+s^2T_{22}=2.25+0.866+0.5=3.616$; $T'_{22}=s^2T_{11}-2csT_{12}+c^2T_{22}=0.75-0.866+1.5=1.384$; $T'_{12}=-cs\,\allowbreak T_{11}+(c^2-s^2)T_{12}+cs\,\allowbreak T_{22}=-1.299+0.5+0.866=0.067$. So $T'=\begin{pmatrix}3.616&amp;0.067\\0.067&amp;1.384\end{pmatrix}$. Trace: $3.616+1.384=5=3+2$ &check;. Determinant: $5.0049-0.0045=5.000=6-1$ &check;. The eigenvalues are $(5\pm\sqrt5)/2=3.618,1.382$, and the principal axis lies at $\tfrac12\arctan\dfrac{2T_{12}}{T_{11}-T_{22}}=31.7^\circ$, very close to the $30^\circ$ chosen, which is why $T'$ is nearly diagonal.</p>
             </div>
 
-            <h2 id="stress">4. Stress<a class="anchor" href="#stress" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.2: rotating a stress and finding the principal values</strong>
+                <p class="given">A plate carries $\sigma_x=80$, $\sigma_y=20$, $\tau_{xy}=40$ MPa in plane stress. Find the principal stresses, their direction, the maximum in-plane shear and the stress on a plane rotated $30^\circ$.</p>
+                <p>Centre of Mohr's circle $=\tfrac12(80+20)=50$ MPa; radius $R=\sqrt{30^2+40^2}=50$ MPa. So $\sigma_{1,2}=50\pm50=100$ and $0$ MPa, and the maximum in-plane shear is $R=50$ MPa. The principal direction satisfies $\tan2\theta_p=2\cdot40/(80-20)=4/3$, so $\theta_p=26.57^\circ$ from the $x$ axis (the direction of the $100$ MPa stress). At $\theta=30^\circ$: $\sigma_{x'}=50+30\cos60^\circ+40\sin60^\circ=50+15+34.64=99.64$ MPa and $\tau_{x'y'}=-30\sin60^\circ+40\cos60^\circ=-25.98+20=-5.98$ MPa, close to the principal state because $30^\circ$ is near $26.57^\circ$. Check with the circle: $(99.64-50)^2+5.98^2=2464+36=2500=R^2$ &check;.</p>
+            </div>
+
+            <div class="note thm"><strong>Why the plane stresses lie on a circle</strong>
+            <p>Write $c=\tfrac12(\sigma_x+\sigma_y)$, $a=\tfrac12(\sigma_x-\sigma_y)$. From the transformation formulas, $\sigma_{x'}-c=a\cos2\theta+\tau_{xy}\sin2\theta$ and $\tau_{x'y'}=-a\sin2\theta+\tau_{xy}\cos2\theta$. Squaring and adding, the cross terms cancel and $(\sigma_{x'}-c)^2+\tau_{x'y'}^2=a^2+\tau_{xy}^2=R^2$. A physical rotation of $\theta$ moves the point by $2\theta$ round the circle, which is why Mohr's circle doubles angles.</p>
+            </div>
+
+            <h2 id="stress">Lecture 4. Stress<a class="anchor" href="#stress" aria-label="Link to this section">#</a></h2>
             <h3 id="traction">Traction and the stress tensor<a class="anchor" href="#traction" aria-label="Link to this section">#</a></h3>
             <p>Cut a body by an imaginary plane with outward unit normal $\mathbf n$. The force per unit area transmitted across the plane (the <strong>traction</strong>) is
             $$t_i=\sigma_{ij}n_j,$$
@@ -132,7 +151,13 @@
             $$\sigma_\mathrm{vM}=\sqrt{\tfrac32\,s_{ij}s_{ij}}=\sqrt{\tfrac12\bigl[(\sigma_1-\sigma_2)^2+(\sigma_2-\sigma_3)^2+(\sigma_3-\sigma_1)^2\bigr]},\qquad\sigma_\mathrm{Tresca}=\sigma_1-\sigma_3,$$
             and yielding is predicted when either reaches the uniaxial yield stress $\sigma_Y$. For uniaxial tension both reduce to $\sigma_1$. Equal triaxial tension (as at a crack tip or in a thick plate) has $s_{ij}=0$ and $\sigma_\mathrm{vM}=0$, which is why such states promote brittle fracture without yielding.</p>
 
-            <h2 id="strain">5. Strain<a class="anchor" href="#strain" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.2: von Mises and Tresca</strong>
+                <p class="given">A steel with $\sigma_Y=250$ MPa carries principal stresses $(\sigma_1,\sigma_2,\sigma_3)=(120,60,0)$ MPa. Does it yield?</p>
+                <p>$\sigma_\mathrm{vM}=\sqrt{\tfrac12[(120-60)^2+(60-0)^2+(0-120)^2]}=\sqrt{\tfrac12(3600+3600+14400)}=\sqrt{10800}=103.9$ MPa and $\sigma_\mathrm{Tresca}=120$ MPa, both well below $250$, so the steel stays elastic (safety factors $2.41$ and $2.08$). Tresca is the more conservative criterion, never smaller than von Mises: they agree for uniaxial tension and differ by at most $15\%$ (pure shear: $\sigma_\mathrm{vM}=\sqrt3\,\tau$ against $\sigma_\mathrm{Tresca}=2\tau$).</p>
+            </div>
+
+            <h2 id="strain">Lecture 5. Strain<a class="anchor" href="#strain" aria-label="Link to this section">#</a></h2>
             <p>Deformation is described by the displacement field $\mathbf u(\mathbf x)$. Its gradient $\partial_ju_i$ contains rigid rotation, which stores no energy, and true deformation. Splitting into symmetric and antisymmetric parts,
             $$\partial_ju_i=\underbrace{\tfrac12(\partial_ju_i+\partial_iu_j)}_{\varepsilon_{ij}\ \text{(strain)}}+\underbrace{\tfrac12(\partial_ju_i-\partial_iu_j)}_{\omega_{ij}\ \text{(rotation)}} .$$
             The <strong>small-strain tensor</strong> $\varepsilon_{ij}$ is symmetric. Its diagonal entries are fractional stretches along the axes; the off-diagonal entries are half the change in angle, so the <em>engineering shear strain</em> is $\gamma_{ij}=2\varepsilon_{ij}$. The trace $\varepsilon_{kk}=\Delta V/V$ is the <strong>volumetric strain</strong>. A strain with zero trace is pure shape change; $\varepsilon_{ij}=\tfrac13\varepsilon_{kk}\delta_{ij}+e_{ij}$. Strain has principal values and axes exactly as stress does. A sanity check for a measured field is the <strong>compatibility condition</strong> (the six components of $\varepsilon$ cannot be arbitrary functions, since they derive from three displacement components).</p>
@@ -140,7 +165,19 @@
             <p>For rotations or stretches beyond about a percent, the linear $\varepsilon_{ij}$ misjudges deformation (a pure rotation would produce spurious strain at second order). Finite-strain theory uses the <strong>deformation gradient</strong> $F_{ij}=\delta_{ij}+\partial_ju_i$ (so $\mathbf x_\mathrm{new}=F\mathbf x_\mathrm{old}$, $\det F=V/V_0$) and the <strong>Green&ndash;Lagrange strain</strong> $E=\tfrac12(F^TF-I)$, which vanishes for any rigid rotation. Simulations that impose a large shear or compress a cell to several GPa use these (Problem 12).</p>
             </div>
 
-            <h2 id="hooke">6. Hooke&rsquo;s law and elastic constants<a class="anchor" href="#hooke" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.1: strain from a displacement field</strong>
+                <p class="given">A displacement field is $u_x=0.002x+0.004y$, $u_y=0.001y$ (all lengths in the same unit, so $u$ is dimensionless per unit length). Find $\varepsilon_{ij}$, the rotation and the area change.</p>
+                <p>$\partial_xu_x=0.002$, $\partial_yu_x=0.004$, $\partial_xu_y=0$, $\partial_yu_y=0.001$. Strain: $\varepsilon_{xx}=0.002$, $\varepsilon_{yy}=0.001$, $\varepsilon_{xy}=\tfrac12(0.004+0)=0.002$ (engineering shear $\gamma_{xy}=0.004$). Rotation: $\omega_{xy}=\tfrac12(\partial_yu_x-\partial_xu_y)=0.002$ rad. Area change: $\varepsilon_{xx}+\varepsilon_{yy}=0.003$, i.e. $0.3\%$. The $0.004$ of &ldquo;shear&rdquo; in the gradient is split equally between a pure strain $0.002$ and a rigid rotation $0.002$ rad, which is exactly what the decomposition is for.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: finite shear</strong>
+                <p class="given">Apply a simple shear $F=\begin{pmatrix}1&amp;0.2\\0&amp;1\end{pmatrix}$. Compare the linear and Green&ndash;Lagrange strains.</p>
+                <p>Linear: $\varepsilon_{xy}=0.1$, all else zero. Green&ndash;Lagrange: $F^TF=\begin{pmatrix}1&amp;0.2\\0.2&amp;1.04\end{pmatrix}$, so $E=\tfrac12(F^TF-I)=\begin{pmatrix}0&amp;0.1\\0.1&amp;0.02\end{pmatrix}$. The extra $E_{yy}=\gamma^2/2=0.02$ is second order and is missed by the linear theory; $\det F=1$, so the shear conserves volume. At $\gamma=0.2$ the error is already $20\%$ of the shear term in one component.</p>
+            </div>
+
+            <h2 id="hooke">Lecture 6. Hooke&rsquo;s law and elastic constants<a class="anchor" href="#hooke" aria-label="Link to this section">#</a></h2>
             <p>For small strains the stress is a linear function of the strain: the <strong>generalised Hooke&rsquo;s law</strong>
             $$\sigma_{ij}=C_{ijkl}\,\varepsilon_{kl},\qquad\varepsilon_{ij}=S_{ijkl}\,\sigma_{kl},$$
             with the <strong>stiffness tensor</strong> $C$ and its inverse, the <strong>compliance</strong> $S$. The elastic energy per unit volume is $W=\tfrac12\sigma_{ij}\varepsilon_{ij}=\tfrac12C_{ijkl}\varepsilon_{ij}\varepsilon_{kl}$, and it must be positive for every nonzero strain for the crystal to be stable. A rank-4 tensor has $3^4=81$ components, but:</p>
@@ -178,11 +215,29 @@
             <div class="demo" data-demo="cubicE"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="symmetry">7. Crystal symmetry and property tensors<a class="anchor" href="#symmetry" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.1: constants of steel</strong>
+                <p class="given">Steel has $E=200$ GPa and $\nu=0.3$. Find $\lambda$, $\mu$ and $K$, and the stress in a bar strained $\varepsilon_{xx}=0.001$ in uniaxial tension.</p>
+                <p>$\mu=E/[2(1+\nu)]=76.9$ GPa; $\lambda=E\nu/[(1+\nu)(1-2\nu)]=60/(1.3\times0.4)=115.4$ GPa; $K=E/[3(1-2\nu)]=166.7$ GPa. Check: $\lambda+\tfrac23\mu=115.4+51.3=166.7$ &check;. The stress is $\sigma_{xx}=E\varepsilon_{xx}=200$ MPa, the lateral strains are $-\nu\varepsilon_{xx}=-0.0003$, and the volumetric strain is $0.001-0.0006=0.0004$, giving $\Delta V/V=0.04\%$ (it is $(1-2\nu)\varepsilon_{xx}$, vanishing as $\nu\to\tfrac12$ for rubber).</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: copper is strongly anisotropic</strong>
+                <p class="given">For copper, $C_{11}=168.4$, $C_{12}=121.4$, $C_{44}=75.4$ GPa. Find $A$, $B$, $E_{[100]}$ and $E_{[111]}$.</p>
+                <p>$A=2(75.4)/(168.4-121.4)=3.21$; $B=\tfrac13(168.4+242.8)=137.1$ GPa. The compliances are $S_{11}=0.015031$, $S_{12}=-0.006297$ and $S_{44}=0.013263$ GPa$^{-1}$. For $[100]$ the direction sum $n_1^2n_2^2+\dots$ is $0$, so $E=1/S_{11}=66.7$ GPa. For $[111]$ the sum is $\tfrac13$, so $1/E=S_{11}-\tfrac23(S_{11}-S_{12}-\tfrac12S_{44})=0.005233$ and $E=191.1$ GPa, nearly three times stiffer. A polycrystal averages these: the Voigt shear modulus is $54.6$ GPa and the Reuss value $40.0$ GPa, so an isotropic estimate of $G$ for Cu lies between them (Hill takes the mean, about $47$ GPa).</p>
+            </div>
+
+            <h2 id="symmetry">Lecture 7. Crystal symmetry and property tensors<a class="anchor" href="#symmetry" aria-label="Link to this section">#</a></h2>
             <p>A crystal looks the same after the operations of its <strong>point group</strong> (rotations, reflections, inversion), each an orthogonal matrix $Q$. <strong>Neumann&rsquo;s principle</strong>: any physical property of a crystal must be unchanged by every symmetry operation of the crystal. For a tensor property, this means $T=T'$ with $T'$ obtained from $T$ by the transformation of section 3 using each symmetry matrix $Q$. Each such condition cuts the number of independent components. For example, a symmetric second-rank tensor (conductivity, thermal expansion, diffusion) has six components for triclinic crystals, four for monoclinic, three for orthorhombic, two for tetragonal, hexagonal and trigonal crystals ($T=\operatorname{diag}(a,a,c)$), and <em>one</em> for cubic crystals: $T=a\,I$, isotropic, even though the crystal is not (Problem 10). So a cubic crystal conducts heat equally well in every direction, but a hexagonal one (zinc, graphite, titanium) has conductivities $\kappa_\perp\neq\kappa_\parallel$ along and across the unique axis, and thermal expansion $\alpha_\perp\ne\alpha_\parallel$, which is why such materials develop internal stresses on heating.</p>
             <p>An important special case is inversion, $Q=-I$. A tensor of odd rank $n$ changes sign, $T'=(-1)^nT$. In a crystal with a centre of symmetry, invariance demands $T=-T$, so $T=0$: <strong>odd-rank tensors vanish in centrosymmetric crystals</strong>. The piezoelectric tensor $d_{ijk}$ (rank 3), which links stress to polarisation, is therefore zero in Si, NaCl and every other centrosymmetric structure, and non-zero in quartz, GaAs or ZnO (Problem 11). Even-rank tensors (conductivity, stiffness) are unaffected by inversion.</p>
 
-            <h2 id="summary-m6">8. How the pieces fit together<a class="anchor" href="#summary-m6" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.1: symmetry forces a cubic conductivity to be a scalar</strong>
+                <p class="given">Show that a symmetric second-rank tensor property $\kappa_{ij}$ of a cubic crystal is isotropic.</p>
+                <p>A fourfold rotation about $z$ is a symmetry operation: $Q=\begin{pmatrix}0&amp;1&amp;0\\-1&amp;0&amp;0\\0&amp;0&amp;1\end{pmatrix}$. Invariance $\kappa=Q\kappa Q^T$ gives, component by component, $\kappa_{xx}=\kappa_{yy}$; $\kappa_{xy}=-\kappa_{xy}\Rightarrow\kappa_{xy}=0$; and $\kappa_{xz}=\kappa_{yz}=-\kappa_{xz}\Rightarrow\kappa_{xz}=\kappa_{yz}=0$. The same argument about $x$ gives $\kappa_{yy}=\kappa_{zz}$. Hence $\kappa=\kappa_0I$: cubic crystals conduct heat and expand identically in all directions even though their stiffness is anisotropic (rank 4 allows three constants, rank 2 allows one). Uniaxial crystals (tetragonal, hexagonal) keep two, $\kappa_\perp=\kappa_{xx}$ and $\kappa_\parallel=\kappa_{zz}$.</p>
+            </div>
+
+            <h2 id="summary-m6">Summary of the unit<a class="anchor" href="#summary-m6" aria-label="Link to this section">#</a></h2>
             <p>A tensor is a direction-dependent linear response described by components that transform under rotation. Stress and strain are symmetric second-rank tensors whose eigen-decompositions give principal values and invariants; the physics of yield and failure lives in those invariants. Hooke&rsquo;s law connects them through a fourth-rank stiffness tensor, compactly handled as a positive-definite $6\times6$ matrix, whose number of independent entries is fixed by crystal symmetry. With the tools of vectors, matrices and tensors in place, we turn to <em>time</em>: ordinary differential equations describe how any of these quantities evolve.</p>
 
             <!-- takeaways:start -->
@@ -197,7 +252,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -342,7 +397,40 @@
             </details>
             </div>
 
-            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q6-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Index notation</span></div>
+            <p>Simplify $\delta_{ij}\delta_{ij}$, $\varepsilon_{ijk}\delta_{jk}$ and $\varepsilon_{ijk}\varepsilon_{ijk}$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\delta_{ij}\delta_{ij}=\delta_{ii}=3$. $\varepsilon_{ijk}\delta_{jk}=\varepsilon_{ijj}=0$ (symmetric against antisymmetric). $\varepsilon_{ijk}\varepsilon_{ijk}=\delta_{jj}\delta_{kk}-\delta_{jk}\delta_{kj}=9-3=6$, the six nonzero permutations.</p></details>
+            </div>
+            <div class="problem" id="q6-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Mohr</span></div>
+            <p>Find the principal stresses and maximum in-plane shear for $\sigma_x=80$, $\sigma_y=20$, $\tau_{xy}=40$ MPa.</p>
+            <details class="solution"><summary>Solution</summary><p>Centre $50$, $R=50$: principal stresses $100$ and $0$ MPa, $\tau_\mathrm{max}=50$ MPa, at $\theta_p=26.6^\circ$ (Example 3.2).</p></details>
+            </div>
+            <div class="problem" id="q6-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Three dimensions</span></div>
+            <p>For $\sigma=\begin{pmatrix}100&amp;50&amp;0\\50&amp;0&amp;0\\0&amp;0&amp;-20\end{pmatrix}$ MPa find the principal stresses, the mean stress and the Tresca stress.</p>
+            <details class="solution"><summary>Solution</summary><p>The $z$ axis is principal with $-20$. The $2\times2$ block has eigenvalues $50\pm\sqrt{50^2+50^2}=120.7,\,-20.7$. So $\sigma=(120.7,-20,-20.7)$ MPa. Mean stress $=\tfrac13\operatorname{tr}\sigma=80/3=26.7$ MPa. Tresca: $120.7-(-20.7)=141.4$ MPa. von Mises is $141.07$ MPa; they are close because the state is nearly pure shear plus little pressure.</p></details>
+            </div>
+            <div class="problem" id="q6-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Strain</span></div>
+            <p>For $u_x=0.001x+0.003y$, $u_y=0$ find $\varepsilon_{xy}$, the rotation and $\Delta V/V$ (2D).</p>
+            <details class="solution"><summary>Solution</summary><p>$\varepsilon_{xy}=\tfrac12(0.003+0)=0.0015$; the rotation $\omega_{xy}=\tfrac12(0.003-0)=0.0015$ rad; $\Delta A/A=\varepsilon_{xx}+\varepsilon_{yy}=0.001$.</p></details>
+            </div>
+            <div class="problem" id="q6-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Elastic constants</span></div>
+            <p>A material has $E=70$ GPa and $\nu=0.33$. Find $G$ and $K$, and check $K&gt;0$.</p>
+            <details class="solution"><summary>Solution</summary><p>$G=70/(2\times1.33)=26.3$ GPa; $K=70/[3(1-0.66)]=68.6$ GPa; both positive (aluminium-like).</p></details>
+            </div>
+            <div class="problem" id="q6-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Symmetry</span></div>
+            <p>Why is the piezoelectric tensor zero in a crystal with a centre of symmetry, but the stiffness tensor is not?</p>
+            <details class="solution"><summary>Solution</summary><p>Inversion is $Q=-I$ and a rank-$n$ tensor picks up $(-1)^n$. For the rank-3 piezoelectric tensor $d=-d$, so $d=0$. For the rank-4 stiffness $C=(+1)C$, which gives no constraint.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Nye, J. F., <em>Physical Properties of Crystals</em>, Oxford University Press: the classic on tensor properties and crystal symmetry.</li>
                 <li>Malvern, L. E., <em>Introduction to the Mechanics of a Continuous Medium</em>, Prentice Hall: stress, strain and finite deformation.</li>
@@ -370,7 +458,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=296a61e3"></script>
+    <script src="../assets/topics.js?v=00ba2e79"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

@@ -36,17 +36,18 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#classify">1. Types of PDE</a></li>
-                <li><a href="#bcs">2. Initial and boundary conditions</a></li>
-                <li><a href="#diffusion">3. Diffusion in infinite and semi-infinite bodies</a></li>
-                <li><a href="#separation">4. Separation of variables on a finite domain</a></li>
-                <li><a href="#wave">5. Waves</a></li>
-                <li><a href="#laplace">6. Laplace and Poisson equations</a></li>
-                <li><a href="#numerics">7. Finite differences and stability</a></li>
-                <li><a href="#nonlinear">8. A nonlinear example: spinodal decomposition</a></li>
-                <li><a href="#summary-m9">9. How the pieces fit together</a></li>
-                <li><a href="#check">10. Problems</a></li>
-                <li><a href="#refs">11. References and further reading</a></li>
+                <li><a href="#classify">Lecture 1. Types of PDE</a></li>
+                <li><a href="#bcs">Lecture 2. Initial and boundary conditions</a></li>
+                <li><a href="#diffusion">Lecture 3. Diffusion in infinite and semi-infinite bodies</a></li>
+                <li><a href="#separation">Lecture 4. Separation of variables on a finite domain</a></li>
+                <li><a href="#wave">Lecture 5. Waves</a></li>
+                <li><a href="#laplace">Lecture 6. Laplace and Poisson equations</a></li>
+                <li><a href="#numerics">Lecture 7. Finite differences and stability</a></li>
+                <li><a href="#nonlinear">Lecture 8. A nonlinear example: spinodal decomposition</a></li>
+                <li><a href="#summary-m9">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -60,7 +61,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 26 min</dd></div>
+<div><dt>Reading time</dt><dd>about 31 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="vector-calculus.html">M3. Vector calculus</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a><br><a href="fourier-analysis.html">M8. Fourier analysis</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -79,12 +80,16 @@
                 <strong>You need:</strong> <a href="vector-calculus.html">M3. Vector calculus</a>, <a href="ordinary-differential-equations.html">M7. ODEs</a> and <a href="fourier-analysis.html">M8. Fourier analysis</a>.
             </div>
 
-            <h2 id="classify">1. Types of PDE<a class="anchor" href="#classify" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 8 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 3 (similarity solutions) and Lecture 4 (separation of variables) are the two analytical workhorses; Lecture 7 explains why simulations are expensive. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="classify">Lecture 1. Types of PDE<a class="anchor" href="#classify" aria-label="Link to this section">#</a></h2>
             <p>A PDE relates a function of several variables, such as $c(x,t)$ or $\phi(x,y,z)$, to its partial derivatives. The general linear second-order equation in two variables,
             $$A\,u_{xx}+B\,u_{xy}+C\,u_{yy}+(\text{lower-order terms})=0,$$
             is classified by the sign of the discriminant $B^2-4AC$, exactly as conic sections are (ellipse, parabola, hyperbola):</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="1. Types of PDE (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 1. Types of PDE (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Type</th><th>Condition</th><th>Prototype</th><th>Character and materials examples</th></tr></thead>
                 <tbody>
                     <tr><td>Elliptic</td><td>$B^2-4AC&lt;0$</td><td>Laplace $\nabla^2u=0$; Poisson $\nabla^2u=f$</td><td>Equilibrium, no time: steady heat flow, electrostatics, static elasticity, steady diffusion. Solution at a point depends on <em>all</em> the boundary.</td></tr>
@@ -94,10 +99,16 @@
             </table></div>
             </div>
             <p>For example $u_{xx}+2u_{xy}+5u_{yy}=0$ has $B^2-4AC=4-20&lt;0$ (elliptic), and $u_{tt}=c^2u_{xx}$, written with $x\to$ first variable, has $A=-c^2$, $C=1$, so $-4AC=4c^2&gt;0$ (hyperbolic). Nonlinear and higher-order equations are often described by analogy: Cahn&ndash;Hilliard is a fourth-order parabolic equation, and the Schr&ouml;dinger equation $i\hbar\psi_t=-\tfrac{\hbar^2}{2m}\psi_{xx}+V\psi$ is parabolic-like with an imaginary coefficient, so it propagates waves while conserving probability.</p>
-            <h2 id="bcs">2. Initial and boundary conditions<a class="anchor" href="#bcs" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 1.1: classifying second-order equations</strong>
+                <p class="given">Classify (a) $3u_{xx}+2u_{xy}+u_{yy}=0$, (b) $u_{xx}+4u_{xy}+4u_{yy}=0$, (c) $u_{xx}+6u_{xy}+u_{yy}=0$.</p>
+                <p>(a) $B^2-4AC=4-12=-8&lt;0$: elliptic (like a steady-state problem). (b) $16-16=0$: parabolic. (c) $36-4=32&gt;0$: hyperbolic, with real characteristic directions along which signals travel. The discriminant is unchanged by rotating the axes, so the type is a property of the equation and not of the coordinates. Note that a mixed equation can change type from place to place if $A,B,C$ depend on position.</p>
+            </div>
+
+            <h2 id="bcs">Lecture 2. Initial and boundary conditions<a class="anchor" href="#bcs" aria-label="Link to this section">#</a></h2>
             <p>A PDE alone has many solutions; physical problems specify enough data to select one. The problem is <strong>well-posed</strong> (Hadamard) if a solution exists, is unique and depends continuously on the data. Diffusion needs one initial condition $c(x,0)$ and a condition at each boundary; waves need $u$ and $u_t$ initially; elliptic problems need only boundary data. The common boundary conditions on a boundary with outward normal $\mathbf n$:</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="2. Initial and boundary conditions (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 2. Initial and boundary conditions (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Name</th><th>Condition</th><th>Physical meaning</th></tr></thead>
                 <tbody>
                     <tr><td>Dirichlet</td><td>$u=g$</td><td>fixed value: a surface held at fixed temperature, or in equilibrium with a gas ($c_s$ set by the chemical potential)</td></tr>
@@ -109,7 +120,13 @@
             </div>
             <p>Dimensionless groups say which process controls. The <strong>Fourier number</strong> $\mathrm{Fo}=Dt/L^2$ compares elapsed time with the diffusion time across length $L$ (equilibrium is reached when $\mathrm{Fo}\gtrsim1$). The <strong>Biot number</strong> $\mathrm{Bi}=hL/\kappa$ compares the resistance of the body ($L/\kappa$) with the resistance of the surface exchange ($1/h$): for $\mathrm{Bi}\ll1$ the interior is uniform and the body cools as a lumped object with $T-T_\infty\propto e^{-t/\tau}$, $\tau=\rho c_pV/(hA)$ (Problem 6); for $\mathrm{Bi}\gg1$ the surface is effectively at $T_\infty$ and conduction inside controls.</p>
 
-            <h2 id="diffusion">3. Diffusion in infinite and semi-infinite bodies<a class="anchor" href="#diffusion" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.1: which time scale matters?</strong>
+                <p class="given">(a) How long must a steel plate of half-thickness $L=1$ mm be held for carbon with $D=2\times10^{-11}\ \mathrm{m^2/s}$ to equilibrate? (b) A steel plate of half-thickness $5$ mm ($\kappa=20$ W/m&nbsp;K, $\rho c=4\times10^6$ J/m$^3$K) cools in air with $h=50$ W/m$^2$K. Is its temperature uniform?</p>
+                <p>(a) $L^2/D=10^{-6}/(2\times10^{-11})=5\times10^4$ s $=13.9$ h; equilibrium ($\mathrm{Fo}\approx0.5$) takes about $7$ h. (b) $\mathrm{Bi}=hL/\kappa=50\times0.005/20=0.0125\ll0.1$, so the surface is the bottleneck, not the body: the plate stays almost isothermal and cools like a lumped object with time constant $\tau=\rho cL/h=4\times10^6\times0.005/50=400$ s (about $20$ min to lose $95\%$ of its excess temperature). Had it been immersed in water ($h\sim3000$), $\mathrm{Bi}=0.75$ and gradients inside the plate would matter.</p>
+            </div>
+
+            <h2 id="diffusion">Lecture 3. Diffusion in infinite and semi-infinite bodies<a class="anchor" href="#diffusion" aria-label="Link to this section">#</a></h2>
             <h3 id="similarity">Similarity solutions<a class="anchor" href="#similarity" aria-label="Link to this section">#</a></h3>
             <p>The equation $c_t=Dc_{xx}$ has no intrinsic length scale in an unbounded domain, so the solution can depend on $x$ and $t$ only through the combination $\eta=x/\sqrt{4Dt}$. Putting $c=f(\eta)$ reduces the PDE to an ODE and gives the solutions of the most common diffusion problems.</p>
             <div class="example">
@@ -128,7 +145,13 @@
             <div class="demo" data-demo="erfprofile"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="separation">4. Separation of variables on a finite domain<a class="anchor" href="#separation" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.3: carburising depth</strong>
+                <p class="given">Steel with $c_0=0.2$ wt% C is carburised at a surface concentration $c_s=1.0$ wt% for 8 h with $D=1.2\times10^{-11}\ \mathrm{m^2/s}$. How deep is the $0.6$ wt% contour? How long for it to reach twice this depth?</p>
+                <p>$\operatorname{erf}\eta=\dfrac{c_s-c}{c_s-c_0}=\dfrac{0.4}{0.8}=0.5$, so $\eta=0.4769$. With $t=28\,800$ s, $\sqrt{Dt}=\sqrt{3.456\times10^{-7}}=5.88\times10^{-4}$ m, so $x=2\eta\sqrt{Dt}=0.561$ mm. Because $x\propto\sqrt t$, doubling the depth takes $4\times8=32$ h: diffusion is slow and deep case-hardening is expensive. Raising the temperature does better: $D$ roughly doubles for each $\sim40$&ndash;$50$ K near $925^\circ$C.</p>
+            </div>
+
+            <h2 id="separation">Lecture 4. Separation of variables on a finite domain<a class="anchor" href="#separation" aria-label="Link to this section">#</a></h2>
             <p>For a bounded domain the profile has a length scale $L$ and similarity no longer works. The method of <strong>separation of variables</strong> looks for solutions $u(x,t)=X(x)T(t)$, which turns a linear PDE into two ODEs linked by a separation constant, and then superposes them.</p>
             <div class="example">
                 <strong>Worked example 4.1: a slab with fixed surfaces</strong>
@@ -141,7 +164,17 @@
             </div>
             <p>Other boundary conditions only change the mode functions. Insulated faces ($c_x=0$) give cosines, $\cos(n\pi x/L)$, with $n=0$ the conserved mean; mixed Dirichlet/Neumann conditions give $\sin\bigl((n+\tfrac12)\pi x/L\bigr)$; convective (Robin) conditions give modes whose wavenumbers solve a transcendental equation such as $\tan(\alpha L)=\dots$ (found numerically). In every case the method works because the modes are an orthogonal basis (<a href="eigenvalues-and-decompositions.html">M5</a>, applied to the operator $-\partial_x^2$): the PDE becomes independent ODEs, one per mode. Inhomogeneous boundary data are handled by subtracting a steady-state solution first.</p>
 
-            <h2 id="wave">5. Waves<a class="anchor" href="#wave" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why the separation constant is positive</strong>
+            <p>For $X''=-\lambda X$ with $X(0)=X(L)=0$, multiply by $X$ and integrate: $\lambda\int_0^LX^2\mathrm dx=-\int_0^LXX''\mathrm dx=\int_0^LX'^2\mathrm dx-[XX']_0^L=\int_0^LX'^2\mathrm dx&gt;0$ for any nontrivial $X$. So $\lambda&gt;0$, and the solutions are sines, not exponentials. Different modes are orthogonal, $\int_0^L\sin\tfrac{n\pi x}L\sin\tfrac{m\pi x}L\mathrm dx=\tfrac L2\delta_{nm}$, which is what gives the coefficient formula $b_n=\tfrac2L\int c_0\sin\tfrac{n\pi x}L\mathrm dx$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: degassing time of a slab</strong>
+                <p class="given">A slab of thickness $L=1$ mm holds uniform hydrogen and degasses at both faces with $D=10^{-9}\ \mathrm{m^2/s}$. How long until 99% has gone?</p>
+                <p>The slowest time constant is $\tau_1=L^2/(\pi^2D)=10^{-6}/(9.87\times10^{-9})=101$ s. The retained fraction is $\tfrac8{\pi^2}e^{-t/\tau_1}$ (higher modes are negligible after the first few seconds). Setting it to $0.01$: $t=\tau_1\ln\bigl(\tfrac{800}{\pi^2}\bigr)=101\times4.40=445$ s, about $7.4$ min. Because $\tau\propto L^2$, a slab ten times thicker (1 cm) takes $100$ times longer, nearly 12 h: the practical reason hydrogen bake-out of thick steel sections is so slow.</p>
+            </div>
+
+            <h2 id="wave">Lecture 5. Waves<a class="anchor" href="#wave" aria-label="Link to this section">#</a></h2>
             <p>The one-dimensional wave equation $u_{tt}=c^2u_{xx}$ (a string, or a longitudinal elastic wave in a rod, with $u$ the displacement) is solved by <strong>d&rsquo;Alembert&rsquo;s formula</strong>: any function of the form
             $$u(x,t)=f(x-ct)+g(x+ct)$$
             solves it, because substituting $\xi=x-ct$ shows $u_{tt}=c^2f''=c^2u_{xx}$. The first term is a profile moving right at speed $c$ without changing shape, the second a profile moving left. Initial data $u(x,0)=\phi$, $u_t(x,0)=\psi$ fix $f$ and $g$. A pulse arriving at a fixed end reflects with a sign change; at a free end it reflects without. For a plane wave $u=e^{i(kx-\omega t)}$ the equation gives the linear dispersion $\omega=ck$, the long-wavelength limit of the phonon dispersion derived in Problem 5.9 of <a href="eigenvalues-and-decompositions.html">M5</a>.</p>
@@ -150,7 +183,13 @@
             <p>The wave equation conserves energy and transmits sharp features; the diffusion equation destroys them. Numerical schemes for waves are limited by the <strong>CFL condition</strong> $c\,\Delta t\le\Delta x$ (information must not travel more than one cell per step); schemes for diffusion are limited by $D\,\Delta t\le\tfrac12\Delta x^2$ (section 7). Using a diffusion scheme on a wave problem, or the reverse, gives spurious damping or instability.</p>
             </div>
 
-            <h2 id="laplace">6. Laplace and Poisson equations<a class="anchor" href="#laplace" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.1: resonant ultrasound of a bar</strong>
+                <p class="given">A steel bar ($E=200$ GPa, $\rho=7850\ \mathrm{kg/m^3}$) is $L=0.1$ m long and free at both ends. Find the wave speed and the first two longitudinal resonances.</p>
+                <p>$c=\sqrt{E/\rho}=\sqrt{200\times10^9/7850}=5048$ m/s. For free&ndash;free ends $f_n=nc/(2L)$: $f_1=25.2$ kHz, $f_2=50.5$ kHz. A pulse would cross the bar in $L/c=19.8\ \mu$s. Measuring the resonance frequencies of a sample of known size and mass gives the elastic constants, since $E=\rho(2Lf_1)^2$; this is the principle of resonant ultrasound spectroscopy used to obtain the $C_{ij}$ of <a href="tensors-stress-and-strain.html">M6</a>, and a shift in $f_n$ with temperature tracks phase transitions.</p>
+            </div>
+
+            <h2 id="laplace">Lecture 6. Laplace and Poisson equations<a class="anchor" href="#laplace" aria-label="Link to this section">#</a></h2>
             <p>Steady states with no time dependence satisfy the <strong>Laplace equation</strong> $\nabla^2u=0$ (no sources) or the <strong>Poisson equation</strong> $\nabla^2u=-s$ (with a source density $s$): $\nabla^2T=-q/\kappa$ for heat generation $q$, $\nabla^2\phi=-\rho/\varepsilon$ for electrostatics. Solutions of Laplace&rsquo;s equation (harmonic functions) obey the <strong>maximum principle</strong>: they take their extreme values on the boundary and nowhere inside (<a href="vector-calculus.html">M3</a>, Problem 3.8), and the solution with given Dirichlet data is unique. The solutions with spherical or cylindrical symmetry were found in M3: $A+B/r$ and $A+B\ln r$.</p>
             <div class="example">
                 <strong>Worked example 6.1: Laplace&rsquo;s equation in a rectangle</strong>
@@ -163,7 +202,15 @@
             <p>In an electrolyte or a metal, mobile charges rearrange to screen a point charge, and the linearised Poisson&ndash;Boltzmann equation reads $\nabla^2\phi=\kappa^2\phi$. For a radial field set $\phi=u(r)/r$: the spherical Laplacian gives $u''=\kappa^2u$, so $u=e^{-\kappa r}$ and $\phi=\dfrac{q}{4\pi\varepsilon r}e^{-\kappa r}$, the screened (Debye&ndash;H&uuml;ckel, or Yukawa) potential. The screening length $1/\kappa$ is $0.96$ nm in a $0.1$ M monovalent electrolyte at room temperature. The same equation with $\kappa=1/\ell$ is the Thomas&ndash;Fermi screening of impurities in metals and the reaction&ndash;diffusion profile of <a href="ordinary-differential-equations.html">M7</a>, Example 4.2 (Problem 10).</p>
             </div>
 
-            <h2 id="numerics">7. Finite differences and stability<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.2: Joule heating of a plate</strong>
+                <p class="given">A slab $-L&lt;x&lt;L$ with $L=5$ mm and $\kappa=20$ W/m&nbsp;K carries a heat source $q=10^6$ W/m$^3$ and both faces are held at $T_0$. Find the steady temperature.</p>
+                <p>The Poisson equation is $\kappa T''=-q$ with $T(\pm L)=T_0$. Integrating twice, $T=-\dfrac{q}{2\kappa}x^2+C_1x+C_2$; symmetry gives $C_1=0$, and the boundary condition gives $C_2=T_0+\dfrac{qL^2}{2\kappa}$. So
+                $$T(x)=T_0+\frac{q}{2\kappa}\,(L^2-x^2),$$
+                a parabola with its maximum at the centre: $T_\mathrm{max}-T_0=\dfrac{qL^2}{2\kappa}=\dfrac{10^6\times25\times10^{-6}}{40}=0.625$ K. The maximum principle of the Laplace equation is violated only because of the source term (the source raises the interior above the boundary).</p>
+            </div>
+
+            <h2 id="numerics">Lecture 7. Finite differences and stability<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
             <p>Replace $c(x_j,t_n)$ by $c_j^n$ on a grid with spacing $\Delta x$ and time step $\Delta t$, and the derivatives by the differences of <a href="calculus-single-variable.html">M1</a>. For diffusion, forward Euler in time and the central three-point stencil in space (the <strong>FTCS</strong> scheme) give
             $$c_j^{n+1}=c_j^n+r\,\bigl(c_{j+1}^n-2c_j^n+c_{j-1}^n\bigr),\qquad r=\frac{D\,\Delta t}{\Delta x^2}.$$
             It is cheap and simple, with error $O(\Delta t)+O(\Delta x^2)$, but it does not work for every $\Delta t$.</p>
@@ -179,7 +226,13 @@
 
             <p>The restriction $\Delta t\le\Delta x^2/(2D)$ is severe: refining the grid by $10$ costs $100$ times more steps in time and $10$ times more points per dimension. <strong>Implicit</strong> schemes avoid it. In the backward-Euler scheme, $c_j^{n+1}-r(c_{j+1}^{n+1}-2c_j^{n+1}+c_{j-1}^{n+1})=c_j^n$, one solves a tridiagonal linear system at each step (cost $O(N)$ with the Thomas algorithm; <a href="linear-algebra-foundations.html">M4</a>), and $g=1/(1+4r\sin^2(\theta/2))$ satisfies $|g|\le1$ for all $r$. The Crank&ndash;Nicolson scheme averages the two and is second order in time. Spectral (Fourier) and finite element discretisations are discussed in the corresponding topics.</p>
 
-            <h2 id="nonlinear">8. A nonlinear example: spinodal decomposition<a class="anchor" href="#nonlinear" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.2: the price of refining the grid</strong>
+                <p class="given">(a) Apply one FTCS step with $r=0.25$ to $c=(0,0,1,0,0)$. (b) For $D=10^{-9}\ \mathrm{m^2/s}$ find the largest stable $\Delta t$ for $\Delta x=0.1$ mm and $0.01$ mm.</p>
+                <p>(a) $c_2^{\,new}=1+0.25(0-2+0)=0.5$, $c_1^{\,new}=c_3^{\,new}=0.25$: $(0,0.25,0.5,0.25,0)$, total $1$ conserved and the spike has spread. (b) $\Delta t\le\Delta x^2/(2D)$: for $\Delta x=10^{-4}$ m, $\Delta t\le5$ s; for $\Delta x=10^{-5}$ m, $\Delta t\le0.05$ s. To simulate one hour that is $720$ against $72\,000$ steps; in three dimensions there are also $10^3$ times more grid points, so the refinement costs $10^5$ times more work. This is the argument for implicit time-stepping.</p>
+            </div>
+
+            <h2 id="nonlinear">Lecture 8. A nonlinear example: spinodal decomposition<a class="anchor" href="#nonlinear" aria-label="Link to this section">#</a></h2>
             <p>The <strong>Cahn&ndash;Hilliard equation</strong> governs phase separation in a binary alloy with composition $c(\mathbf r,t)$:
             $$\frac{\partial c}{\partial t}=\nabla\cdot\bigl(M\nabla\mu\bigr),\qquad\mu=f'(c)-\kappa\nabla^2c,$$
             where $f(c)$ is the homogeneous free-energy density, $\kappa$ the gradient-energy coefficient (penalising sharp interfaces), $M$ the mobility, and $\mu$ the chemical potential. This is the continuity equation of <a href="vector-calculus.html">M3</a> with a flux driven by $\nabla\mu$. In the miscibility gap $f''(c)&lt;0$ (the spinodal region), uniform composition is unstable. <strong>Linear stability analysis</strong> shows how: it is the PDE version of the fixed-point analysis of <a href="ordinary-differential-equations.html">M7</a>.</p>
@@ -197,7 +250,13 @@
 
             <p>Beyond the linear regime nonlinear terms saturate the growth, and the pattern coarsens; that is the domain of the numerical phase-field method (<a href="phase-field-modelling.html">Phase-field modelling</a>), whose time step, as above, must resolve $\sigma_m$ and satisfy a stability limit that, for a fourth-order operator, scales as $\Delta x^4$ for explicit schemes (so semi-implicit spectral schemes are the norm).</p>
 
-            <h2 id="summary-m9">9. How the pieces fit together<a class="anchor" href="#summary-m9" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 8.2: a spinodal in numbers</strong>
+                <p class="given">Take $f''=-8\times10^7\ \mathrm{J/m^3}$, $\kappa=10^{-10}\ \mathrm{J/m}$ and $M=10^{-26}\ \mathrm{m^5/(J\,s)}$. Find the fastest-growing wavelength, the cut-off wavelength and the growth time.</p>
+                <p>$k_m^2=|f''|/(2\kappa)=4\times10^{17}\ \mathrm{m^{-2}}$, $k_m=6.32\times10^8\ \mathrm{m^{-1}}$, so $\lambda_m=2\pi/k_m=9.9$ nm. The cut-off is $k_c^2=|f''|/\kappa=8\times10^{17}$, $\lambda_c=7.0$ nm: patterns finer than this decay. The maximum growth rate is $\sigma_m=M f''^2/(4\kappa)=0.16\ \mathrm s^{-1}$, so a fluctuation grows by $e^6\approx400$ in about $6/0.16=38$ s. (The effective diffusivity is $M f''=-8\times10^{-19}\ \mathrm{m^2/s}$, negative: the uphill diffusion.) The nm length scale and the time scale of seconds to minutes are typical of spinodal decomposition in alloys at a few hundred degrees Celsius.</p>
+            </div>
+
+            <h2 id="summary-m9">Summary of the unit<a class="anchor" href="#summary-m9" aria-label="Link to this section">#</a></h2>
             <p>PDEs are classified by their character, and the type dictates both the physics and the numerics. Diffusion in unbounded media is a similarity problem with $\sqrt{Dt}$ scaling; in finite bodies it is a Fourier problem whose slowest mode sets the time constant. Waves propagate along characteristics or ring as standing modes; steady states are harmonic and extremal on the boundary. Von Neumann analysis in Fourier space predicts which numerical schemes are stable, and the same linear analysis predicts when a nonlinear system, such as an alloy in its miscibility gap, will spontaneously form patterns. The next two modules provide the other half of simulation mathematics: probability and statistics for sampling and error bars, and variational methods, which lead to the weak forms of finite elements.</p>
 
             <!-- takeaways:start -->
@@ -212,7 +271,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -359,7 +418,40 @@
             </details>
             </div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q9-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Classification</span></div>
+            <p>Classify $u_{xx}+6u_{xy}+u_{yy}=0$ and $3u_{xx}+2u_{xy}+u_{yy}=0$.</p>
+            <details class="solution"><summary>Solution</summary><p>$B^2-4AC=36-4=32&gt;0$: hyperbolic. $4-12=-8&lt;0$: elliptic.</p></details>
+            </div>
+            <div class="problem" id="q9-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Similarity solution</span></div>
+            <p>In carburising with $D=10^{-11}\ \mathrm{m^2/s}$ for $1$ h, where is the contour with $\operatorname{erf}\eta=0.5$ ($\eta=0.477$)?</p>
+            <details class="solution"><summary>Solution</summary><p>$\sqrt{Dt}=\sqrt{3.6\times10^{-8}}=1.90\times10^{-4}$ m, so $x=2\eta\sqrt{Dt}=2(0.477)(0.190)=0.181$ mm. To double this depth requires four times as long.</p></details>
+            </div>
+            <div class="problem" id="q9-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Separation of variables</span></div>
+            <p>A slab of thickness $L=1$ mm with fixed zero surface concentration has $D=10^{-9}\ \mathrm{m^2/s}$. Give the time constant of the slowest mode.</p>
+            <details class="solution"><summary>Solution</summary><p>$\tau_1=L^2/(\pi^2D)=10^{-6}/(9.87\times10^{-9})=101$ s. A uniform start excites only odd modes, and mode $n$ decays $n^2$ times faster: the next one present is $n=3$ with $\tau_3=\tau_1/9=11$ s.</p></details>
+            </div>
+            <div class="problem" id="q9-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Waves</span></div>
+            <p>A steel bar of length $0.1$ m, free at both ends, with $c=5050$ m/s. Give the first two resonances.</p>
+            <details class="solution"><summary>Solution</summary><p>$f_n=nc/(2L)$: $25.3$ kHz and $50.5$ kHz.</p></details>
+            </div>
+            <div class="problem" id="q9-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Stability</span></div>
+            <p>FTCS with $D=10^{-9}\ \mathrm{m^2/s}$ and $\Delta x=0.2$ mm: what is the largest stable $\Delta t$? What happens at $\Delta t=30$ s?</p>
+            <details class="solution"><summary>Solution</summary><p>$\Delta t\le\Delta x^2/(2D)=4\times10^{-8}/(2\times10^{-9})=20$ s. At $30$ s, $r=0.75$ and the sawtooth mode has $g=1-4r=-2$: it doubles and flips sign every step.</p></details>
+            </div>
+            <div class="problem" id="q9-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Spinodal decomposition</span></div>
+            <p>For $f''=-8\times10^7\ \mathrm{J/m^3}$ and $\kappa=10^{-10}\ \mathrm{J/m}$ find $\lambda_m$.</p>
+            <details class="solution"><summary>Solution</summary><p>$k_m^2=|f''|/(2\kappa)=4\times10^{17}\ \mathrm{m^{-2}}$, so $\lambda_m=2\pi/k_m=9.9$ nm.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Crank, J., <em>The Mathematics of Diffusion</em>, Oxford University Press: the standard catalogue of diffusion solutions.</li>
                 <li>Carslaw, H. S. and Jaeger, J. C., <em>Conduction of Heat in Solids</em>, Oxford University Press.</li>
@@ -388,7 +480,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=296a61e3"></script>
+    <script src="../assets/topics.js?v=00ba2e79"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

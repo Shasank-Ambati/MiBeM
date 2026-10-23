@@ -36,14 +36,15 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#complex">1. Complex numbers and exponentials</a></li>
-                <li><a href="#series">2. Fourier series</a></li>
-                <li><a href="#transform">3. The Fourier transform</a></li>
-                <li><a href="#dft">4. The discrete Fourier transform and the FFT</a></li>
-                <li><a href="#recipspace">5. Reciprocal space, diffraction and Bloch waves</a></li>
-                <li><a href="#summary-m8">6. How the pieces fit together</a></li>
-                <li><a href="#check">7. Problems</a></li>
-                <li><a href="#refs">8. References and further reading</a></li>
+                <li><a href="#complex">Lecture 1. Complex numbers and exponentials</a></li>
+                <li><a href="#series">Lecture 2. Fourier series</a></li>
+                <li><a href="#transform">Lecture 3. The Fourier transform</a></li>
+                <li><a href="#dft">Lecture 4. The discrete Fourier transform and the FFT</a></li>
+                <li><a href="#recipspace">Lecture 5. Reciprocal space, diffraction and Bloch waves</a></li>
+                <li><a href="#summary-m8">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -57,7 +58,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 25 min</dd></div>
+<div><dt>Reading time</dt><dd>about 30 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a><br><a href="linear-algebra-foundations.html">M4. Linear algebra I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="partial-differential-equations.html">M9. PDEs</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -76,7 +77,11 @@
                 <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> (integrals, series) and <a href="linear-algebra-foundations.html">M4. Linear algebra I</a> (orthogonality, reciprocal lattice).
             </div>
 
-            <h2 id="complex">1. Complex numbers and exponentials<a class="anchor" href="#complex" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 5 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 3 (the transform) and Lecture 5 (diffraction) are the parts that return again and again. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="complex">Lecture 1. Complex numbers and exponentials<a class="anchor" href="#complex" aria-label="Link to this section">#</a></h2>
             <p>A complex number is $z=x+iy$ with $i^2=-1$; $x=\operatorname{Re}z$, $y=\operatorname{Im}z$. Its <strong>conjugate</strong> is $\bar z=x-iy$ and its <strong>modulus</strong> is $|z|=\sqrt{z\bar z}=\sqrt{x^2+y^2}$. In the complex plane it has a polar form $z=re^{i\theta}$, with $r=|z|$ and $\theta=\arg z$. The key link is
             $$e^{i\theta}=\cos\theta+i\sin\theta\qquad\text{(Euler&rsquo;s formula),}$$
             which can be checked by comparing the Taylor series of $e^{i\theta}$, $\cos\theta$ and $\sin\theta$ (<a href="calculus-single-variable.html">M1</a>). Consequences:</p>
@@ -88,7 +93,17 @@
             </ul>
             <p>The function $e^{ikx}=\cos kx+i\sin kx$ is a <strong>plane wave</strong>: with time dependence, $e^{i(kx-\omega t)}$ travels to the right at speed $\omega/k$. A real oscillation $A\cos(\omega t+\varphi)$ is the real part of the <strong>phasor</strong> $\hat Ae^{i\omega t}$ with complex amplitude $\hat A=Ae^{i\varphi}$ carrying both size and phase; the driven oscillator of <a href="ordinary-differential-equations.html">M7</a> is solved in two lines this way.</p>
 
-            <h2 id="series">2. Fourier series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why the roots of unity sum to zero</strong>
+            <p>For $n$ not a multiple of $N$, put $r=e^{2\pi in/N}\ne1$. The sum is a geometric series, $\sum_{m=0}^{N-1}r^m=\dfrac{1-r^N}{1-r}$, and $r^N=e^{2\pi in}=1$, so the numerator vanishes and the sum is $0$. If $n$ is a multiple of $N$, every term equals $1$ and the sum is $N$. This single fact makes the DFT invertible (Lecture 4).</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.1: powers, roots and trigonometry</strong>
+                <p class="given">(a) Compute $(1+i)^8$. (b) Find the cube roots of $-8$. (c) Express $\cos^3\theta$ in terms of $\cos\theta$ and $\cos3\theta$.</p>
+                <p>(a) $1+i=\sqrt2\,e^{i\pi/4}$, so $(1+i)^8=(\sqrt2)^8e^{2\pi i}=16$. (b) $-8=8e^{i\pi}$, so the roots are $2e^{i(\pi+2\pi m)/3}$ for $m=0,1,2$: $2e^{i\pi/3}=1+i\sqrt3$, $2e^{i\pi}=-2$ and $2e^{-i\pi/3}=1-i\sqrt3$, equally spaced on a circle of radius $2$. (c) $\cos^3\theta=\tfrac18\bigl(e^{i\theta}+e^{-i\theta}\bigr)^3=\tfrac18\bigl(e^{3i\theta}+3e^{i\theta}+3e^{-i\theta}+e^{-3i\theta}\bigr)=\tfrac14\cos3\theta+\tfrac34\cos\theta$. Check at $\theta=0$: $1=\tfrac14+\tfrac34$ &check;. This is how a cubic nonlinearity creates a third harmonic.</p>
+            </div>
+
+            <h2 id="series">Lecture 2. Fourier series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
             <h3 id="orth">Orthogonality<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h3>
             <p>Let $f(x)$ have period $L$ and define $k_n=2\pi n/L$. The functions $e^{ik_nx}$ are <strong>orthogonal</strong> over one period:
             $$\frac1L\int_0^Le^{i(k_n-k_m)x}\,\mathrm dx=\delta_{nm},$$
@@ -133,12 +148,20 @@
             <div class="demo" data-demo="fourier"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="transform">3. The Fourier transform<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.3: the triangle wave and how fast the coefficients decay</strong>
+                <p class="given">Expand $f(x)=|x|$ on $(-\pi,\pi)$ (period $2\pi$) and compare the decay with the square wave.</p>
+                <p>$f$ is even, so only cosines: $a_0/2=\tfrac1\pi\int_0^\pi x\,\allowbreak \mathrm dx=\tfrac\pi2$ and $a_n=\tfrac2\pi\int_0^\pi x\cos nx\,\allowbreak \mathrm dx=\tfrac2{\pi n^2}\bigl[(-1)^n-1\bigr]$, which is $-\dfrac4{\pi n^2}$ for odd $n$ and $0$ for even $n$:
+                $$|x|=\frac\pi2-\frac4\pi\Bigl(\cos x+\frac{\cos3x}{9}+\frac{\cos5x}{25}+\cdots\Bigr).$$
+                Setting $x=0$ gives $\sum_{m\ge0}\dfrac1{(2m+1)^2}=\dfrac{\pi^2}8$. The coefficients fall as $1/n^2$ (the periodic extension is continuous with only a kink), against $1/n$ for the square wave (a jump). With only the $n=1$ term, the approximation at $x=0$ is $\tfrac\pi2-\tfrac4\pi=0.30$ against the true value $0$, and with $n=1,3$: $0.30-0.14=0.16$ &mdash; fast convergence and no Gibbs overshoot, because the function is continuous.</p>
+            </div>
+
+            <h2 id="transform">Lecture 3. The Fourier transform<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
             <p>Let the period $L\to\infty$: the spacing of the wavenumbers $k_n$ goes to zero, the sum becomes an integral, and a non-periodic function can be written as a continuous superposition of plane waves. With the convention used here,
             $$F(k)=\int_{-\infty}^{\infty}f(x)\,e^{-ikx}\,\mathrm dx,\qquad f(x)=\frac1{2\pi}\int_{-\infty}^{\infty}F(k)\,e^{ikx}\,\mathrm dk .$$
             $F(k)$ is the amplitude of the plane wave of wavenumber $k$ in $f$. (Other books move the $2\pi$ or use $e^{2\pi i\nu x}$; always check which convention a code or paper uses.) The properties that make the transform so useful:</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="3. The Fourier transform (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. The Fourier transform (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Property</th><th>Real space</th><th>Fourier space</th></tr></thead>
                 <tbody>
                     <tr><td>Linearity</td><td>$af+bg$</td><td>$aF+bG$</td></tr>
@@ -180,7 +203,18 @@
             <p>A cast alloy has composition varying sinusoidally with the dendrite spacing $\lambda$, $c=\bar c+A\cos(2\pi x/\lambda)$. In Fourier space only one mode is present, $k=2\pi/\lambda$, so $c=\bar c+Ae^{-t/\tau}\cos kx$ with $\tau=1/(Dk^2)=\lambda^2/(4\pi^2D)$: the time for a homogenising heat treatment grows as the <em>square</em> of the segregation wavelength (Problem 7). Real microsegregation contains many wavelengths, each decaying at its own rate: the longest persists longest.</p>
             </div>
 
-            <h2 id="dft">4. The discrete Fourier transform and the FFT<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Two proofs from the definition</strong>
+            <p><em>Derivative rule.</em> Integrate by parts, $\int f'(x)e^{-ikx}\mathrm dx=\bigl[f e^{-ikx}\bigr]_{-\infty}^{\infty}+ik\int fe^{-ikx}\mathrm dx=ik\,\allowbreak F(k)$, since $f\to0$ at infinity. Applied twice, $\nabla^2\to-k^2$.</p>
+            <p><em>Convolution theorem.</em> $\int\!\!\int f(x')g(x-x')e^{-ikx}\mathrm dx'\mathrm dx$: substitute $u=x-x'$ so that $e^{-ikx}=e^{-ikx'}e^{-iku}$. The double integral factorises into $\int f(x')e^{-ikx'}\mathrm dx'\times\int g(u)e^{-iku}\mathrm du=F(k)G(k)$. Convolution in real space is therefore multiplication in Fourier space; this is why a diffusing profile is a Gaussian-filtered copy of the initial one, and why a measured diffraction peak is the true peak convolved with the instrument response.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.1: a finite crystal and a correlation length</strong>
+                <p class="given">(a) A slab of scatterers fills $|x|&lt;a/2$ with $a=10$ nm. Where is the first zero of its transform? (b) A structure has correlations $e^{-|x|/\xi}$ with $\xi=5$ nm. Find the width of its line in $k$.</p>
+                <p>(a) $F(k)=2\sin(ka/2)/k$ vanishes first when $ka/2=\pi$, i.e. $k=2\pi/a=0.628\ \mathrm{nm^{-1}}$. The central peak therefore has a full width $\approx4\pi/a$ (between the first zeros) and the width of a Bragg peak in $k$ scales as $1/(\text{crystal size})$: this is the Scherrer broadening. (b) The transform is Lorentzian, $F=2\xi/(1+\xi^2k^2)$. It falls to half its peak at $\xi k=1$, so the half-width is $1/\xi=0.2\ \mathrm{nm^{-1}}$ and the full width $0.4\ \mathrm{nm^{-1}}$. A shorter correlation length means a broader line.</p>
+            </div>
+
+            <h2 id="dft">Lecture 4. The discrete Fourier transform and the FFT<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h2>
             <p>Computers handle a function only as $N$ samples $f_n=f(n\Delta)$, $n=0,\ldots,N-1$, at spacing $\Delta$ over a length $L=N\Delta$ (treated as periodic). The <strong>discrete Fourier transform</strong> (DFT) is
             $$X_k=\sum_{n=0}^{N-1}f_n\,e^{-2\pi ikn/N},\qquad f_n=\frac1N\sum_{k=0}^{N-1}X_k\,e^{2\pi ikn/N},$$
             the exact finite analogue of the Fourier series, and the inversion works because of the roots-of-unity sum of section 1. Parseval becomes $\sum|f_n|^2=\tfrac1N\sum|X_k|^2$. The index $k$ corresponds to the wavenumber $2\pi k/L$ (frequencies above $N/2$ are the negative ones, $k\to k-N$). The direct sum costs $O(N^2)$ operations; the <strong>fast Fourier transform</strong> (FFT) of Cooley and Tukey exploits the symmetry of the roots of unity (splitting even and odd samples recursively) to compute it in $O(N\log N)$, which turns a $10^6$-point transform from $10^{12}$ operations into $2\times10^7$. In three dimensions a grid of $n^3$ points is transformed in $O(n^3\log n)$ by one-dimensional FFTs along each axis.</p>
@@ -199,7 +233,13 @@
             <h3 id="spectral">Spectral differentiation<a class="anchor" href="#spectral" aria-label="Link to this section">#</a></h3>
             <p>Derivatives are exact and trivial in Fourier space, so a periodic derivative is computed as: transform, multiply by $ik$, transform back. For smooth periodic functions the error decreases faster than any power of $\Delta$ (&ldquo;spectral accuracy&rdquo;), whereas a finite difference has $O(\Delta^2)$ error. The effect of finite differences is visible in Fourier space: the three-point stencil $(f_{j+1}-2f_j+f_{j-1})/\Delta^2$ acting on $e^{ikx}$ returns $-\tfrac{4}{\Delta^2}\sin^2\tfrac{k\Delta}2\,\allowbreak e^{ikx}$ instead of $-k^2e^{ikx}$: the effective wavenumber is $k_\mathrm{eff}^2=\tfrac4{\Delta^2}\sin^2(k\Delta/2)$, correct only for $k\Delta\ll1$ (Problem 10). Spectral phase-field codes exploit this exactness and the speed of the FFT.</p>
 
-            <h2 id="recipspace">5. Reciprocal space, diffraction and Bloch waves<a class="anchor" href="#recipspace" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.1: a four-point DFT, and aliasing</strong>
+                <p class="given">(a) Compute the DFT of $x=(1,2,3,4)$. (b) A $70$ Hz signal is sampled at $100$ Hz. What frequency appears?</p>
+                <p>(a) $X_k=\sum_nx_ne^{-2\pi ikn/4}=\sum_nx_n(-i)^{kn}$. $X_0=10$; $X_1=1-2i-3+4i=-2+2i$; $X_2=1-2+3-4=-2$; $X_3=-2-2i=\overline{X_1}$ (as it must be for real input). The mean is $X_0/N=2.5$, and Parseval holds: $\sum|x_n|^2=30=\tfrac14\sum|X_k|^2=\tfrac14(100+8+4+8)=30$ &check;. (b) The Nyquist frequency is $f_s/2=50$ Hz. A $70$ Hz tone has $\cos(2\pi\cdot70\,n/100)=\cos(2\pi\cdot30\,n/100)$ at the sample times, so it appears as a $30$ Hz peak: an <em>alias</em>. The cure is to sample faster or low-pass filter first. The spectral resolution is $\Delta f=f_s/N$: with $N=2000$ samples the lines are $0.05$ Hz apart.</p>
+            </div>
+
+            <h2 id="recipspace">Lecture 5. Reciprocal space, diffraction and Bloch waves<a class="anchor" href="#recipspace" aria-label="Link to this section">#</a></h2>
             <h3 id="diffraction">Diffraction is a Fourier transform<a class="anchor" href="#diffraction" aria-label="Link to this section">#</a></h3>
             <p>When radiation of wavevector $\mathbf k_0$ scatters weakly from a distribution of scatterers with density $\rho(\mathbf r)$, the scattered amplitude into wavevector $\mathbf k$ is proportional to the Fourier transform of $\rho$ at the <em>scattering vector</em> $\mathbf q=\mathbf k-\mathbf k_0$:
             $$A(\mathbf q)\propto\int\rho(\mathbf r)\,e^{-i\mathbf q\cdot\mathbf r}\,\mathrm d^3r,\qquad I(\mathbf q)=|A(\mathbf q)|^2 .$$
@@ -211,7 +251,13 @@
             $$\psi_{\mathbf k}(\mathbf r)=e^{i\mathbf k\cdot\mathbf r}\,u_{\mathbf k}(\mathbf r),\qquad u_{\mathbf k}(\mathbf r+\mathbf R)=u_{\mathbf k}(\mathbf r),$$
             a plane wave times a function with the periodicity of the lattice. Expanding $u_{\mathbf k}$ in its own Fourier series gives $\psi_{\mathbf k}=\sum_{\mathbf G}c_{\mathbf k+\mathbf G}\,\allowbreak e^{i(\mathbf k+\mathbf G)\cdot\mathbf r}$: a <strong>plane-wave basis</strong>, the basis of most DFT codes for solids. It is truncated at a <em>cutoff energy</em> $E_\mathrm{cut}$, $\hbar^2|\mathbf k+\mathbf G|^2/2m\le E_\mathrm{cut}$, and the number of plane waves grows as $E_\mathrm{cut}^{3/2}V$. The wavevector $\mathbf k$ is only defined modulo $\mathbf G$ (<em>aliasing</em> again: $\mathbf k$ and $\mathbf k+\mathbf G$ label the same Bloch state), so it can be restricted to one cell of reciprocal space, the first <strong>Brillouin zone</strong>; integrals over it are done by sampling a grid of $\mathbf k$-points. Where the free-electron energies of $\mathbf k$ and $\mathbf k-\mathbf G$ coincide ($\mathbf k=\mathbf G/2$, the zone boundary), the potential component $V_{\mathbf G}$ couples them and opens an <strong>energy gap</strong> of $2|V_{\mathbf G}|$ (Problem 11): the origin of band gaps.</p>
 
-            <h2 id="summary-m8">6. How the pieces fit together<a class="anchor" href="#summary-m8" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.1: reading a powder pattern</strong>
+                <p class="given">Cu K$\alpha$ radiation ($\lambda=0.15406$ nm) hits silicon (diamond cubic, $a=0.5431$ nm). Where is the (111) peak, and what are the reciprocal-lattice vector and the first Brillouin-zone edge for a 1D chain with $a=0.4$ nm?</p>
+                <p>For cubic crystals $d_{111}=a/\sqrt3=0.3136$ nm. Bragg's law $2d\sin\theta=\lambda$ gives $\sin\theta=0.15406/0.6272=0.2456$, $\theta=14.22^\circ$, so the peak is at $2\theta=28.44^\circ$, the textbook Si(111) position. In reciprocal space the same statement is $|\mathbf G_{111}|=2\pi/d=20.0\ \mathrm{nm^{-1}}$, and diffraction occurs when the scattering vector equals a reciprocal-lattice vector. For the chain, the reciprocal lattice has spacing $G=2\pi/a=15.71\ \mathrm{nm^{-1}}$ and the Brillouin zone is $|k|&lt;\pi/a=7.85\ \mathrm{nm^{-1}}$: wavenumbers differing by $G$ describe the same lattice wave, the aliasing of Lecture 4 in physical clothes.</p>
+            </div>
+
+            <h2 id="summary-m8">Summary of the unit<a class="anchor" href="#summary-m8" aria-label="Link to this section">#</a></h2>
             <p>Complex exponentials are the natural waves; Fourier series and transforms express any function in terms of them, and the dictionary &ldquo;derivative $\leftrightarrow\;ik$, convolution $\leftrightarrow$ product, width $\leftrightarrow$ inverse width&rdquo; turns hard operations into easy ones. The diffusion equation is solved mode by mode; sampled data are handled by the DFT and FFT with the limits of resolution and Nyquist; and in a crystal, Fourier space is reciprocal space, where diffraction peaks, Brillouin zones and plane-wave bases live. These tools return in the next module, where Fourier methods and separation of variables solve the classic partial differential equations.</p>
 
             <!-- takeaways:start -->
@@ -226,7 +272,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">7. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -374,7 +420,40 @@
             </details>
             </div>
 
-            <h2 id="refs">8. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q8-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Complex numbers</span></div>
+            <p>Compute $(1+i)^8$ and the cube roots of $-8$.</p>
+            <details class="solution"><summary>Solution</summary><p>$(\sqrt2e^{i\pi/4})^8=16e^{2\pi i}=16$. The roots are $2e^{i(\pi+2\pi m)/3}=1+i\sqrt3,\allowbreak \ -2,\allowbreak \ 1-i\sqrt3$.</p></details>
+            </div>
+            <div class="problem" id="q8-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Coefficients and Parseval</span></div>
+            <p>Find the complex Fourier coefficients of $f(x)=\cos^2x$ (period $\pi$ or $2\pi$) and verify Parseval.</p>
+            <details class="solution"><summary>Solution</summary><p>$\cos^2x=\tfrac12+\tfrac12\cos2x=\tfrac12+\tfrac14e^{2ix}+\tfrac14e^{-2ix}$, so $c_0=\tfrac12$, $c_{\pm2}=\tfrac14$. Mean square: $\overline{\cos^4x}=\tfrac38$. Sum of $|c_n|^2=\tfrac14+\tfrac1{16}+\tfrac1{16}=\tfrac38$ &check;.</p></details>
+            </div>
+            <div class="problem" id="q8-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Smoothness</span></div>
+            <p>A periodic function is continuous but its first derivative has jumps. How do the Fourier coefficients decay? Does the Gibbs phenomenon occur?</p>
+            <details class="solution"><summary>Solution</summary><p>Like $1/n^2$ (the triangle-wave case). There is no Gibbs overshoot, because the function itself has no jump; the partial sums converge uniformly.</p></details>
+            </div>
+            <div class="problem" id="q8-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Fourier transform</span></div>
+            <p>A Gaussian $e^{-x^2/(2\sigma^2)}$ has $\sigma=2$ nm. What is the width of its transform, and what happens if $\sigma$ is halved?</p>
+            <details class="solution"><summary>Solution</summary><p>$F(k)\propto e^{-\sigma^2k^2/2}$ is a Gaussian with standard deviation $1/\sigma=0.5\ \mathrm{nm^{-1}}$. Halving $\sigma$ to $1$ nm doubles it to $1\ \mathrm{nm^{-1}}$: narrow in $x$, broad in $k$.</p></details>
+            </div>
+            <div class="problem" id="q8-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Sampling</span></div>
+            <p>A $70$ Hz tone is sampled at $100$ Hz for $N=2000$ points. Which frequency appears, and what is the frequency resolution?</p>
+            <details class="solution"><summary>Solution</summary><p>Nyquist is $50$ Hz, so the tone aliases to $|70-100|=30$ Hz. The resolution is $f_s/N=0.05$ Hz.</p></details>
+            </div>
+            <div class="problem" id="q8-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Diffraction</span></div>
+            <p>Cu K$\alpha$ ($0.15406$ nm) diffracts from the (111) planes of aluminium, $d=0.2338$ nm. At what $2\theta$ is the peak?</p>
+            <details class="solution"><summary>Solution</summary><p>$\sin\theta=0.15406/(2\times0.2338)=0.3295$, $\theta=19.24^\circ$, $2\theta=38.47^\circ$ (the known Al(111) position).</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Boas, M. L., <em>Mathematical Methods in the Physical Sciences</em>, Wiley: chapters on complex numbers, Fourier series and integrals.</li>
                 <li>Bracewell, R. N., <em>The Fourier Transform and Its Applications</em>, McGraw-Hill: a thorough reference on transform pairs.</li>
@@ -402,7 +481,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=296a61e3"></script>
+    <script src="../assets/topics.js?v=00ba2e79"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>
