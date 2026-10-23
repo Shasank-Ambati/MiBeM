@@ -1,0 +1,17 @@
+fcc Cu
+   shell 1: r = 2.556 A   12 neighbours
+   shell 2: r = 3.615 A    6 neighbours
+   shell 3: r = 4.427 A   24 neighbours
+bcc Fe
+   shell 1: r = 2.482 A    8 neighbours
+   shell 2: r = 2.866 A    6 neighbours
+   shell 3: r = 4.053 A   12 neighbours
+   shell 4: r = 4.753 A   24 neighbours
+hcp Mg
+   shell 1: r = 3.197 A    6 neighbours
+   shell 2: r = 3.209 A    6 neighbours
+   shell 3: r = 4.530 A    6 neighbours
+diamond Si
+   shell 1: r = 2.352 A    4 neighbours
+   shell 2: r = 3.840 A   12 neighbours
+   shell 3: r = 4.503 A   12 neighbours

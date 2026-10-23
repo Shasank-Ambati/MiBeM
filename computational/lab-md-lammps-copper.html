@@ -51,7 +51,7 @@
         <article id="main">
             <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 503</span></p>
             <!-- coursenav:start -->
-<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" class="here" aria-current="page" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a></nav>
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" class="here" aria-current="page" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a></nav>
 <!-- coursenav:end -->
             <h1>Lab: A metal with LAMMPS: copper with an EAM potential</h1>
             <p class="lead">In the previous lab you simulated a model fluid. Here you simulate a real metal, <strong>copper</strong>, with the embedded-atom method (EAM) and compute the properties that a materials scientist asks for first: lattice constant, cohesive energy, bulk modulus, thermal expansion, elastic constants, vacancy formation energy, surface energies and the response to a tensile test. Each property is a small numerical experiment with its own input file, and each result is compared with measured values. Everything was run for this page.</p>
@@ -558,7 +558,7 @@
             <p>The relaxed vacancy formation energy is $1.28$ eV. (a) Compute the equilibrium vacancy fraction $c=\exp(-E_f/k_\mathrm BT)$ at $300$, $600$ and $1000$ K, neglecting the formation entropy. (b) How many vacancies are there in a crystal of $10^{23}$ atoms at $1000$ K?</p>
             <details class="hint"><summary>Hint</summary><p>$k_\mathrm B=8.617\times10^{-5}$ eV/K.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $c(300)=\exp(-1.28/0.02585)=3\times10^{-22}$; $c(600)=\exp(-1.28/0.0517)=1.8\times10^{-11}$; $c(1000)=\exp(-1.28/0.08617)=3.5\times10^{-7}$. (b) $3.5\times10^{-7}\times10^{23}=3.5\times10^{16}$ vacancies. The factor of $10^{15}$ between 300 and 1000 K is why diffusion in solids is negligible at room temperature and important in heat treatment (<a href="diffusion-and-kinetics.html">MSE 301</a>); in practice the formation entropy ($\approx2\,k_\mathrm B$) raises these numbers by a factor of about $e^{2}\approx7$.</p>
+            <p>(a) $c(300)=\exp(-1.28/0.02585)=3\times10^{-22}$; $c(600)=\exp(-1.28/0.0517)=1.8\times10^{-11}$; $c(1000)=\exp(-1.28/0.08617)=3.5\times10^{-7}$. (b) $3.5\times10^{-7}\times10^{23}=3.5\times10^{16}$ vacancies. The factor of $10^{15}$ between 300 and 1000 K is why diffusion in solids is negligible at room temperature and important in heat treatment (<a href="diffusion-and-kinetics.html">CMS 504</a>); in practice the formation entropy ($\approx2\,k_\mathrm B$) raises these numbers by a factor of about $e^{2}\approx7$.</p>
             <p class="answer">(a) $3\times10^{-22}$, $1.8\times10^{-11}$, $3.5\times10^{-7}$  (b) $3.5\times10^{16}$</p>
             </details>
             </div>
@@ -611,8 +611,8 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=9ae5aafb"></script>
-    <script src="../assets/pathdata.js?v=7fdf5e00"></script>
+    <script src="../assets/topics.js?v=ba183f9f"></script>
+    <script src="../assets/pathdata.js?v=3fbb49d3"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>

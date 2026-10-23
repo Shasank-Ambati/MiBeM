@@ -1,0 +1,6 @@
+2 x 2 x 2  N =  32   E_f unrelaxed = 1.2447 eV   relaxed = 1.2369 eV
+3 x 3 x 3  N = 108   E_f unrelaxed = 1.2447 eV   relaxed = 1.2339 eV
+4 x 4 x 4  N = 256   E_f unrelaxed = 1.2447 eV   relaxed = 1.2339 eV
+5 x 5 x 5  N = 500   E_f unrelaxed = 1.2447 eV   relaxed = 1.2339 eV
+
+substitution Ag in Cu (108 atoms): E = -0.5683 eV, solution energy = 0.1458 eV

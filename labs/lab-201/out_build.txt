@@ -1,0 +1,21 @@
+Atoms(symbols='Cu4', pbc=True, cell=[3.615, 3.615, 3.615])
+cell (angstrom):
+[[3.615 0.    0.   ]
+ [0.    3.615 0.   ]
+ [0.    0.    3.615]]
+scaled positions:
+[[0.  0.  0. ]
+ [0.  0.5 0.5]
+ [0.5 0.  0.5]
+ [0.5 0.5 0. ]]
+volume 47.24 A^3, density 8.93 g/cm3
+
+structure          atoms formula       V (A^3)  rho g/cm3
+Cu  fcc                4 Cu4             47.24      8.935
+Fe  bcc                2 Fe2             23.54      7.878
+Mg  hcp                2 Mg2             46.47      1.737
+Si  diamond            8 Si8            160.19      2.329
+NaCl rocksalt          8 Cl4Na4         179.41      2.164
+CsCl                   2 ClCs            70.09      3.989
+ZnS zincblende         8 S4Zn4          158.25      4.090
+SrTiO3 perovskite      5 O3SrTi          59.55      5.117

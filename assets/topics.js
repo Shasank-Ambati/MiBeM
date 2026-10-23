@@ -492,6 +492,33 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 45,
+    "label": "LAB 201",
+    "code": "LAB 201",
+    "dept": "LAB",
+    "level": 2,
+    "slug": "lab-structures-ase",
+    "short": "ASE: structures",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 28,
+    "title": "Lab: Crystal structures in Python with ASE",
+    "blurb": "Build crystals, supercells, defects and surface slabs with ASE, check neighbours and space groups, compute a lattice constant and defect energies with EMT, write files for LAMMPS, VASP and Quantum ESPRESSO, and index an X-ray pattern.",
+    "builds": [
+      2,
+      27
+    ],
+    "related": [],
+    "takeaways": [
+      "ASE represents a structure as an Atoms object: a cell (three vectors), atomic numbers, positions and periodic boundary conditions; bulk(), crystal(), fcc111() and similar builders create standard crystals and surfaces in one line.",
+      "Always verify a built structure with numbers: atom count, volume, density (copper 8.93 g/cm3), neighbour shells (12 at 2.556 angstrom for fcc), and the space group with spglib (Fm-3m 225 for fcc, Im-3m 229 for bcc, Fd-3m 227 for diamond).",
+      "The symmetry tolerance matters: copper with 0.0005 angstrom of random noise is P1 at symprec 1e-3 but still Fm-3m at 0.1; choose the tolerance to match the noise of your data, not the other way round.",
+      "Supercells and slabs are the basis of defect and surface calculations: a vacancy formation energy in EMT copper is 1.234 eV in a 3x3x3 cell, and surface energies of the (111), (100) and (110) faces (1.04, 1.13, 1.23 J/m2) do not change from 3 to 9 layers.",
+      "ASE writes the same structure to CIF, XYZ, VASP POSCAR, LAMMPS data and Quantum ESPRESSO input, so it is the glue between the codes in the later labs; and a powder diffraction pattern can be indexed from the sin-squared theta ratios (1:2:3:4 for bcc, 3:4:8:11 for fcc)."
+    ],
+    "katex": true
+  },
+  {
     "id": 32,
     "label": "MATH 301",
     "code": "MATH 301",
@@ -1051,6 +1078,7 @@ window.MIBEM_PATHPLAN = [
       "MATH 205",
       "PHYS 201",
       "MSE 201",
+      "LAB 201",
       "COMP 201"
     ]
   },

@@ -4,8 +4,11 @@ Input files, scripts and figures for the hands-on labs of the site (`computation
 
 | Folder | Lab | Software |
 | --- | --- | --- |
+| `lab-201` | Crystal structures in Python with ASE | ASE, spglib, numpy, matplotlib (no LAMMPS needed) |
 | `lab-502` | Molecular dynamics of liquid argon | LAMMPS, Python (numpy, matplotlib) |
 | `lab-503` | A metal with LAMMPS: copper with an EAM potential | LAMMPS, ASE |
+
+Every number printed in LAB 201 comes from `pip install ase spglib numpy matplotlib` (ASE 3.29, spglib 2.8); `cd labs/lab-201 && python build.py` etc.
 
 Every number printed in the lab pages was produced by running these files with LAMMPS 22 Jul 2025 (Update 4) from the PyPI `lammps` package on Linux. To reproduce them:
 

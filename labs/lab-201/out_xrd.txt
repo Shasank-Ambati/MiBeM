@@ -1,0 +1,23 @@
+Cu fcc, a = 3.615
+   (1 1 1)   d = 2.0871 A   2theta =  43.32 deg
+   (2 0 0)   d = 1.8075 A   2theta =  50.45 deg
+   (2 2 0)   d = 1.2781 A   2theta =  74.13 deg
+   (3 1 1)   d = 1.0900 A   2theta =  89.94 deg
+   (2 2 2)   d = 1.0436 A   2theta =  95.15 deg
+   (4 0 0)   d = 0.9038 A   2theta = 116.93 deg
+   (3 3 1)   d = 0.8293 A   2theta = 136.50 deg
+Fe bcc, a = 2.866
+   (1 1 0)   d = 2.0266 A   2theta =  44.68 deg
+   (2 0 0)   d = 1.4330 A   2theta =  65.03 deg
+   (2 1 1)   d = 1.1700 A   2theta =  82.35 deg
+   (2 2 0)   d = 1.0133 A   2theta =  98.96 deg
+   (3 1 0)   d = 0.9063 A   2theta = 116.41 deg
+   (2 2 2)   d = 0.8273 A   2theta = 137.20 deg
+Si diamond, a = 5.431
+   (1 1 1)   d = 3.1356 A   2theta =  28.44 deg
+   (2 2 0)   d = 1.9201 A   2theta =  47.30 deg
+   (3 1 1)   d = 1.6375 A   2theta =  56.12 deg
+   (4 0 0)   d = 1.3578 A   2theta =  69.13 deg
+   (3 3 1)   d = 1.2460 A   2theta =  76.38 deg
+   (4 2 2)   d = 1.1086 A   2theta =  88.03 deg
+   (3 3 3)   d = 1.0452 A   2theta =  94.95 deg
