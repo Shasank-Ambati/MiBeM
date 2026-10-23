@@ -43,6 +43,7 @@ def load_topics():
 
 TOPICS = load_topics()
 PLANNED = _load_array("MIBEM_PLANNED")
+PATHPLAN = _load_array("MIBEM_PATHPLAN")
 BY_ID = {t["id"]: t for t in TOPICS}
 BY_CODE = {t["code"]: t for t in TOPICS}
 for t in TOPICS:
@@ -170,7 +171,7 @@ def katex_css(rel):
 
 
 def NAV(rel):
-    return [(rel + "curriculum.html", "Curriculum"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary"), (rel + "index.html#about", "About")]
+    return [(rel + "path.html", "Learning path"), (rel + "curriculum.html", "Curriculum"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary"), (rel + "index.html#about", "About")]
 
 
 def header(rel, links, cta=None):
@@ -198,8 +199,10 @@ def scripts(rel, demos=False, math=False):
               f'    <script src="{rel}assets/katex/auto-render.min.js?v={ver("assets/katex/auto-render.min.js")}"></script>\n'
               f'    <script src="{rel}assets/math.js?v={ver("assets/math.js")}"></script>\n    ')
     s += (f'<script src="{rel}assets/topics.js?v={ver("assets/topics.js")}"></script>\n'
+         f'    <script src="{rel}assets/pathdata.js?v={ver("assets/pathdata.js")}"></script>\n'
          f'    <script src="{rel}assets/glossary.js?v={ver("assets/glossary.js")}"></script>\n'
-         f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>')
+         f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>\n'
+         f'    <script src="{rel}assets/learn.js?v={ver("assets/learn.js")}" defer></script>')
     if demos:
         s += f'\n    <script src="{rel}assets/demos.js?v={ver("assets/demos.js")}" defer></script>'
         if math:
@@ -409,7 +412,7 @@ def build_curriculum():
     <main class="wrap" id="main">
         <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Curriculum</span></p>
         <h1>Curriculum</h1>
-        <p class="lead">A free university curriculum in computational materials science. It starts at first-year level, so that a new university student can begin here, and runs up to graduate research methods. Each course teaches the concepts it needs, includes worked examples and problems with solutions, and lists the courses it builds on.</p>
+        <p class="lead">This is the catalogue. If you would rather be guided, the <a href="path.html">learning path</a> puts every course and lesson in one recommended order with progress tracking. A free university curriculum in computational materials science. It starts at first-year level, so that a new university student can begin here, and runs up to graduate research methods. Each course teaches the concepts it needs, includes worked examples and problems with solutions, and lists the courses it builds on.</p>
 
         <h2 id="how">How the courses are numbered</h2>
         <p>Course codes follow the usual university pattern: a subject, then a three-digit number whose first digit is the level.</p>
@@ -441,6 +444,67 @@ def build_curriculum():
 </html>
 """
     (ROOT / "curriculum.html").write_text(page, encoding="utf-8")
+
+
+def build_pathdata():
+    """assets/pathdata.js: the learning path (sections, units = courses, lessons = the entries of each page's contents list)."""
+    by_code = {t["code"]: t for t in TOPICS}
+    planned = {p["code"]: p for p in PLANNED}
+    sections = []
+    for sec in PATHPLAN:
+        units = []
+        for code in sec["courses"]:
+            if code in by_code:
+                t = by_code[code]
+                page = (ROOT / t["path"]).read_text(encoding="utf-8")
+                toc = re.search(r'<aside class="toc">.*?</aside>', page, re.S).group(0)
+                lessons = []
+                for hid, title in re.findall(r'<li><a href="#([^"]+)">(.*?)</a></li>', toc, re.S):
+                    if hid in ("refs", "glossary") or hid.startswith("summary"):
+                        continue
+                    title = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", title))).strip()
+                    title = re.sub(r"^\d+\.\s*", "", title)
+                    lessons.append({"id": hid, "t": title})
+                units.append({"code": code, "slug": t["slug"], "title": t["title"], "blurb": t["blurb"], "min": t["minutes"],
+                              "needs": [BY_ID[b]["code"] for b in t["builds"]], "lessons": lessons})
+            else:
+                pl = planned[code]
+                units.append({"code": code, "slug": None, "title": pl["title"], "blurb": pl["blurb"], "min": 0, "needs": pl["needs"], "lessons": []})
+        sections.append({"name": sec["name"], "sub": sec["sub"], "units": units})
+    out = "window.MIBEM_PATHDATA = " + json.dumps(sections, ensure_ascii=False, separators=(",", ":")) + ";\n"
+    (ROOT / "assets" / "pathdata.js").write_text(out, encoding="utf-8")
+    return sections
+
+
+def build_path(sections):
+    title = "Learning Path - MiBeM"
+    desc = "A single path through the whole curriculum: sections, units and lessons, with progress, streaks and a continue button."
+    hdr = header("", NAV(""), None)
+    fallback = "".join(
+        f'<h3>{html.escape(sec["name"])}</h3><ol>' + "".join(
+            (f'<li><a href="computational/{u["slug"]}.html">{u["code"]}: {html.escape(u["title"])}</a></li>' if u["slug"]
+             else f'<li>{u["code"]}: {html.escape(u["title"])} (in preparation)</li>') for u in sec["units"]) + "</ol>"
+        for sec in sections)
+    page = f"""<!DOCTYPE html>
+<html lang="en">
+{head("", title, desc, BASE + "path.html", "website")}
+<body>
+    {hdr}
+
+    <main class="wrap wide" id="main">
+        <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Learning path</span></p>
+        <h1>Learning path</h1>
+        <p class="lead">One path through everything. Each unit is a course and each circle is a lesson: a lecture, a problem set or a quiz. Work from the top; the highlighted circle is your next step, and every lesson ends with a button that takes you to the next one, across course boundaries. Progress is stored only in this browser.</p>
+        <div id="learn-path"><noscript><p>The interactive path needs JavaScript. Here are the courses in order:</p>{fallback}</noscript></div>
+        <p class="meta">Already know a unit? Use &ldquo;I know this&rdquo; on it to mark its lessons done. The <a href="curriculum.html">curriculum page</a> lists the same courses as a catalogue, and the <a href="map.html">prerequisite map</a> shows how they depend on each other.</p>
+    </main>
+
+    {footer("")}
+    {scripts("")}
+</body>
+</html>
+"""
+    (ROOT / "path.html").write_text(page, encoding="utf-8")
 
 
 def build_map():
@@ -656,7 +720,7 @@ def build_search():
 
 
 def build_sitemap():
-    urls = [BASE, BASE + "curriculum.html", BASE + "map.html", BASE + "glossary.html"] + [BASE + t["path"] for t in TOPICS]
+    urls = [BASE, BASE + "path.html", BASE + "curriculum.html", BASE + "map.html", BASE + "glossary.html"] + [BASE + t["path"] for t in TOPICS]
     body = "".join(f"  <url><loc>{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in urls)
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n", encoding="utf-8")
 
@@ -694,11 +758,13 @@ def compute_minutes():
 if __name__ == "__main__":
     compute_minutes()
     write_minutes()
+    SECTIONS = build_pathdata()
     for i, t in enumerate(TOPICS):
         build_topic(t, i)
     build_index()
     build_map()
     build_curriculum()
+    build_path(SECTIONS)
     build_404()
     build_glossary()
     build_sitemap()

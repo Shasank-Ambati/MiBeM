@@ -26,6 +26,10 @@ Open `index.html` in a browser, or publish the repository with GitHub Pages. The
 
 Commit the generated files together with the page.
 
+## The learning path
+
+`path.html` is a Duolingo-style track through every course: sections (levels), units (courses) and lessons (each lecture, problem set and quiz). The order is `MIBEM_PATHPLAN` at the end of `assets/topics.js` (each course must come after its prerequisites); lessons are read from each page's contents list by `tools/build.py`, which writes `assets/pathdata.js`. `assets/learn.js` draws the path and adds a lesson footer (previous, complete, next) to every course page; progress, XP and streaks are kept in the visitor's browser only (`mibem-lessons`, `mibem-days`).
+
 ## Animations
 
 Figures in `assets/animations/` are GIFs or animated SVGs. Each has a still `*.poster.png` used by the "Pause animation" button and by visitors who ask their system to reduce motion. After adding or changing an animation, run `python tools/make_posters.py` (needs Pillow and Edge or Chrome), then `python tools/build.py`.

@@ -948,9 +948,9 @@ window.MIBEM_PLANNED = [
     ]
   },
   {
-    "code": "MSE 202",
+    "code": "MSE 302",
     "dept": "MSE",
-    "level": 2,
+    "level": 3,
     "title": "Mechanical behaviour of materials",
     "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.",
     "needs": [
@@ -991,4 +991,15 @@ window.MIBEM_PLANNED = [
       "CMS 507"
     ]
   }
+];
+
+/* The learning path: one linear order through every course, grouped into sections. Codes not yet written are shown as locked units.
+   Every course must come after the courses it builds on. */
+window.MIBEM_PATHPLAN = [
+  {"name": "Section 1: Foundations", "sub": "Calculus, linear algebra, mechanics, heat, electromagnetism, materials and programming.", "courses": ["MATH 100", "MATH 101", "COMP 101", "MATH 103", "PHYS 101", "MSE 101", "MATH 102", "COMP 102", "PHYS 102", "PHYS 103"]},
+  {"name": "Section 2: Core tools", "sub": "Vector calculus, differential equations, probability, Fourier analysis, quantum mechanics, crystals and numerical methods.", "courses": ["MATH 201", "MATH 202", "MATH 203", "MATH 204", "MATH 205", "PHYS 100", "PHYS 201", "MSE 201", "COMP 201"]},
+  {"name": "Section 3: Advanced theory", "sub": "Partial differential equations, tensors, statistics, variational methods, statistical mechanics and thermodynamics of materials.", "courses": ["MATH 301", "MATH 302", "MSE 302", "MATH 303", "MATH 304", "PHYS 301", "PHYS 302", "MSE 301"]},
+  {"name": "Section 4: The field", "sub": "What computational materials science is, what it can predict and where it fails.", "courses": ["CMS 401"]},
+  {"name": "Section 5: Simulation methods", "sub": "Electrons, atoms, sampling, kinetics, microstructure, components and data.", "courses": ["CMS 501", "CMS 502", "CMS 503", "CMS 504", "CMS 505", "CMS 506", "CMS 507"]},
+  {"name": "Section 6: Research topics", "sub": "Advanced courses for research, planned.", "courses": ["CMS 701", "CMS 702", "CMS 703"]}
 ];
