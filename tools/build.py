@@ -377,6 +377,8 @@ def build_curriculum():
 
     sections = []
     for lv, (ltitle, lsub) in LEVELS.items():
+        if not any(x["level"] == lv for x in TOPICS) and not any(x["level"] == lv for x in PLANNED):
+            continue
         rows = []
         for tt in TOPICS:
             if tt["level"] != lv:
@@ -418,7 +420,7 @@ def build_curriculum():
         <p>Course codes follow the usual university pattern: a subject, then a three-digit number whose first digit is the level.</p>
         <ul>
             <li><strong>Subject:</strong> MATH mathematics; PHYS physics; MSE materials science and engineering; COMP computing and numerical methods; CMS computational materials science.</li>
-            <li><strong>Level (first digit):</strong> 1 Year 1; 2 Year 2; 3 Year 3; 4 Year 4; 5 graduate; 7 doctoral research topics.</li>
+            <li><strong>Level (first digit):</strong> 1 Year 1; 2 Year 2; 3 Year 3; 4 Year 4; 5 graduate. Doctoral-level courses (7) are planned for later.</li>
         </ul>
         <p>Within a subject, work through the courses in number order; across subjects, the <strong>Needs</strong> column says what to have finished first. Year 1 courses assume only school mathematics and science. A course numbered 100 (such as MATH 100) is a guide to its subject rather than a lecture course.</p>
 

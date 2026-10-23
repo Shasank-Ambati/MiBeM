@@ -106,34 +106,6 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
-    "id": 13,
-    "label": "PHYS 100",
-    "code": "PHYS 100",
-    "dept": "PHYS",
-    "level": 1,
-    "slug": "physics-for-simulation",
-    "short": "Physics review",
-    "part": "Physics",
-    "tone": "a",
-    "minutes": 13,
-    "title": "Physics for simulation",
-    "blurb": "Classical mechanics, electrostatics, quantum mechanics essentials, thermodynamics and the units used in atomistic work.",
-    "builds": [
-      24
-    ],
-    "related": [
-      3,
-      5
-    ],
-    "takeaways": [
-      "A potential energy surface turns forces, equilibrium, stability and vibrations into calculus: forces are slopes, stiffness is curvature, and normal modes are eigenvectors.",
-      "Electrostatics is long-ranged, which is why charged systems need special summation methods and why neutral cells matter.",
-      "Quantum mechanics enters through the Schroedinger equation, the Pauli principle, the variational principle and Bloch's theorem for periodic solids.",
-      "Thermodynamics supplies the quantities that simulations are compared with: free energies, chemical potentials and heat capacities.",
-      "Know your units: 1 eV is about 96.5 kJ/mol, kT is about 0.0259 eV at 300 K, and 1 Hartree is about 27.2 eV."
-    ]
-  },
-  {
     "id": 37,
     "label": "PHYS 101",
     "code": "PHYS 101",
@@ -652,8 +624,9 @@ window.MIBEM_TOPICS = [
     "title": "Statistical mechanics for simulation",
     "blurb": "Microstates, ensembles, the partition function, free energy, ergodicity and error bars.",
     "builds": [
-      13,
-      33
+      38,
+      33,
+      40
     ],
     "related": [],
     "takeaways": [
@@ -791,7 +764,7 @@ window.MIBEM_TOPICS = [
     "builds": [
       1,
       2,
-      13,
+      40,
       28
     ],
     "related": [
@@ -991,49 +964,73 @@ window.MIBEM_TOPICS = [
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
-window.MIBEM_PLANNED = [
-  {
-    "code": "CMS 701",
-    "dept": "CMS",
-    "level": 7,
-    "title": "Beyond DFT: many-body methods",
-    "blurb": "GW, quantum Monte Carlo and coupled-cluster methods for systems where DFT is unreliable.",
-    "needs": [
-      "CMS 501"
-    ]
-  },
-  {
-    "code": "CMS 702",
-    "dept": "CMS",
-    "level": 7,
-    "title": "Multiscale modelling",
-    "blurb": "Linking atoms to continuum: coarse-graining, concurrent coupling and homogenisation.",
-    "needs": [
-      "CMS 502",
-      "CMS 505",
-      "CMS 506"
-    ]
-  },
-  {
-    "code": "CMS 703",
-    "dept": "CMS",
-    "level": 7,
-    "title": "Machine-learned interatomic potentials",
-    "blurb": "Descriptors, neural-network and equivariant potentials, active learning and uncertainty.",
-    "needs": [
-      "CMS 502",
-      "CMS 507"
-    ]
-  }
-];
+window.MIBEM_PLANNED = [];
 
 /* The learning path: one linear order through every course, grouped into sections. Codes not yet written are shown as locked units.
    Every course must come after the courses it builds on. */
 window.MIBEM_PATHPLAN = [
-  {"name": "Section 1: Foundations", "sub": "Calculus, linear algebra, mechanics, heat, electromagnetism, materials and programming.", "courses": ["MATH 100", "MATH 101", "COMP 101", "MATH 103", "PHYS 101", "MSE 101", "MATH 102", "COMP 102", "PHYS 102", "PHYS 103"]},
-  {"name": "Section 2: Core tools", "sub": "Vector calculus, differential equations, probability, Fourier analysis, quantum mechanics, crystals and numerical methods.", "courses": ["MATH 201", "MATH 202", "MATH 203", "MATH 204", "MATH 205", "PHYS 100", "PHYS 201", "MSE 201", "COMP 201"]},
-  {"name": "Section 3: Advanced theory", "sub": "Partial differential equations, tensors, statistics, variational methods, statistical mechanics and thermodynamics of materials.", "courses": ["MATH 301", "MATH 302", "MSE 302", "MATH 303", "MATH 304", "PHYS 301", "PHYS 302", "MSE 301"]},
-  {"name": "Section 4: The field", "sub": "What computational materials science is, what it can predict and where it fails.", "courses": ["CMS 401"]},
-  {"name": "Section 5: Simulation methods", "sub": "Electrons, atoms, sampling, kinetics, microstructure, components and data.", "courses": ["CMS 501", "CMS 502", "CMS 503", "CMS 504", "CMS 505", "CMS 506", "CMS 507"]},
-  {"name": "Section 6: Research topics", "sub": "Advanced courses for research, planned.", "courses": ["CMS 701", "CMS 702", "CMS 703"]}
+  {
+    "name": "Section 1: Foundations",
+    "sub": "Calculus, linear algebra, mechanics, heat, electromagnetism, materials and programming.",
+    "courses": [
+      "MATH 100",
+      "MATH 101",
+      "COMP 101",
+      "MATH 103",
+      "PHYS 101",
+      "MSE 101",
+      "MATH 102",
+      "COMP 102",
+      "PHYS 102",
+      "PHYS 103"
+    ]
+  },
+  {
+    "name": "Section 2: Core tools",
+    "sub": "Vector calculus, differential equations, probability, Fourier analysis, quantum mechanics, crystals and numerical methods.",
+    "courses": [
+      "MATH 201",
+      "MATH 202",
+      "MATH 203",
+      "MATH 204",
+      "MATH 205",
+      "PHYS 201",
+      "MSE 201",
+      "COMP 201"
+    ]
+  },
+  {
+    "name": "Section 3: Advanced theory",
+    "sub": "Partial differential equations, tensors, statistics, variational methods, statistical mechanics and thermodynamics of materials.",
+    "courses": [
+      "MATH 301",
+      "MATH 302",
+      "MSE 302",
+      "MATH 303",
+      "MATH 304",
+      "PHYS 301",
+      "PHYS 302",
+      "MSE 301"
+    ]
+  },
+  {
+    "name": "Section 4: The field",
+    "sub": "What computational materials science is, what it can predict and where it fails.",
+    "courses": [
+      "CMS 401"
+    ]
+  },
+  {
+    "name": "Section 5: Simulation methods",
+    "sub": "Electrons, atoms, sampling, kinetics, microstructure, components and data.",
+    "courses": [
+      "CMS 501",
+      "CMS 502",
+      "CMS 503",
+      "CMS 504",
+      "CMS 505",
+      "CMS 506",
+      "CMS 507"
+    ]
+  }
 ];

@@ -14,7 +14,7 @@ Open `index.html` in a browser, or publish the repository with GitHub Pages. The
 - `assets/katex/` and `assets/math.js`: the bundled KaTeX and the script that typesets `$...$` and `$$...$$` on the Maths course pages (no CDN).
 - `assets/mathdemos.js`: the interactive figures of the Maths course (built on the helpers in `demos.js`).
 - `assets/animations/`: animated GIF and SVG figures.
-- `assets/topics.js`: the course list, prerequisites and key takeaways (single source of truth), plus `MIBEM_PLANNED`, the courses that are announced but not yet written. Courses use university-style codes: a subject (MATH, PHYS, MSE, COMP, CMS) and a three-digit number whose first digit is the level (1 to 4 for years 1 to 4, 5 graduate, 7 doctoral). A course that is not yet written is listed in `MIBEM_PLANNED`; `python tools/add_course.py` moves it into the live list.
+- `assets/topics.js`: the course list, prerequisites and key takeaways (single source of truth), plus `MIBEM_PLANNED`, the courses that are announced but not yet written. Courses use university-style codes: a subject (MATH, PHYS, MSE, COMP, CMS) and a three-digit number whose first digit is the level (1 to 4 for years 1 to 4, 5 graduate; 7 is reserved for doctoral courses, none yet). A course that is not yet written is listed in `MIBEM_PLANNED`; `python tools/add_course.py` moves it into the live list.
 - `assets/glossary.js`: plain-language definitions. Terms are underlined on topic pages with a hover/tap definition, and the build writes `glossary.html` from this file.
 - `assets/search-index.js`, `sitemap.xml`, `site.webmanifest`: generated.
 

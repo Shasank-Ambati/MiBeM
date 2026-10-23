@@ -53,7 +53,7 @@
         <article id="main">
             <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 101</span></p>
             <!-- coursenav:start -->
-<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" class="here" aria-current="page" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" title="PHYS 302: Solid state physics">302</a></nav>
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="classical-mechanics.html" class="here" aria-current="page" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" title="PHYS 302: Solid state physics">302</a></nav>
 <!-- coursenav:end -->
             <h1>Classical mechanics</h1>
             <p class="lead">Every simulation of atoms is, at heart, a calculation of classical mechanics: the forces on each atom are found, Newton's second law gives its acceleration, and the positions are advanced a tiny step in time. This course teaches the mechanics that this calculation rests on, at the level of a first-year university physics degree: motion, forces, energy, momentum, oscillations, rotation, and the more powerful Lagrangian and Hamiltonian formulations that connect to statistical and quantum mechanics.</p>
@@ -199,7 +199,7 @@
             $$m\ddot x_1=-kx_1-k_c(x_1-x_2),\qquad m\ddot x_2=-kx_2-k_c(x_2-x_1).$$
             Adding and subtracting the equations decouples them: for $s=x_1+x_2$, $m\ddot s=-ks$; for $d=x_1-x_2$, $m\ddot d=-(k+2k_c)d$. So there are two independent oscillations, the <strong>normal modes</strong>: the in-phase mode $(1,1)$ with $\omega_1=\sqrt{k/m}$ (the coupling spring is never stretched) and the out-of-phase mode $(1,-1)$ with $\omega_2=\sqrt{(k+2k_c)/m}$. Any motion is a combination of the two; if only one mass is displaced initially, the energy shuttles between them with a beat period $2\pi/(\omega_2-\omega_1)$. In matrix language (<a href="eigenvalues-and-decompositions.html">MATH 202</a>) the modes are the eigenvectors of $K/m$ and the squared frequencies are its eigenvalues.</p>
             <div class="note mat"><strong>In materials science: bonds, phonons and thermal motion</strong>
-            <p>A chain of $N$ coupled atoms has $N$ normal modes, and a crystal of $N$ atoms has $3N$: these are the <strong>phonons</strong> that carry heat, scatter neutrons and limit conductivity. Each atom vibrates about its site with the equipartition energy $\tfrac12k_\mathrm BT$ per mode, so in the classical limit the rms displacement is $\sqrt{k_\mathrm BT/k}$; the Lindemann criterion says that a crystal melts when this reaches about a tenth of the atomic spacing. The classical estimate fails for stiff bonds: when $\hbar\omega\gg k_\mathrm BT$ the mode is frozen in its quantum ground state (<a href="physics-for-simulation.html">PHYS 100</a>), which is why the heat capacity of a stiff material falls below the classical value at low temperature.</p>
+            <p>A chain of $N$ coupled atoms has $N$ normal modes, and a crystal of $N$ atoms has $3N$: these are the <strong>phonons</strong> that carry heat, scatter neutrons and limit conductivity. Each atom vibrates about its site with the equipartition energy $\tfrac12k_\mathrm BT$ per mode, so in the classical limit the rms displacement is $\sqrt{k_\mathrm BT/k}$; the Lindemann criterion says that a crystal melts when this reaches about a tenth of the atomic spacing. The classical estimate fails for stiff bonds: when $\hbar\omega\gg k_\mathrm BT$ the mode is frozen in its quantum ground state (<a href="quantum-mechanics.html#tunnel">PHYS 201</a>), which is why the heat capacity of a stiff material falls below the classical value at low temperature.</p>
             </div>
             <div class="example">
                 <strong>Worked example 5.1: a spring-mass system</strong>
@@ -241,7 +241,7 @@
             <div class="example">
                 <strong>Worked example 6.2: rotation of the nitrogen molecule</strong>
                 <p class="given">N$_2$ has a bond length of $1.098$ &Aring;. Find its moment of inertia and the rotational constant $B=\hbar^2/(2I)$ in wavenumbers.</p>
-                <p>The reduced mass is $\mu=14.003/2=7.00$ u $=1.163\times10^{-26}$ kg, so $I=\mu r^2=1.163\times10^{-26}\times(1.098\times10^{-10})^2=1.40\times10^{-46}$ kg m$^2$. Then $B=\hbar^2/(2I)=3.97\times10^{-23}$ J, or $1.997\ \mathrm{cm^{-1}}$ after dividing by $hc$, in agreement with the measured $1.998\ \mathrm{cm^{-1}}$. Rotational spectra therefore measure bond lengths to a fraction of a percent: the quantum energies are $E_J=BJ(J+1)$ (<a href="physics-for-simulation.html">PHYS 100</a>), the classical $L^2/2I$ with $L^2\to\hbar^2J(J+1)$.</p>
+                <p>The reduced mass is $\mu=14.003/2=7.00$ u $=1.163\times10^{-26}$ kg, so $I=\mu r^2=1.163\times10^{-26}\times(1.098\times10^{-10})^2=1.40\times10^{-46}$ kg m$^2$. Then $B=\hbar^2/(2I)=3.97\times10^{-23}$ J, or $1.997\ \mathrm{cm^{-1}}$ after dividing by $hc$, in agreement with the measured $1.998\ \mathrm{cm^{-1}}$. Rotational spectra therefore measure bond lengths to a fraction of a percent: the quantum energies are $E_J=BJ(J+1)$ (<a href="quantum-mechanics.html#hydrogen">PHYS 201</a>), the classical $L^2/2I$ with $L^2\to\hbar^2J(J+1)$.</p>
             </div>
 
             <div class="example">
@@ -265,7 +265,7 @@
             <p><strong>Conservation laws from symmetry.</strong> If $L$ does not depend on a coordinate $q_i$ (it is <em>cyclic</em>), then $\partial L/\partial q_i=0$ and the Euler&ndash;Lagrange equation says $\dot p_i=0$: the conjugate momentum is conserved. Translation invariance gives conservation of linear momentum, rotation invariance gives conservation of angular momentum. If $L$ has no explicit dependence on time, the <strong>Hamiltonian</strong> $H=\sum_ip_i\dot q_i-L$ is conserved. <em>Proof.</em> $\dfrac{\mathrm dH}{\mathrm dt}=\sum_i\dot p_i\dot q_i+p_i\ddot q_i-\dfrac{\partial L}{\partial q_i}\dot q_i-\dfrac{\partial L}{\partial\dot q_i}\ddot q_i-\dfrac{\partial L}{\partial t}$; the Euler&ndash;Lagrange equation replaces $\dot p_i$ by $\partial L/\partial q_i$ and the terms cancel, leaving $-\partial L/\partial t=0$. For ordinary mechanical systems $H=T+U$, the total energy. (This is a special case of Noether's theorem: every continuous symmetry gives a conservation law.)</p>
             <p><strong>Hamilton's equations.</strong> Writing $H$ as a function of the coordinates and the momenta $p$, the equations of motion become the first-order pair
             $$\dot q_i=\frac{\partial H}{\partial p_i},\qquad\dot p_i=-\frac{\partial H}{\partial q_i}.$$
-            For $H=p^2/2m+U(q)$ these are $\dot q=p/m$ and $\dot p=-U'$, Newton's law again. The state of the system is a point in <strong>phase space</strong> $(q,p)$ and it flows along curves of constant $H$. A key property (Liouville's theorem) is that the flow preserves phase-space volume; integrators that respect this, like velocity Verlet, are called <em>symplectic</em> and conserve energy over very long runs (<a href="ordinary-differential-equations.html">MATH 203</a>). The Hamiltonian is also the object that statistical mechanics averages over, with the weight $e^{-H/k_\mathrm BT}$ (<a href="statistical-mechanics.html">PHYS 301</a>), and that becomes the quantum Hamiltonian operator in <a href="physics-for-simulation.html">PHYS 100</a>.</p>
+            For $H=p^2/2m+U(q)$ these are $\dot q=p/m$ and $\dot p=-U'$, Newton's law again. The state of the system is a point in <strong>phase space</strong> $(q,p)$ and it flows along curves of constant $H$. A key property (Liouville's theorem) is that the flow preserves phase-space volume; integrators that respect this, like velocity Verlet, are called <em>symplectic</em> and conserve energy over very long runs (<a href="ordinary-differential-equations.html">MATH 203</a>). The Hamiltonian is also the object that statistical mechanics averages over, with the weight $e^{-H/k_\mathrm BT}$ (<a href="statistical-mechanics.html">PHYS 301</a>), and that becomes the quantum Hamiltonian operator in <a href="quantum-mechanics.html#schro">PHYS 201</a>.</p>
             <div class="demo" data-demo="integrators"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
             <div class="note mat"><strong>In materials science: constraints and rigid molecules</strong>
             <p>Water models in molecular dynamics keep the O&ndash;H bonds and the H&ndash;O&ndash;H angle fixed. This removes the fastest vibration (about $9$ fs), allowing a time step four times larger. With generalised coordinates one simply does not include the frozen degrees of freedom; in Cartesian coordinates the same effect needs <em>Lagrange multipliers</em> adding constraint forces (the SHAKE and RATTLE algorithms). The Lagrangian view also generalises beyond particles: the continuum free-energy functionals of <a href="calculus-of-variations-and-optimisation.html">MATH 304</a> and the phase-field models of <a href="phase-field-modelling.html">CMS 505</a> are stationarity principles of exactly this kind.</p>
@@ -471,7 +471,7 @@
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next course in this subject">
-<a class="prev" href="physics-for-simulation.html"><span class="dir">Previous course</span>Physics for simulation</a>
+<span class="spacer"></span>
 <a class="next" href="thermal-physics.html"><span class="dir">Next course</span>Thermal physics</a>
 </nav>
 <!-- pager:end -->
@@ -487,9 +487,9 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=7c6ded67"></script>
-    <script src="../assets/pathdata.js?v=7a11c920"></script>
-    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/topics.js?v=8a1c9776"></script>
+    <script src="../assets/pathdata.js?v=69bd11b3"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
     <script src="../assets/demos.js?v=ca1d8edb" defer></script>

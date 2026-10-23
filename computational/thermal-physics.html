@@ -53,7 +53,7 @@
         <article id="main">
             <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 102</span></p>
             <!-- coursenav:start -->
-<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" class="here" aria-current="page" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" title="PHYS 302: Solid state physics">302</a></nav>
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" class="here" aria-current="page" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" title="PHYS 302: Solid state physics">302</a></nav>
 <!-- coursenav:end -->
             <h1>Thermal physics</h1>
             <p class="lead">Materials are hot or cold, expand when heated, melt, evaporate and conduct heat, and every one of these facts comes from the random motion of atoms. Thermal physics is the subject that connects the microscopic world of atoms to the large-scale quantities we measure: temperature, pressure, heat, entropy and free energy. This course covers the thermodynamics and elementary statistical physics of a first-year university degree, with the focus on what a materials scientist needs: defects, phases, heat capacity and heat flow.</p>
@@ -62,7 +62,7 @@
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 34 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">MATH 101: Calculus I</a><br><a href="classical-mechanics.html">PHYS 101: Classical mechanics</a></dd></div>
-<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Leads to</dt><dd><a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a></dd></div>
 <div><dt>Level</dt><dd>Year 1: foundations</dd></div>
 </dl>
 <!-- facts:end -->
@@ -227,7 +227,7 @@
             For $T\gg\theta_E$ this tends to $3R\bigl[1-\tfrac1{12}(\theta_E/T)^2+\dots\bigr]$: the Dulong&ndash;Petit value. For $T\ll\theta_E$ the oscillators are frozen in their ground state, each mode needs a quantum $\hbar\omega\gg k_\mathrm BT$ to be excited, and $C_V\to0$ exponentially. The model explains the trend but gets the low-$T$ shape wrong, because a real solid has oscillators of all frequencies down to zero (long-wavelength sound waves).</p>
             <p><strong>Debye&rsquo;s model.</strong> Treat the solid as an elastic continuum with a linear dispersion $\omega=vk$ up to a cut-off frequency set by the number of atoms; the number of modes below $\omega$ grows as $\omega^2$ (<a href="fourier-analysis.html">MATH 205</a>, reciprocal space). The result is
             $$C_V=\frac{12\pi^4}5R\Bigl(\frac T{\theta_D}\Bigr)^3\qquad(T\ll\theta_D),$$
-            the <strong>Debye $T^3$ law</strong>, with the Debye temperature $\theta_D$ a measure of the stiffness of the lattice: $\theta_D=428$ K for Al, $343$ K for Cu, $470$ K for Fe, $645$ K for Si and $2230$ K for diamond. The full Debye curve is a universal function of $T/\theta_D$ that tends to $3R$ for $T\gg\theta_D$. In metals the conduction electrons add a term linear in temperature, $C_\mathrm{el}=\gamma T$ ($\gamma\sim1\ \mathrm{mJ/mol\,K^2}$), which dominates below a few kelvin; free-electron theory and band structure explain its size (<a href="physics-for-simulation.html">PHYS 100</a>).</p>
+            the <strong>Debye $T^3$ law</strong>, with the Debye temperature $\theta_D$ a measure of the stiffness of the lattice: $\theta_D=428$ K for Al, $343$ K for Cu, $470$ K for Fe, $645$ K for Si and $2230$ K for diamond. The full Debye curve is a universal function of $T/\theta_D$ that tends to $3R$ for $T\gg\theta_D$. In metals the conduction electrons add a term linear in temperature, $C_\mathrm{el}=\gamma T$ ($\gamma\sim1\ \mathrm{mJ/mol\,K^2}$), which dominates below a few kelvin; free-electron theory and band structure explain its size (<a href="solid-state-physics.html#electrons">PHYS 302</a>).</p>
             <div class="example">
                 <strong>Worked example 6.1: Einstein and Debye numbers</strong>
                 <p class="given">(a) Take $\theta_E=240$ K. Find $C_V$ at $100$ K and $300$ K from the Einstein formula and from the high-temperature expansion. (b) Estimate the heat capacity of aluminium at $20$ K from the $T^3$ law.</p>
@@ -247,7 +247,7 @@
             $$\rho c\,\frac{\partial T}{\partial t}=\kappa\nabla^2T,\qquad\frac{\partial T}{\partial t}=\alpha\nabla^2T,\quad\alpha=\frac\kappa{\rho c},$$
             a diffusion equation (<a href="partial-differential-equations.html">MATH 301</a>) for the temperature, with <strong>thermal diffusivity</strong> $\alpha$ (m$^2$/s); a temperature disturbance spreads over a distance $L$ in a time $\sim L^2/\alpha$. <strong>Convection</strong> is transport by moving fluid, described for surfaces by Newton&rsquo;s law of cooling, $q=h(T_s-T_\infty)$, with the heat-transfer coefficient $h$ ($5$&ndash;$25$ W/m$^2$K in natural convection in air, $10^3$&ndash;$10^4$ in boiling water). <strong>Radiation</strong>: a black surface emits $q=\sigma T^4$ with $\sigma=5.67\times10^{-8}$ W/m$^2$K$^4$ (Stefan&ndash;Boltzmann); the net exchange between a body and its surroundings is $\sigma(T^4-T_\mathrm{surr}^4)$, which for small $\Delta T$ acts like convection with $h_\mathrm{rad}=4\sigma T^3$.</p>
             <div class="demo" data-demo="cooling"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
-            <p><strong>Conductivity of solids.</strong> In insulators heat is carried by phonons. A kinetic argument analogous to the gas result gives $\kappa=\tfrac13C\,v\,\ell$, with $C$ the heat capacity per unit volume, $v$ the sound speed and $\ell$ the phonon mean free path, limited by phonon&ndash;phonon scattering, defects and boundaries. In metals the conduction electrons carry most of the heat, and the Wiedemann&ndash;Franz law relates $\kappa$ to the electrical conductivity $\sigma_e$: $\kappa/(\sigma_eT)=L_0=2.44\times10^{-8}\ \mathrm{W\,\Omega\,K^{-2}}$ (<a href="physics-for-simulation.html">PHYS 100</a>).</p>
+            <p><strong>Conductivity of solids.</strong> In insulators heat is carried by phonons. A kinetic argument analogous to the gas result gives $\kappa=\tfrac13C\,v\,\ell$, with $C$ the heat capacity per unit volume, $v$ the sound speed and $\ell$ the phonon mean free path, limited by phonon&ndash;phonon scattering, defects and boundaries. In metals the conduction electrons carry most of the heat, and the Wiedemann&ndash;Franz law relates $\kappa$ to the electrical conductivity $\sigma_e$: $\kappa/(\sigma_eT)=L_0=2.44\times10^{-8}\ \mathrm{W\,\Omega\,K^{-2}}$ (<a href="solid-state-physics.html#electrons">PHYS 302</a>).</p>
             <p><strong>Thermal expansion.</strong> Most solids expand on heating, $\Delta L/L=\alpha\Delta T$, with a linear coefficient $\alpha\sim10^{-5}\ \mathrm K^{-1}$. A purely harmonic solid would not expand at all: the origin is the asymmetry of the interatomic potential.</p>
             <div class="note thm"><strong>Expansion needs anharmonicity</strong>
             <p>For a bond with $U(x)=\tfrac12k_sx^2-gx^3$ (the cubic term makes it softer when stretched), the Boltzmann average displacement is $\langle x\rangle=\dfrac{\int xe^{-U/k_\mathrm BT}\mathrm dx}{\int e^{-U/k_\mathrm BT}\mathrm dx}\approx\dfrac{g}{k_\mathrm BT}\dfrac{\langle x^4\rangle_0}{1}$ to first order in $g$, where $\langle x^4\rangle_0=3(k_\mathrm BT/k_s)^2$ for the Gaussian of the harmonic part. So $\langle x\rangle=\dfrac{3gk_\mathrm BT}{k_s^2}$, proportional to $T$: the mean bond length grows linearly with temperature, with $\alpha=\dfrac{3gk_\mathrm B}{a\,k_s^2}$ ($a$ the bond length). For $g=0$ there is no expansion; atoms vibrate more but the mean position does not shift.</p>
@@ -472,9 +472,9 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=7c6ded67"></script>
-    <script src="../assets/pathdata.js?v=7a11c920"></script>
-    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/topics.js?v=8a1c9776"></script>
+    <script src="../assets/pathdata.js?v=69bd11b3"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
     <script src="../assets/demos.js?v=ca1d8edb" defer></script>

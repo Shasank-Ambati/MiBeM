@@ -265,7 +265,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "phases"
   ],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#free"
  },
  {
   "t": "semiconductor",
@@ -598,31 +598,31 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "forces"
   ],
-  "p": "physics-for-simulation.html#newton"
+  "p": "classical-mechanics.html#newton"
  },
  {
   "t": "velocity",
   "d": "How fast and in which direction something moves.",
   "a": [],
-  "p": "physics-for-simulation.html#newton"
+  "p": "classical-mechanics.html#kin"
  },
  {
   "t": "acceleration",
   "d": "The rate at which velocity changes.",
   "a": [],
-  "p": "physics-for-simulation.html#newton"
+  "p": "classical-mechanics.html#kin"
  },
  {
   "t": "kinetic energy",
   "d": "Energy of motion, equal to half the mass times the speed squared.",
   "a": [],
-  "p": "physics-for-simulation.html#mechanics"
+  "p": "classical-mechanics.html#energy"
  },
  {
   "t": "potential energy",
   "d": "Energy stored because of position or arrangement, such as in a stretched spring or a chemical bond.",
   "a": [],
-  "p": "physics-for-simulation.html#mechanics"
+  "p": "classical-mechanics.html#energy"
  },
  {
   "t": "potential energy surface",
@@ -631,13 +631,13 @@ window.MIBEM_GLOSSARY = [
    "energy landscape",
    "energy landscapes"
   ],
-  "p": "physics-for-simulation.html#newton"
+  "p": "classical-mechanics.html#energy"
  },
  {
   "t": "equilibrium",
   "d": "A state with no net force, or in which nothing changes on average.",
   "a": [],
-  "p": "physics-for-simulation.html#mechanics"
+  "p": "classical-mechanics.html#energy"
  },
  {
   "t": "Newton's laws",
@@ -645,13 +645,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Newton's second law"
   ],
-  "p": "physics-for-simulation.html#newton"
+  "p": "classical-mechanics.html#newton"
  },
  {
   "t": "Hooke's law",
   "d": "The rule that a spring's restoring force is proportional to its stretch, F = -kx.",
   "a": [],
-  "p": "physics-for-simulation.html#oscillator"
+  "p": "classical-mechanics.html#osc"
  },
  {
   "t": "stress",
@@ -681,31 +681,31 @@ window.MIBEM_GLOSSARY = [
   "t": "temperature",
   "d": "A measure of the average kinetic energy of the random motion of atoms.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#gas"
  },
  {
   "t": "kelvin",
   "d": "The unit of absolute temperature; 0 K is absolute zero and K = degrees Celsius + 273.15.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#gas"
  },
  {
   "t": "Boltzmann constant",
   "d": "The constant k_B = 8.617 x 10^-5 eV/K that converts temperature into energy.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#gas"
  },
  {
   "t": "heat",
   "d": "Energy transferred between bodies because of a temperature difference.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#first"
  },
  {
   "t": "thermal energy",
   "d": "The energy of random atomic motion, of order k_B T per atom.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#gas"
  },
  {
   "t": "electronvolt",
@@ -713,13 +713,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "eV"
   ],
-  "p": "physics-for-simulation.html#units"
+  "p": "electricity-magnetism-and-waves.html#field"
  },
  {
   "t": "entropy",
   "d": "A measure of how many microscopic arrangements correspond to a given state; systems tend toward higher entropy.",
   "a": [],
-  "p": "physics-for-simulation.html#thermo"
+  "p": "thermal-physics.html#entropy"
  },
  {
   "t": "free energy",
@@ -742,7 +742,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "wavefunctions"
   ],
-  "p": "physics-for-simulation.html#schrodinger"
+  "p": "quantum-mechanics.html#origins"
  },
  {
   "t": "Schrodinger equation",
@@ -751,7 +751,7 @@ window.MIBEM_GLOSSARY = [
    "Schrödinger equation",
    "Schrödinger"
   ],
-  "p": "physics-for-simulation.html#schrodinger"
+  "p": "quantum-mechanics.html#schro"
  },
  {
   "t": "Pauli exclusion principle",
@@ -759,13 +759,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Pauli principle"
   ],
-  "p": "physics-for-simulation.html#rules"
+  "p": "quantum-mechanics.html#spin"
  },
  {
   "t": "variational principle",
   "d": "Any trial wavefunction gives an energy at least as high as the true ground-state energy.",
   "a": [],
-  "p": "physics-for-simulation.html#rules"
+  "p": "quantum-mechanics.html#approx"
  },
  {
   "t": "Born-Oppenheimer approximation",
@@ -773,7 +773,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Born–Oppenheimer"
   ],
-  "p": "physics-for-simulation.html#rules"
+  "p": "quantum-mechanics.html#approx"
  },
  {
   "t": "phonon",
@@ -781,7 +781,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "phonons"
   ],
-  "p": "physics-for-simulation.html#oscillator"
+  "p": "solid-state-physics.html#phonons"
  },
  {
   "t": "Bloch's theorem",
@@ -789,7 +789,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Bloch"
   ],
-  "p": "physics-for-simulation.html#bands"
+  "p": "solid-state-physics.html#bands"
  },
  {
   "t": "Brillouin zone",
@@ -809,7 +809,7 @@ window.MIBEM_GLOSSARY = [
   "t": "density of states",
   "d": "The number of available states per unit energy.",
   "a": [],
-  "p": "physics-for-simulation.html#bands"
+  "p": "solid-state-physics.html#electrons"
  },
  {
   "t": "Fermi energy",
@@ -817,19 +817,19 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Fermi level"
   ],
-  "p": "physics-for-simulation.html#bands"
+  "p": "solid-state-physics.html#electrons"
  },
  {
   "t": "band gap",
   "d": "The range of energies with no electron states, which makes a material a semiconductor or insulator.",
   "a": [],
-  "p": "physics-for-simulation.html#bands"
+  "p": "solid-state-physics.html#semis"
  },
  {
   "t": "diffraction",
   "d": "The pattern formed when waves scatter from the regular planes of atoms in a crystal.",
   "a": [],
-  "p": "physics-for-simulation.html#waves"
+  "p": "electricity-magnetism-and-waves.html#wave"
  },
  {
   "t": "simulation",
