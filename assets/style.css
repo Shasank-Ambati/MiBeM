@@ -780,3 +780,18 @@ details .katex-display { margin: 12px 0; }
 
 .demo select { font: 600 .84rem var(--sans); padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--ink); max-width: 100%; }
 .demo select:focus-visible, .demo input[type="range"]:focus-visible, .demo button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+/* curriculum page and course codes */
+.topic-card .num small { display: block; font-size: .42em; font-weight: 700; letter-spacing: .08em; opacity: .8; margin-bottom: 2px; }
+.topic-card .num.bg small { font-size: .5em; }
+.course-nav .cn-dept { font-weight: 700; letter-spacing: .06em; padding: 2px 4px; color: var(--muted); }
+table.curric td.code { white-space: nowrap; font-weight: 700; font-family: var(--sans); }
+table.curric .cdesc { display: block; font-size: .88rem; color: var(--muted); margin-top: 2px; }
+table.curric tr.planned { opacity: .72; }
+table.curric tr.planned .chip { margin-left: 6px; }
+.muted { color: var(--muted); }
+.subj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 18px; }
+.subj h3 { margin: 0 0 6px; font-size: 1rem; }
+.subj-list { margin: 0; padding-left: 1.2em; font-size: .93rem; }
+#topic-map .node .dept { font-size: 9.5px; font-weight: 700; letter-spacing: .08em; fill: var(--muted); }
+#topic-map .node .num.two { font-size: 17px; }

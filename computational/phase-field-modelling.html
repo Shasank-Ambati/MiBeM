@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="9">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -50,16 +50,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Microstructure</span><span>Topic 9</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip blue">Computational methods</span><span>CMS 505</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational methods courses"><span class="cn-dept">CMS</span><a href="introduction.html" title="CMS 401: Introduction to computational materials science">401</a><a href="density-functional-theory.html" title="CMS 501: Density functional theory in practice">501</a><a href="molecular-dynamics.html" title="CMS 502: Molecular dynamics">502</a><a href="monte-carlo-methods.html" title="CMS 503: Monte Carlo and kinetic Monte Carlo">503</a><a href="diffusion-and-kinetics.html" title="CMS 504: Diffusion and kinetics">504</a><a href="phase-field-modelling.html" class="here" aria-current="page" title="CMS 505: Phase-field modelling">505</a><a href="finite-element-method.html" title="CMS 506: The finite element method">506</a><a href="machine-learning-for-materials.html" title="CMS 507: Machine learning for materials">507</a></nav>
+<!-- coursenav:end -->
             <h1>Phase-field modelling</h1>
             <p class="lead">Microstructure is made of interfaces: grain boundaries, phase boundaries, solidification fronts. Tracking each one explicitly through merging, splitting and branching is a bookkeeping nightmare. Phase-field models sidestep it by describing the whole microstructure with smooth fields and letting the interfaces take care of themselves.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">4. Thermodynamics and CALPHAD</a><br><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a></dd></div>
+<div><dt>Builds on</dt><dd><a href="thermodynamics-and-calphad.html">MSE 301: Thermodynamics and CALPHAD</a><br><a href="diffusion-and-kinetics.html">CMS 504: Diffusion and kinetics</a><br><a href="partial-differential-equations.html">MATH 301: PDEs</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
-<div><dt>Category</dt><dd>Microstructure</dd></div>
+<div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -148,7 +151,7 @@
                 <li><strong>Finite elements</strong> handle complex geometry and adaptive mesh refinement, which concentrates resolution at interfaces and can reduce cost by orders of magnitude in three dimensions.</li>
                 <li><strong>Large 3D simulations</strong> rely on parallel computing, GPUs and adaptive grids.</li>
             </ul>
-            <p>Open-source frameworks include MOOSE (finite elements, with a phase-field module), PRISMS-PF, FiPy, OpenPhase and FEniCS-based codes; MICRESS and Pace3D are commercial and research multi-phase-field programs respectively.</p>
+            <p>Open-source frameworks include MOOSE (finite elements, with a phase-field course), PRISMS-PF, FiPy, OpenPhase and FEniCS-based codes; MICRESS and Pace3D are commercial and research multi-phase-field programs respectively.</p>
 
             <h2 id="code">8. A short program<a class="anchor" href="#code" aria-label="Link to this section">#</a></h2>
             <p>The following solves the Cahn&ndash;Hilliard equation on a periodic square with the semi-implicit Fourier scheme (non-dimensional units, <em>f</em> = (<em>c</em>&sup2; &minus; 1)&sup2;/4, <em>M</em> = 1, grid spacing 1). Plot <code>c</code> every few hundred steps to reproduce the animation above.</p>
@@ -211,9 +214,9 @@ print("mean c is conserved:", c.mean())</code></pre>
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="diffusion-and-kinetics.html"><span class="dir">Previous topic</span>Diffusion and kinetics</a>
-<a class="next" href="finite-element-method.html"><span class="dir">Next topic</span>The finite element method</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="diffusion-and-kinetics.html"><span class="dir">Previous course</span>Diffusion and kinetics</a>
+<a class="next" href="finite-element-method.html"><span class="dir">Next course</span>The finite element method</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -222,11 +225,11 @@ print("mean c is conserved:", c.mean())</code></pre>
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
 </body>
 </html>

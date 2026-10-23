@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="13">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -48,16 +48,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Background</span><span>Background 2</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 100</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" class="here" aria-current="page" title="PHYS 100: Physics for simulation">100</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a></nav>
+<!-- coursenav:end -->
             <h1>Physics for simulation</h1>
             <p class="lead">Behind every method in this series is a handful of physical principles: Newton&rsquo;s laws for atoms, electrostatics for charges, the Schr&ouml;dinger equation for electrons and thermodynamics for what is stable. This page states them in the form the simulation methods use them, and gives the units and constants you need to move between them.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 13 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="mathematics-for-simulation.html">B1. Mathematics</a><br><a href="forces-energy-and-heat.html">S4. Forces, energy, heat</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="statistical-mechanics.html">3. Statistical mechanics</a><br><a href="density-functional-theory.html">5. Density functional theory</a></dd></div>
-<div><dt>Category</dt><dd>Background</dd></div>
+<div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">MATH 101: Calculus I</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a><br><a href="density-functional-theory.html">CMS 501: Density functional theory</a></dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -71,7 +74,7 @@
                 </ul>
             </div>
 
-            <p><strong>Starting point:</strong> This page works at first-year university level. If forces, energy, heat or atoms are new to you, read <a href="forces-energy-and-heat.html">Forces, energy, heat and motion</a> first; it covers the same ground from scratch. </p>
+            <p><strong>Starting point:</strong> This page works at first-year university level. </p>
 
             <h2 id="scope">1. The physics behind the methods<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
             <div class="table-scroll" role="region" aria-label="1. The physics behind the methods (scrollable table)" tabindex="0"><table>
@@ -90,7 +93,7 @@
             <p>Newton&rsquo;s second law, <strong>F</strong> = <em>m</em><strong>a</strong>, together with the fact that interatomic forces derive from a potential energy, <strong>F</strong> = &minus;&nabla;<em>U</em>, defines the whole of classical atomistic modelling. The function <em>U</em>(<strong>r</strong><sub>1</sub>, &hellip;, <strong>r</strong><sub><em>N</em></sub>) of all atomic positions is the <strong>potential energy surface</strong>. Its features have direct physical meaning: a point where the gradient vanishes is an <em>equilibrium</em>; a minimum (all second derivatives positive) is stable; a saddle point with one negative curvature is a transition state between two minima; the depth of a minimum is a binding or cohesive energy and the height of a saddle above it is an activation barrier.</p>
             <p>Total energy is conserved when only conservative forces act, <em>E</em> = <em>K</em> + <em>U</em> = constant, which is the check used to validate integrators in <a href="molecular-dynamics.html">molecular dynamics</a>. Linear and angular momentum are also conserved for an isolated system; these conservation laws follow from the symmetry of space under translation and rotation.</p>
             <h3 id="oscillator">Vibrations and phonons<a class="anchor" href="#oscillator" aria-label="Link to this section">#</a></h3>
-            <p>Near a minimum, any potential looks like a parabola, so atoms behave like masses on springs. A single oscillator of stiffness <em>k</em> and mass <em>m</em> vibrates with angular frequency &omega; = &radic;(<em>k</em>/<em>m</em>). For a crystal of <em>N</em> atoms, the coupled equations have 3<em>N</em> independent <strong>normal modes</strong>, each oscillating at one frequency, found by diagonalising the matrix of second derivatives (the dynamical matrix, see <a href="mathematics-for-simulation.html#eigen">eigenvalue problems</a>). Quantised normal modes are called <strong>phonons</strong>. For a one-dimensional chain of identical atoms with spacing <em>a</em> and nearest-neighbour stiffness <em>K</em>, the frequency depends on the wavenumber as</p>
+            <p>Near a minimum, any potential looks like a parabola, so atoms behave like masses on springs. A single oscillator of stiffness <em>k</em> and mass <em>m</em> vibrates with angular frequency &omega; = &radic;(<em>k</em>/<em>m</em>). For a crystal of <em>N</em> atoms, the coupled equations have 3<em>N</em> independent <strong>normal modes</strong>, each oscillating at one frequency, found by diagonalising the matrix of second derivatives (the dynamical matrix, see <a href="eigenvalues-and-decompositions.html#eigen">eigenvalue problems</a>). Quantised normal modes are called <strong>phonons</strong>. For a one-dimensional chain of identical atoms with spacing <em>a</em> and nearest-neighbour stiffness <em>K</em>, the frequency depends on the wavenumber as</p>
             <span class="eq">&omega;(k) = 2 &radic;(K/m) |sin(ka/2)|</span>
             <p>which is linear for small <em>k</em> (sound waves, with speed &radic;(<em>K</em>/<em>m</em>)<em>a</em>) and flattens at the edge of the Brillouin zone. Typical atomic vibration frequencies in solids are a few to tens of terahertz, periods of about 0.1 ps, which is why molecular dynamics needs femtosecond steps. Phonons carry heat and set the vibrational free energy.</p>
             <h3 id="hamilton">Hamiltonian mechanics<a class="anchor" href="#hamilton" aria-label="Link to this section">#</a></h3>
@@ -100,7 +103,7 @@
 
             <h2 id="em">3. Electrostatics and magnetism<a class="anchor" href="#em" aria-label="Link to this section">#</a></h2>
             <h3 id="coulomb">Coulomb interactions<a class="anchor" href="#coulomb" aria-label="Link to this section">#</a></h3>
-            <p>Two point charges <em>q</em><sub>1</sub> and <em>q</em><sub>2</sub> a distance <em>r</em> apart have potential energy <em>U</em> = <em>q</em><sub>1</sub><em>q</em><sub>2</sub>/(4&pi;&epsilon;<sub>0</sub><em>r</em>). In atomistic units, <em>e</em>&sup2;/(4&pi;&epsilon;<sub>0</sub>) = 14.40 eV&middot;&Aring;, so two unit charges 2 &Aring; apart interact with about 7.2 eV, far more than typical bond energies, which is why ionic solids are strongly bound. The electrostatic potential &phi; of a charge density &rho; obeys Poisson&rsquo;s equation, &nabla;&sup2;&phi; = &minus;&rho;/&epsilon;<sub>0</sub> (see <a href="mathematics-for-simulation.html#pde">partial differential equations</a>).</p>
+            <p>Two point charges <em>q</em><sub>1</sub> and <em>q</em><sub>2</sub> a distance <em>r</em> apart have potential energy <em>U</em> = <em>q</em><sub>1</sub><em>q</em><sub>2</sub>/(4&pi;&epsilon;<sub>0</sub><em>r</em>). In atomistic units, <em>e</em>&sup2;/(4&pi;&epsilon;<sub>0</sub>) = 14.40 eV&middot;&Aring;, so two unit charges 2 &Aring; apart interact with about 7.2 eV, far more than typical bond energies, which is why ionic solids are strongly bound. The electrostatic potential &phi; of a charge density &rho; obeys Poisson&rsquo;s equation, &nabla;&sup2;&phi; = &minus;&rho;/&epsilon;<sub>0</sub> (see <a href="partial-differential-equations.html">partial differential equations</a>).</p>
             <h3 id="longrange">Why long range matters<a class="anchor" href="#longrange" aria-label="Link to this section">#</a></h3>
             <p>Coulomb interactions decay only as 1/<em>r</em>, while the number of charges at distance <em>r</em> grows as <em>r</em>&sup2;. A direct sum over a periodic crystal therefore converges only conditionally, and truncating at a cutoff gives errors that do not vanish. The remedy is the <strong>Ewald summation</strong> (1921) and its mesh-based descendants (PPPM, particle-mesh Ewald), which split the interaction into a short-range part summed in real space and a smooth long-range part summed in reciprocal space. For a rock-salt crystal, the result is the Madelung constant, &alpha; &asymp; 1.7476 for NaCl, which sets the electrostatic energy per ion pair. Practical consequences for simulation cells: they must be <em>charge neutral</em>, a charged defect in a periodic cell needs a compensating background and a correction, and dielectric screening reduces interactions in the real material.</p>
             <h3 id="magnetism">Magnetism<a class="anchor" href="#magnetism" aria-label="Link to this section">#</a></h3>
@@ -196,9 +199,9 @@
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="mathematics-for-simulation.html"><span class="dir">Previous topic</span>Mathematics for simulation</a>
-<a class="next" href="materials-science-essentials.html"><span class="dir">Next topic</span>Materials science essentials</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<span class="spacer"></span>
+<a class="next" href="statistical-mechanics.html"><span class="dir">Next course</span>Statistical mechanics for simulation</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -207,12 +210,12 @@
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
-    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>

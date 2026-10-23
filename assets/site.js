@@ -15,12 +15,7 @@
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) { /* private mode */ } }
   };
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function tLabel(t) {
-    if (t.series === "background") return "Background " + String(t.label).replace(/^B/, "");
-    if (t.series === "start") return "Start here " + String(t.label).replace(/^S/, "");
-    if (t.series === "maths") return t.label === "M0" ? "Maths course" : "Maths module " + String(t.label).replace(/^M/, "");
-    return "Topic " + (t.label || t.id);
-  }
+  function tLabel(t) { return t.code || String(t.label); }
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
 
   var ICON = {
@@ -388,7 +383,7 @@
       nodes += '<g class="' + cls + '" data-id="' + t.id + '" transform="translate(' + p.x + " " + p.y + ')">' +
         '<a href="' + esc(ROOT + "computational/" + t.slug + ".html") + '" aria-label="' + tLabel(t) + ": " + esc(t.title) + '">' +
         '<rect class="box" width="' + NW + '" height="' + NH + '" rx="12"/><rect class="bar" width="7" height="' + NH + '" rx="3"/>' +
-        '<text class="num' + (String(t.label).length > 1 ? " two" : "") + '" x="30" y="40" text-anchor="middle">' + esc(t.label) + "</text>" + tspans +
+        '<text class="dept" x="30" y="23" text-anchor="middle">' + esc(t.dept) + '</text><text class="num two" x="30" y="45" text-anchor="middle">' + esc(String(t.label).replace(/^\D+ /, "")) + "</text>" + tspans +
         '<text class="sub" x="50" y="' + (NH - 9) + '">' + esc(t.part) + " &middot; " + t.minutes + " min</text>" +
         (read.indexOf(t.id) >= 0 ? '<text class="tick" x="' + (NW - 18) + '" y="22">&#10003;</text>' : "") +
         "</a></g>";
@@ -407,11 +402,11 @@
     var edgeEls = svg.querySelectorAll(".edge");
     var pinned = currentId || 0;
 
-    function names(ids) { return ids.length ? ids.map(function (i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + byId[i].label + ". " + esc(byId[i].short) + "</a>"; }).join(", ") : "&mdash;"; }
+    function names(ids) { return ids.length ? ids.map(function (i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + byId[i].label + ": " + esc(byId[i].short) + "</a>"; }).join(", ") : "&mdash;"; }
     function showPanel(id) {
       var t = byId[id];
       var leads = TOPICS.filter(function (x) { return x.builds.indexOf(id) >= 0; }).map(function (x) { return x.id; });
-      panel.innerHTML = '<b>' + t.label + ". " + esc(t.title) + '</b><div>' + esc(t.blurb) + '</div><div class="meta2">' + esc(t.part) + " &middot; about " + t.minutes + " min &middot; builds on: " + names(t.builds) + " &middot; leads to: " + names(leads) + '</div><a class="go" href="' + esc(ROOT + "computational/" + t.slug + ".html") + '">Open this topic &rarr;</a>';
+      panel.innerHTML = '<b>' + t.label + ": " + esc(t.title) + '</b><div>' + esc(t.blurb) + '</div><div class="meta2">' + esc(t.part) + " &middot; about " + t.minutes + " min &middot; builds on: " + names(t.builds) + " &middot; leads to: " + names(leads) + '</div><a class="go" href="' + esc(ROOT + "computational/" + t.slug + ".html") + '">Open this topic &rarr;</a>';
     }
     function focusNode(id) {
       var A = up(id, {}), D = down(id, {});
@@ -449,7 +444,7 @@
     var host = doc.getElementById("topic-map");
     var byId = {}; TOPICS.forEach(function (t) { byId[t.id] = t; });
     var read = readList();
-    function link(i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + esc(byId[i].label) + ". " + esc(byId[i].short) + "</a>"; }
+    function link(i) { return '<a href="' + esc(ROOT + "computational/" + byId[i].slug + ".html") + '">' + esc(byId[i].label) + ": " + esc(byId[i].short) + "</a>"; }
     host.innerHTML = '<ol class="map-list">' + TOPICS.map(function (t) {
       var b = t.builds.length ? "Builds on: " + t.builds.map(link).join(", ") : "A place to start";
       return '<li class="tone-' + t.tone + (read.indexOf(t.id) >= 0 ? " read" : "") + '"><span class="ml-num">' + esc(t.label) + '</span>' +

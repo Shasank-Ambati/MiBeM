@@ -7,7 +7,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "atoms"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "nucleus",
@@ -15,7 +15,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "nuclei"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "electron",
@@ -23,7 +23,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "electrons"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "proton",
@@ -31,7 +31,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "protons"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "neutron",
@@ -39,7 +39,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "neutrons"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "element",
@@ -47,13 +47,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "elements"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "atomic number",
   "d": "The number of protons in an atom's nucleus; it identifies the element.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "valence electrons",
@@ -61,13 +61,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "valence electron"
   ],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "periodic table",
   "d": "The chart of elements ordered by atomic number, with similar elements in the same column.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#inside"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "mole",
@@ -75,7 +75,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "moles"
   ],
-  "p": "atoms-bonds-and-materials.html#atoms"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "Avogadro number",
@@ -83,7 +83,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Avogadro constant"
   ],
-  "p": "atoms-bonds-and-materials.html#atoms"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "bond",
@@ -93,19 +93,19 @@ window.MIBEM_GLOSSARY = [
    "bonding",
    "bonded"
   ],
-  "p": "atoms-bonds-and-materials.html#bonds"
+  "p": "materials-science-essentials.html#bonding"
  },
  {
   "t": "bond length",
   "d": "The distance between two bonded atoms at which their energy is lowest.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#bonds"
+  "p": "materials-science-essentials.html#bonding"
  },
  {
   "t": "bond energy",
   "d": "The energy needed to separate two bonded atoms; the depth of the energy valley.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#bonds"
+  "p": "materials-science-essentials.html#bonding"
  },
  {
   "t": "metallic bond",
@@ -113,7 +113,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "metallic bonding"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "covalent bond",
@@ -122,7 +122,7 @@ window.MIBEM_GLOSSARY = [
    "covalent bonding",
    "covalent"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "ionic bond",
@@ -131,13 +131,13 @@ window.MIBEM_GLOSSARY = [
    "ionic bonding",
    "ionic"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "van der Waals",
   "d": "A weak attraction between neutral atoms or molecules caused by fleeting shifts of charge.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "crystal",
@@ -146,7 +146,7 @@ window.MIBEM_GLOSSARY = [
    "crystals",
    "crystalline"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "unit cell",
@@ -154,7 +154,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "unit cells"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "lattice",
@@ -170,7 +170,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "grains"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "grain boundary",
@@ -178,7 +178,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "grain boundaries"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "polycrystal",
@@ -187,13 +187,13 @@ window.MIBEM_GLOSSARY = [
    "polycrystals",
    "polycrystalline"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "microstructure",
   "d": "The arrangement of grains, phases, particles and defects seen at micrometre scale.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "glass",
@@ -201,13 +201,13 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "glasses"
   ],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "amorphous",
   "d": "Without long-range atomic order, as in glass.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#solids"
+  "p": "materials-science-essentials.html#structure"
  },
  {
   "t": "vacancy",
@@ -215,7 +215,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "vacancies"
   ],
-  "p": "atoms-bonds-and-materials.html#defects"
+  "p": "materials-science-essentials.html#defects"
  },
  {
   "t": "interstitial",
@@ -223,7 +223,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "interstitials"
   ],
-  "p": "atoms-bonds-and-materials.html#defects"
+  "p": "materials-science-essentials.html#defects"
  },
  {
   "t": "solute",
@@ -232,7 +232,7 @@ window.MIBEM_GLOSSARY = [
    "solutes",
    "solute atoms"
   ],
-  "p": "atoms-bonds-and-materials.html#defects"
+  "p": "materials-science-essentials.html#defects"
  },
  {
   "t": "alloy",
@@ -241,7 +241,7 @@ window.MIBEM_GLOSSARY = [
    "alloys",
    "alloying"
   ],
-  "p": "atoms-bonds-and-materials.html#defects"
+  "p": "materials-science-essentials.html#defects"
  },
  {
   "t": "dislocation",
@@ -257,7 +257,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "defects"
   ],
-  "p": "atoms-bonds-and-materials.html#defects"
+  "p": "materials-science-essentials.html#defects"
  },
  {
   "t": "phase",
@@ -265,7 +265,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "phases"
   ],
-  "p": "forces-energy-and-heat.html#phases"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "semiconductor",
@@ -273,7 +273,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "semiconductors"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "ceramic",
@@ -281,7 +281,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "ceramics"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "polymer",
@@ -289,7 +289,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "polymers"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "composite",
@@ -297,7 +297,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "composites"
   ],
-  "p": "atoms-bonds-and-materials.html#types"
+  "p": "materials-science-essentials.html#framework"
  },
  {
   "t": "ductile",
@@ -385,7 +385,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "yield stress"
   ],
-  "p": "forces-energy-and-heat.html#stress"
+  "p": "tensors-stress-and-strain.html#stress"
  },
  {
   "t": "supercell",
@@ -407,7 +407,7 @@ window.MIBEM_GLOSSARY = [
   "t": "scientific notation",
   "d": "Writing a number as a value between 1 and 10 times a power of ten, such as 6.0 x 10^23.",
   "a": [],
-  "p": "numbers-units-and-graphs.html#notation"
+  "p": "maths-course-overview.html#notation"
  },
  {
   "t": "order of magnitude",
@@ -415,7 +415,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "orders of magnitude"
   ],
-  "p": "numbers-units-and-graphs.html#notation"
+  "p": "maths-course-overview.html#notation"
  },
  {
   "t": "significant figures",
@@ -423,7 +423,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "significant figure"
   ],
-  "p": "numbers-units-and-graphs.html#notation"
+  "p": "maths-course-overview.html#notation"
  },
  {
   "t": "exponential",
@@ -431,7 +431,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "exponentials"
   ],
-  "p": "numbers-units-and-graphs.html#graphs"
+  "p": "calculus-single-variable.html#toolkit"
  },
  {
   "t": "logarithm",
@@ -440,7 +440,7 @@ window.MIBEM_GLOSSARY = [
    "logarithms",
    "logarithmic"
   ],
-  "p": "numbers-units-and-graphs.html#logs"
+  "p": "calculus-single-variable.html#log-diff"
  },
  {
   "t": "slope",
@@ -448,7 +448,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "slopes"
   ],
-  "p": "numbers-units-and-graphs.html#slope"
+  "p": "calculus-single-variable.html#derivative"
  },
  {
   "t": "derivative",
@@ -456,7 +456,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "derivatives"
   ],
-  "p": "rates-of-change-calculus.html#derivative"
+  "p": "calculus-single-variable.html#derivative"
  },
  {
   "t": "integral",
@@ -465,7 +465,7 @@ window.MIBEM_GLOSSARY = [
    "integrals",
    "integration"
   ],
-  "p": "rates-of-change-calculus.html#area"
+  "p": "calculus-single-variable.html#integral-def"
  },
  {
   "t": "differential equation",
@@ -473,19 +473,19 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "differential equations"
   ],
-  "p": "rates-of-change-calculus.html#de"
+  "p": "ordinary-differential-equations.html"
  },
  {
   "t": "half-life",
   "d": "The time for a decaying quantity to fall to half its value.",
   "a": [],
-  "p": "rates-of-change-calculus.html#de"
+  "p": "ordinary-differential-equations.html"
  },
  {
   "t": "gradient",
   "d": "An arrow pointing in the direction of steepest increase of a quantity, with length equal to the steepness.",
   "a": [],
-  "p": "rates-of-change-calculus.html#several"
+  "p": "multivariable-calculus.html#partials"
  },
  {
   "t": "vector",
@@ -493,7 +493,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "vectors"
   ],
-  "p": "numbers-units-and-graphs.html#angles"
+  "p": "calculus-single-variable.html#toolkit"
  },
  {
   "t": "matrix",
@@ -501,7 +501,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "matrices"
   ],
-  "p": "mathematics-for-simulation.html#linalg"
+  "p": "linear-algebra-foundations.html#matrices"
  },
  {
   "t": "eigenvalue",
@@ -510,7 +510,7 @@ window.MIBEM_GLOSSARY = [
    "eigenvalues",
    "eigenvalue problem"
   ],
-  "p": "mathematics-for-simulation.html#eigen"
+  "p": "eigenvalues-and-decompositions.html#eigen"
  },
  {
   "t": "eigenvector",
@@ -518,7 +518,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "eigenvectors"
   ],
-  "p": "mathematics-for-simulation.html#eigen"
+  "p": "eigenvalues-and-decompositions.html#eigen"
  },
  {
   "t": "tensor",
@@ -526,7 +526,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "tensors"
   ],
-  "p": "mathematics-for-simulation.html#tensors"
+  "p": "tensors-stress-and-strain.html#what"
  },
  {
   "t": "Fourier transform",
@@ -535,25 +535,25 @@ window.MIBEM_GLOSSARY = [
    "Fourier series",
    "Fourier"
   ],
-  "p": "mathematics-for-simulation.html#fourier"
+  "p": "fourier-analysis.html#series"
  },
  {
   "t": "probability",
   "d": "A number from 0 to 1 saying how likely an event is.",
   "a": [],
-  "p": "chance-averages-and-error-bars.html#probability"
+  "p": "probability-for-simulation.html#basics"
  },
  {
   "t": "standard deviation",
   "d": "A measure of how spread out data are around their mean.",
   "a": [],
-  "p": "chance-averages-and-error-bars.html#average"
+  "p": "probability-for-simulation.html#rv"
  },
  {
   "t": "standard error",
   "d": "The uncertainty of an average: the standard deviation divided by the square root of the number of samples.",
   "a": [],
-  "p": "chance-averages-and-error-bars.html#samples"
+  "p": "probability-for-simulation.html#clt"
  },
  {
   "t": "normal distribution",
@@ -562,13 +562,13 @@ window.MIBEM_GLOSSARY = [
    "bell curve",
    "Gaussian"
   ],
-  "p": "chance-averages-and-error-bars.html#bell"
+  "p": "probability-for-simulation.html#gauss"
  },
  {
   "t": "central limit theorem",
   "d": "The result that sums or averages of many independent random effects tend to a bell-shaped distribution.",
   "a": [],
-  "p": "chance-averages-and-error-bars.html#bell"
+  "p": "probability-for-simulation.html#gauss"
  },
  {
   "t": "random walk",
@@ -578,19 +578,19 @@ window.MIBEM_GLOSSARY = [
    "random walker",
    "random walkers"
   ],
-  "p": "chance-averages-and-error-bars.html#walk"
+  "p": "probability-for-simulation.html#rw"
  },
  {
   "t": "least squares",
   "d": "Fitting a line or curve by minimising the sum of the squared distances to the data points.",
   "a": [],
-  "p": "numbers-units-and-graphs.html#slope"
+  "p": "calculus-single-variable.html#derivative"
  },
  {
   "t": "histogram",
   "d": "A bar chart showing how many data values fall into each range.",
   "a": [],
-  "p": "chance-averages-and-error-bars.html#average"
+  "p": "probability-for-simulation.html#rv"
  },
  {
   "t": "force",
@@ -598,31 +598,31 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "forces"
   ],
-  "p": "forces-energy-and-heat.html#forces"
+  "p": "physics-for-simulation.html#newton"
  },
  {
   "t": "velocity",
   "d": "How fast and in which direction something moves.",
   "a": [],
-  "p": "forces-energy-and-heat.html#motion"
+  "p": "physics-for-simulation.html#newton"
  },
  {
   "t": "acceleration",
   "d": "The rate at which velocity changes.",
   "a": [],
-  "p": "forces-energy-and-heat.html#motion"
+  "p": "physics-for-simulation.html#newton"
  },
  {
   "t": "kinetic energy",
   "d": "Energy of motion, equal to half the mass times the speed squared.",
   "a": [],
-  "p": "forces-energy-and-heat.html#energy"
+  "p": "physics-for-simulation.html#mechanics"
  },
  {
   "t": "potential energy",
   "d": "Energy stored because of position or arrangement, such as in a stretched spring or a chemical bond.",
   "a": [],
-  "p": "forces-energy-and-heat.html#energy"
+  "p": "physics-for-simulation.html#mechanics"
  },
  {
   "t": "potential energy surface",
@@ -637,7 +637,7 @@ window.MIBEM_GLOSSARY = [
   "t": "equilibrium",
   "d": "A state with no net force, or in which nothing changes on average.",
   "a": [],
-  "p": "forces-energy-and-heat.html#landscape"
+  "p": "physics-for-simulation.html#mechanics"
  },
  {
   "t": "Newton's laws",
@@ -645,67 +645,67 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "Newton's second law"
   ],
-  "p": "forces-energy-and-heat.html#forces"
+  "p": "physics-for-simulation.html#newton"
  },
  {
   "t": "Hooke's law",
   "d": "The rule that a spring's restoring force is proportional to its stretch, F = -kx.",
   "a": [],
-  "p": "forces-energy-and-heat.html#springs"
+  "p": "physics-for-simulation.html#oscillator"
  },
  {
   "t": "stress",
   "d": "Force per unit area acting inside a material.",
   "a": [],
-  "p": "forces-energy-and-heat.html#stress"
+  "p": "tensors-stress-and-strain.html#stress"
  },
  {
   "t": "strain",
   "d": "The stretch of a material as a fraction of its original length.",
   "a": [],
-  "p": "forces-energy-and-heat.html#stress"
+  "p": "tensors-stress-and-strain.html#stress"
  },
  {
   "t": "Young's modulus",
   "d": "The stiffness of a material: the ratio of stress to strain in the elastic region.",
   "a": [],
-  "p": "forces-energy-and-heat.html#stress"
+  "p": "tensors-stress-and-strain.html#stress"
  },
  {
   "t": "stiffness",
   "d": "How strongly something resists being stretched or squeezed.",
   "a": [],
-  "p": "atoms-bonds-and-materials.html#bonds"
+  "p": "materials-science-essentials.html#bonding"
  },
  {
   "t": "temperature",
   "d": "A measure of the average kinetic energy of the random motion of atoms.",
   "a": [],
-  "p": "forces-energy-and-heat.html#heat"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "kelvin",
   "d": "The unit of absolute temperature; 0 K is absolute zero and K = degrees Celsius + 273.15.",
   "a": [],
-  "p": "forces-energy-and-heat.html#heat"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "Boltzmann constant",
   "d": "The constant k_B = 8.617 x 10^-5 eV/K that converts temperature into energy.",
   "a": [],
-  "p": "forces-energy-and-heat.html#heat"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "heat",
   "d": "Energy transferred between bodies because of a temperature difference.",
   "a": [],
-  "p": "forces-energy-and-heat.html#heat"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "thermal energy",
   "d": "The energy of random atomic motion, of order k_B T per atom.",
   "a": [],
-  "p": "forces-energy-and-heat.html#heat"
+  "p": "physics-for-simulation.html#thermo"
  },
  {
   "t": "electronvolt",
@@ -713,7 +713,7 @@ window.MIBEM_GLOSSARY = [
   "a": [
    "eV"
   ],
-  "p": "numbers-units-and-graphs.html#units"
+  "p": "physics-for-simulation.html#units"
  },
  {
   "t": "entropy",

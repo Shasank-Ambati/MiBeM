@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://shasank-ambati.github.io/MiBeM/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/curriculum.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/map.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/glossary.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/start-here.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/numbers-units-and-graphs.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/rates-of-change-calculus.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/atoms-bonds-and-materials.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/forces-energy-and-heat.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/chance-averages-and-error-bars.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/your-first-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/maths-course-overview.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/calculus-single-variable.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/multivariable-calculus.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/vector-calculus.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/linear-algebra-foundations.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/eigenvalues-and-decompositions.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/tensors-stress-and-strain.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/ordinary-differential-equations.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/fourier-analysis.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/partial-differential-equations.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/probability-for-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/statistics-and-data-fitting.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/calculus-of-variations-and-optimisation.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/mathematics-for-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/physics-for-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/materials-science-essentials.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/programming-and-workflow.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/introduction.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/your-first-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/vector-calculus.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/eigenvalues-and-decompositions.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/ordinary-differential-equations.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/probability-for-simulation.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/fourier-analysis.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/partial-differential-equations.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/tensors-stress-and-strain.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/statistics-and-data-fitting.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/calculus-of-variations-and-optimisation.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/statistical-mechanics.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/thermodynamics-and-calphad.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://shasank-ambati.github.io/MiBeM/computational/introduction.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/density-functional-theory.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/molecular-dynamics.html</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html</loc><lastmod>2026-10-23</lastmod></url>

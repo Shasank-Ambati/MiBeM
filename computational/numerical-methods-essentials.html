@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="15">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -50,16 +50,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Background</span><span>Background 4</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computing</span><span>COMP 201</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" class="here" aria-current="page" title="COMP 201: Numerical methods essentials">201</a></nav>
+<!-- coursenav:end -->
             <h1>Numerical methods essentials</h1>
             <p class="lead">Every simulation is a numerical approximation to a mathematical model. This page covers the ideas that decide whether the numbers a program prints can be trusted: how computers do arithmetic, how errors arise and grow, how to choose steps and grids, and what scales badly.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="mathematics-for-simulation.html">B1. Mathematics</a><br><a href="your-first-simulation.html">S6. Your first simulation</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="molecular-dynamics.html">6. Molecular dynamics</a><br><a href="monte-carlo-methods.html">7. Monte Carlo and kMC</a><br><a href="diffusion-and-kinetics.html">8. Diffusion and kinetics</a><br><a href="finite-element-method.html">10. Finite elements</a></dd></div>
-<div><dt>Category</dt><dd>Background</dd></div>
+<div><dt>Builds on</dt><dd><a href="programming-and-workflow.html">COMP 101: Programming and workflow</a><br><a href="calculus-single-variable.html">MATH 101: Calculus I</a><br><a href="linear-algebra-foundations.html">MATH 103: Linear algebra I</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a><br><a href="monte-carlo-methods.html">CMS 503: Monte Carlo and kMC</a><br><a href="diffusion-and-kinetics.html">CMS 504: Diffusion and kinetics</a><br><a href="finite-element-method.html">CMS 506: Finite elements</a></dd></div>
+<div><dt>Level</dt><dd>Year 2: core tools</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -73,7 +76,7 @@
                 </ul>
             </div>
 
-            <p><strong>Starting point:</strong> This page assumes the basic idea of a simulation and some calculus. If you have not met them, read <a href="your-first-simulation.html">Your first simulation</a> and <a href="rates-of-change-calculus.html">Rates of change</a> first. </p>
+            <p><strong>Starting point:</strong> This page assumes the basic idea of a simulation and some calculus. If you have not met them, read <a href="your-first-simulation.html">Your first simulation</a> and <a href="calculus-single-variable.html">Calculus I</a> first. </p>
 
             <h2 id="floating">1. Finite-precision arithmetic<a class="anchor" href="#floating" aria-label="Link to this section">#</a></h2>
             <p>Computers store real numbers as <strong>floating-point</strong> values: a sign, an exponent and a fixed number of significant bits. Most scientific code uses IEEE 754 double precision: 64 bits, of which 52 are the stored fraction (53 significant bits with the implicit leading one), giving about 16 decimal digits and a range of roughly 10<sup>&minus;308</sup> to 10<sup>308</sup>. The spacing of numbers near 1 is the <em>machine epsilon</em>, &epsilon;<sub>mach</sub> = 2<sup>&minus;52</sup> &asymp; 2.2 &times; 10<sup>&minus;16</sup>; single precision has about 7 digits (&epsilon; &asymp; 1.2 &times; 10<sup>&minus;7</sup>), which is much faster on GPUs but needs care.</p>
@@ -101,7 +104,7 @@
 
             <h2 id="calculus">3. Differentiation and integration<a class="anchor" href="#calculus" aria-label="Link to this section">#</a></h2>
             <h3 id="diff">Finite differences<a class="anchor" href="#diff" aria-label="Link to this section">#</a></h3>
-            <p>Taylor series (see <a href="mathematics-for-simulation.html#taylor">mathematics for simulation</a>) give difference formulas for derivatives with known error:</p>
+            <p>Taylor series (see <a href="calculus-single-variable.html#taylor">Calculus I</a>) give difference formulas for derivatives with known error:</p>
             <span class="eq">forward: f&prime;(x) &asymp; [f(x+h) &minus; f(x)]/h, error &asymp; &frac12; h f&Prime; (first order)<br>central: f&prime;(x) &asymp; [f(x+h) &minus; f(x&minus;h)]/2h, error &asymp; &#8537; h&sup2; f&prime;&prime;&prime; (second order)</span>
             <p>Reducing <em>h</em> shrinks this truncation error, but the numerator involves subtracting nearly equal numbers, so round-off error grows as &epsilon;<sub>mach</sub>/<em>h</em>. The total error therefore has a minimum at an intermediate step: about &radic;&epsilon;<sub>mach</sub> &asymp; 10<sup>&minus;8</sup> for forward differences and &epsilon;<sub>mach</sub><sup>1/3</sup> &asymp; 6 &times; 10<sup>&minus;6</sup> for central differences in double precision. The plot shows the characteristic V shape; switch to single precision to see the whole curve shift.</p>
             <div class="demo" data-demo="fdstep"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
@@ -148,7 +151,7 @@
                 <li><strong>Finite differences</strong> replace derivatives by differences on a regular grid: simple and fast, best for simple geometry.</li>
                 <li><strong>Finite volumes</strong> balance fluxes across the faces of cells, so conserved quantities are conserved exactly; the standard for fluid flow and transport.</li>
                 <li><strong>Finite elements</strong> use a weak form and piecewise polynomial functions on unstructured meshes; the standard for solid mechanics and complex geometry.</li>
-                <li><strong>Spectral methods</strong> expand in Fourier or polynomial modes; extremely accurate for smooth periodic problems (see <a href="mathematics-for-simulation.html#fourier">Fourier analysis</a>).</li>
+                <li><strong>Spectral methods</strong> expand in Fourier or polynomial modes; extremely accurate for smooth periodic problems (see <a href="fourier-analysis.html">Fourier analysis</a>).</li>
             </ul>
             <p>Time stepping adds stability limits. For explicit diffusion the dimensionless number <em>r</em> = <em>D</em>&Delta;<em>t</em>/&Delta;<em>x</em>&sup2; must not exceed 1/2 in one dimension (1/4 in two, 1/6 in three); for wave and advection problems the <strong>Courant&ndash;Friedrichs&ndash;Lewy (CFL)</strong> condition requires that the numerical domain of dependence contains the physical one, <em>c</em>&Delta;<em>t</em>/&Delta;<em>x</em> &le; 1 with <em>c</em> the wave speed. Implicit schemes remove these limits at the price of solving a linear system each step, and the Crank&ndash;Nicolson scheme is second order in time. Always run a <strong>mesh-convergence</strong> and a <strong>time-step convergence</strong> study; and test against a problem with a known analytic solution (the <em>method of manufactured solutions</em> constructs one for any equation).</p>
 
@@ -203,9 +206,9 @@
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="materials-science-essentials.html"><span class="dir">Previous topic</span>Materials science essentials</a>
-<a class="next" href="programming-and-workflow.html"><span class="dir">Next topic</span>Programming and workflow</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="your-first-simulation.html"><span class="dir">Previous course</span>Your first simulation</a>
+<span class="spacer"></span>
 </nav>
 <!-- pager:end -->
         </article>
@@ -214,12 +217,12 @@
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
-    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>

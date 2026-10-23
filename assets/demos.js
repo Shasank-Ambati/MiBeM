@@ -462,64 +462,6 @@
 
   /* ================= beginner demos ================= */
 
-  /* ---- placement quiz ---- */
-  function placement(host) {
-    var api = shell(host, "Where should you start? A two-minute check",
-      "This is not a test and nothing is saved or sent anywhere. Answer what you can (it is fine to guess or skip), and you will get a suggested order of pages.");
-    var Q = [
-      { page: "S1", q: "Solve 3x + 6 = 21 for x.", o: ["x = 3", "x = 5", "x = 7", "x = 9"], c: 1 },
-      { page: "S1", q: "Write 0.0025 in scientific notation.", o: ["2.5 × 10³", "2.5 × 10⁻⁴", "2.5 × 10⁻³", "25 × 10⁻³"], c: 2 },
-      { page: "S1", q: "A straight line on a graph passes through (0, 2) and (4, 10). What is its slope?", o: ["1", "4", "8", "2"], c: 3 },
-      { page: "S2", q: "On a distance-against-time graph, a steeper line means…", o: ["a longer distance", "a higher speed", "a heavier object", "more time"], c: 1 },
-      { page: "S2", q: "At the very bottom of a smooth valley-shaped curve, the slope is…", o: ["positive", "negative", "zero", "infinite"], c: 2 },
-      { page: "S3", q: "Which of these conducts electricity best?", o: ["glass", "diamond", "rubber", "copper"], c: 3 },
-      { page: "S3", q: "In a crystal, a “vacancy” is…", o: ["an extra atom squeezed in", "an empty atom site", "a crack", "a different crystal grain"], c: 1 },
-      { page: "S4", q: "A ball rolls down a smooth hill. Its kinetic energy…", o: ["increases as it goes down", "decreases as it goes down", "stays zero", "is always equal to its height"], c: 0 },
-      { page: "S4", q: "The temperature of a solid is related to…", o: ["the number of atoms in it", "its colour", "how much the atoms jiggle on average", "how heavy it is"], c: 2 },
-      { page: "S5", q: "You repeat a measurement 100 times instead of once and take the average. The result is…", o: ["exactly right", "more reliable (smaller random error)", "no different", "less reliable"], c: 1 },
-      { page: "S5", q: "You flip a fair coin twice. The chance of two heads is…", o: ["1/2", "1/3", "1/4", "1"], c: 2 },
-      { page: "S6", q: "Have you written any program before (for example in Python)?", o: ["Never", "A little", "Yes, regularly"], c: -1 }
-    ];
-    var picks = {};
-    Q.forEach(function (item, qi) {
-      var fs = el("fieldset", "quiz-q"), lg = el("legend", null, (qi + 1) + ". " + item.q.replace(/&/g, "&amp;").replace(/</g, "&lt;"));
-      fs.appendChild(lg);
-      item.o.forEach(function (text, oi) {
-        var id = "q" + qi + "o" + oi + "-" + (++uid);
-        var lab = el("label", "quiz-o"); lab.setAttribute("for", id);
-        var inp = doc.createElement("input"); inp.type = "radio"; inp.name = "q" + qi + "-" + uid; inp.id = id;
-        inp.addEventListener("change", function () { picks[qi] = oi; });
-        lab.appendChild(inp); lab.appendChild(doc.createTextNode(" " + text));
-        fs.appendChild(lab);
-      });
-      api.controls.appendChild(fs);
-    });
-    api.controls.className = "quiz-list";
-    var out = el("div", "quiz-out");
-    var go = button(api, "Show my starting point", true, function () {
-      var need = {};
-      Q.forEach(function (item, qi) {
-        var ok = item.c === -1 ? (picks[qi] !== undefined && picks[qi] !== 0) : picks[qi] === item.c;
-        if (!ok) need[item.page] = true;
-      });
-      var names = { S1: ["numbers-units-and-graphs", "Numbers, units and graphs"], S2: ["rates-of-change-calculus", "Rates of change"], S3: ["atoms-bonds-and-materials", "Atoms, bonds and materials"], S4: ["forces-energy-and-heat", "Forces, energy, heat and motion"], S5: ["chance-averages-and-error-bars", "Chance, averages and error bars"], S6: ["your-first-simulation", "Your first simulation"] };
-      var order = ["S1", "S2", "S3", "S4", "S5", "S6"], list = order.filter(function (k) { return need[k]; });
-      var html;
-      if (!list.length) {
-        html = "<p><b>You can skip most of the Start here pages.</b> Skim <a href=\"start-here.html\">Start here</a> for the roadmap, then begin with <a href=\"mathematics-for-simulation.html\">Background 1: Mathematics</a> or go straight to <a href=\"introduction.html\">Topic 1: the Introduction</a>.</p>";
-      } else {
-        html = "<p><b>Suggested order:</b></p><ol><li>Finish reading this page (<a href=\"start-here.html\">Start here</a>).</li>" +
-          list.map(function (k) { return "<li><a href=\"" + names[k][0] + ".html\">" + names[k][1] + "</a></li>"; }).join("") +
-          "</ol><p>After those, continue with Background 1 and the rest. Pages you did not need to open can be skimmed later for review.</p>";
-      }
-      out.innerHTML = html;
-    });
-    api.controls.appendChild(go);
-    api.body.appendChild(out);
-    api.finish();
-  }
-
-  /* ---- unit converter ---- */
   function units(host) {
     var api = shell(host, "Unit converter: energy and length",
       "Type a value and pick its unit. Scientists move between these units constantly, so it is worth getting a feel for the sizes: 1 eV is the energy an electron gains crossing 1 volt, and 1 Ångström is a tenth of a nanometre, about the size of an atom.");
@@ -937,7 +879,7 @@
     reset(); redraws.push(draw); loop();
   }
 
-  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep, placement: placement, units: units, graphs: graphs, tangent: tangent, area: area, bond: bond, crystal2d: crystal2d, oscillator: oscillator, jiggle: jiggle, coins: coins, cooling: cooling, walkers: walkers };
+  var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep, units: units, graphs: graphs, tangent: tangent, area: area, bond: bond, crystal2d: crystal2d, oscillator: oscillator, jiggle: jiggle, coins: coins, cooling: cooling, walkers: walkers };
   window.MIBEM_DEMO = { REG: REG, redraws: redraws, css: css, colours: colours, el: el, shell: shell, slider: slider, button: button, checkbox: checkbox, setRead: setRead, fmtN: fmtN, axes: axes };
   function boot() {
     doc.querySelectorAll(".demo[data-demo]").forEach(function (h) { var f = REG[h.getAttribute("data-demo")]; if (f) { try { f(h); } catch (e) { h.innerHTML = '<div class="demo-body"><p class="demo-note">This demo could not start in your browser.</p></div>'; if (window.console) console.error(e); } } });

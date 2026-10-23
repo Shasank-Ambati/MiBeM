@@ -5,206 +5,41 @@
    `builds` = topics worth reading first; `related` = topics that connect but are not required. */
 window.MIBEM_TOPICS = [
   {
-    "id": 17,
-    "label": "S0",
-    "series": "start",
-    "slug": "start-here",
-    "short": "Start here",
-    "part": "Start here",
-    "tone": "a",
-    "minutes": 8,
-    "title": "Start here: what you will learn and how",
-    "blurb": "What computational materials science is, a roadmap with time estimates, how to study, and a short quiz that tells you where to begin.",
+    "id": 36,
+    "label": "MATH 100",
+    "code": "MATH 100",
+    "dept": "MATH",
+    "level": 1,
+    "slug": "maths-course-overview",
+    "short": "Mathematics guide",
+    "part": "Mathematics",
+    "tone": "b",
+    "minutes": 9,
+    "title": "Mathematics: course guide and study plan",
+    "blurb": "How the twelve-course mathematics sequence is organised, three learning paths, how to study with the problems, a placement check, a notation guide and a one-page revision sheet.",
     "builds": [],
     "related": [],
     "takeaways": [
-      "Computational materials science uses computers to predict how materials behave, by describing atoms, energy and heat with rules and calculating what follows.",
-      "A model is a simplified description; a simulation is the step-by-step calculation of what the model predicts, and it must be checked against reality.",
-      "The site has three levels: Start here (school-level), Background (university-level refresher) and Core topics (the methods).",
-      "Learn actively: try every demo, attempt each question before opening the answer, and use the glossary when a word is new.",
-      "If a page feels too hard, go one level down instead of pushing on; that is the intended way to use this site."
-    ]
-  },
-  {
-    "id": 18,
-    "label": "S1",
-    "series": "start",
-    "slug": "numbers-units-and-graphs",
-    "short": "Numbers, units, graphs",
-    "part": "Start here",
-    "tone": "a",
-    "minutes": 13,
-    "title": "Numbers, units and graphs",
-    "blurb": "Scientific notation, units and conversions, algebra, functions, logarithms and reading graphs: the everyday maths of science.",
-    "builds": [
-      17
-    ],
-    "related": [],
-    "takeaways": [
-      "Scientific notation (such as 6.0 x 10^23) lets you write very large and very small numbers and compare sizes at a glance.",
-      "A number without a unit is incomplete; convert by multiplying by factors equal to one, and check that units balance.",
-      "A function turns an input into an output; its graph shows how, and the shape (line, curve, exponential) tells you the kind of process.",
-      "A logarithm asks 'what power?', and plotting on a log scale turns exponential curves into straight lines.",
-      "The slope of a straight line is a rate: how much y changes for each step in x."
-    ]
-  },
-  {
-    "id": 19,
-    "label": "S2",
-    "series": "start",
-    "slug": "rates-of-change-calculus",
-    "short": "Rates of change",
-    "part": "Start here",
-    "tone": "b",
-    "minutes": 11,
-    "title": "Rates of change: calculus from scratch",
-    "blurb": "Slopes, derivatives, areas and the idea of an equation that says how fast something changes, built up with pictures instead of proofs.",
-    "builds": [
-      18
-    ],
-    "related": [],
-    "takeaways": [
-      "A derivative is the slope of a curve at a point: the instantaneous rate of change.",
-      "Where the slope of an energy curve is zero there is an equilibrium; a positive curvature there means it is stable.",
-      "An integral adds up many small pieces and equals the area under a curve.",
-      "Many laws say 'the rate of change depends on the amount', and their solutions are exponential decay or growth.",
-      "Force is minus the slope of the energy: the arrow that points downhill."
-    ]
-  },
-  {
-    "id": 20,
-    "label": "S3",
-    "series": "start",
-    "slug": "atoms-bonds-and-materials",
-    "short": "Atoms and materials",
-    "part": "Start here",
-    "tone": "b",
-    "minutes": 10,
-    "title": "Atoms, bonds and materials from scratch",
-    "blurb": "What materials are made of, why atoms stick together, how crystals and defects arise, and how structure sets properties.",
-    "builds": [
-      17
-    ],
-    "related": [],
-    "takeaways": [
-      "Everything is made of atoms; properties come from which atoms there are and how they are arranged and bonded.",
-      "Bonds balance attraction and repulsion, giving a preferred spacing and a stiffness; deeper bonds mean higher melting points.",
-      "Crystals are repeating patterns; real crystals contain defects such as vacancies, solute atoms and dislocations.",
-      "Defects, not perfect order, explain why metals bend, conduct and can be strengthened by alloying.",
-      "We simulate because we cannot see atoms directly and cannot afford to test every composition."
-    ]
-  },
-  {
-    "id": 21,
-    "label": "S4",
-    "series": "start",
-    "slug": "forces-energy-and-heat",
-    "short": "Forces, energy, heat",
-    "part": "Start here",
-    "tone": "a",
-    "minutes": 10,
-    "title": "Forces, energy, heat and motion",
-    "blurb": "Newton's laws, kinetic and potential energy, springs, why temperature is atomic jiggling, and stress and strain.",
-    "builds": [
-      18
-    ],
-    "related": [
-      19
-    ],
-    "takeaways": [
-      "A force changes motion according to F = ma, and forces on atoms come from the slope of an energy curve.",
-      "Energy is conserved: it moves between kinetic (motion) and potential (position) forms.",
-      "Atoms joined by bonds behave like masses on springs, and they vibrate at around ten trillion times a second.",
-      "Temperature measures the average kinetic energy of atoms; heating a solid makes the atoms jiggle more until it melts.",
-      "Stress is force per area, strain is relative stretch, and their ratio for a given material is its stiffness."
-    ]
-  },
-  {
-    "id": 22,
-    "label": "S5",
-    "series": "start",
-    "slug": "chance-averages-and-error-bars",
-    "short": "Chance and averages",
-    "part": "Start here",
-    "tone": "b",
-    "minutes": 8,
-    "title": "Chance, averages and error bars",
-    "blurb": "Probability, means and spread, why more samples shrink the error, the bell curve, and how to be honest about uncertainty.",
-    "builds": [
-      18
-    ],
-    "related": [],
-    "takeaways": [
-      "Probability measures how likely an outcome is, from 0 (never) to 1 (always); independent chances multiply.",
-      "The mean says where data centre; the standard deviation says how spread out they are.",
-      "The error of an average falls as one over the square root of the number of samples: four times as many for half the error.",
-      "Sums of many small random effects form a bell curve, which is why it appears everywhere.",
-      "Always report an uncertainty: a number without an error bar is a guess."
-    ]
-  },
-  {
-    "id": 23,
-    "label": "S6",
-    "series": "start",
-    "slug": "your-first-simulation",
-    "short": "Your first simulation",
-    "part": "Start here",
-    "tone": "a",
-    "minutes": 12,
-    "title": "Your first simulation",
-    "blurb": "Build a simulation from three ingredients, watch diffusion emerge from random walkers, and write the same thing in a few lines of Python.",
-    "builds": [
-      19,
-      22
-    ],
-    "related": [],
-    "takeaways": [
-      "A simulation needs a description of the state, a rule for how it changes, and a loop that applies the rule step by step.",
-      "Smaller time steps give more accurate answers at more cost; always check by changing the step.",
-      "Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.",
-      "Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.",
-      "Everything in the Core topics is this same idea with better rules: atoms, energies, grids and probabilities."
-    ]
-  },
-  {
-    "id": 36,
-    "label": "M0",
-    "series": "maths",
-    "slug": "maths-course-overview",
-    "short": "Course overview",
-    "part": "Maths course",
-    "tone": "b",
-    "minutes": 8,
-    "title": "Maths course: overview and study plan",
-    "blurb": "How the twelve-module maths course is organised, three learning paths, how to study with the problems, a placement check, a notation guide and a one-page revision sheet.",
-    "builds": [
-      18
-    ],
-    "related": [
-      12
-    ],
-    "takeaways": [
-      "The course has twelve modules, each organised as lectures with proofs and worked examples, interactive figures, a problem set of twelve graded problems with hints and full solutions, and a six-question unit quiz.",
+      "The mathematics sequence has twelve courses, each organised as lectures with proofs and worked examples, interactive figures, a problem set of twelve graded problems with hints and full solutions, and a six-question unit quiz.",
       "Read in order if you can; otherwise follow a goal-based path (electronic structure, atomistic simulation, continuum and phase-field, or data and machine learning).",
       "Learning happens in the problems: attempt each on paper first, then use the hint, and only then read the solution.",
-      "Your ticks are stored only in your browser; the table below counts them per module."
+      "Your ticks are stored only in your browser; the table below counts them per course."
     ]
   },
   {
     "id": 24,
-    "label": "M1",
-    "series": "maths",
+    "label": "MATH 101",
+    "code": "MATH 101",
+    "dept": "MATH",
+    "level": 1,
     "slug": "calculus-single-variable",
     "short": "Calculus I",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 30,
     "title": "Calculus I: functions of one variable",
     "blurb": "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
-    "builds": [
-      19,
-      36
-    ],
+    "builds": [],
     "related": [
       2,
       15
@@ -219,11 +54,13 @@ window.MIBEM_TOPICS = [
   },
   {
     "id": 25,
-    "label": "M2",
-    "series": "maths",
+    "label": "MATH 102",
+    "code": "MATH 102",
+    "dept": "MATH",
+    "level": 1,
     "slug": "multivariable-calculus",
     "short": "Calculus II",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "b",
     "minutes": 24,
     "title": "Calculus II: several variables and optimisation",
@@ -244,12 +81,144 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 27,
+    "label": "MATH 103",
+    "code": "MATH 103",
+    "dept": "MATH",
+    "level": 1,
+    "slug": "linear-algebra-foundations",
+    "short": "Linear algebra I",
+    "part": "Mathematics",
+    "tone": "b",
+    "minutes": 25,
+    "title": "Linear algebra I: vectors, matrices and lattices",
+    "blurb": "Vectors, linear systems, matrix algebra, determinants, bases and coordinate changes, with crystal lattices as the running example.",
+    "builds": [],
+    "related": [
+      2
+    ],
+    "takeaways": [
+      "A system $A\\mathbf{x}=\\mathbf{b}$ is solved by Gaussian elimination in $O(n^3)$ operations; it has a unique solution, none, or infinitely many, according to the rank of $A$, and in practice one solves rather than inverts.",
+      "A matrix is a linear map and multiplication is composition, so in general $AB\\neq BA$; the determinant is the factor by which the map scales volume, and it vanishes exactly when the map collapses space (the matrix is singular).",
+      "Columns of the lattice matrix $A$ are the basis vectors $\\mathbf{a}_i$: Cartesian position is $\\mathbf{r}=A\\mathbf{f}$ for fractional coordinates $\\mathbf{f}$, the cell volume is $|\\det A|$, and distances use the metric $G=A^{T}A$.",
+      "The reciprocal lattice matrix is $B=2\\pi A^{-T}$ so that $\\mathbf{a}_i\\cdot\\mathbf{b}_j=2\\pi\\delta_{ij}$; a plane $(hkl)$ has normal $\\mathbf{G}_{hkl}$ and spacing $d=2\\pi/|\\mathbf{G}_{hkl}|$, which with Bragg's law explains diffraction patterns.",
+      "Orthogonal matrices ($Q^{T}Q=I$) preserve lengths and angles and represent rotations and reflections; an ill-conditioned matrix (huge ratio of largest to smallest stretch) makes solutions hypersensitive to small errors."
+    ]
+  },
+  {
+    "id": 13,
+    "label": "PHYS 100",
+    "code": "PHYS 100",
+    "dept": "PHYS",
+    "level": 1,
+    "slug": "physics-for-simulation",
+    "short": "Physics review",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 13,
+    "title": "Physics for simulation",
+    "blurb": "Classical mechanics, electrostatics, quantum mechanics essentials, thermodynamics and the units used in atomistic work.",
+    "builds": [
+      24
+    ],
+    "related": [
+      3,
+      5
+    ],
+    "takeaways": [
+      "A potential energy surface turns forces, equilibrium, stability and vibrations into calculus: forces are slopes, stiffness is curvature, and normal modes are eigenvectors.",
+      "Electrostatics is long-ranged, which is why charged systems need special summation methods and why neutral cells matter.",
+      "Quantum mechanics enters through the Schroedinger equation, the Pauli principle, the variational principle and Bloch's theorem for periodic solids.",
+      "Thermodynamics supplies the quantities that simulations are compared with: free energies, chemical potentials and heat capacities.",
+      "Know your units: 1 eV is about 96.5 kJ/mol, kT is about 0.0259 eV at 300 K, and 1 Hartree is about 27.2 eV."
+    ]
+  },
+  {
+    "id": 14,
+    "label": "MSE 101",
+    "code": "MSE 101",
+    "dept": "MSE",
+    "level": 1,
+    "slug": "materials-science-essentials",
+    "short": "Materials essentials",
+    "part": "Materials science",
+    "tone": "b",
+    "minutes": 13,
+    "title": "Materials science essentials",
+    "blurb": "Bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments simulations are compared with.",
+    "builds": [],
+    "related": [
+      2,
+      8
+    ],
+    "takeaways": [
+      "Processing sets structure, structure sets properties, and properties set performance; simulation can enter at every link.",
+      "Bonding type (metallic, covalent, ionic, van der Waals) decides which interatomic model or electronic method is appropriate.",
+      "Defects control most useful properties: dislocations govern strength, vacancies govern diffusion, and boundaries govern grain-size effects.",
+      "Phase diagrams give the equilibrium; transformation kinetics (nucleation, growth, diffusion) decide which microstructure actually forms.",
+      "Know what each experiment measures (diffraction, microscopy, tensile tests, calorimetry), because that is what a simulation must be compared with."
+    ]
+  },
+  {
+    "id": 16,
+    "label": "COMP 101",
+    "code": "COMP 101",
+    "dept": "COMP",
+    "level": 1,
+    "slug": "programming-and-workflow",
+    "short": "Programming and workflow",
+    "part": "Computing",
+    "tone": "b",
+    "minutes": 11,
+    "title": "Programming and workflow",
+    "blurb": "The command line, Python for science, version control, running on clusters, reproducibility and testing your own code.",
+    "builds": [],
+    "related": [
+      11
+    ],
+    "takeaways": [
+      "A scripting language (Python with NumPy, SciPy and Matplotlib) plus the command line covers most day-to-day computational work.",
+      "Keep inputs, scripts and notes under version control; keep large outputs elsewhere and record how they were made.",
+      "On a cluster, test small, request only the resources you need, use job arrays for parameter sweeps and checkpoint long runs.",
+      "Reproducibility means recorded versions, seeds, units and inputs so that someone else, or you in a year, can rerun the work.",
+      "Test your own code against analytic solutions and simple limits before trusting it on real problems."
+    ]
+  },
+  {
+    "id": 23,
+    "label": "COMP 102",
+    "code": "COMP 102",
+    "dept": "COMP",
+    "level": 1,
+    "slug": "your-first-simulation",
+    "short": "Your first simulation",
+    "part": "Computing",
+    "tone": "a",
+    "minutes": 12,
+    "title": "Your first simulation",
+    "blurb": "Build a simulation from three ingredients, watch diffusion emerge from random walkers, and write the same thing in a few lines of Python.",
+    "builds": [
+      16,
+      24
+    ],
+    "related": [],
+    "takeaways": [
+      "A simulation needs a description of the state, a rule for how it changes, and a loop that applies the rule step by step.",
+      "Smaller time steps give more accurate answers at more cost; always check by changing the step.",
+      "Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.",
+      "Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.",
+      "Everything in the computational methods courses is this same idea with better rules: atoms, energies, grids and probabilities."
+    ]
+  },
+  {
     "id": 26,
-    "label": "M3",
-    "series": "maths",
+    "label": "MATH 201",
+    "code": "MATH 201",
+    "dept": "MATH",
+    "level": 2,
     "slug": "vector-calculus",
     "short": "Vector calculus",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 24,
     "title": "Vector calculus: fields, fluxes and conservation laws",
@@ -270,37 +239,14 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
-    "id": 27,
-    "label": "M4",
-    "series": "maths",
-    "slug": "linear-algebra-foundations",
-    "short": "Linear algebra I",
-    "part": "Maths course",
-    "tone": "b",
-    "minutes": 25,
-    "title": "Linear algebra I: vectors, matrices and lattices",
-    "blurb": "Vectors, linear systems, matrix algebra, determinants, bases and coordinate changes, with crystal lattices as the running example.",
-    "builds": [
-      18
-    ],
-    "related": [
-      2
-    ],
-    "takeaways": [
-      "A system $A\\mathbf{x}=\\mathbf{b}$ is solved by Gaussian elimination in $O(n^3)$ operations; it has a unique solution, none, or infinitely many, according to the rank of $A$, and in practice one solves rather than inverts.",
-      "A matrix is a linear map and multiplication is composition, so in general $AB\\neq BA$; the determinant is the factor by which the map scales volume, and it vanishes exactly when the map collapses space (the matrix is singular).",
-      "Columns of the lattice matrix $A$ are the basis vectors $\\mathbf{a}_i$: Cartesian position is $\\mathbf{r}=A\\mathbf{f}$ for fractional coordinates $\\mathbf{f}$, the cell volume is $|\\det A|$, and distances use the metric $G=A^{T}A$.",
-      "The reciprocal lattice matrix is $B=2\\pi A^{-T}$ so that $\\mathbf{a}_i\\cdot\\mathbf{b}_j=2\\pi\\delta_{ij}$; a plane $(hkl)$ has normal $\\mathbf{G}_{hkl}$ and spacing $d=2\\pi/|\\mathbf{G}_{hkl}|$, which with Bragg's law explains diffraction patterns.",
-      "Orthogonal matrices ($Q^{T}Q=I$) preserve lengths and angles and represent rotations and reflections; an ill-conditioned matrix (huge ratio of largest to smallest stretch) makes solutions hypersensitive to small errors."
-    ]
-  },
-  {
     "id": 28,
-    "label": "M5",
-    "series": "maths",
+    "label": "MATH 202",
+    "code": "MATH 202",
+    "dept": "MATH",
+    "level": 2,
     "slug": "eigenvalues-and-decompositions",
     "short": "Linear algebra II",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 25,
     "title": "Linear algebra II: eigenvalues and decompositions",
@@ -321,40 +267,14 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
-    "id": 29,
-    "label": "M6",
-    "series": "maths",
-    "slug": "tensors-stress-and-strain",
-    "short": "Tensors",
-    "part": "Maths course",
-    "tone": "b",
-    "minutes": 26,
-    "title": "Tensors: stress, strain and anisotropy",
-    "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
-    "builds": [
-      28,
-      26
-    ],
-    "related": [
-      2,
-      10
-    ],
-    "takeaways": [
-      "A tensor is defined by how its components transform when the axes rotate, $T'_{ij}=Q_{ik}Q_{jl}T_{kl}$, not merely by being an array of numbers; scalars, vectors, stress and the stiffness tensor are tensors of rank 0, 1, 2 and 4.",
-      "In index notation a repeated index is summed (Einstein convention); with the Kronecker delta $\\delta_{ij}$ and the permutation symbol $\\varepsilon_{ijk}$ it expresses dot and cross products, traces and determinants compactly.",
-      "Stress $\\sigma_{ij}$ gives the traction on any plane, $t_i=\\sigma_{ij}n_j$; it is symmetric, its eigenvalues are the principal stresses, and failure criteria depend only on invariants such as the von Mises stress $\\sqrt{\\tfrac32 s_{ij}s_{ij}}$ of the deviatoric part.",
-      "Small strain is the symmetric part of the displacement gradient, $\\varepsilon_{ij}=\\tfrac12(\\partial_ju_i+\\partial_iu_j)$; the trace is the volume change and the antisymmetric part is a rigid rotation that stores no energy.",
-      "Hooke's law $\\sigma_{ij}=C_{ijkl}\\varepsilon_{kl}$ has 81 components but only 21 independent constants in general, 3 for cubic crystals and 2 for isotropic solids; Voigt notation turns it into a $6\\times6$ matrix, which must be positive definite for stability.",
-      "Neumann's principle: a crystal property tensor must be invariant under the crystal's point-group operations, which reduces the number of independent components and forces odd-rank tensors such as piezoelectricity to vanish in centrosymmetric crystals."
-    ]
-  },
-  {
     "id": 30,
-    "label": "M7",
-    "series": "maths",
+    "label": "MATH 203",
+    "code": "MATH 203",
+    "dept": "MATH",
+    "level": 2,
     "slug": "ordinary-differential-equations",
     "short": "ODEs",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 27,
     "title": "Ordinary differential equations",
@@ -376,12 +296,43 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 33,
+    "label": "MATH 204",
+    "code": "MATH 204",
+    "dept": "MATH",
+    "level": 2,
+    "slug": "probability-for-simulation",
+    "short": "Probability",
+    "part": "Mathematics",
+    "tone": "b",
+    "minutes": 28,
+    "title": "Probability and distributions",
+    "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
+    "builds": [
+      24
+    ],
+    "related": [
+      3,
+      7
+    ],
+    "takeaways": [
+      "Probability assigns numbers to uncertain outcomes; conditional probability and Bayes' theorem $P(A|B)=P(B|A)P(A)/P(B)$ update beliefs with evidence, and a positive test for a rare condition is far less conclusive than it seems.",
+      "A distribution is summarised by its mean $\\langle X\\rangle$ and variance $\\mathrm{Var}X=\\langle X^2\\rangle-\\langle X\\rangle^2$; for independent variables variances add, so the standard deviation of a sum of $N$ terms grows like $\\sqrt{N}$ and that of an average shrinks like $1/\\sqrt{N}$.",
+      "The binomial describes counting successes, the Poisson rare events (mean equals variance), the exponential the waiting time between random events (the heart of kinetic Monte Carlo), and the Gaussian sums of many small independent contributions.",
+      "The central limit theorem says averages of many independent samples are Gaussian whatever the original distribution, so error bars $\\sigma/\\sqrt{N}$ are meaningful; it fails for heavy-tailed or strongly correlated samples.",
+      "The canonical (Boltzmann) distribution $p_i=e^{-E_i/k_\\mathrm{B}T}/Z$ gives all thermodynamics from $\\ln Z$, and fluctuations are tied to response, for instance $\\mathrm{Var}(E)=k_\\mathrm{B}T^2C_V$, with relative fluctuations falling as $1/\\sqrt{N}$.",
+      "Random numbers drawn uniformly can be transformed into any distribution (inverse transform, Box-Muller), and a random walk of $N$ steps spreads as $\\sqrt{N}$, which is diffusion with $D=\\Gamma d^2/6$ in three dimensions."
+    ]
+  },
+  {
     "id": 31,
-    "label": "M8",
-    "series": "maths",
+    "label": "MATH 205",
+    "code": "MATH 205",
+    "dept": "MATH",
+    "level": 2,
     "slug": "fourier-analysis",
     "short": "Fourier analysis",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "b",
     "minutes": 30,
     "title": "Fourier series and transforms",
@@ -404,12 +355,70 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 2,
+    "slug": "crystal-structure-and-periodic-cells",
+    "short": "Crystals and cells",
+    "part": "Materials science",
+    "tone": "a",
+    "minutes": 12,
+    "title": "Crystal structures, supercells and periodic boundaries",
+    "blurb": "Lattices, Miller indices, defects, building simulation cells and periodic boundary conditions.",
+    "builds": [
+      14,
+      27
+    ],
+    "related": [],
+    "takeaways": [
+      "A crystal is a lattice plus a basis. Count atoms and neighbours to sanity-check a structure: fcc has 4 atoms per cubic cell and 12 neighbours, bcc has 2 and 8.",
+      "Miller indices label planes and directions; the reciprocal lattice links real-space cells to diffraction and to k-point sampling.",
+      "Defects are the subject of most simulations. Supercell size is a convergence parameter, and one vacancy in an N-atom cell is a concentration of 1/N.",
+      "Periodic boundaries remove walls but make a defect interact with its own images; every cutoff must be smaller than half the box.",
+      "Surfaces use slabs with vacuum; a grain boundary in a fully periodic cell always comes as a pair."
+    ],
+    "label": "MSE 201",
+    "code": "MSE 201",
+    "dept": "MSE",
+    "level": 2
+  },
+  {
+    "id": 15,
+    "label": "COMP 201",
+    "code": "COMP 201",
+    "dept": "COMP",
+    "level": 2,
+    "slug": "numerical-methods-essentials",
+    "short": "Numerical methods",
+    "part": "Computing",
+    "tone": "a",
+    "minutes": 12,
+    "title": "Numerical methods essentials",
+    "blurb": "Floating point, error and stability, root finding and optimisation, linear algebra, integrators, discretisation and parallel scaling.",
+    "builds": [
+      16,
+      24,
+      27
+    ],
+    "related": [
+      6,
+      9
+    ],
+    "takeaways": [
+      "Computers use finite-precision arithmetic: double precision keeps about 16 digits, and subtracting nearly equal numbers destroys most of them.",
+      "Every numerical answer has modelling, discretisation, round-off and iteration error; convergence tests separate them.",
+      "Stability and conditioning matter as much as accuracy: an explicit scheme can blow up, and an ill-conditioned problem amplifies small errors.",
+      "Newton's method converges quadratically near a root; optimisers find local, not global, minima.",
+      "Cost scaling decides what is feasible: dense linear algebra grows as N cubed, and Amdahl's law limits parallel speed-up."
+    ]
+  },
+  {
     "id": 32,
-    "label": "M9",
-    "series": "maths",
+    "label": "MATH 301",
+    "code": "MATH 301",
+    "dept": "MATH",
+    "level": 3,
     "slug": "partial-differential-equations",
     "short": "PDEs",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 31,
     "title": "Partial differential equations",
@@ -434,39 +443,44 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
-    "id": 33,
-    "label": "M10",
-    "series": "maths",
-    "slug": "probability-for-simulation",
-    "short": "Probability",
-    "part": "Maths course",
+    "id": 29,
+    "label": "MATH 302",
+    "code": "MATH 302",
+    "dept": "MATH",
+    "level": 3,
+    "slug": "tensors-stress-and-strain",
+    "short": "Tensors",
+    "part": "Mathematics",
     "tone": "b",
-    "minutes": 28,
-    "title": "Probability and distributions",
-    "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
+    "minutes": 26,
+    "title": "Tensors: stress, strain and anisotropy",
+    "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
     "builds": [
-      24
+      28,
+      26
     ],
     "related": [
-      3,
-      7
+      2,
+      10
     ],
     "takeaways": [
-      "Probability assigns numbers to uncertain outcomes; conditional probability and Bayes' theorem $P(A|B)=P(B|A)P(A)/P(B)$ update beliefs with evidence, and a positive test for a rare condition is far less conclusive than it seems.",
-      "A distribution is summarised by its mean $\\langle X\\rangle$ and variance $\\mathrm{Var}X=\\langle X^2\\rangle-\\langle X\\rangle^2$; for independent variables variances add, so the standard deviation of a sum of $N$ terms grows like $\\sqrt{N}$ and that of an average shrinks like $1/\\sqrt{N}$.",
-      "The binomial describes counting successes, the Poisson rare events (mean equals variance), the exponential the waiting time between random events (the heart of kinetic Monte Carlo), and the Gaussian sums of many small independent contributions.",
-      "The central limit theorem says averages of many independent samples are Gaussian whatever the original distribution, so error bars $\\sigma/\\sqrt{N}$ are meaningful; it fails for heavy-tailed or strongly correlated samples.",
-      "The canonical (Boltzmann) distribution $p_i=e^{-E_i/k_\\mathrm{B}T}/Z$ gives all thermodynamics from $\\ln Z$, and fluctuations are tied to response, for instance $\\mathrm{Var}(E)=k_\\mathrm{B}T^2C_V$, with relative fluctuations falling as $1/\\sqrt{N}$.",
-      "Random numbers drawn uniformly can be transformed into any distribution (inverse transform, Box-Muller), and a random walk of $N$ steps spreads as $\\sqrt{N}$, which is diffusion with $D=\\Gamma d^2/6$ in three dimensions."
+      "A tensor is defined by how its components transform when the axes rotate, $T'_{ij}=Q_{ik}Q_{jl}T_{kl}$, not merely by being an array of numbers; scalars, vectors, stress and the stiffness tensor are tensors of rank 0, 1, 2 and 4.",
+      "In index notation a repeated index is summed (Einstein convention); with the Kronecker delta $\\delta_{ij}$ and the permutation symbol $\\varepsilon_{ijk}$ it expresses dot and cross products, traces and determinants compactly.",
+      "Stress $\\sigma_{ij}$ gives the traction on any plane, $t_i=\\sigma_{ij}n_j$; it is symmetric, its eigenvalues are the principal stresses, and failure criteria depend only on invariants such as the von Mises stress $\\sqrt{\\tfrac32 s_{ij}s_{ij}}$ of the deviatoric part.",
+      "Small strain is the symmetric part of the displacement gradient, $\\varepsilon_{ij}=\\tfrac12(\\partial_ju_i+\\partial_iu_j)$; the trace is the volume change and the antisymmetric part is a rigid rotation that stores no energy.",
+      "Hooke's law $\\sigma_{ij}=C_{ijkl}\\varepsilon_{kl}$ has 81 components but only 21 independent constants in general, 3 for cubic crystals and 2 for isotropic solids; Voigt notation turns it into a $6\\times6$ matrix, which must be positive definite for stability.",
+      "Neumann's principle: a crystal property tensor must be invariant under the crystal's point-group operations, which reduces the number of independent components and forces odd-rank tensors such as piezoelectricity to vanish in centrosymmetric crystals."
     ]
   },
   {
     "id": 34,
-    "label": "M11",
-    "series": "maths",
+    "label": "MATH 303",
+    "code": "MATH 303",
+    "dept": "MATH",
+    "level": 3,
     "slug": "statistics-and-data-fitting",
     "short": "Statistics",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "a",
     "minutes": 31,
     "title": "Statistics, error analysis and fitting",
@@ -490,11 +504,13 @@ window.MIBEM_TOPICS = [
   },
   {
     "id": 35,
-    "label": "M12",
-    "series": "maths",
+    "label": "MATH 304",
+    "code": "MATH 304",
+    "dept": "MATH",
+    "level": 3,
     "slug": "calculus-of-variations-and-optimisation",
     "short": "Variational methods",
-    "part": "Maths course",
+    "part": "Mathematics",
     "tone": "b",
     "minutes": 34,
     "title": "Calculus of variations and optimisation",
@@ -518,195 +534,17 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
-    "id": 12,
-    "label": "B1",
-    "series": "background",
-    "slug": "mathematics-for-simulation",
-    "short": "Mathematics",
-    "part": "Background",
-    "tone": "a",
-    "minutes": 15,
-    "title": "Mathematics for simulation",
-    "blurb": "Vector calculus, linear algebra, differential equations, Fourier analysis and statistics: the maths every method relies on.",
-    "builds": [
-      18,
-      19
-    ],
-    "related": [
-      8,
-      9
-    ],
-    "takeaways": [
-      "Most simulation maths reduces to a few ideas: gradients and divergences, eigenvalue problems, differential equations, Fourier modes and averages over random variables.",
-      "Forces are gradients of energy (F = -grad U), fluxes are gradients of potentials (J = -D grad c), and conservation laws are divergence equations.",
-      "Many physical quantities are eigenvalues of matrices: principal stresses, vibration frequencies and electronic energies.",
-      "A differential equation needs initial and boundary conditions, and its character (diffusive, wave-like, oscillatory) decides the numerical method.",
-      "Plane waves and the Fourier transform connect real space and reciprocal space, and the standard error of an average falls as one over the square root of the number of independent samples."
-    ]
-  },
-  {
-    "id": 13,
-    "label": "B2",
-    "series": "background",
-    "slug": "physics-for-simulation",
-    "short": "Physics",
-    "part": "Background",
-    "tone": "a",
-    "minutes": 13,
-    "title": "Physics for simulation",
-    "blurb": "Classical mechanics, electrostatics, quantum mechanics essentials, thermodynamics and the units used in atomistic work.",
-    "builds": [
-      12,
-      21
-    ],
-    "related": [
-      3,
-      5
-    ],
-    "takeaways": [
-      "A potential energy surface turns forces, equilibrium, stability and vibrations into calculus: forces are slopes, stiffness is curvature, and normal modes are eigenvectors.",
-      "Electrostatics is long-ranged, which is why charged systems need special summation methods and why neutral cells matter.",
-      "Quantum mechanics enters through the Schroedinger equation, the Pauli principle, the variational principle and Bloch's theorem for periodic solids.",
-      "Thermodynamics supplies the quantities that simulations are compared with: free energies, chemical potentials and heat capacities.",
-      "Know your units: 1 eV is about 96.5 kJ/mol, kT is about 0.0259 eV at 300 K, and 1 Hartree is about 27.2 eV."
-    ]
-  },
-  {
-    "id": 14,
-    "label": "B3",
-    "series": "background",
-    "slug": "materials-science-essentials",
-    "short": "Materials essentials",
-    "part": "Background",
-    "tone": "b",
-    "minutes": 13,
-    "title": "Materials science essentials",
-    "blurb": "Bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments simulations are compared with.",
-    "builds": [
-      20
-    ],
-    "related": [
-      2,
-      8
-    ],
-    "takeaways": [
-      "Processing sets structure, structure sets properties, and properties set performance; simulation can enter at every link.",
-      "Bonding type (metallic, covalent, ionic, van der Waals) decides which interatomic model or electronic method is appropriate.",
-      "Defects control most useful properties: dislocations govern strength, vacancies govern diffusion, and boundaries govern grain-size effects.",
-      "Phase diagrams give the equilibrium; transformation kinetics (nucleation, growth, diffusion) decide which microstructure actually forms.",
-      "Know what each experiment measures (diffraction, microscopy, tensile tests, calorimetry), because that is what a simulation must be compared with."
-    ]
-  },
-  {
-    "id": 15,
-    "label": "B4",
-    "series": "background",
-    "slug": "numerical-methods-essentials",
-    "short": "Numerical methods",
-    "part": "Background",
-    "tone": "a",
-    "minutes": 12,
-    "title": "Numerical methods essentials",
-    "blurb": "Floating point, error and stability, root finding and optimisation, linear algebra, integrators, discretisation and parallel scaling.",
-    "builds": [
-      12,
-      23
-    ],
-    "related": [
-      6,
-      9
-    ],
-    "takeaways": [
-      "Computers use finite-precision arithmetic: double precision keeps about 16 digits, and subtracting nearly equal numbers destroys most of them.",
-      "Every numerical answer has modelling, discretisation, round-off and iteration error; convergence tests separate them.",
-      "Stability and conditioning matter as much as accuracy: an explicit scheme can blow up, and an ill-conditioned problem amplifies small errors.",
-      "Newton's method converges quadratically near a root; optimisers find local, not global, minima.",
-      "Cost scaling decides what is feasible: dense linear algebra grows as N cubed, and Amdahl's law limits parallel speed-up."
-    ]
-  },
-  {
-    "id": 16,
-    "label": "B5",
-    "series": "background",
-    "slug": "programming-and-workflow",
-    "short": "Programming and workflow",
-    "part": "Background",
-    "tone": "b",
-    "minutes": 11,
-    "title": "Programming and workflow",
-    "blurb": "The command line, Python for science, version control, running on clusters, reproducibility and testing your own code.",
-    "builds": [
-      23
-    ],
-    "related": [
-      11
-    ],
-    "takeaways": [
-      "A scripting language (Python with NumPy, SciPy and Matplotlib) plus the command line covers most day-to-day computational work.",
-      "Keep inputs, scripts and notes under version control; keep large outputs elsewhere and record how they were made.",
-      "On a cluster, test small, request only the resources you need, use job arrays for parameter sweeps and checkpoint long runs.",
-      "Reproducibility means recorded versions, seeds, units and inputs so that someone else, or you in a year, can rerun the work.",
-      "Test your own code against analytic solutions and simple limits before trusting it on real problems."
-    ]
-  },
-  {
-    "id": 1,
-    "slug": "introduction",
-    "short": "Introduction",
-    "part": "Foundations",
-    "tone": "a",
-    "minutes": 20,
-    "title": "Introduction to computational materials science",
-    "blurb": "Scales, method families, multiscale linking, validation, software and data resources.",
-    "builds": [
-      14
-    ],
-    "related": [],
-    "takeaways": [
-      "Methods are specialised by length and time scale; no single model covers every scale, so multiscale linking is the norm.",
-      "Start from the question: the smallest feature that matters, the longest time that matters, and whether the answer is an equilibrium or a rate.",
-      "A simulation is a prediction to be tested. Verification, validation and uncertainty quantification are three different checks.",
-      "The cheapest useful step is often a thermodynamic (CALPHAD) calculation, before heavier modelling is attempted.",
-      "Inputs and approximations bound accuracy: trends and rankings are usually more reliable than absolute numbers."
-    ],
-    "label": "1",
-    "series": "core"
-  },
-  {
-    "id": 2,
-    "slug": "crystal-structure-and-periodic-cells",
-    "short": "Crystals and cells",
-    "part": "Foundations",
-    "tone": "a",
-    "minutes": 12,
-    "title": "Crystal structures, supercells and periodic boundaries",
-    "blurb": "Lattices, Miller indices, defects, building simulation cells and periodic boundary conditions.",
-    "builds": [
-      1
-    ],
-    "related": [],
-    "takeaways": [
-      "A crystal is a lattice plus a basis. Count atoms and neighbours to sanity-check a structure: fcc has 4 atoms per cubic cell and 12 neighbours, bcc has 2 and 8.",
-      "Miller indices label planes and directions; the reciprocal lattice links real-space cells to diffraction and to k-point sampling.",
-      "Defects are the subject of most simulations. Supercell size is a convergence parameter, and one vacancy in an N-atom cell is a concentration of 1/N.",
-      "Periodic boundaries remove walls but make a defect interact with its own images; every cutoff must be smaller than half the box.",
-      "Surfaces use slabs with vacuum; a grain boundary in a fully periodic cell always comes as a pair."
-    ],
-    "label": "2",
-    "series": "core"
-  },
-  {
     "id": 3,
     "slug": "statistical-mechanics",
     "short": "Statistical mechanics",
-    "part": "Foundations",
+    "part": "Physics",
     "tone": "a",
     "minutes": 12,
     "title": "Statistical mechanics for simulation",
     "blurb": "Microstates, ensembles, the partition function, free energy, ergodicity and error bars.",
     "builds": [
-      1,
-      13
+      13,
+      33
     ],
     "related": [],
     "takeaways": [
@@ -716,19 +554,22 @@ window.MIBEM_TOPICS = [
       "Classical simulation assumes equipartition, so it overestimates heat capacity when quantum modes are frozen out at low temperature.",
       "Quote averages with error bars. The correlation time sets the number of independent samples, and ergodicity is never guaranteed."
     ],
-    "label": "3",
-    "series": "core"
+    "label": "PHYS 301",
+    "code": "PHYS 301",
+    "dept": "PHYS",
+    "level": 3
   },
   {
     "id": 4,
     "slug": "thermodynamics-and-calphad",
     "short": "Thermodynamics and CALPHAD",
-    "part": "Thermodynamics",
+    "part": "Materials science",
     "tone": "b",
     "minutes": 12,
     "title": "Thermodynamics and CALPHAD",
     "blurb": "Gibbs energy, the common tangent, solution models, phase diagrams and equilibrium calculation.",
     "builds": [
+      14,
       3
     ],
     "related": [
@@ -741,21 +582,51 @@ window.MIBEM_TOPICS = [
       "It delivers equilibria, solidification paths and driving forces. It does not deliver kinetics or geometry.",
       "Database coverage limits accuracy, and multicomponent extrapolation from binary data needs checking."
     ],
-    "label": "4",
-    "series": "core"
+    "label": "MSE 301",
+    "code": "MSE 301",
+    "dept": "MSE",
+    "level": 3
+  },
+  {
+    "id": 1,
+    "slug": "introduction",
+    "short": "Introduction",
+    "part": "Computational methods",
+    "tone": "a",
+    "minutes": 20,
+    "title": "Introduction to computational materials science",
+    "blurb": "Scales, method families, multiscale linking, validation, software and data resources.",
+    "builds": [
+      14,
+      16
+    ],
+    "related": [],
+    "takeaways": [
+      "Methods are specialised by length and time scale; no single model covers every scale, so multiscale linking is the norm.",
+      "Start from the question: the smallest feature that matters, the longest time that matters, and whether the answer is an equilibrium or a rate.",
+      "A simulation is a prediction to be tested. Verification, validation and uncertainty quantification are three different checks.",
+      "The cheapest useful step is often a thermodynamic (CALPHAD) calculation, before heavier modelling is attempted.",
+      "Inputs and approximations bound accuracy: trends and rankings are usually more reliable than absolute numbers."
+    ],
+    "label": "CMS 401",
+    "code": "CMS 401",
+    "dept": "CMS",
+    "level": 4
   },
   {
     "id": 5,
     "slug": "density-functional-theory",
     "short": "Density functional theory",
-    "part": "Electrons",
+    "part": "Computational methods",
     "tone": "b",
     "minutes": 13,
     "title": "Density functional theory in practice",
     "blurb": "The Kohn-Sham scheme, functionals, the SCF cycle, convergence and what to compute.",
     "builds": [
+      1,
       2,
-      13
+      13,
+      28
     ],
     "related": [
       4
@@ -767,19 +638,22 @@ window.MIBEM_TOPICS = [
       "Standard outputs are lattice constants, elastic constants, formation and defect energies, barriers by nudged elastic band, and phonons.",
       "Cost grows roughly as N cubed, which limits cells to hundreds or a few thousand atoms, and results are for 0 K unless extended."
     ],
-    "label": "5",
-    "series": "core"
+    "label": "CMS 501",
+    "code": "CMS 501",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 6,
     "slug": "molecular-dynamics",
     "short": "Molecular dynamics",
-    "part": "Atoms",
+    "part": "Computational methods",
     "tone": "b",
     "minutes": 11,
     "title": "Molecular dynamics",
     "blurb": "Integrators, interatomic potentials, thermostats, workflow and analysis.",
     "builds": [
+      1,
       2,
       3,
       15
@@ -795,21 +669,24 @@ window.MIBEM_TOPICS = [
       "The workflow is build, minimise, equilibrate, produce and analyse, with error bars from independent runs.",
       "Limits: nanoseconds to microseconds, very high strain rates, classical nuclei and no electrons."
     ],
-    "label": "6",
-    "series": "core"
+    "label": "CMS 502",
+    "code": "CMS 502",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 7,
     "slug": "monte-carlo-methods",
     "short": "Monte Carlo and kMC",
-    "part": "Atoms",
+    "part": "Computational methods",
     "tone": "b",
     "minutes": 12,
     "title": "Monte Carlo and kinetic Monte Carlo",
     "blurb": "Importance sampling, Metropolis, the Ising model, cluster expansions and rejection-free kinetics.",
     "builds": [
       3,
-      15
+      15,
+      33
     ],
     "related": [
       8
@@ -821,21 +698,24 @@ window.MIBEM_TOPICS = [
       "Kinetic Monte Carlo advances physical time, dt = -ln(u)/R, using rates built from barriers.",
       "kMC is only as good as its event catalogue and barriers."
     ],
-    "label": "7",
-    "series": "core"
+    "label": "CMS 503",
+    "code": "CMS 503",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 8,
     "slug": "diffusion-and-kinetics",
     "short": "Diffusion and kinetics",
-    "part": "Kinetics",
+    "part": "Computational methods",
     "tone": "a",
     "minutes": 13,
     "title": "Diffusion and kinetics",
     "blurb": "Fick's laws, driving forces, atomistic mechanisms, computing D and solving the equation.",
     "builds": [
       4,
-      15
+      15,
+      32
     ],
     "related": [
       6,
@@ -848,21 +728,24 @@ window.MIBEM_TOPICS = [
       "D can come from MD (fast species), DFT with transition-state theory, or kinetic Monte Carlo, and should be checked against experiment.",
       "An explicit finite-difference scheme is stable only for r = D dt/dx squared of at most one half in one dimension."
     ],
-    "label": "8",
-    "series": "core"
+    "label": "CMS 504",
+    "code": "CMS 504",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 9,
     "slug": "phase-field-modelling",
     "short": "Phase-field",
-    "part": "Microstructure",
+    "part": "Computational methods",
     "tone": "b",
     "minutes": 12,
     "title": "Phase-field modelling",
     "blurb": "Diffuse interfaces, Allen-Cahn and Cahn-Hilliard, spinodal decomposition and numerics.",
     "builds": [
       4,
-      8
+      8,
+      32
     ],
     "related": [
       5,
@@ -875,21 +758,24 @@ window.MIBEM_TOPICS = [
       "Inputs come from CALPHAD (free energy), diffusion databases (mobility) and atomistics (interface energy); results must not depend on the interface width or the grid.",
       "Resolve the interface with about 4 to 8 grid points; explicit steps are tightly limited, so use semi-implicit spectral or adaptive finite elements."
     ],
-    "label": "9",
-    "series": "core"
+    "label": "CMS 505",
+    "code": "CMS 505",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 10,
     "slug": "finite-element-method",
     "short": "Finite elements",
-    "part": "Continuum",
+    "part": "Computational methods",
     "tone": "a",
-    "minutes": 13,
+    "minutes": 14,
     "title": "The finite element method",
     "blurb": "Weak form, shape functions, meshing, convergence, nonlinear problems and materials applications.",
     "builds": [
       8,
-      15
+      15,
+      32
     ],
     "related": [
       9
@@ -901,14 +787,16 @@ window.MIBEM_TOPICS = [
       "The constitutive law and boundary conditions (heat transfer, friction) usually dominate the uncertainty.",
       "Verify against analytic cases (the Kirsch plate gives a factor of 3, the patch test) and validate against measurements."
     ],
-    "label": "10",
-    "series": "core"
+    "label": "CMS 506",
+    "code": "CMS 506",
+    "dept": "CMS",
+    "level": 5
   },
   {
     "id": 11,
     "slug": "machine-learning-for-materials",
     "short": "Machine learning",
-    "part": "Data",
+    "part": "Computational methods",
     "tone": "b",
     "minutes": 15,
     "title": "Machine learning for materials",
@@ -916,7 +804,8 @@ window.MIBEM_TOPICS = [
     "builds": [
       5,
       6,
-      16
+      16,
+      34
     ],
     "related": [
       7
@@ -928,7 +817,22 @@ window.MIBEM_TOPICS = [
       "Machine-learned potentials reach near-DFT accuracy at far lower cost; build them with active learning and validate on properties, not only on energies.",
       "Active learning and Bayesian optimisation choose the next calculation or experiment; combine them with physical models."
     ],
-    "label": "11",
-    "series": "core"
+    "label": "CMS 507",
+    "code": "CMS 507",
+    "dept": "CMS",
+    "level": 5
   }
+];
+/* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
+   When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
+window.MIBEM_PLANNED = [
+  {"code": "PHYS 101", "dept": "PHYS", "level": 1, "title": "Classical mechanics", "blurb": "Newton's laws, energy, momentum, oscillations, rotation and Lagrangian mechanics: the physics that molecular dynamics integrates.", "needs": ["MATH 101"]},
+  {"code": "PHYS 102", "dept": "PHYS", "level": 1, "title": "Thermal physics", "blurb": "Temperature, heat, entropy and the laws of thermodynamics, with the kinetic theory of gases.", "needs": ["MATH 101", "PHYS 101"]},
+  {"code": "PHYS 103", "dept": "PHYS", "level": 1, "title": "Electricity, magnetism and waves", "blurb": "Fields, potentials, Maxwell's equations, light and wave phenomena, including diffraction.", "needs": ["MATH 102", "PHYS 101"]},
+  {"code": "PHYS 201", "dept": "PHYS", "level": 2, "title": "Quantum mechanics", "blurb": "Wavefunctions, the Schrödinger equation, operators, the hydrogen atom, spin and perturbation theory.", "needs": ["MATH 202", "MATH 203", "PHYS 101"]},
+  {"code": "PHYS 302", "dept": "PHYS", "level": 3, "title": "Solid state physics", "blurb": "Lattice vibrations, free electrons, bands and the Bloch theorem: the physics behind density functional theory.", "needs": ["PHYS 201", "PHYS 301", "MSE 201"]},
+  {"code": "MSE 202", "dept": "MSE", "level": 2, "title": "Mechanical behaviour of materials", "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.", "needs": ["MSE 101", "MATH 302"]},
+  {"code": "CMS 701", "dept": "CMS", "level": 7, "title": "Beyond DFT: many-body methods", "blurb": "GW, quantum Monte Carlo and coupled-cluster methods for systems where DFT is unreliable.", "needs": ["CMS 501"]},
+  {"code": "CMS 702", "dept": "CMS", "level": 7, "title": "Multiscale modelling", "blurb": "Linking atoms to continuum: coarse-graining, concurrent coupling and homogenisation.", "needs": ["CMS 502", "CMS 505", "CMS 506"]},
+  {"code": "CMS 703", "dept": "CMS", "level": 7, "title": "Machine-learned interatomic potentials", "blurb": "Descriptors, neural-network and equivariant potentials, active learning and uncertainty.", "needs": ["CMS 502", "CMS 507"]}
 ];

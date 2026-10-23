@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="23">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -49,16 +49,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Start here</span><span>Start here 6</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computing</span><span>COMP 102</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" class="here" aria-current="page" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" title="COMP 201: Numerical methods essentials">201</a></nav>
+<!-- coursenav:end -->
             <h1>Your first simulation</h1>
             <p class="lead">Time to build one. This page shows that every simulation in the series is made from the same three ingredients, lets you watch diffusion appear from nothing but coin flips, and then writes the same thing in a few lines of code that you can run yourself.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="rates-of-change-calculus.html">S2. Rates of change</a><br><a href="chance-averages-and-error-bars.html">S5. Chance and averages</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="numerical-methods-essentials.html">B4. Numerical methods</a><br><a href="programming-and-workflow.html">B5. Programming and workflow</a></dd></div>
-<div><dt>Category</dt><dd>Start here</dd></div>
+<div><dt>Builds on</dt><dd><a href="programming-and-workflow.html">COMP 101: Programming and workflow</a><br><a href="calculus-single-variable.html">MATH 101: Calculus I</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -72,7 +75,7 @@
                 </ul>
             </div>
 
-            <p><strong>You need:</strong> <a href="rates-of-change-calculus.html">Rates of change</a> (the idea of a rate) and <a href="chance-averages-and-error-bars.html">Chance, averages and error bars</a> (averages, error bars and random walks). No programming experience is assumed.</p>
+            <p><strong>You need:</strong> <a href="calculus-single-variable.html">MATH 101</a> (the idea of a rate of change) and the idea of an average; random walks and error bars are explained here and developed in <a href="probability-for-simulation.html">MATH 204</a>. No programming experience is assumed.</p>
 
             <h2 id="recipe">1. The recipe<a class="anchor" href="#recipe" aria-label="Link to this section">#</a></h2>
             <p>Strip any simulation down and you find three ingredients:</p>
@@ -205,7 +208,7 @@ plt.show()</code></pre>
                     <tr><td>Programs and checks</td><td>Command line, clusters, version control, testing</td><td><a href="programming-and-workflow.html">Programming and workflow</a></td></tr>
                 </tbody>
             </table></div>
-            <p>You are ready for the next level. <a href="mathematics-for-simulation.html">Mathematics for simulation</a> and <a href="physics-for-simulation.html">Physics for simulation</a> take the ideas of the Start here pages to university level, and <a href="programming-and-workflow.html">Programming and workflow</a> develops what you started here.</p>
+            <p>You are ready for the next level. The <a href="../curriculum.html">curriculum</a> shows the mathematics, physics and materials courses that this lab leans on, and <a href="programming-and-workflow.html">COMP 101</a> develops the programming.</p>
 
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
@@ -214,7 +217,7 @@ plt.show()</code></pre>
 <li>Smaller time steps give more accurate answers at more cost; always check by changing the step.</li>
 <li>Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.</li>
 <li>Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.</li>
-<li>Everything in the Core topics is this same idea with better rules: atoms, energies, grids and probabilities.</li>
+<li>Everything in the computational methods courses is this same idea with better rules: atoms, energies, grids and probabilities.</li>
 </ul></div>
 <!-- takeaways:end -->
 
@@ -249,9 +252,9 @@ plt.show()</code></pre>
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="chance-averages-and-error-bars.html"><span class="dir">Previous topic</span>Chance, averages and error bars</a>
-<a class="next" href="maths-course-overview.html"><span class="dir">Next topic</span>Maths course: overview and study plan</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="programming-and-workflow.html"><span class="dir">Previous course</span>Programming and workflow</a>
+<a class="next" href="numerical-methods-essentials.html"><span class="dir">Next course</span>Numerical methods essentials</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -260,12 +263,12 @@ plt.show()</code></pre>
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
-    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>

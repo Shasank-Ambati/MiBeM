@@ -30,34 +30,48 @@ WPM = 200
 TOPICS_JS = ROOT / "assets" / "topics.js"
 
 
-def load_topics():
+def _load_array(name):
     text = TOPICS_JS.read_text(encoding="utf-8")
-    body = text[text.index("window.MIBEM_TOPICS = ") + len("window.MIBEM_TOPICS = "):]
-    body = body[: body.rindex("];") + 1]
-    return json.loads(body)
+    start = text.index(f"window.{name} = ") + len(f"window.{name} = ")
+    end = text.index("];", start) + 1
+    return json.loads(text[start:end])
+
+
+def load_topics():
+    return _load_array("MIBEM_TOPICS")
 
 
 TOPICS = load_topics()
+PLANNED = _load_array("MIBEM_PLANNED")
 BY_ID = {t["id"]: t for t in TOPICS}
+BY_CODE = {t["code"]: t for t in TOPICS}
 for t in TOPICS:
     t["path"] = f"computational/{t['slug']}.html"
-    t.setdefault("label", str(t["id"]))
-    t.setdefault("series", "core")
+    t["math"] = t["dept"] == "MATH" or bool(t.get("katex"))
+
+LEVELS = {
+    1: ("Year 1: foundations", "Calculus, linear algebra, physics, materials and programming from first principles. If you are new to university science, start here."),
+    2: ("Year 2: core tools", "The mathematics and science that every later course relies on: vector calculus, differential equations, probability, crystal structure and numerical methods."),
+    3: ("Year 3: advanced theory", "Partial differential equations, tensors, statistics, variational methods, statistical mechanics and thermodynamics of materials."),
+    4: ("Year 4: the field", "A first look at computational materials science: what the methods are, what they can predict and where they fail."),
+    5: ("Graduate: simulation methods", "The methods themselves, one course each: density functional theory, molecular dynamics, Monte Carlo, kinetics, phase-field, finite elements and machine learning."),
+    7: ("Doctoral: research topics", "Advanced and specialist courses for research. These are planned and will be added over time."),
+}
+DEPTS = {"MATH": "Mathematics", "PHYS": "Physics", "MSE": "Materials science", "COMP": "Computing", "CMS": "Computational methods"}
 
 
 def lab(t):
-    """Short label used in the number slot: 1..11 for core topics, B1..B5 for background pages."""
-    return t["label"]
+    """Course code such as MATH 101."""
+    return t["code"]
 
 
 def label_text(t):
-    if t["series"] == "background":
-        return "Background " + t["label"].lstrip("B")
-    if t["series"] == "start":
-        return "Start here " + t["label"].lstrip("S")
-    if t["series"] == "maths":
-        return "Maths course" if t["label"] == "M0" else "Maths module " + t["label"].lstrip("M")
-    return "Topic " + t["label"]
+    return t["code"]
+
+
+def dept_courses(t):
+    """Courses of the same department, in code order: the 'previous / next course' sequence."""
+    return sorted((x for x in TOPICS if x["dept"] == t["dept"]), key=lambda x: int(x["code"].split()[1]))
 
 
 def esc(s):
@@ -155,6 +169,10 @@ def katex_css(rel):
     return f'\n    <link rel="stylesheet" href="{rel}assets/katex/katex.min.css?v={ver("assets/katex/katex.min.css")}">'
 
 
+def NAV(rel):
+    return [(rel + "curriculum.html", "Curriculum"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary"), (rel + "index.html#about", "About")]
+
+
 def header(rel, links, cta=None):
     nav = "".join(f'<a href="{href}">{label}</a>' for href, label in links)
     if cta:
@@ -168,8 +186,8 @@ def header(rel, links, cta=None):
 
 def footer(rel):
     return f"""<footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="{rel}index.html#topics">All topics</a><a href="{rel}map.html">Topic map</a><a href="{rel}glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="{rel}curriculum.html">Curriculum</a><a href="{rel}map.html">Prerequisite map</a><a href="{rel}glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>"""
 
 
@@ -192,7 +210,7 @@ def scripts(rel, demos=False, math=False):
 def links_html(ids, rel_prefix="", empty="none"):
     if not ids:
         return empty
-    return "<br>".join(f'<a href="{rel_prefix}{BY_ID[i]["slug"]}.html">{lab(BY_ID[i])}. {esc(BY_ID[i]["short"])}</a>' for i in ids)
+    return "<br>".join(f'<a href="{rel_prefix}{BY_ID[i]["slug"]}.html">{lab(BY_ID[i])}: {esc(BY_ID[i]["short"])}</a>' for i in ids)
 
 
 def region(name, content):
@@ -227,31 +245,32 @@ def build_topic(t, i):
     art = re.search(r"<article.*?</article>", s, re.S).group(0)
     t["minutes"] = minutes_of(art)
 
-    prev_t = TOPICS[i - 1] if i > 0 else None
-    next_t = TOPICS[i + 1] if i + 1 < len(TOPICS) else None
+    seq = dept_courses(t)
+    k = seq.index(t)
+    prev_t = seq[k - 1] if k > 0 else None
+    next_t = seq[k + 1] if k + 1 < len(seq) else None
     leads = [x["id"] for x in TOPICS if t["id"] in x["builds"]]
 
-    math = t["series"] == "maths"
+    math = t["math"]
     s = re.sub(r"<head>.*?</head>", lambda m: head(rel, title, desc, url, math=math), s, count=1, flags=re.S)
     s = re.sub(r"<body[^>]*>", f'<body data-topic="{t["id"]}">', s, count=1)
     cta = None
-    hdr = header(rel, [(rel + "index.html#topics", "Topics"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary")], cta)
+    hdr = header(rel, NAV(rel), cta)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
 
-    crumbs = (f'<p class="crumbs"><a href="{rel}index.html#topics">Topics</a><span>/</span>'
+    crumbs = (f'<p class="crumbs"><a href="{rel}curriculum.html">Curriculum</a><span>/</span>'
               f'<span class="chip{" blue" if t["tone"] == "b" else ""}">{esc(t["part"])}</span><span>{label_text(t)}</span></p>')
     s, n = re.subn(r'<p class="crumbs">.*?</p>', lambda m: crumbs, s, count=1, flags=re.S)
     assert n == 1, f"no breadcrumb in {t['slug']}"
     s = s.replace("<article>", '<article id="main">', 1)
 
-    if math:
-        chips = "".join(f'<a href="{x["slug"]}.html"{" class=\"here\" aria-current=\"page\"" if x["id"] == t["id"] else ""} title="{esc(x["title"])}">{x["label"]}</a>'
-                        for x in TOPICS if x["series"] == "maths")
-        cnav = f'<nav class="course-nav" aria-label="Maths course modules">{chips}</nav>'
-        if has_region(s, "coursenav"):
-            s = replace_region(s, "coursenav", cnav)
-        else:
-            s = re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + "\n            " + region("coursenav", cnav), s, count=1, flags=re.S)
+    chips = "".join(f'<a href="{x["slug"]}.html"{" class=\"here\" aria-current=\"page\"" if x["id"] == t["id"] else ""} title="{esc(x["code"] + ": " + x["title"])}">{x["code"].split()[1]}</a>'
+                    for x in seq)
+    cnav = f'<nav class="course-nav" aria-label="{DEPTS[t["dept"]]} courses"><span class="cn-dept">{t["dept"]}</span>{chips}</nav>'
+    if has_region(s, "coursenav"):
+        s = replace_region(s, "coursenav", cnav)
+    else:
+        s = re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + "\n            " + region("coursenav", cnav), s, count=1, flags=re.S)
 
     # facts strip after the lead paragraph
     builds = links_html(t["builds"], empty="Nothing: this is the place to start")
@@ -259,7 +278,7 @@ def build_topic(t, i):
              f'<div><dt>Reading time</dt><dd>about {t["minutes"]} min</dd></div>\n'
              f'<div><dt>Builds on</dt><dd>{builds}</dd></div>\n'
              f'<div><dt>Leads to</dt><dd>{links_html(leads, empty="&mdash;")}</dd></div>\n'
-             f'<div><dt>Category</dt><dd>{esc(t["part"])}</dd></div>\n</dl>')
+             f'<div><dt>Level</dt><dd>{esc(LEVELS[t["level"]][0])}</dd></div>\n</dl>')
     if has_region(s, "facts"):
         s = replace_region(s, "facts", facts)
     else:
@@ -276,11 +295,11 @@ def build_topic(t, i):
         assert n == 1, f"no check section in {t['slug']}"
 
     # pager
-    pv = (f'<a class="prev" href="{prev_t["slug"]}.html"><span class="dir">Previous topic</span>{esc(prev_t["title"])}</a>'
+    pv = (f'<a class="prev" href="{prev_t["slug"]}.html"><span class="dir">Previous course</span>{esc(prev_t["title"])}</a>'
           if prev_t else '<span class="spacer"></span>')
-    nx = (f'<a class="next" href="{next_t["slug"]}.html"><span class="dir">Next topic</span>{esc(next_t["title"])}</a>'
+    nx = (f'<a class="next" href="{next_t["slug"]}.html"><span class="dir">Next course</span>{esc(next_t["title"])}</a>'
           if next_t else '<span class="spacer"></span>')
-    pager = f'<nav class="pager" aria-label="Previous and next topic">\n{pv}\n{nx}\n</nav>'
+    pager = f'<nav class="pager" aria-label="Previous and next course in this subject">\n{pv}\n{nx}\n</nav>'
     if has_region(s, "pager"):
         s = replace_region(s, "pager", pager)
     else:
@@ -297,23 +316,23 @@ def build_topic(t, i):
 
 # ----------------------------------------------------------------- landing + map
 def card_html(t):
-    bg = " bg" if t["series"] in ("background", "maths") else ""
+    bg = " bg" if t["dept"] == "MATH" else ""
     chip = " blue" if t["tone"] == "b" else ""
+    d, n = t["code"].split()
     return f'''            <li><a class="topic-card" data-id="{t["id"]}" href="{t["path"]}">
-                <span class="num{bg}">{lab(t)}</span>
+                <span class="num{bg}"><small>{d}</small>{n}</span>
                 <span class="title">{esc(t["title"])}</span>
                 <span class="desc">{esc(t["blurb"])}</span>
                 <span class="tags"><span class="chip{chip}">{esc(t["part"])}</span>{t["minutes"]} min read</span></a></li>'''
 
 
 def cards():
-    groups = [("Start here: no background needed", "start", "Plain-language foundations for anyone starting from school-level maths and science. Read these in order."),
-              ("Maths course: university level, with problems", "maths", "A full course in the mathematics behind simulation: every concept explained and derived, worked examples, and graded problems with complete solutions. Twelve modules, in order."),
-              ("Background: university-level refresher", "background", "Maths, physics, materials science, numerical methods and programming as the core topics use them."),
-              ("Core topics", "core", "The methods themselves, in a sensible reading order.")]
     out = []
-    for title, series, sub in groups:
-        items = "\n".join(card_html(x) for x in TOPICS if x["series"] == series)
+    for lv, (title, sub) in LEVELS.items():
+        courses = [x for x in TOPICS if x["level"] == lv]
+        if not courses:
+            continue
+        items = "\n".join(card_html(x) for x in courses)
         out.append(f'        <h3 class="group-title">{title}</h3>\n        <p class="section-sub">{sub}</p>\n        <ul class="topic-grid">\n{items}\n        </ul>')
     return "\n".join(out)
 
@@ -321,8 +340,8 @@ def cards():
 def fallback_list(rel_prefix):
     items = []
     for t in TOPICS:
-        b = f' <span class="meta">builds on {", ".join(str(x) for x in t["builds"])}</span>' if t["builds"] else ""
-        items.append(f'<li><a href="{rel_prefix}{t["path"]}">{lab(t)}. {esc(t["title"])}</a>{b}</li>')
+        b = f' <span class="meta">builds on {", ".join(BY_ID[x]["code"] for x in t["builds"])}</span>' if t["builds"] else ""
+        items.append(f'<li><a href="{rel_prefix}{t["path"]}">{lab(t)}: {esc(t["title"])}</a>{b}</li>')
     return "<ol>" + "".join(items) + "</ol>"
 
 
@@ -332,8 +351,7 @@ def build_index():
     title = re.search(r"<title>(.*?)</title>", s).group(1)
     desc = re.search(r'<meta name="description" content="(.*?)">', s).group(1)
     s = re.sub(r"<head>.*?</head>", lambda m: head("", title, desc, BASE, "website"), s, count=1, flags=re.S)
-    links = [("#start", "Where to start"), ("#map", "Map"), ("#topics", "Topics"), ("glossary.html", "Glossary"), ("#about", "About")]
-    hdr = header("", links, None)
+    hdr = header("", NAV(""), None)
     s = re.sub(r'(<body[^>]*>)\s*.*?(?=<(?:div|main) class="wrap")', lambda m: m.group(1) + "\n    " + hdr + "\n\n    ", s, count=1, flags=re.S)
     s = replace_region(s, "cards", cards())
     s = replace_region(s, "map", '        <div id="topic-map">' + fallback_list("") + "</div>")
@@ -342,10 +360,93 @@ def build_index():
     path.write_text(s, encoding="utf-8")
 
 
+def build_curriculum():
+    title = "Curriculum - MiBeM"
+    desc = "A free, self-contained university curriculum in computational materials science, from first-year mathematics and physics to graduate simulation methods."
+    hdr = header("", NAV(""), None)
+
+    def needs_html(codes):
+        out = []
+        for c in codes:
+            tt = BY_CODE.get(c)
+            out.append(f'<a href="computational/{tt["slug"]}.html">{c}</a>' if tt else f'<span class="muted">{c}</span>')
+        return ", ".join(out) or "&mdash;"
+
+    sections = []
+    for lv, (ltitle, lsub) in LEVELS.items():
+        rows = []
+        for tt in TOPICS:
+            if tt["level"] != lv:
+                continue
+            rows.append(f'<tr><td class="code">{tt["code"]}</td><td><a href="computational/{tt["slug"]}.html">{esc(tt["title"])}</a><span class="cdesc">{esc(tt["blurb"])}</span></td>'
+                        f'<td>{esc(tt["part"])}</td><td>{needs_html([BY_ID[b]["code"] for b in tt["builds"]])}</td><td>{tt["minutes"]} min</td></tr>')
+        for pl in PLANNED:
+            if pl["level"] == lv:
+                rows.append(f'<tr class="planned"><td class="code">{pl["code"]}</td><td>{esc(pl["title"])} <span class="chip">In preparation</span><span class="cdesc">{esc(pl["blurb"])}</span></td>'
+                            f'<td>{esc(DEPTS[pl["dept"]])}</td><td>{needs_html(pl["needs"])}</td><td>&mdash;</td></tr>')
+        rows.sort(key=lambda r: re.search(r'class="code">(\w+) (\d+)', r).groups()[::-1])
+        sections.append(f'''        <h2 id="level-{lv}">{ltitle}</h2>
+        <p class="section-sub">{lsub}</p>
+        <div class="table-scroll" role="region" aria-label="{ltitle} (scrollable table)" tabindex="0"><table class="curric">
+            <thead><tr><th>Code</th><th>Course</th><th>Subject</th><th>Needs</th><th>Reading</th></tr></thead>
+            <tbody>
+{chr(10).join(rows)}
+            </tbody></table></div>''')
+
+    subj = []
+    for d, dn in DEPTS.items():
+        items = [tt for tt in TOPICS if tt["dept"] == d] + [pl for pl in PLANNED if pl["dept"] == d]
+        items.sort(key=lambda x: int(x["code"].split()[1]))
+        lis = "".join((f'<li><a href="computational/{x["slug"]}.html">{x["code"]} {esc(x["title"])}</a></li>' if "slug" in x else f'<li class="muted">{x["code"]} {esc(x["title"])} (in preparation)</li>') for x in items)
+        subj.append(f'<div class="subj"><h3>{dn}</h3><ol class="subj-list">{lis}</ol></div>')
+
+    page = f"""<!DOCTYPE html>
+<html lang="en">
+{head("", title, desc, BASE + "curriculum.html", "website")}
+<body>
+    {hdr}
+
+    <main class="wrap" id="main">
+        <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Curriculum</span></p>
+        <h1>Curriculum</h1>
+        <p class="lead">A free university curriculum in computational materials science. It starts at first-year level, so that a new university student can begin here, and runs up to graduate research methods. Each course teaches the concepts it needs, includes worked examples and problems with solutions, and lists the courses it builds on.</p>
+
+        <h2 id="how">How the courses are numbered</h2>
+        <p>Course codes follow the usual university pattern: a subject, then a three-digit number whose first digit is the level.</p>
+        <ul>
+            <li><strong>Subject:</strong> MATH mathematics; PHYS physics; MSE materials science and engineering; COMP computing and numerical methods; CMS computational materials science.</li>
+            <li><strong>Level (first digit):</strong> 1 Year 1; 2 Year 2; 3 Year 3; 4 Year 4; 5 graduate; 7 doctoral research topics.</li>
+        </ul>
+        <p>Within a subject, work through the courses in number order; across subjects, the <strong>Needs</strong> column says what to have finished first. Year 1 courses assume only school mathematics and science. A course numbered 100 (such as MATH 100) is a guide to its subject rather than a lecture course.</p>
+
+        <h2 id="paths">Where to start</h2>
+        <ul>
+            <li><strong>New to university science.</strong> Begin with Year 1: <a href="computational/calculus-single-variable.html">MATH 101</a> and <a href="computational/linear-algebra-foundations.html">MATH 103</a> together, with <a href="computational/materials-science-essentials.html">MSE 101</a> and <a href="computational/programming-and-workflow.html">COMP 101</a>. The <a href="computational/maths-course-overview.html">mathematics guide</a> has a short placement check.</li>
+            <li><strong>You have a science or engineering degree.</strong> Use the placement check in the mathematics guide to skip what you know, then take the Year 2 and Year 3 courses you are missing and move on to Year 4 and the graduate courses.</li>
+            <li><strong>You want a particular method.</strong> Open its graduate course (CMS 5xx) and follow the <strong>Needs</strong> links backwards, or use the <a href="map.html">prerequisite map</a>.</li>
+        </ul>
+
+{chr(10).join(sections)}
+
+        <h2 id="subjects">By subject</h2>
+        <p class="section-sub">The same courses grouped by subject, in the order to take them.</p>
+        <div class="subj-grid">
+            {"".join(subj)}
+        </div>
+    </main>
+
+    {footer("")}
+    {scripts("")}
+</body>
+</html>
+"""
+    (ROOT / "curriculum.html").write_text(page, encoding="utf-8")
+
+
 def build_map():
-    title = "Topic Map - MiBeM"
-    desc = "How the topics build on each other: prerequisites and what each topic leads to."
-    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map"), ("glossary.html", "Glossary")], None)
+    title = "Prerequisite Map - MiBeM"
+    desc = "How the courses build on each other: prerequisites and what each course leads to."
+    hdr = header("", NAV(""), None)
     page = f"""<!DOCTYPE html>
 <html lang="en">
 {head("", title, desc, BASE + "map.html", "website")}
@@ -353,17 +454,17 @@ def build_map():
     {hdr}
 
     <main class="wrap" id="main">
-        <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Topic map</span></p>
-        <h1>Topic map</h1>
-        <p class="lead">Every topic builds on a few others. Follow the arrows from the top to see a sensible order, or jump straight to the topic you need and read what it assumes.</p>
+        <p class="crumbs"><a href="index.html">Home</a><span>/</span><span>Prerequisite map</span></p>
+        <h1>Prerequisite map</h1>
+        <p class="lead">Every course builds on a few others. Follow the arrows from the top to see a sensible order, or jump straight to the course you need and read what it assumes. The <a href="curriculum.html">curriculum page</a> lists the same courses by level.</p>
 
         <div id="topic-map">{fallback_list("")}</div>
 
         <h2>How to read the map</h2>
         <ul>
-            <li><strong>Orange lines</strong> lead from a topic back to what it builds on; <strong>blue lines</strong> lead forward to what it unlocks.</li>
-            <li><strong>Dashed related links</strong> mark topics that connect without being required.</li>
-            <li>A tick on a topic means you have read most of that page on this device. The record stays in your browser only, and can be cleared with the link in the footer.</li>
+            <li><strong>Orange lines</strong> lead from a course back to what it builds on; <strong>blue lines</strong> lead forward to what it unlocks.</li>
+            <li><strong>Dashed related links</strong> mark courses that connect without being required.</li>
+            <li>A tick on a course means you have read most of that page on this device. The record stays in your browser only, and can be cleared with the link in the footer.</li>
         </ul>
     </main>
 
@@ -378,7 +479,7 @@ def build_map():
 def build_404():
     """Served by GitHub Pages for any address that does not exist. Uses absolute URLs so it works at any depth."""
     rel = BASE
-    hdr = header(rel, [(BASE + "index.html#topics", "Topics"), (BASE + "map.html", "Map"), (BASE + "glossary.html", "Glossary")], None)
+    hdr = header(rel, NAV(BASE), None)
     h = head(rel, "Page not found - MiBeM", "That page does not exist.", BASE + "404.html", "website")
     h = h.replace('<meta name="description"', '<meta name="robots" content="noindex">\n    <meta name="description"', 1)
     page = f"""<!DOCTYPE html>
@@ -421,7 +522,7 @@ def build_glossary():
     terms = sorted(load_glossary(), key=lambda g: g["t"].lower())
     title = "Glossary - MiBeM"
     desc = "Plain-language definitions of the terms used across the MiBeM topics, from atoms and bonds to eigenvalues and Monte Carlo."
-    hdr = header("", [("index.html#topics", "Topics"), ("map.html", "Map"), ("glossary.html", "Glossary")], None)
+    hdr = header("", NAV(""), None)
     letters = sorted({g["t"][0].upper() for g in terms})
     jump = " ".join(f'<a href="#letter-{c}">{c}</a>' for c in letters)
     groups = []
@@ -543,7 +644,7 @@ def build_search():
         p = Sections(t)
         p.feed((ROOT / t["path"]).read_text(encoding="utf-8"))
         for it in p.items:
-            if t["series"] == "maths":
+            if t["math"]:
                 it["x"] = re.sub(r"\\[a-zA-Z]+|[$\\{}^_]", " ", it["x"])
             it["x"] = re.sub(r"\s+", " ", it["x"]).strip()[:2400]
             entries.append(it)
@@ -555,7 +656,7 @@ def build_search():
 
 
 def build_sitemap():
-    urls = [BASE, BASE + "map.html", BASE + "glossary.html"] + [BASE + t["path"] for t in TOPICS]
+    urls = [BASE, BASE + "curriculum.html", BASE + "map.html", BASE + "glossary.html"] + [BASE + t["path"] for t in TOPICS]
     body = "".join(f"  <url><loc>{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n" for u in urls)
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n", encoding="utf-8")
 
@@ -597,6 +698,7 @@ if __name__ == "__main__":
         build_topic(t, i)
     build_index()
     build_map()
+    build_curriculum()
     build_404()
     build_glossary()
     build_sitemap()

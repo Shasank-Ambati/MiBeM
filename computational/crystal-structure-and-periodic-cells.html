@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="2">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -50,16 +50,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Foundations</span><span>Topic 2</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Materials science</span><span>MSE 201</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Materials science courses"><span class="cn-dept">MSE</span><a href="materials-science-essentials.html" title="MSE 101: Materials science essentials">101</a><a href="crystal-structure-and-periodic-cells.html" class="here" aria-current="page" title="MSE 201: Crystal structures, supercells and periodic boundaries">201</a><a href="thermodynamics-and-calphad.html" title="MSE 301: Thermodynamics and CALPHAD">301</a></nav>
+<!-- coursenav:end -->
             <h1>Crystal structures, supercells and periodic boundaries</h1>
             <p class="lead">Almost every atomistic simulation starts by writing down where the atoms are. For crystals, a handful of numbers describes an infinite solid; for defects, the same description is stretched into a finite, repeating box that must be chosen with care.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 12 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="introduction.html">1. Introduction</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="density-functional-theory.html">5. Density functional theory</a><br><a href="molecular-dynamics.html">6. Molecular dynamics</a></dd></div>
-<div><dt>Category</dt><dd>Foundations</dd></div>
+<div><dt>Builds on</dt><dd><a href="materials-science-essentials.html">MSE 101: Materials essentials</a><br><a href="linear-algebra-foundations.html">MATH 103: Linear algebra I</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="density-functional-theory.html">CMS 501: Density functional theory</a><br><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a></dd></div>
+<div><dt>Level</dt><dd>Year 2: core tools</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -214,9 +217,9 @@ print(len(cell), cell.get_volume())</code></pre>
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="introduction.html"><span class="dir">Previous topic</span>Introduction to computational materials science</a>
-<a class="next" href="statistical-mechanics.html"><span class="dir">Next topic</span>Statistical mechanics for simulation</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="materials-science-essentials.html"><span class="dir">Previous course</span>Materials science essentials</a>
+<a class="next" href="thermodynamics-and-calphad.html"><span class="dir">Next course</span>Thermodynamics and CALPHAD</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -225,11 +228,11 @@ print(len(cell), cell.get_volume())</code></pre>
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
 </body>
 </html>

@@ -20,13 +20,13 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
 </head>
 <body data-topic="16">
     <a class="skip" href="#main">Skip to content</a>
     <header class="site"><div class="bar">
         <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
-        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
     </div></header>
 
     <div class="wrap">
@@ -50,16 +50,19 @@
         </aside>
 
         <article id="main">
-            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Background</span><span>Background 5</span></p>
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip blue">Computing</span><span>COMP 101</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" class="here" aria-current="page" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" title="COMP 201: Numerical methods essentials">201</a></nav>
+<!-- coursenav:end -->
             <h1>Programming and workflow</h1>
             <p class="lead">Computational work is as much about organisation as about equations: running many calculations, keeping track of what produced which result, and being able to repeat it months later. This page covers the practical skills that make that routine: the command line, a scripting language, version control, clusters and testing.</p>
 
             <!-- facts:start -->
 <dl class="facts">
 <div><dt>Reading time</dt><dd>about 11 min</dd></div>
-<div><dt>Builds on</dt><dd><a href="your-first-simulation.html">S6. Your first simulation</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">11. Machine learning</a></dd></div>
-<div><dt>Category</dt><dd>Background</dd></div>
+<div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
+<div><dt>Leads to</dt><dd><a href="your-first-simulation.html">COMP 102: Your first simulation</a><br><a href="numerical-methods-essentials.html">COMP 201: Numerical methods</a><br><a href="introduction.html">CMS 401: Introduction</a><br><a href="machine-learning-for-materials.html">CMS 507: Machine learning</a></dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
 </dl>
 <!-- facts:end -->
 
@@ -83,7 +86,7 @@
                     <tr><td>Command line</td><td>Simulation codes and clusters are driven from a text terminal</td><td>bash or zsh, ssh, rsync</td></tr>
                     <tr><td>A scripting language</td><td>Build inputs, run sweeps, analyse and plot output</td><td>Python with NumPy, SciPy, Matplotlib</td></tr>
                     <tr><td>Version control</td><td>History, collaboration, recovery from mistakes</td><td>git with GitHub or GitLab</td></tr>
-                    <tr><td>Cluster use</td><td>Large runs need many cores</td><td>Slurm or PBS, MPI, modules</td></tr>
+                    <tr><td>Cluster use</td><td>Large runs need many cores</td><td>Slurm or PBS, MPI, courses</td></tr>
                     <tr><td>Reproducibility habits</td><td>Results must be repeatable and traceable</td><td>Environments, containers, notes, seeds</td></tr>
                 </tbody>
             </table></div>
@@ -108,7 +111,7 @@ grep "free  energy   TOTEN" OUTCAR | tail -1
 
 # make one folder per temperature
 for T in 300 600 900; do mkdir T$T; done</code></pre>
-            <p><strong>Environment variables</strong> (such as <code>PATH</code>, the list of places searched for programs) and <strong>modules</strong> (<code>module load lammps</code> on most clusters) control which software versions you get. Python and other packages are managed in isolated <em>environments</em> (<code>python -m venv</code>, or <code>conda</code> / <code>mamba</code>), so that one project&rsquo;s libraries do not break another&rsquo;s.</p>
+            <p><strong>Environment variables</strong> (such as <code>PATH</code>, the list of places searched for programs) and <strong>courses</strong> (<code>course load lammps</code> on most clusters) control which software versions you get. Python and other packages are managed in isolated <em>environments</em> (<code>python -m venv</code>, or <code>conda</code> / <code>mamba</code>), so that one project&rsquo;s libraries do not break another&rsquo;s.</p>
 
             <h2 id="python">3. Python for science<a class="anchor" href="#python" aria-label="Link to this section">#</a></h2>
             <p>Python is the usual glue language: readable, with a large scientific ecosystem. The core is small. Lists and dictionaries hold data, loops and functions structure the work, and f-strings format output. The scientific stack adds:</p>
@@ -174,7 +177,7 @@ git push                      # share it</code></pre>
 #SBATCH --time=02:00:00
 #SBATCH --output=%x_%j.out
 
-module load lammps
+course load lammps
 srun lmp -in in.vacancy</code></pre>
             <p>Submit it with <code>sbatch job.sh</code>, watch it with <code>squeue -u $USER</code>, cancel with <code>scancel &lt;jobid&gt;</code> and review finished jobs with <code>sacct</code>. A <strong>job array</strong> runs the same script for many parameter values, for example ten temperatures:</p>
 <pre><code>#SBATCH --array=0-9
@@ -186,7 +189,7 @@ srun lmp -in in.melt -var T $T</code></pre>
                 <li><strong>Ask for what you need.</strong> Requests far above the need wait longer in the queue; a time limit set too short kills the job. Allow a safety margin of 20&ndash;30% on measured run time.</li>
                 <li><strong>Checkpoint long runs</strong> (write restart files regularly) so a failure costs hours, not days.</li>
                 <li><strong>Mind the file systems.</strong> Fast scratch storage is for running jobs and is often purged; home or project storage is for keeping results. Copy what matters off scratch, and compress or delete bulky intermediate files.</li>
-                <li><strong>Read the error first.</strong> The usual failures are out of memory, exceeded time limit, a missing module or a wrong path, and the scheduler and program logs say which.</li>
+                <li><strong>Read the error first.</strong> The usual failures are out of memory, exceeded time limit, a missing course or a wrong path, and the scheduler and program logs say which.</li>
             </ul>
 
             <h2 id="workflow">7. Workflows and reproducibility<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
@@ -268,9 +271,9 @@ def test_arrhenius_limits():
             </ul>
 
             <!-- pager:start -->
-<nav class="pager" aria-label="Previous and next topic">
-<a class="prev" href="numerical-methods-essentials.html"><span class="dir">Previous topic</span>Numerical methods essentials</a>
-<a class="next" href="introduction.html"><span class="dir">Next topic</span>Introduction to computational materials science</a>
+<nav class="pager" aria-label="Previous and next course in this subject">
+<span class="spacer"></span>
+<a class="next" href="your-first-simulation.html"><span class="dir">Next course</span>Your first simulation</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -279,11 +282,11 @@ def test_arrhenius_limits():
     </div>
 
     <footer class="site"><div class="inner">
-        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
-        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=34d42aed"></script>
-    <script src="../assets/glossary.js?v=ea645ac3"></script>
-    <script src="../assets/site.js?v=cdf2ee74" defer></script>
+    <script src="../assets/topics.js?v=f9c40be5"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
 </body>
 </html>

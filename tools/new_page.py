@@ -20,7 +20,7 @@ to the references):
     <h2 id="check">9. Problems</h2>
     ...
 
-The slug must already exist in assets/topics.js (see tools/add_maths_topics.py). The
+The slug must already exist in assets/topics.js (see tools/add_course.py). The
 script writes the page (table of contents built from the h2 headings), updates the
 takeaways in topics.js, and leaves the rest to `python tools/build.py`.
 """
@@ -34,9 +34,12 @@ TOPICS_JS = ROOT / "assets" / "topics.js"
 
 
 def load():
+    """Returns (text before the topic array, the topics, text after it: the planned-course list)."""
     text = TOPICS_JS.read_text(encoding="utf-8")
-    i = text.index("window.MIBEM_TOPICS = ") + len("window.MIBEM_TOPICS = ")
-    return text[:i - len("window.MIBEM_TOPICS = ")], json.loads(text[i: text.rindex("];") + 1])
+    key = "window.MIBEM_TOPICS = "
+    i = text.index(key) + len(key)
+    j = text.index("];", i) + 1
+    return text[:i - len(key)], json.loads(text[i:j]), text[j + 1:]
 
 
 def parse(src):
@@ -122,7 +125,7 @@ def escape_math(body):
 def main(path):
     meta, body = parse(Path(path).read_text(encoding="utf-8"))
     body = escape_math(body)
-    header, topics = load()
+    header, topics, tail = load()
     t = next((x for x in topics if x["slug"] == meta["slug"]), None)
     if t is None:
         raise SystemExit(f"slug {meta['slug']!r} is not in assets/topics.js")
@@ -134,7 +137,7 @@ def main(path):
     (ROOT / "computational" / f"{t['slug']}.html").write_text(page, encoding="utf-8")
     if meta["takeaways"]:
         t["takeaways"] = meta["takeaways"]
-        TOPICS_JS.write_text(header + "window.MIBEM_TOPICS = " + json.dumps(topics, indent=2, ensure_ascii=False) + ";\n", encoding="utf-8")
+        TOPICS_JS.write_text(header + "window.MIBEM_TOPICS = " + json.dumps(topics, indent=2, ensure_ascii=False) + ";" + tail, encoding="utf-8")
     print("wrote", t["slug"], f"({len(heads)} sections, {len(meta['takeaways'])} takeaways)")
 
 
