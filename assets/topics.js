@@ -248,7 +248,7 @@ window.MIBEM_TOPICS = [
     "short": "Your first simulation",
     "part": "Computing",
     "tone": "a",
-    "minutes": 12,
+    "minutes": 46,
     "title": "Your first simulation",
     "blurb": "Build a simulation from three ingredients, watch diffusion emerge from random walkers, and write the same thing in a few lines of Python.",
     "builds": [
@@ -257,12 +257,13 @@ window.MIBEM_TOPICS = [
     ],
     "related": [],
     "takeaways": [
-      "A simulation needs a description of the state, a rule for how it changes, and a loop that applies the rule step by step.",
-      "Smaller time steps give more accurate answers at more cost; always check by changing the step.",
-      "Diffusion emerges from random walkers: the spread grows as the square root of time, and D = a squared over 2 tau in one dimension.",
-      "Checking against a known answer, changing the random seed and increasing the sample size are the first tests of any simulation.",
-      "Everything in the computational methods courses is this same idea with better rules: atoms, energies, grids and probabilities."
-    ]
+      "A simulation is a chain of choices: a physical model, an algorithm that solves it, a program, an analysis of the output, and tests of each link (verification: do we solve the model right? validation: is it the right model?); the first law of the subject is that every number must come with an estimate of its numerical and statistical error.",
+      "The explicit Euler method for dT/dt = -k(T - Ta) has a global error proportional to the time step (error/dt = -0.52 at 30 min, in agreement with the analytic -0.5228), and for oscillators it is unstable: with dt = 0.1 the energy of a harmonic oscillator grows from 0.5 to 10 480 in 100 time units, while velocity Verlet keeps it within 0.00125.",
+      "Velocity Verlet is the integrator of molecular dynamics because it is second order, needs one force evaluation per step, is time-reversible and symplectic; in a 108-atom Lennard-Jones simulation the standard deviation of the total energy per atom falls as dt squared (4.9e-5, 1.65e-4, 6.5e-4 and 2.7e-3 for dt = 0.002 to 0.016).",
+      "A molecular-dynamics code needs only a few ingredients: an initial lattice, Maxwell-distributed velocities with zero total momentum, periodic boundaries with the minimum-image convention, a shifted cutoff, the velocity-Verlet loop, and observables (temperature from the kinetic energy, pressure from the virial, g(r) from a histogram of distances, diffusion from the mean-square displacement).",
+      "Metropolis Monte Carlo samples the Boltzmann distribution without dynamics: for a particle in the double well x^4 - 2x^2 at kT = 0.5 the simulation gives <x^2> = 0.854 against the exact 0.852, and the efficiency depends strongly on the step size (acceptance 0.41 to 0.51 gives 55 000 to 67 000 independent samples from 200 000 steps, a step of 0.05 gives only 520)."
+    ],
+    "katex": true
   },
   {
     "id": 49,

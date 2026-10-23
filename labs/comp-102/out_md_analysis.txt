@@ -1,0 +1,5 @@
+T* = 0.8456 +- 0.0019   P* = 1.589 +- 0.018   (block errors, blocks of 2000 steps)
+equipartition check: <KE>/N = 1.2566, (3/2)(N-1)/N T* = 1.2566
+g(r): first maximum 2.87 at r = 1.071; first minimum 0.61 at r = 1.524; g(L/2) = 0.85
+coordination number up to r = 1.55: 12.8
+MSD at t = 1, 2, 3 : 0.241, 0.448, 0.653 ;  D* = slope/6 = 0.0344 (fit between t = 1 and 2.4)

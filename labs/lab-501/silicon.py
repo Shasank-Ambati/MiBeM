@@ -2,7 +2,7 @@
 import numpy as np, time
 from pyscf.pbc import gto, dft
 from ase.eos import EquationOfState
-from ase.units import Hartree, GPa
+from ase.units import Hartree, GPa, Bohr
 
 def make_cell(a, basis="gth-dzvp"):
     cell = gto.Cell()
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     print("\n2. equation of state (k = 4)")
     V, E = [], []
     for a in (5.33, 5.38, 5.43, 5.48, 5.53, 5.58):
-        cell, mf = run(a, 4); V.append(cell.vol); E.append(mf.e_tot * Hartree)
+        cell, mf = run(a, 4); V.append(cell.vol * Bohr**3); E.append(mf.e_tot * Hartree)      # PySCF volumes are in bohr^3
         print("   a = %.2f A   V = %7.3f A^3   E = %.5f eV" % (a, V[-1], E[-1]), flush=True)
     v0, e0, B = EquationOfState(V, E, eos="birchmurnaghan").fit()
     a0 = (4 * v0) ** (1 / 3)

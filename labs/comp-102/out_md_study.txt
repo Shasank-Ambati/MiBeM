@@ -1,0 +1,14 @@
+1. energy conservation in NVE (N = 108, rho = 0.8442; the same total time 8.0 for every dt)
+   dt        steps   std(E/N)      drift of E/N     mean T
+   0.002     4000    4.89e-05      +1.27e-04       0.8568
+   0.004     2000    1.65e-04      +6.34e-06       0.8304
+   0.008     1000    6.53e-04      +8.90e-04       0.8347
+   0.016      500    2.69e-03      -4.03e-03       0.8411
+
+2. production run: equilibrate 2000 steps, then 20000 steps, dt = 0.004
+   time 37.2 s
+   quantity     mean      naive error   block error (blocks of 1000 steps)   block-size scan of the error (blocks of 50, 200, 1000, 4000 steps)
+   T*         0.8456     0.00031       0.00184                       0.00122  0.00147  0.00184  0.00259
+   P*         1.5894     0.00214       0.01507                       0.00945  0.01180  0.01507  0.02575
+   PE/N      -5.0631     0.00047       0.00276                       0.00181  0.00219  0.00276  0.00392
+   total energy E/N: mean -3.80642, std 2.5e-04 (conserved)

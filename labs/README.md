@@ -4,6 +4,7 @@ Input files, scripts and figures for the hands-on labs of the site (`computation
 
 | Folder | Lab | Software |
 | --- | --- | --- |
+| `comp-102` | Code of the course COMP 102 (Euler, Verlet, MD of a LJ fluid, Metropolis MC) | Python, numpy, scipy |
 | `comp-101` | Code of the course COMP 101 (tests, I/O, profiling examples) | Python, numpy, pytest |
 | `lab-101` | Setting up a computational workstation | Python, git, numpy, matplotlib |
 | `lab-201` | Crystal structures in Python with ASE | ASE, spglib, numpy, matplotlib (no LAMMPS needed) |
