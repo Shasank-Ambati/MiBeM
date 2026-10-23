@@ -36,17 +36,18 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#vectors">1. Vectors</a></li>
-                <li><a href="#systems">2. Linear systems and Gaussian elimination</a></li>
-                <li><a href="#matrices">3. Matrices as linear maps</a></li>
-                <li><a href="#det">4. Determinants</a></li>
-                <li><a href="#basis">5. Bases and coordinates</a></li>
-                <li><a href="#recip">6. The reciprocal lattice</a></li>
-                <li><a href="#orth">7. Orthogonality and rotations</a></li>
-                <li><a href="#cond">8. Conditioning: when small errors are amplified</a></li>
-                <li><a href="#summary-m4">9. How the pieces fit together</a></li>
-                <li><a href="#check">10. Problems</a></li>
-                <li><a href="#refs">11. References and further reading</a></li>
+                <li><a href="#vectors">Lecture 1. Vectors</a></li>
+                <li><a href="#systems">Lecture 2. Linear systems and Gaussian elimination</a></li>
+                <li><a href="#matrices">Lecture 3. Matrices as linear maps</a></li>
+                <li><a href="#det">Lecture 4. Determinants</a></li>
+                <li><a href="#basis">Lecture 5. Bases and coordinates</a></li>
+                <li><a href="#recip">Lecture 6. The reciprocal lattice</a></li>
+                <li><a href="#orth">Lecture 7. Orthogonality and rotations</a></li>
+                <li><a href="#cond">Lecture 8. Conditioning: when small errors are amplified</a></li>
+                <li><a href="#summary-m4">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -60,7 +61,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Reading time</dt><dd>about 25 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="numbers-units-and-graphs.html">S1. Numbers, units, graphs</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a><br><a href="fourier-analysis.html">M8. Fourier analysis</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -79,7 +80,11 @@
                 <strong>You need:</strong> school algebra and trigonometry (<a href="numbers-units-and-graphs.html">S1</a>). No calculus is required here.
             </div>
 
-            <h2 id="vectors">1. Vectors<a class="anchor" href="#vectors" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 8 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. The reciprocal lattice of Lecture 6 is used again in the Fourier module. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="vectors">Lecture 1. Vectors<a class="anchor" href="#vectors" aria-label="Link to this section">#</a></h2>
             <h3 id="vec-basics">Vectors and the dot product<a class="anchor" href="#vec-basics" aria-label="Link to this section">#</a></h3>
             <p>A vector $\mathbf v=(v_1,\ldots,v_n)$ in $\mathbb R^n$ is an ordered list of numbers; geometrically, an arrow from the origin. Vectors add component by component and can be multiplied by a scalar. The <strong>dot product</strong> and <strong>norm</strong> are
             $$\mathbf a\cdot\mathbf b=\sum_ia_ib_i=|\mathbf a||\mathbf b|\cos\theta,\qquad|\mathbf a|=\sqrt{\mathbf a\cdot\mathbf a}.$$
@@ -92,7 +97,13 @@
             <p>Bond lengths and angles from atomic coordinates are dot products: for an atom at the origin bonded to atoms at $\mathbf u$ and $\mathbf v$, the bond angle is $\arccos\dfrac{\mathbf u\cdot\mathbf v}{|\mathbf u||\mathbf v|}$ (Problem 1). The volume of a unit cell with edge vectors $\mathbf a_1,\mathbf a_2,\mathbf a_3$ is $V=|\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)|$, which gives the density of any crystal (Problem 7).</p>
             </div>
 
-            <h2 id="systems">2. Linear systems and Gaussian elimination<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 1.2: dot product, cross product and projection</strong>
+                <p class="given">For $\mathbf a=(1,2,3)$ and $\mathbf b=(4,5,6)$ find $\mathbf a\cdot\mathbf b$, $\mathbf a\times\mathbf b$ and the area of the parallelogram they span. Then project $\mathbf p=(3,0,4)$ onto $\mathbf q=(1,2,2)$.</p>
+                <p>$\mathbf a\cdot\mathbf b=4+10+18=32$. $\mathbf a\times\mathbf b=(2\cdot6-3\cdot5,\ 3\cdot4-1\cdot6,\ 1\cdot5-2\cdot4)=(-3,6,-3)$, of length $\sqrt{54}=7.35$, the parallelogram area (and the vector is perpendicular to both: $(-3,6,-3)\cdot(1,2,3)=0$). Projection: $\dfrac{\mathbf p\cdot\mathbf q}{\mathbf q\cdot\mathbf q}\mathbf q=\dfrac{11}9(1,2,2)=(1.22,2.44,2.44)$, and the remainder $\mathbf p-\text{proj}=(1.78,-2.44,1.56)$ is orthogonal to $\mathbf q$.</p>
+            </div>
+
+            <h2 id="systems">Lecture 2. Linear systems and Gaussian elimination<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
             <p>A <strong>linear system</strong> of $m$ equations in $n$ unknowns,
             $$a_{11}x_1+\cdots+a_{1n}x_n=b_1,\ \ \ldots,\ \ a_{m1}x_1+\cdots+a_{mn}x_n=b_m,$$
             is written $A\mathbf x=\mathbf b$, with $A$ the $m\times n$ matrix of coefficients. Linear systems are everywhere: balancing chemical reactions, mass balance in a flow network, fitting a model, finite-element equations, and the self-consistent equations in electronic-structure codes.</p>
@@ -112,7 +123,15 @@
             </ul>
             <p>For a homogeneous system $A\mathbf x=\mathbf 0$ the solutions form the <strong>null space</strong>, of dimension $n-\operatorname{rank}A$ (<em>rank&ndash;nullity theorem</em>). Balancing a chemical equation is exactly a null-space problem (Problem 3).</p>
 
-            <h2 id="matrices">3. Matrices as linear maps<a class="anchor" href="#matrices" aria-label="Link to this section">#</a></h2>
+            <h3 id="lu">Elimination as a factorisation<a class="anchor" href="#lu" aria-label="Link to this section">#</a></h3>
+            <p>Elimination is equivalent to writing $A=LU$ with $L$ lower-triangular (holding the multipliers, with ones on the diagonal) and $U$ upper-triangular (the echelon form). Solving $A\mathbf x=\mathbf b$ then needs two cheap triangular solves, $L\mathbf y=\mathbf b$ (forward) and $U\mathbf x=\mathbf y$ (back), and the expensive factorisation ($\approx\tfrac13n^3$ operations) is done once for many right-hand sides.</p>
+            <div class="example">
+                <strong>Worked example 2.2: an LU factorisation</strong>
+                <p class="given">Factorise $A=\begin{pmatrix}2&amp;1&amp;1\\4&amp;3&amp;3\\8&amp;7&amp;9\end{pmatrix}$ and solve $A\mathbf x=(4,10,24)^T$.</p>
+                <p>Eliminate column 1 with multipliers $2$ and $4$: rows become $(0,1,1)$ and $(0,3,5)$. Then eliminate with multiplier $3$: $(0,0,2)$. So $L=\begin{pmatrix}1&amp;0&amp;0\\2&amp;1&amp;0\\4&amp;3&amp;1\end{pmatrix}$, $U=\begin{pmatrix}2&amp;1&amp;1\\0&amp;1&amp;1\\0&amp;0&amp;2\end{pmatrix}$. Forward: $y_1=4$, $y_2=10-2(4)=2$, $y_3=24-4(4)-3(2)=2$. Back: $x_3=1$, $x_2=2-1=1$, $x_1=(4-1-1)/2=1$. So $\mathbf x=(1,1,1)$, and $\det A=\prod u_{ii}=2\cdot1\cdot2=4$.</p>
+            </div>
+
+            <h2 id="matrices">Lecture 3. Matrices as linear maps<a class="anchor" href="#matrices" aria-label="Link to this section">#</a></h2>
             <p>An $m\times n$ matrix $A$ defines a map $\mathbf x\mapsto A\mathbf x$ from $\mathbb R^n$ to $\mathbb R^m$ that is <strong>linear</strong>: $A(\alpha\mathbf x+\beta\mathbf y)=\alpha A\mathbf x+\beta A\mathbf y$. The columns of $A$ are the images of the standard basis vectors, which is the quickest way to write down a matrix for a given transformation. The product of an $m\times n$ and an $n\times p$ matrix is $(AB)_{ij}=\sum_kA_{ik}B_{kj}$, and it represents <em>doing $B$ first, then $A$</em>. Matrix multiplication is associative, $(AB)C=A(BC)$, and distributive, but <strong>not commutative</strong>: rotating then reflecting is generally not the same as reflecting then rotating.</p>
             <p>The <strong>transpose</strong> $A^T$ swaps rows and columns, with $(AB)^T=B^TA^T$; a matrix is symmetric if $A^T=A$. The <strong>identity</strong> $I$ leaves everything unchanged. The <strong>inverse</strong> $A^{-1}$, if it exists, undoes $A$: $A^{-1}A=AA^{-1}=I$, and $(AB)^{-1}=B^{-1}A^{-1}$. For a $2\times2$ matrix,
             $$\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}^{-1}=\frac1{ad-bc}\begin{pmatrix}d&amp;-b\\-c&amp;a\end{pmatrix},$$
@@ -124,7 +143,7 @@
             <p>Mathematically $\mathbf x=A^{-1}\mathbf b$. Numerically, computing $A^{-1}$ is slower and less accurate than solving $A\mathbf x=\mathbf b$ by elimination (LU factorisation), and it destroys sparsity. Write &ldquo;solve&rdquo; in your code, not &ldquo;inv&rdquo;. If you need to solve with many right-hand sides, factorise once and reuse.</p>
             </div>
 
-            <h2 id="det">4. Determinants<a class="anchor" href="#det" aria-label="Link to this section">#</a></h2>
+            <h2 id="det">Lecture 4. Determinants<a class="anchor" href="#det" aria-label="Link to this section">#</a></h2>
             <p>For a square matrix the <strong>determinant</strong> is a single number. For $2\times2$ and $3\times3$:
             $$\det\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}=ad-bc,\qquad\det\begin{pmatrix}a&amp;b&amp;c\\d&amp;e&amp;f\\g&amp;h&amp;i\end{pmatrix}=a(ei-fh)-b(di-fg)+c(dh-eg).$$
             In general one expands along a row or column, or (better) reduces to triangular form by elimination and multiplies the diagonal. Key properties: $\det(AB)=\det A\det B$; $\det A^T=\det A$; swapping two rows flips the sign; a row of zeros or two proportional rows gives $0$; $\det A^{-1}=1/\det A$; the determinant of a triangular matrix is the product of its diagonal.</p>
@@ -133,7 +152,13 @@
             </div>
             <p>This is why the cell volume of a crystal is $V=|\det[\mathbf a_1\ \mathbf a_2\ \mathbf a_3]|=|\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)|$, and why a deformation gradient $F$ has $\det F=V/V_0$ (the volume ratio) and a physically admissible one has $\det F&gt;0$.</p>
 
-            <h2 id="basis">5. Bases and coordinates<a class="anchor" href="#basis" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.1: determinant, inverse and rank</strong>
+                <p class="given">(a) Evaluate $\det A$ for $A=\begin{pmatrix}1&amp;2&amp;-1\\2&amp;1&amp;1\\3&amp;-1&amp;2\end{pmatrix}$. (b) Invert $B=\begin{pmatrix}2&amp;1\\1&amp;3\end{pmatrix}$. (c) Find the rank of $C=\begin{pmatrix}1&amp;2&amp;3\\2&amp;4&amp;6\\1&amp;0&amp;1\end{pmatrix}$.</p>
+                <p>(a) Expand along row 1: $1(1\cdot2-1\cdot(-1))-2(2\cdot2-1\cdot3)+(-1)(2\cdot(-1)-1\cdot3)=3-2+5=6\neq0$, so $A$ is invertible. (b) $\det B=5$, $B^{-1}=\tfrac15\begin{pmatrix}3&amp;-1\\-1&amp;2\end{pmatrix}$ (check: $BB^{-1}=I$). (c) Row 2 is twice row 1, so the rows are dependent: eliminating gives two non-zero rows, rank $2$, and the null space is one-dimensional, spanned by $(-1,-1,1)$ (check: $C(-1,-1,1)^T=\mathbf0$).</p>
+            </div>
+
+            <h2 id="basis">Lecture 5. Bases and coordinates<a class="anchor" href="#basis" aria-label="Link to this section">#</a></h2>
             <h3 id="indep">Linear independence and basis<a class="anchor" href="#indep" aria-label="Link to this section">#</a></h3>
             <p>Vectors $\mathbf v_1,\ldots,\mathbf v_k$ are <strong>linearly independent</strong> if the only solution of $c_1\mathbf v_1+\cdots+c_k\mathbf v_k=\mathbf 0$ is $c_i=0$ for all $i$; none is a combination of the others. Their <strong>span</strong> is the set of all combinations. A <strong>basis</strong> of a space is a set of independent vectors that spans it, and the number of vectors is the <strong>dimension</strong>. For $n$ vectors in $\mathbb R^n$ placed as the columns of a matrix, independence is equivalent to $\det\neq0$. Every vector then has unique <strong>coordinates</strong> in the basis.</p>
             <h3 id="lattice">Crystal lattices<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h3>
@@ -148,7 +173,13 @@
                 <p>$V=|\det A|$ with $A=\tfrac a2\begin{pmatrix}0&amp;1&amp;1\\1&amp;0&amp;1\\1&amp;1&amp;0\end{pmatrix}$. The determinant of the integer matrix is $0(0-1)-1(0-1)+1(1-0)=2$, and scaling a $3\times3$ matrix by $a/2$ multiplies the determinant by $(a/2)^3$: $V=\dfrac{a^3}{8}\times2=\dfrac{a^3}{4}$. The conventional cube has volume $a^3$, which therefore contains $a^3/(a^3/4)=4$ primitive cells, hence $4$ lattice points. Since FCC has one atom per lattice point, the cube holds $4$ atoms: $8$ corners shared by $8$ cubes and $6$ face centres shared by $2$ gives $8\cdot\tfrac18+6\cdot\tfrac12=4$. &check;</p>
             </div>
 
-            <h2 id="recip">6. The reciprocal lattice<a class="anchor" href="#recip" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.2: fractional coordinates in a triclinic cell</strong>
+                <p class="given">A cell has $\mathbf a=(3,0,0)$, $\mathbf b=(1,3,0)$, $\mathbf c=(0.5,0.5,4)$ &Aring;. Find its volume and the fractional coordinates of the point $\mathbf r=(2,2,2)$.</p>
+                <p>$A$ is triangular, so $V=\det A=3\cdot3\cdot4=36$ &Aring;$^3$. Solve $A\mathbf f=\mathbf r$ from the bottom: $4f_3=2\Rightarrow f_3=0.5$; $3f_2+0.5f_3=2\Rightarrow f_2=0.583$; $3f_1+f_2+0.5f_3=2\Rightarrow f_1=0.389$. So $\mathbf f=(0.389,0.583,0.5)$, inside the cell (all components between $0$ and $1$).</p>
+            </div>
+
+            <h2 id="recip">Lecture 6. The reciprocal lattice<a class="anchor" href="#recip" aria-label="Link to this section">#</a></h2>
             <p>Diffraction experiments and plane-wave electronic-structure codes work in <em>reciprocal space</em>. The <strong>reciprocal lattice</strong> has basis vectors $\mathbf b_1,\mathbf b_2,\mathbf b_3$ defined by
             $$\mathbf a_i\cdot\mathbf b_j=2\pi\,\delta_{ij},\qquad\text{explicitly}\quad\mathbf b_1=2\pi\frac{\mathbf a_2\times\mathbf a_3}{\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)}\ \text{(and cyclic)},$$
             or in matrix form, with columns $\mathbf b_j$ in $B$: $B^TA=2\pi I$, so $B=2\pi\,A^{-T}$. A reciprocal lattice vector $\mathbf G=h\mathbf b_1+k\mathbf b_2+l\mathbf b_3$ (integers $h,k,l$) is <strong>perpendicular to the family of lattice planes with Miller indices $(hkl)$</strong>, and the spacing between adjacent planes is
@@ -161,16 +192,28 @@
             <div class="demo" data-demo="lattice2d"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="orth">7. Orthogonality and rotations<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.2: reciprocal lattice of a hexagonal net</strong>
+                <p class="given">A 2D hexagonal lattice has $\mathbf a_1=(1,0)$, $\mathbf a_2=(-\tfrac12,\tfrac{\sqrt3}2)$. Find $\mathbf b_1,\mathbf b_2$ and the spacing of the $(10)$ planes.</p>
+                <p>With the vectors as columns, $A=\begin{pmatrix}1&amp;-\tfrac12\\0&amp;\tfrac{\sqrt3}2\end{pmatrix}$ and $A^{-1}=\begin{pmatrix}1&amp;\tfrac1{\sqrt3}\\0&amp;\tfrac2{\sqrt3}\end{pmatrix}$. $B=2\pi A^{-T}$ has columns equal to the rows of $2\pi A^{-1}$: $\mathbf b_1=2\pi\bigl(1,\tfrac1{\sqrt3}\bigr)$, $\mathbf b_2=2\pi\bigl(0,\tfrac2{\sqrt3}\bigr)$, both of length $2\pi\cdot\tfrac2{\sqrt3}=7.26$, at $60^\circ$ to each other: a hexagonal lattice again, rotated by $30^\circ$. Check: $\mathbf a_1\cdot\mathbf b_2=0$, $\mathbf a_2\cdot\mathbf b_2=2\pi$. &check; The $(10)$ spacing is $d=2\pi/|\mathbf b_1|=\tfrac{\sqrt3}2=0.866$ (in units of $|\mathbf a_1|$), as in the interactive figure above.</p>
+            </div>
+
+            <h2 id="orth">Lecture 7. Orthogonality and rotations<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h2>
             <p>A set of vectors is <strong>orthonormal</strong> if they are mutually orthogonal unit vectors. A matrix $Q$ whose columns are orthonormal is an <strong>orthogonal matrix</strong>: $Q^TQ=I$, so $Q^{-1}=Q^T$, and it preserves lengths and angles, $|Q\mathbf x|=|\mathbf x|$. Its determinant is $\pm1$: $+1$ for a proper <strong>rotation</strong>, $-1$ for a reflection or inversion. The point-group operations of a crystal are orthogonal matrices, which is why symmetry analysis is linear algebra. The rotation matrices of section 3 are orthogonal; a rotation by $\theta$ about the $z$-axis in three dimensions is $\begin{pmatrix}\cos\theta&amp;-\sin\theta&amp;0\\\sin\theta&amp;\cos\theta&amp;0\\0&amp;0&amp;1\end{pmatrix}$.</p>
             <p>Given any independent set, the <strong>Gram&ndash;Schmidt process</strong> builds an orthonormal one: take $\mathbf e_1=\mathbf v_1/|\mathbf v_1|$, then subtract from each subsequent vector its projections on the earlier $\mathbf e$&rsquo;s and normalise:
             $$\mathbf w_k=\mathbf v_k-\sum_{j&lt;k}(\mathbf e_j\cdot\mathbf v_k)\mathbf e_j,\qquad\mathbf e_k=\mathbf w_k/|\mathbf w_k| .$$
             Applied to the columns of $A$ this gives the QR factorisation $A=QR$, with $R$ upper-triangular, which is how lattice vectors are rotated into the standard orientation used by codes (first vector along $x$, second in the $xy$-plane) and a stable way to solve least-squares problems (<a href="statistics-and-data-fitting.html">M11</a>). The <strong>orthogonal projection</strong> onto a unit vector $\mathbf e$ is the matrix $P=\mathbf e\mathbf e^T$ ($P^2=P$).</p>
 
-            <h2 id="cond">8. Conditioning: when small errors are amplified<a class="anchor" href="#cond" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.2: decomposing a displacement</strong>
+                <p class="given">An atom is displaced by $\mathbf d=(0.3,0.1,0.2)$ &Aring; relative to a bond along $\hat{\mathbf n}=(0,0,1)$. Split $\mathbf d$ into components parallel and perpendicular to the bond.</p>
+                <p>Parallel part: $(\mathbf d\cdot\hat{\mathbf n})\hat{\mathbf n}=(0,0,0.2)$ (a bond stretch of $0.2$ &Aring;). Perpendicular part: $\mathbf d-\mathbf d_\parallel=(0.3,0.1,0)$, magnitude $0.316$ &Aring; (a bending or shear displacement). Stretch and bend have very different force constants, so splitting a displacement this way is the first step of a vibrational analysis.</p>
+            </div>
+
+            <h2 id="cond">Lecture 8. Conditioning: when small errors are amplified<a class="anchor" href="#cond" aria-label="Link to this section">#</a></h2>
             <p>Solving $A\mathbf x=\mathbf b$ on a computer is exact only up to rounding, and the data $\mathbf b$ are usually uncertain anyway. A system is <strong>ill-conditioned</strong> if a tiny change in $\mathbf b$ (or $A$) causes a large change in $\mathbf x$. The sensitivity is measured by the <strong>condition number</strong> $\kappa(A)=\sigma_\mathrm{max}/\sigma_\mathrm{min}$, the ratio of the largest to the smallest stretching factor of the map (the singular values, see <a href="eigenvalues-and-decompositions.html">M5</a>). Roughly, the relative error in $\mathbf x$ can be $\kappa$ times the relative error in $\mathbf b$, so you lose about $\log_{10}\kappa$ digits of accuracy. Nearly dependent columns make $\kappa$ huge: nearly parallel lattice vectors, nearly collinear descriptors in a regression, or an over-complete basis set in an electronic-structure code (a nearly singular overlap matrix). Problem 12 shows an example.</p>
 
-            <h2 id="summary-m4">9. How the pieces fit together<a class="anchor" href="#summary-m4" aria-label="Link to this section">#</a></h2>
+            <h2 id="summary-m4">Summary of the unit<a class="anchor" href="#summary-m4" aria-label="Link to this section">#</a></h2>
             <p>Linear systems and their rank classify when equations can be solved; matrices are maps whose determinant measures volume scaling; a basis of lattice vectors gives coordinates, cell volume and the metric; the reciprocal lattice is the inverse-transpose of the lattice matrix and governs diffraction and Brillouin zones; orthogonal matrices are rotations and reflections; conditioning warns when numbers cannot be trusted. The sequel asks the central question about a matrix: which directions does it only stretch, and by how much?</p>
 
             <!-- takeaways:start -->
@@ -184,7 +227,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -332,7 +375,40 @@
             </details>
             </div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q4-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Determinant</span></div>
+            <p>Compute $\det\begin{pmatrix}1&amp;2&amp;-1\\2&amp;1&amp;1\\3&amp;-1&amp;2\end{pmatrix}$ and say what a zero value would mean.</p>
+            <details class="solution"><summary>Solution</summary><p>$1(3)-2(1)+(-1)(-5)=6$. A zero determinant would mean the columns are linearly dependent: the map flattens space, the matrix is not invertible, and $A\mathbf x=\mathbf b$ has either no or infinitely many solutions.</p></details>
+            </div>
+            <div class="problem" id="q4-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Linear system</span></div>
+            <p>Solve $2x+y=5$, $x+3y=5$ using the inverse.</p>
+            <details class="solution"><summary>Solution</summary><p>$B^{-1}=\tfrac15\begin{pmatrix}3&amp;-1\\-1&amp;2\end{pmatrix}$, so $\mathbf x=\tfrac15(15-5,\ -5+10)=(2,1)$. Check: $4+1=5$, $2+3=5$. &check;</p></details>
+            </div>
+            <div class="problem" id="q4-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Rank</span></div>
+            <p>Find the rank and a null-space vector of $\begin{pmatrix}1&amp;2&amp;3\\2&amp;4&amp;6\\1&amp;0&amp;1\end{pmatrix}$.</p>
+            <details class="solution"><summary>Solution</summary><p>Rank $2$ (row 2 $=2\times$ row 1). Null space dimension $3-2=1$: solving $x+2y+3z=0$, $x+z=0$ gives $\mathbf v=(-1,-1,1)$.</p></details>
+            </div>
+            <div class="problem" id="q4-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Cell volume</span></div>
+            <p>A cell has edges $(3,0,0)$, $(1,3,0)$, $(0.5,0.5,4)$ &Aring; and contains $4$ atoms of mass $50$ u. Find the volume and the density ($1$ u $=1.6605\times10^{-24}$ g).</p>
+            <details class="solution"><summary>Solution</summary><p>$V=3\cdot3\cdot4=36$ &Aring;$^3=3.6\times10^{-23}$ cm$^3$. Mass $=4\times50\times1.6605\times10^{-24}=3.32\times10^{-22}$ g. $\rho=3.32\times10^{-22}/3.6\times10^{-23}=9.2$ g/cm$^3$.</p></details>
+            </div>
+            <div class="problem" id="q4-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Reciprocal lattice</span></div>
+            <p>A simple cubic crystal has $a=4$ &Aring;. Find $|\mathbf b|$, and the spacing of the (110) planes.</p>
+            <details class="solution"><summary>Solution</summary><p>$|\mathbf b_i|=2\pi/a=1.571$ &Aring;$^{-1}$. $\mathbf G_{110}=\tfrac{2\pi}a(1,1,0)$, $|\mathbf G|=\tfrac{2\pi}a\sqrt2$, so $d_{110}=a/\sqrt2=2.83$ &Aring;.</p></details>
+            </div>
+            <div class="problem" id="q4-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Projection</span></div>
+            <p>Project $\mathbf p=(3,0,4)$ onto $\mathbf q=(1,2,2)$ and verify that the remainder is orthogonal to $\mathbf q$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\mathbf p\cdot\mathbf q=11$, $\mathbf q\cdot\mathbf q=9$: projection $\tfrac{11}9(1,2,2)=(1.22,2.44,2.44)$. Remainder $(1.78,-2.44,1.56)$; dot with $\mathbf q$: $1.78-4.89+3.11=0$. &check;</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Strang, G., <em>Introduction to Linear Algebra</em>, Wellesley&ndash;Cambridge Press: the best single book for this module; video lectures freely available.</li>
                 <li>Lay, D. C., <em>Linear Algebra and Its Applications</em>, Pearson.</li>
@@ -359,7 +435,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=75820cef"></script>
+    <script src="../assets/topics.js?v=296a61e3"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

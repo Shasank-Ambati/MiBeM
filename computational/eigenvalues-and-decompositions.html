@@ -36,16 +36,17 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#eigen">1. Eigenvalues and eigenvectors</a></li>
-                <li><a href="#diag">2. Diagonalisation</a></li>
-                <li><a href="#sym">3. Symmetric matrices and the spectral theorem</a></li>
-                <li><a href="#quad">4. Quadratic forms and definiteness</a></li>
-                <li><a href="#modes">5. Coupled oscillators and normal modes</a></li>
-                <li><a href="#svd">6. The singular value decomposition</a></li>
-                <li><a href="#elec">7. Electronic structure as an eigenproblem</a></li>
-                <li><a href="#summary-m5">8. How the pieces fit together</a></li>
-                <li><a href="#check">9. Problems</a></li>
-                <li><a href="#refs">10. References and further reading</a></li>
+                <li><a href="#eigen">Lecture 1. Eigenvalues and eigenvectors</a></li>
+                <li><a href="#diag">Lecture 2. Diagonalisation</a></li>
+                <li><a href="#sym">Lecture 3. Symmetric matrices and the spectral theorem</a></li>
+                <li><a href="#quad">Lecture 4. Quadratic forms and definiteness</a></li>
+                <li><a href="#modes">Lecture 5. Coupled oscillators and normal modes</a></li>
+                <li><a href="#svd">Lecture 6. The singular value decomposition</a></li>
+                <li><a href="#elec">Lecture 7. Electronic structure as an eigenproblem</a></li>
+                <li><a href="#summary-m5">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -59,7 +60,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Reading time</dt><dd>about 25 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="linear-algebra-foundations.html">M4. Linear algebra I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="tensors-stress-and-strain.html">M6. Tensors</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a><br><a href="statistics-and-data-fitting.html">M11. Statistics</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -78,7 +79,11 @@
                 <strong>You need:</strong> <a href="linear-algebra-foundations.html">M4. Linear algebra I</a> (matrices, determinants, orthogonality).
             </div>
 
-            <h2 id="eigen">1. Eigenvalues and eigenvectors<a class="anchor" href="#eigen" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Normal modes (Lecture 5) and the SVD (Lecture 6) are the two results you will meet most often. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="eigen">Lecture 1. Eigenvalues and eigenvectors<a class="anchor" href="#eigen" aria-label="Link to this section">#</a></h2>
             <div class="note def"><strong>Definition (eigenpair)</strong>
             <p>For a square matrix $A$, a nonzero vector $\mathbf v$ is an <strong>eigenvector</strong> with <strong>eigenvalue</strong> $\lambda$ if
             $$A\mathbf v=\lambda\mathbf v .$$
@@ -100,13 +105,23 @@
 
             <p>Matrices need not have real eigenvalues: a rotation by $\theta$ has $\lambda=e^{\pm i\theta}$ (no real direction is preserved). Some matrices have fewer independent eigenvectors than $n$ ("defective" matrices, such as $\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}$), but the symmetric matrices of physics never do.</p>
 
-            <h2 id="diag">2. Diagonalisation<a class="anchor" href="#diag" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Why eigenvectors for distinct eigenvalues are independent</strong>
+            <p>Suppose $A\mathbf v_1=\lambda_1\mathbf v_1$ and $A\mathbf v_2=\lambda_2\mathbf v_2$ with $\lambda_1\ne\lambda_2$ and $c_1\mathbf v_1+c_2\mathbf v_2=\mathbf0$. Applying $A$ gives $c_1\lambda_1\mathbf v_1+c_2\lambda_2\mathbf v_2=\mathbf0$; subtracting $\lambda_2$ times the first equation leaves $c_1(\lambda_1-\lambda_2)\mathbf v_1=\mathbf0$, so $c_1=0$ and then $c_2=0$. Hence $n$ distinct eigenvalues give $n$ independent eigenvectors and $A$ is diagonalisable.</p>
+            </div>
+
+            <h2 id="diag">Lecture 2. Diagonalisation<a class="anchor" href="#diag" aria-label="Link to this section">#</a></h2>
             <p>If $A$ has $n$ independent eigenvectors $\mathbf v_1,\ldots,\mathbf v_n$, put them as columns of $P$ and the eigenvalues on the diagonal of $\Lambda$. Then $AP=P\Lambda$, so
             $$A=P\Lambda P^{-1}.$$
             In the basis of eigenvectors, $A$ is just the diagonal matrix $\Lambda$: a set of independent stretches. This makes functions of $A$ trivial: $A^k=P\Lambda^kP^{-1}$ and, more generally, $f(A)=P\,f(\Lambda)\,P^{-1}$, with $f(\Lambda)=\operatorname{diag}\bigl(f(\lambda_i)\bigr)$. For instance $A^{-1}$ has eigenvalues $1/\lambda_i$ (so $A$ is invertible iff no $\lambda_i=0$), $A^k$ has eigenvalues $\lambda_i^k$, and the matrix exponential is $e^{A}=Pe^{\Lambda}P^{-1}$.</p>
             <p>Applications: repeated application of a matrix (Markov chains and kinetic Monte Carlo transition matrices; $A^k$ for large $k$ is dominated by the largest eigenvalue, which is how the power iteration finds a ground state) and the solution of linear differential equations (section 5).</p>
 
-            <h2 id="sym">3. Symmetric matrices and the spectral theorem<a class="anchor" href="#sym" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.1: powers by diagonalisation</strong>
+                <p class="given">Compute $A^3$ for $A=\begin{pmatrix}4&amp;1\\2&amp;3\end{pmatrix}$ by diagonalising.</p>
+                <p>The eigenpairs are $\lambda=5$ with $(1,1)$ and $\lambda=2$ with $(-1,2)$ (check $A(-1,2)^T=(-2,4)^T=2(-1,2)^T$). With $P=\begin{pmatrix}1&amp;-1\\1&amp;2\end{pmatrix}$, $A=P\,\mathrm{diag}(5,2)\,P^{-1}$ and $P^{-1}=\tfrac13\begin{pmatrix}2&amp;1\\-1&amp;1\end{pmatrix}$. Then $A^3=P\,\allowbreak \mathrm{diag}(125,8)\,\allowbreak P^{-1}=\tfrac13\begin{pmatrix}125&amp;-8\\125&amp;16\end{pmatrix}\begin{pmatrix}2&amp;1\\-1&amp;1\end{pmatrix}=\begin{pmatrix}86&amp;39\\78&amp;47\end{pmatrix}$. (Direct multiplication, $A\cdot A\cdot A$, agrees.) For large $k$ the term $5^k$ dominates, so $A^k\approx5^k\times$ the projector onto $(1,1)$: this is how a Markov chain or a power iteration converges to its dominant eigenvector.</p>
+            </div>
+
+            <h2 id="sym">Lecture 3. Symmetric matrices and the spectral theorem<a class="anchor" href="#sym" aria-label="Link to this section">#</a></h2>
             <div class="note thm"><strong>Spectral theorem</strong>
             <p>If $A$ is real and symmetric ($A^T=A$), then (i) all its eigenvalues are real; (ii) eigenvectors belonging to different eigenvalues are orthogonal, and a full orthonormal set of eigenvectors can always be chosen; hence
             $$A=Q\Lambda Q^{T}=\sum_i\lambda_i\,\mathbf q_i\mathbf q_i^{T},$$
@@ -122,12 +137,18 @@
             </ul>
             <p>In practice, library routines (<code>eigh</code> in NumPy and LAPACK) exploit symmetry and are faster, more accurate and guarantee real eigenvalues. Use the symmetric solver whenever the matrix is symmetric.</p>
 
-            <h2 id="quad">4. Quadratic forms and definiteness<a class="anchor" href="#quad" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.2: a three-mass chain</strong>
+                <p class="given">Three equal masses are joined by springs to each other and to fixed walls at both ends: $K=k\begin{pmatrix}2&amp;-1&amp;0\\-1&amp;2&amp;-1\\0&amp;-1&amp;2\end{pmatrix}$. Find the normal modes.</p>
+                <p>The matrix is symmetric, so the eigenvectors are orthogonal. Trying the shapes $\sin(n\pi j/4)$ gives $\lambda=2-2\cos(n\pi/4)$: $n=1$: $\lambda=2-\sqrt2$ with $\mathbf v=(1,\sqrt2,1)$; $n=2$: $\lambda=2$ with $(1,0,-1)$; $n=3$: $\lambda=2+\sqrt2$ with $(1,-\sqrt2,1)$. Frequencies $\omega=\sqrt{\lambda k/m}=0.765,\allowbreak \ 1.414,\allowbreak \ 1.848$ in units of $\sqrt{k/m}$. Mode 1 is all masses in phase (the long-wavelength mode), mode 2 has the centre mass fixed, mode 3 alternates. The eigenvalues sum to the trace, $(2-\sqrt2)+2+(2+\sqrt2)=6$. &check;</p>
+            </div>
+
+            <h2 id="quad">Lecture 4. Quadratic forms and definiteness<a class="anchor" href="#quad" aria-label="Link to this section">#</a></h2>
             <p>For a symmetric matrix $A$ the <strong>quadratic form</strong> is the scalar $q(\mathbf x)=\mathbf x^TA\mathbf x=\sum_{ij}A_{ij}x_ix_j$. In the eigenbasis, with $\mathbf y=Q^T\mathbf x$,
             $$q=\sum_i\lambda_i\,y_i^2 .$$
             So the sign of $q$ is controlled entirely by the eigenvalues:</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="4. Quadratic forms and definiteness (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 4. Quadratic forms and definiteness (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Type</th><th>Condition</th><th>Meaning for an energy $E=E_0+\tfrac12\mathbf x^TH\mathbf x$</th></tr></thead>
                 <tbody>
                     <tr><td>Positive definite</td><td>all $\lambda_i&gt;0$</td><td>minimum: stable equilibrium</td></tr>
@@ -142,7 +163,13 @@
             <p>A crystal is mechanically stable only if its elastic-constant matrix (in Voigt form) is positive definite: for a cubic crystal this means $C_{11}&gt;|C_{12}|$, $C_{11}+2C_{12}&gt;0$ and $C_{44}&gt;0$ (the Born stability criteria). An atomic structure at a stationary point is a true minimum only if its Hessian has no negative eigenvalues apart from the $6$ zero modes of rigid translation and rotation (of a free cluster); a negative eigenvalue marks a saddle, i.e. an <em>imaginary phonon frequency</em>, signalling a structural instability that the structure can lower its energy by distorting along that eigenvector.</p>
             </div>
 
-            <h2 id="modes">5. Coupled oscillators and normal modes<a class="anchor" href="#modes" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.2: the shape of an energy well</strong>
+                <p class="given">An energy is $E=\tfrac12\mathbf x^TH\mathbf x$ with $H=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$ (energy units). Describe the surface $E=\tfrac12$.</p>
+                <p>$H$ has eigenvalues $3$ and $1$ with eigenvectors $\tfrac1{\sqrt2}(1,1)$ and $\tfrac1{\sqrt2}(1,-1)$, so $E=\tfrac12\bigl(3y_1^2+y_2^2\bigr)$ in the rotated coordinates. $E=\tfrac12$ is an ellipse with semi-axes $1/\sqrt3=0.577$ along $(1,1)$ (the stiff direction) and $1$ along $(1,-1)$ (the soft direction). Both eigenvalues are positive, so $H$ is positive definite and the point is a stable minimum; the stiffness ratio $3:1$ is the condition number that will matter for optimisers in <a href="calculus-of-variations-and-optimisation.html">M12</a>.</p>
+            </div>
+
+            <h2 id="modes">Lecture 5. Coupled oscillators and normal modes<a class="anchor" href="#modes" aria-label="Link to this section">#</a></h2>
             <p>Consider $n$ masses with positions $x_i$ (measured from equilibrium) connected by springs, with potential energy $U=\tfrac12\mathbf x^TK\mathbf x$ and kinetic energy $T=\tfrac12\sum m_i\dot x_i^2$. With equal masses $m$, Newton&rsquo;s equations are $m\ddot{\mathbf x}=-K\mathbf x$, where $K$ (the Hessian of $U$, or <em>force-constant matrix</em>) is symmetric. Try $\mathbf x(t)=\mathbf v\,\allowbreak \cos(\omega t)$: then $-m\omega^2\mathbf v=-K\mathbf v$, i.e.
             $$K\mathbf v=m\omega^2\mathbf v .$$
             This is an eigenproblem: <strong>each eigenvector of $K$ is a normal mode</strong> in which all atoms oscillate in phase at a single frequency, with $\omega_i=\sqrt{\lambda_i/m}$ where $\lambda_i$ are the eigenvalues. Because $K$ is symmetric, the modes are orthogonal and independent: any motion is a superposition of them. (For unequal masses, rescale to $D_{ij}=K_{ij}/\sqrt{m_im_j}$, the <em>dynamical matrix</em>.) A positive-definite $K$ gives real frequencies; a negative eigenvalue gives $\omega^2&lt;0$, i.e. exponential growth, an instability.</p>
@@ -161,7 +188,13 @@
             $$\mathbf y(t)=\sum_ic_i(0)\,e^{\lambda_it}\mathbf v_i=e^{At}\mathbf y(0),\qquad e^{At}=Pe^{\Lambda t}P^{-1}.$$
             Solutions grow if some eigenvalue has $\operatorname{Re}\lambda&gt;0$, decay if all have $\operatorname{Re}\lambda&lt;0$ (stable), and oscillate when $\lambda$ is complex. Linearising a nonlinear system about a fixed point gives exactly this problem with $A$ the Jacobian (see <a href="ordinary-differential-equations.html">M7</a>), so the eigenvalues of the Jacobian decide the stability of kinetic models and the stiffness of reaction networks (the ratio of the largest to the smallest $|\lambda|$).</p>
 
-            <h2 id="svd">6. The singular value decomposition<a class="anchor" href="#svd" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.2: an oscillator as a first-order system</strong>
+                <p class="given">Solve $\ddot x=-4x$, $x(0)=1$, $\dot x(0)=0$ by writing $\mathbf y=(x,\dot x)$.</p>
+                <p>$\dot{\mathbf y}=A\mathbf y$ with $A=\begin{pmatrix}0&amp;1\\-4&amp;0\end{pmatrix}$, $\operatorname{tr}A=0$, $\det A=4$, so $\lambda=\pm2i$. Eigenvectors $(1,\pm2i)$. Writing the real solution $x=\operatorname{Re}\bigl(c\,e^{2it}\bigr)$ with $x(0)=1$, $\dot x(0)=0$ gives $x=\cos2t$, $\dot x=-2\sin2t$: purely imaginary eigenvalues mean undamped oscillation at angular frequency $2$. Eigenvalues with a negative real part would add a decaying envelope.</p>
+            </div>
+
+            <h2 id="svd">Lecture 6. The singular value decomposition<a class="anchor" href="#svd" aria-label="Link to this section">#</a></h2>
             <p>Non-symmetric and rectangular matrices (a data table of $m$ samples by $n$ features, say) have no eigen-decomposition in general, but <em>every</em> real matrix has a singular value decomposition.</p>
             <div class="note thm"><strong>Singular value decomposition (SVD)</strong>
             <p>Every $m\times n$ real matrix can be written
@@ -177,7 +210,13 @@
             <h3 id="pca">Principal component analysis<a class="anchor" href="#pca" aria-label="Link to this section">#</a></h3>
             <p>Take $m$ samples of $n$ features, with each column of the data matrix $X$ ($m\times n$) shifted to zero mean. The covariance matrix is $C=\tfrac1{m-1}X^TX$ (symmetric, positive semi-definite). Its eigenvectors are the <strong>principal components</strong>, the orthogonal directions of decreasing variance, and the eigenvalue $\lambda_i$ is the variance along the $i$-th: the fraction of variance retained by the first $k$ components is $\sum_{i\le k}\lambda_i/\sum_i\lambda_i$. With $X=U\Sigma V^T$, the principal components are the columns of $V$ and $\lambda_i=\sigma_i^2/(m-1)$, so PCA is computed directly from the SVD. In materials work, PCA reduces high-dimensional descriptors, finds collective variables in molecular dynamics (the dominant, large-amplitude motions of a protein or a defect) and visualises structure&ndash;property maps (<a href="machine-learning-for-materials.html">Machine learning for materials</a>).</p>
 
-            <h2 id="elec">7. Electronic structure as an eigenproblem<a class="anchor" href="#elec" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.2: SVD of a shear</strong>
+                <p class="given">Find the singular values of $A=\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}$ and its condition number.</p>
+                <p>$A^TA=\begin{pmatrix}1&amp;1\\1&amp;2\end{pmatrix}$ has trace $3$ and determinant $1$: $\lambda=\dfrac{3\pm\sqrt5}2=2.618,\allowbreak \,\allowbreak 0.382$. The singular values are the square roots, $1.618$ and $0.618$ (the golden ratio and its reciprocal), with product $1=|\det A|$. Condition number $1.618/0.618=2.618$. The unit circle is mapped to an ellipse with these semi-axes: a $100\%$ shear stretches by $62\%$ along one direction and squeezes by $38\%$ along the other, the finite-strain picture of <a href="tensors-stress-and-strain.html">M6</a>, Problem 6.12.</p>
+            </div>
+
+            <h2 id="elec">Lecture 7. Electronic structure as an eigenproblem<a class="anchor" href="#elec" aria-label="Link to this section">#</a></h2>
             <p>The time-independent Schr&ouml;dinger equation $\hat H\psi=E\psi$ is an eigenvalue equation for the Hamiltonian operator. Expanding the unknown wavefunction in a finite basis of known functions $\phi_\mu$ (plane waves, Gaussians or atomic orbitals), $\psi=\sum_\mu c_\mu\phi_\mu$, turns it into a matrix problem
             $$H\mathbf c=E\,S\,\mathbf c,\qquad H_{\mu\nu}=\langle\phi_\mu|\hat H|\phi_\nu\rangle,\quad S_{\mu\nu}=\langle\phi_\mu|\phi_\nu\rangle,$$
             a <strong>generalised eigenproblem</strong> with overlap matrix $S$ (the identity for an orthonormal basis, e.g. plane waves). The eigenvalues $E_i$ are the energy levels, the eigenvectors the orbitals, and the spectral theorem guarantees real energies and orthogonal states. A generalised problem is reduced to an ordinary one using $S=Q_s\Lambda_sQ_s^T$ to form $S^{-1/2}=Q_s\Lambda_s^{-1/2}Q_s^T$, giving $\tilde H=S^{-1/2}HS^{-1/2}$ (this fails if $S$ is ill-conditioned because the basis is nearly dependent: the conditioning problem of <a href="linear-algebra-foundations.html">M4</a>). Diagonalising $H$ at every iteration of the self-consistent loop dominates the cost of DFT, scaling as the cube of the matrix size, which is why large calculations use iterative methods that find only the lowest few eigenpairs.</p>
@@ -185,7 +224,7 @@
             <p>A chain of atoms with one orbital each, on-site energy $\varepsilon$ and hopping $-t$ between neighbours, has $H$ with $\varepsilon$ on the diagonal and $-t$ on the first off-diagonals. Its eigenvectors are plane waves $c_j=e^{ikja}$ with energies $E(k)=\varepsilon-2t\cos ka$: the energy band, with bandwidth $4t$. For a ring of $N$ atoms (periodic) the allowed $k=2\pi n/(Na)$ give the $N$ eigenvalues, a discrete preview of Bloch&rsquo;s theorem and of the Fourier methods of <a href="fourier-analysis.html">M8</a> (Problem 10).</p>
             </div>
 
-            <h2 id="summary-m5">8. How the pieces fit together<a class="anchor" href="#summary-m5" aria-label="Link to this section">#</a></h2>
+            <h2 id="summary-m5">Summary of the unit<a class="anchor" href="#summary-m5" aria-label="Link to this section">#</a></h2>
             <p>An eigenvector is an axis along which a matrix acts as a simple stretch; for the symmetric matrices of physics these axes are orthogonal and complete, so that in the right coordinates every coupled problem becomes independent one-dimensional ones. Eigenvalues are the stretch factors: frequencies$^2$ for vibrations, energies for electrons, curvature for stability, variance for data. The SVD extends the same picture to arbitrary matrices. Next we put the matrices to work on the physical quantities that are naturally tensors: stress, strain and the elastic stiffness of crystals.</p>
 
             <!-- takeaways:start -->
@@ -199,7 +238,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -338,7 +377,40 @@
             </details>
             </div>
 
-            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q5-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Eigenvalues</span></div>
+            <p>Find the eigenvalues and eigenvectors of $\begin{pmatrix}1&amp;2\\2&amp;1\end{pmatrix}$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\lambda^2-2\lambda-3=0$, so $\lambda=3$ with $(1,1)$ and $\lambda=-1$ with $(1,-1)$ (orthogonal, as the matrix is symmetric; the sum $2$ is the trace and the product $-3$ the determinant).</p></details>
+            </div>
+            <div class="problem" id="q5-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Functions of a matrix</span></div>
+            <p>$A$ has eigenvalues $2$ and $3$. Give the eigenvalues of $A^2$, $A^{-1}$ and $A+5I$.</p>
+            <details class="solution"><summary>Solution</summary><p>$4,9$; $\tfrac12,\tfrac13$; $7,8$. Functions of a matrix act on its eigenvalues with the same eigenvectors.</p></details>
+            </div>
+            <div class="problem" id="q5-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Definiteness</span></div>
+            <p>Classify $\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix}$ and $\begin{pmatrix}1&amp;2\\2&amp;1\end{pmatrix}$.</p>
+            <details class="solution"><summary>Solution</summary><p>First: leading minors $2&gt;0$ and $\det=3&gt;0$: positive definite (eigenvalues $1,3$). Second: $\det=-3&lt;0$: indefinite (eigenvalues $3,-1$), a saddle.</p></details>
+            </div>
+            <div class="problem" id="q5-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Normal modes</span></div>
+            <p>Three equal masses between walls joined by identical springs: give the three frequencies in units of $\sqrt{k/m}$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\sqrt{2-\sqrt2}=0.765$, $\sqrt2=1.414$, $\sqrt{2+\sqrt2}=1.848$ (Example 3.2).</p></details>
+            </div>
+            <div class="problem" id="q5-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">SVD</span></div>
+            <p>Find the singular values of $\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\sqrt{(3\pm\sqrt5)/2}=1.618,\ 0.618$; condition number $2.618$.</p></details>
+            </div>
+            <div class="problem" id="q5-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">PCA</span></div>
+            <p>A covariance matrix is $\begin{pmatrix}4&amp;2\\2&amp;1\end{pmatrix}$. Find the principal components and the variance fractions.</p>
+            <details class="solution"><summary>Solution</summary><p>Trace $5$, determinant $0$: eigenvalues $5$ and $0$. The first component is $(2,1)/\sqrt5$ and carries $100\%$ of the variance: the two variables are perfectly correlated and the data lie on a line.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Strang, G., <em>Introduction to Linear Algebra</em>, Wellesley&ndash;Cambridge Press: chapters on eigenvalues, symmetric matrices and the SVD.</li>
                 <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM: eigenvalue algorithms and the SVD.</li>
@@ -366,7 +438,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=75820cef"></script>
+    <script src="../assets/topics.js?v=296a61e3"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

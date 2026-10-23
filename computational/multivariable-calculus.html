@@ -36,16 +36,17 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#fields">1. Functions of several variables</a></li>
-                <li><a href="#partials">2. Partial derivatives</a></li>
-                <li><a href="#chain">3. The chain rule and implicit differentiation</a></li>
-                <li><a href="#gradient">4. The gradient, directional derivatives and forces</a></li>
-                <li><a href="#hessian">5. Stationary points: the Hessian</a></li>
-                <li><a href="#lagrange">6. Constrained optimisation: Lagrange multipliers</a></li>
-                <li><a href="#multiple">7. Multiple integrals</a></li>
-                <li><a href="#summary-m2">8. How the pieces fit together</a></li>
-                <li><a href="#check">9. Problems</a></li>
-                <li><a href="#refs">10. References and further reading</a></li>
+                <li><a href="#fields">Lecture 1. Functions of several variables</a></li>
+                <li><a href="#partials">Lecture 2. Partial derivatives</a></li>
+                <li><a href="#chain">Lecture 3. The chain rule and implicit differentiation</a></li>
+                <li><a href="#gradient">Lecture 4. The gradient, directional derivatives and forces</a></li>
+                <li><a href="#hessian">Lecture 5. Stationary points: the Hessian</a></li>
+                <li><a href="#lagrange">Lecture 6. Constrained optimisation: Lagrange multipliers</a></li>
+                <li><a href="#multiple">Lecture 7. Multiple integrals</a></li>
+                <li><a href="#summary-m2">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -59,7 +60,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Reading time</dt><dd>about 24 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="vector-calculus.html">M3. Vector calculus</a><br><a href="calculus-of-variations-and-optimisation.html">M12. Variational methods</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -78,11 +79,15 @@
                 <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a>, in particular derivative rules, Taylor series and Gaussian integrals.
             </div>
 
-            <h2 id="fields">1. Functions of several variables<a class="anchor" href="#fields" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. The derivation of the Boltzmann distribution from a constrained maximisation is the capstone of the lectures. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="fields">Lecture 1. Functions of several variables<a class="anchor" href="#fields" aria-label="Link to this section">#</a></h2>
             <p>A <strong>scalar field</strong> assigns a number to every point: $f(x,y)$, $f(x,y,z)$, or $f(x_1,\ldots,x_n)$. Examples you will meet: the potential energy $U(\mathbf r_1,\ldots,\mathbf r_N)$ of $N$ atoms (a function of $3N$ variables), the temperature $T(x,y,z,t)$ in a part, the Gibbs energy $G(T,P,x)$ of a phase, a concentration field $c(\mathbf r,t)$.</p>
             <p>Functions of two variables are drawn as surfaces $z=f(x,y)$ or, more usefully, as <strong>contour maps</strong>: curves of constant $f$ (<em>level curves</em>, or <em>level surfaces</em> in 3D). A contour plot of a potential energy surface (PES) shows valleys (stable states), passes between valleys (saddles) and hills. High-dimensional functions cannot be drawn; we study them through the derivatives below, which work in any number of dimensions.</p>
 
-            <h2 id="partials">2. Partial derivatives<a class="anchor" href="#partials" aria-label="Link to this section">#</a></h2>
+            <h2 id="partials">Lecture 2. Partial derivatives<a class="anchor" href="#partials" aria-label="Link to this section">#</a></h2>
             <h3 id="partial-def">Definition and notation<a class="anchor" href="#partial-def" aria-label="Link to this section">#</a></h3>
             <div class="note def"><strong>Definition (partial derivative)</strong>
             <p>The partial derivative of $f(x,y)$ with respect to $x$ is the ordinary derivative with $y$ held constant:
@@ -106,7 +111,13 @@
             The left side is hard to measure; the right side is the thermal expansion coefficient (times $V$), which is easy. Problem 12 puts it to work.</p>
             </div>
 
-            <h2 id="chain">3. The chain rule and implicit differentiation<a class="anchor" href="#chain" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.1: sensitivity of the pressure of a gas</strong>
+                <p class="given">For $P=nRT/V$ find $\mathrm dP$ and the relative change of $P$ if $T$ rises by $2\%$ and $V$ by $1\%$.</p>
+                <p>$\mathrm dP=\dfrac{nR}{V}\mathrm dT-\dfrac{nRT}{V^2}\mathrm dV$. Dividing by $P=nRT/V$ gives the relative form $\dfrac{\mathrm dP}{P}=\dfrac{\mathrm dT}{T}-\dfrac{\mathrm dV}{V}$. With $\mathrm dT/T=0.02$ and $\mathrm dV/V=0.01$: $\mathrm dP/P\approx+0.01$, a $1\%$ rise. Powers and quotients give sums of relative changes, the pattern behind error propagation in <a href="statistics-and-data-fitting.html">M11</a>.</p>
+            </div>
+
+            <h2 id="chain">Lecture 3. The chain rule and implicit differentiation<a class="anchor" href="#chain" aria-label="Link to this section">#</a></h2>
             <p>If $f=f(x,y)$ and both $x$ and $y$ depend on a parameter $t$, then
             $$\frac{\mathrm{d}f}{\mathrm{d}t}=\frac{\partial f}{\partial x}\frac{\mathrm{d}x}{\mathrm{d}t}+\frac{\partial f}{\partial y}\frac{\mathrm{d}y}{\mathrm{d}t}.$$
             If instead $x=x(s,t)$ and $y=y(s,t)$, then $\dfrac{\partial f}{\partial s}=\dfrac{\partial f}{\partial x}\dfrac{\partial x}{\partial s}+\dfrac{\partial f}{\partial y}\dfrac{\partial y}{\partial s}$, and similarly for $t$. The pattern is always: sum over every route through which $f$ depends on the variable.</p>
@@ -131,7 +142,7 @@
                 A practical use: the bulk modulus $K=-V(\partial P/\partial V)_T$ can be found from the (easier to measure) thermal expansion $\alpha$ and the pressure coefficient via $(\partial P/\partial V)_T=-(\partial P/\partial T)_V/(\partial V/\partial T)_P$.</p>
             </div>
 
-            <h2 id="gradient">4. The gradient, directional derivatives and forces<a class="anchor" href="#gradient" aria-label="Link to this section">#</a></h2>
+            <h2 id="gradient">Lecture 4. The gradient, directional derivatives and forces<a class="anchor" href="#gradient" aria-label="Link to this section">#</a></h2>
             <h3 id="grad-def">The gradient vector<a class="anchor" href="#grad-def" aria-label="Link to this section">#</a></h3>
             <div class="note def"><strong>Definition (gradient)</strong>
             <p>The gradient of $f(x,y,z)$ is the vector of its partial derivatives:
@@ -158,7 +169,15 @@
                 The force is along the line joining the atoms, with magnitude $|U'(r)|$: repulsive if $U'&lt;0$ (energy falls as atoms separate), attractive if $U'&gt;0$. All pair potentials in simulations (Lennard-Jones, Morse, Coulomb) work this way.</p>
             </div>
 
-            <h2 id="hessian">5. Stationary points: the Hessian<a class="anchor" href="#hessian" aria-label="Link to this section">#</a></h2>
+            <h3 id="grad-proof">Why the gradient is perpendicular to level curves<a class="anchor" href="#grad-proof" aria-label="Link to this section">#</a></h3>
+            <p>Let $\mathbf r(t)$ trace a level curve, so $f(\mathbf r(t))=c$ is constant. Differentiating with the chain rule gives $\nabla f\cdot\mathbf r'(t)=0$: the gradient is orthogonal to every tangent of the level curve. Combined with $D_{\hat{\mathbf u}}f=|\nabla f|\cos\theta$, the gradient direction is the one in which $f$ climbs fastest, at the rate $|\nabla f|$.</p>
+            <div class="example">
+                <strong>Worked example 4.2: linear approximation in two variables</strong>
+                <p class="given">Estimate $f(3.1,\,3.9)$ for $f=\sqrt{x^2+y^2}$ using the gradient at $(3,4)$.</p>
+                <p>$f(3,4)=5$ and $\nabla f=\bigl(x/f,\,y/f\bigr)=(0.6,\,0.8)$. Then $f(3.1,3.9)\approx5+0.6(0.1)+0.8(-0.1)=4.98$. The exact value is $\sqrt{24.82}=4.9820$. The first-order estimate is good to about $2\times10^{-3}$, an error of second order in the step.</p>
+            </div>
+
+            <h2 id="hessian">Lecture 5. Stationary points: the Hessian<a class="anchor" href="#hessian" aria-label="Link to this section">#</a></h2>
             <h3 id="taylor2">Taylor expansion in several variables<a class="anchor" href="#taylor2" aria-label="Link to this section">#</a></h3>
             <p>Writing the displacement as a vector $\mathbf h$, the second-order Taylor expansion about $\mathbf x_0$ is
             $$f(\mathbf x_0+\mathbf h)=f(\mathbf x_0)+\nabla f(\mathbf x_0)\cdot\mathbf h+\tfrac12\,\mathbf h^{T}\mathsf H\,\mathbf h+O(|\mathbf h|^3),$$
@@ -191,7 +210,13 @@
             <div class="demo" data-demo="contour"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="lagrange">6. Constrained optimisation: Lagrange multipliers<a class="anchor" href="#lagrange" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.2: classification with the discriminant</strong>
+                <p class="given">Find and classify the stationary points of $f(x,y)=x^3-3xy+y^3$.</p>
+                <p>$f_x=3x^2-3y=0$ and $f_y=3y^2-3x=0$ give $y=x^2$ and $x=y^2$, so $x=x^4$: $x=0$ or $x=1$. The real stationary points are $(0,0)$ and $(1,1)$. The Hessian is $\begin{pmatrix}6x&amp;-3\\-3&amp;6y\end{pmatrix}$ with $D=36xy-9$. At $(0,0)$, $D=-9&lt;0$: a <strong>saddle</strong>. At $(1,1)$, $D=27&gt;0$ and $f_{xx}=6&gt;0$: a <strong>minimum</strong>, with $f=-1$.</p>
+            </div>
+
+            <h2 id="lagrange">Lecture 6. Constrained optimisation: Lagrange multipliers<a class="anchor" href="#lagrange" aria-label="Link to this section">#</a></h2>
             <p>Often you must extremise $f$ subject to a constraint $g(\mathbf x)=0$: minimise energy at fixed composition, maximise entropy at fixed mean energy, minimise surface area at fixed volume. Along the constraint curve, $f$ is stationary when its level curve is <em>tangent</em> to the constraint curve, i.e. when $\nabla f$ and $\nabla g$ are parallel.</p>
             <div class="note thm"><strong>Method of Lagrange multipliers</strong>
             <p>To find extrema of $f$ subject to $g=0$, solve
@@ -214,7 +239,13 @@
                 so $a(b+c)=b(a+c)\Rightarrow ac=bc\Rightarrow a=b$, and likewise $b=c$. The optimum is a cube, $a=b=c=V^{1/3}$ with $A=6V^{2/3}$. Problem 8 repeats this with different surface energies on different faces and gets the Wulff shape of a crystal.</p>
             </div>
 
-            <h2 id="multiple">7. Multiple integrals<a class="anchor" href="#multiple" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.3: a maximum on a circle</strong>
+                <p class="given">Maximise $x+y$ on the circle $x^2+y^2=1$.</p>
+                <p>$\nabla(x+y)=(1,1)=\lambda(2x,2y)$, so $x=y=\dfrac1{2\lambda}$; the constraint then gives $2x^2=1$, $x=y=\pm\dfrac1{\sqrt2}$. The maximum is $\sqrt2$ at $\bigl(\tfrac1{\sqrt2},\tfrac1{\sqrt2}\bigr)$ (with $\lambda=\tfrac1{\sqrt2}$) and the minimum $-\sqrt2$ at the opposite point. Geometrically the level lines $x+y=c$ touch the circle where the circle&rsquo;s normal is parallel to $(1,1)$.</p>
+            </div>
+
+            <h2 id="multiple">Lecture 7. Multiple integrals<a class="anchor" href="#multiple" aria-label="Link to this section">#</a></h2>
             <h3 id="double">Double and triple integrals<a class="anchor" href="#double" aria-label="Link to this section">#</a></h3>
             <p>The integral of $f(x,y)$ over a region $R$ of the plane, $\iint_Rf\,\mathrm{d}A$, is the volume under the surface (more generally a total of &ldquo;density times area&rdquo;). For a rectangle it is evaluated as an <em>iterated integral</em>, and the order does not matter (<strong>Fubini&rsquo;s theorem</strong>):
             $$\iint_Rf\,\mathrm{d}A=\int_a^b\!\Bigl(\int_c^df(x,y)\,\mathrm{d}y\Bigr)\mathrm{d}x=\int_c^d\!\Bigl(\int_a^bf(x,y)\,\mathrm{d}x\Bigr)\mathrm{d}y .$$
@@ -255,7 +286,13 @@
                 With $b=m/(2k_\mathrm{B}T)$ the integral $\int_0^\infty v^3e^{-bv^2}\mathrm{d}v=\dfrac1{2b^2}$ (substitute $u=v^2$) gives $\langle v\rangle=4\pi(b/\pi)^{3/2}/(2b^2)=\sqrt{8k_\mathrm{B}T/(\pi m)}$. The factor $v^2$ from the volume element is why the distribution vanishes at $v=0$ even though the velocity density is largest there: there are few ways to have almost no speed, and many to have a moderate one.</p>
             </div>
 
-            <h2 id="summary-m2">8. How the pieces fit together<a class="anchor" href="#summary-m2" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.4: the volume of a sphere</strong>
+                <p class="given">Use spherical coordinates to find the volume of a ball of radius $R$.</p>
+                <p>$V=\displaystyle\int_0^{2\pi}\!\!\int_0^\pi\!\!\int_0^Rr^2\sin\theta\,\allowbreak \mathrm dr\,\allowbreak \mathrm d\theta\,\allowbreak \mathrm d\phi=\frac{R^3}3\cdot2\cdot2\pi=\frac43\pi R^3$. The three integrals separate because the integrand is constant and the limits are independent; the Jacobian $r^2\sin\theta$ does all the geometry.</p>
+            </div>
+
+            <h2 id="summary-m2">Summary of the unit<a class="anchor" href="#summary-m2" aria-label="Link to this section">#</a></h2>
             <p>A function of many variables is understood through its gradient (the slope, which gives forces and fluxes) and its Hessian (the curvature, which gives stiffness, stability and transition states). Constraints are handled by Lagrange multipliers, which in statistical mechanics turn into temperature and chemical potential. Integrals over several variables, with the right Jacobian, are how averages over positions or velocities are computed. The next module packages the gradient together with the divergence and curl into <em>vector calculus</em>, which expresses conservation laws and produces the diffusion equation.</p>
 
             <!-- takeaways:start -->
@@ -269,7 +306,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Try each problem before opening the hint, and the hint before the solution. Basic problems check the techniques; Core problems apply them to materials settings; Challenge problems combine several ideas.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -338,7 +375,7 @@
             <details class="hint"><summary>Hint</summary><p>The function separates into $g(x)+g(y)$ with $g(t)=t^4-2t^2$, so the Hessian is diagonal.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>$f_x=4x^3-4x=4x(x-1)(x+1)$ and $f_y=4y(y-1)(y+1)$, so stationary points have $x,y\in\{-1,0,1\}$: nine points. The Hessian is diagonal with $f_{xx}=12x^2-4$ and $f_{yy}=12y^2-4$, so each eigenvalue is $+8$ if the coordinate is $\pm1$ and $-4$ if it is $0$.</p>
-            <div class="table-scroll" role="region" aria-label="9. Problems (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Problem set (scrollable table)" tabindex="0"><table>
             <thead><tr><th>Points</th><th>Hessian eigenvalues</th><th>Type</th><th>$f$</th></tr></thead>
             <tbody>
             <tr><td>$(\pm1,\pm1)$ (4 points)</td><td>$+8,+8$</td><td>minimum</td><td>$-2$</td></tr>
@@ -423,7 +460,40 @@
             </details>
             </div>
 
-            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q2-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Gradient</span></div>
+            <p>$f(x,y)=xe^y+y^2$. Find $\nabla f$ at $(1,0)$ and the directional derivative along $(3,4)/5$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\nabla f=(e^y,\ xe^y+2y)=(1,\ 1)$ at $(1,0)$. $D_{\hat u}f=(1,1)\cdot(0.6,0.8)=1.4$.</p></details>
+            </div>
+            <div class="problem" id="q2-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Stationary points</span></div>
+            <p>Classify the stationary points of $f=x^3-12x+y^2$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\nabla f=(3x^2-12,\ 2y)=0$ at $(\pm2,0)$. $H=\mathrm{diag}(6x,2)$: at $(2,0)$ both eigenvalues positive, a minimum with $f=-16$; at $(-2,0)$ eigenvalues $-12$ and $2$, a saddle point with $f=16$.</p></details>
+            </div>
+            <div class="problem" id="q2-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Constraint</span></div>
+            <p>Minimise $x^2+y^2$ subject to $2x+y=5$.</p>
+            <details class="solution"><summary>Solution</summary><p>$(2x,2y)=\lambda(2,1)$ gives $x=\lambda$, $y=\lambda/2$; the constraint gives $\tfrac52\lambda=5$, $\lambda=2$. Minimum at $(2,1)$ with value $5$ (distance $\sqrt5$ from the origin).</p></details>
+            </div>
+            <div class="problem" id="q2-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Double integral</span></div>
+            <p>Evaluate $\iint(x+y)\,\mathrm dA$ over the triangle with vertices $(0,0),(1,0),(0,1)$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\displaystyle\int_0^1\!\!\int_0^{1-x}(x+y)\,\allowbreak \mathrm dy\,\allowbreak \mathrm dx=\int_0^1\Bigl[x(1-x)+\tfrac12(1-x)^2\Bigr]\mathrm dx=\int_0^1\tfrac12(1-x^2)\,\allowbreak \mathrm dx=\tfrac13$.</p></details>
+            </div>
+            <div class="problem" id="q2-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Polar coordinates</span></div>
+            <p>Evaluate $\iint_{x^2+y^2\le4}(x^2+y^2)\,\allowbreak \mathrm dA$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\displaystyle\int_0^{2\pi}\!\!\int_0^2r^2\cdot r\,\allowbreak \mathrm dr\,\allowbreak \mathrm d\theta=2\pi\cdot\tfrac{2^4}4=8\pi$ (the extra $r$ is the Jacobian).</p></details>
+            </div>
+            <div class="problem" id="q2-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Chain rule</span></div>
+            <p>Let $z=x^2y$ with $x=t^2$, $y=t^3$. Find $\mathrm dz/\mathrm dt$ in two ways.</p>
+            <details class="solution"><summary>Solution</summary><p>Chain rule: $2xy\cdot2t+x^2\cdot3t^2=2t^5\cdot2t+t^4\cdot3t^2=7t^6$. Direct substitution: $z=t^7$, $\mathrm dz/\mathrm dt=7t^6$. &check;</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Stewart, J., <em>Calculus: Early Transcendentals</em>, chapters on partial derivatives and multiple integrals.</li>
                 <li>Marsden, J. E. and Tromba, A. J., <em>Vector Calculus</em>, Freeman.</li>
@@ -450,7 +520,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=75820cef"></script>
+    <script src="../assets/topics.js?v=296a61e3"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

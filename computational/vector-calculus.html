@@ -36,18 +36,19 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#fields3">1. Vector fields</a></li>
-                <li><a href="#line">2. Line integrals and conservative fields</a></li>
-                <li><a href="#flux">3. Surface integrals and flux</a></li>
-                <li><a href="#div">4. Divergence</a></li>
-                <li><a href="#curl">5. Curl</a></li>
-                <li><a href="#lap">6. The Laplacian</a></li>
-                <li><a href="#theorems">7. The integral theorems</a></li>
-                <li><a href="#conservation">8. From conservation laws to equations</a></li>
-                <li><a href="#identities">9. Summary of identities</a></li>
-                <li><a href="#summary-m3">10. How the pieces fit together</a></li>
-                <li><a href="#check">11. Problems</a></li>
-                <li><a href="#refs">12. References and further reading</a></li>
+                <li><a href="#fields3">Lecture 1. Vector fields</a></li>
+                <li><a href="#line">Lecture 2. Line integrals and conservative fields</a></li>
+                <li><a href="#flux">Lecture 3. Surface integrals and flux</a></li>
+                <li><a href="#div">Lecture 4. Divergence</a></li>
+                <li><a href="#curl">Lecture 5. Curl</a></li>
+                <li><a href="#lap">Lecture 6. The Laplacian</a></li>
+                <li><a href="#theorems">Lecture 7. The integral theorems</a></li>
+                <li><a href="#conservation">Lecture 8. From conservation laws to equations</a></li>
+                <li><a href="#identities">Reference table: summary of identities</a></li>
+                <li><a href="#summary-m3">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -61,7 +62,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 20 min</dd></div>
+<div><dt>Reading time</dt><dd>about 24 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="multivariable-calculus.html">M2. Calculus II</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="tensors-stress-and-strain.html">M6. Tensors</a><br><a href="partial-differential-equations.html">M9. PDEs</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -80,7 +81,11 @@
                 <strong>You need:</strong> <a href="multivariable-calculus.html">M2. Calculus II</a> (gradient, chain rule, multiple integrals).
             </div>
 
-            <h2 id="fields3">1. Vector fields<a class="anchor" href="#fields3" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 8 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. The integral theorems of Lecture 7 are the centrepiece. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="fields3">Lecture 1. Vector fields<a class="anchor" href="#fields3" aria-label="Link to this section">#</a></h2>
             <p>A <strong>vector field</strong> $\mathbf F(x,y,z)=(F_x,F_y,F_z)$ assigns a vector to each point. Think of arrows attached to space. Four fields recur throughout this series:</p>
             <ul>
                 <li>the <strong>force field</strong> $\mathbf F=-\nabla U$ derived from a potential energy;</li>
@@ -91,7 +96,7 @@
             <p>We use the position vector $\mathbf r=(x,y,z)$, its length $r=|\mathbf r|$ and the unit vector $\hat{\mathbf r}=\mathbf r/r$. The field $\mathbf F=\mathbf r$ points radially outward and grows with distance; $\mathbf F=\mathbf r/r^3=\hat{\mathbf r}/r^2$ is the inverse-square field of a point source (a point charge, or a point source of atoms). Field lines are curves tangent to the field: they show the direction of flow.</p>
             <p>The vector algebra you need is brief. The dot product $\mathbf a\cdot\mathbf b=|\mathbf a||\mathbf b|\cos\theta$ projects one vector on another, and the cross product $\mathbf a\times\mathbf b$ has magnitude $|\mathbf a||\mathbf b|\sin\theta$ and direction perpendicular to both. Component forms and their properties are developed in <a href="linear-algebra-foundations.html">M4</a>.</p>
 
-            <h2 id="line">2. Line integrals and conservative fields<a class="anchor" href="#line" aria-label="Link to this section">#</a></h2>
+            <h2 id="line">Lecture 2. Line integrals and conservative fields<a class="anchor" href="#line" aria-label="Link to this section">#</a></h2>
             <h3 id="line-def">The line integral<a class="anchor" href="#line-def" aria-label="Link to this section">#</a></h3>
             <p>The work done by a force $\mathbf F$ moving a particle along a curve $C$ is the sum of $\mathbf F\cdot\mathrm{d}\mathbf r$ over small steps. Parametrise the curve by $\mathbf r(t)$, $a\le t\le b$; then
             $$W=\int_C\mathbf F\cdot\mathrm{d}\mathbf r=\int_a^b\mathbf F\bigl(\mathbf r(t)\bigr)\cdot\frac{\mathrm{d}\mathbf r}{\mathrm{d}t}\,\mathrm{d}t .$$
@@ -107,7 +112,13 @@
                 <p>(i) $\mathbf r=(t,t)$, $\mathrm{d}\mathbf r=(1,1)\,\allowbreak \mathrm{d}t$, $\mathbf F=(t,t)$: $\int_0^1(t+t)\,\mathrm{d}t=1$. (ii) $\mathbf r=(t,t^2)$, $\mathrm{d}\mathbf r=(1,2t)\,\allowbreak \mathrm{d}t$, $\mathbf F=(t^2,t)$: $\int_0^1(t^2+2t^2)\,\mathrm{d}t=1$. Both give $1$ because $\mathbf F=\nabla(xy)$ and $xy$ goes from $0$ to $1$. Problem 4 shows what happens for a non-conservative field.</p>
             </div>
 
-            <h2 id="flux">3. Surface integrals and flux<a class="anchor" href="#flux" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.2: work along a helix</strong>
+                <p class="given">Find $\int_C\mathbf F\cdot\mathrm d\mathbf r$ for $\mathbf F=(-y,\,x,\,1)$ along $\mathbf r(t)=(\cos t,\sin t,t)$, $0\le t\le2\pi$.</p>
+                <p>$\mathrm d\mathbf r=(-\sin t,\cos t,1)\,\allowbreak \mathrm dt$ and $\mathbf F=(-\sin t,\cos t,1)$ on the curve, so $\mathbf F\cdot\mathrm d\mathbf r=(\sin^2t+\cos^2t+1)\,\allowbreak \mathrm dt=2\,\allowbreak \mathrm dt$ and the integral is $4\pi$. The field has $\nabla\times\mathbf F=(0,0,2)\neq\mathbf0$, so it is not conservative and the result depends on the path.</p>
+            </div>
+
+            <h2 id="flux">Lecture 3. Surface integrals and flux<a class="anchor" href="#flux" aria-label="Link to this section">#</a></h2>
             <p>The <strong>flux</strong> of a vector field $\mathbf F$ through a surface $S$ with unit normal $\mathbf n$ is
             $$\Phi=\iint_S\mathbf F\cdot\mathbf n\,\mathrm{d}S .$$
             Only the component of $\mathbf F$ perpendicular to the surface counts. If $\mathbf F=\mathbf J$ is a particle flux (particles per area per time), then $\Phi$ is the number of particles crossing $S$ per unit time; for heat flux $\mathbf q$ it is the heat flow rate in watts. For a closed surface, $\mathbf n$ is taken to point outward, so $\Phi&gt;0$ means a net flow <em>out</em>.</p>
@@ -118,7 +129,13 @@
                 <p>On the sphere $\mathbf F\cdot\mathbf n=\dfrac{\hat{\mathbf r}}{R^2}\cdot\hat{\mathbf r}=\dfrac1{R^2}$, which is constant, so $\Phi=\dfrac1{R^2}\cdot4\pi R^2=4\pi$. The flux does not depend on $R$: the same total passes through every concentric sphere, as it must if nothing is created or destroyed between them. This is Gauss&rsquo;s law, and the reason a point source produces an inverse-square field.</p>
             </div>
 
-            <h2 id="div">4. Divergence<a class="anchor" href="#div" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.2: heat flow through a tilted plane</strong>
+                <p class="given">A uniform heat flux $\mathbf q=(0,0,-5\times10^4)$ W/m$^2$ crosses a flat area $A=2$ cm$^2$ whose unit normal makes $60^\circ$ with the $z$-axis. Find the heat flow rate through it.</p>
+                <p>$Q=\mathbf q\cdot\mathbf n\,A$ with $\mathbf n=(\sin60^\circ,0,\cos60^\circ)$: $\mathbf q\cdot\mathbf n=-5\times10^4\times0.5=-2.5\times10^4$ W/m$^2$, so $Q=-2.5\times10^4\times2\times10^{-4}=-5$ W. Only the component normal to the surface counts; the minus sign says heat crosses in the direction opposite to $\mathbf n$. Tilting the plane to $90^\circ$ would give zero flux.</p>
+            </div>
+
+            <h2 id="div">Lecture 4. Divergence<a class="anchor" href="#div" aria-label="Link to this section">#</a></h2>
             <div class="note def"><strong>Definition (divergence)</strong>
             <p>$$\nabla\cdot\mathbf F=\frac{\partial F_x}{\partial x}+\frac{\partial F_y}{\partial y}+\frac{\partial F_z}{\partial z}.$$
             It is a scalar: the net outflow of $\mathbf F$ per unit volume at a point.</p>
@@ -131,7 +148,13 @@
                 <p>Use the product rule with $\phi=r^{-3}$: $\nabla\cdot(r^{-3}\mathbf r)=r^{-3}\,\allowbreak \nabla\cdot\mathbf r+\mathbf r\cdot\nabla(r^{-3})$. Here $\nabla\cdot\mathbf r=3$ and $\nabla(r^{-3})=-3r^{-4}\hat{\mathbf r}=-3r^{-5}\mathbf r$. So the result is $3r^{-3}-3r^{-5}\,\allowbreak \mathbf r\cdot\mathbf r=3r^{-3}-3r^{-3}=0$. All the flux $4\pi$ found in Example 3.1 therefore emerges from the single point $r=0$, where the field is singular.</p>
             </div>
 
-            <h2 id="curl">5. Curl<a class="anchor" href="#curl" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.2: divergence of a radial field</strong>
+                <p class="given">Show $\nabla\cdot\hat{\mathbf r}=2/r$ in three dimensions, and find $n$ for which $\nabla\cdot(r^n\mathbf r)=0$.</p>
+                <p>$\hat{\mathbf r}=r^{-1}\mathbf r$, so $\nabla\cdot(r^{-1}\mathbf r)=r^{-1}(\nabla\cdot\mathbf r)+\mathbf r\cdot\nabla r^{-1}=\dfrac3r-\dfrac1{r^2}\,\allowbreak \mathbf r\cdot\hat{\mathbf r}=\dfrac2r$. In general $\nabla\cdot(r^n\mathbf r)=3r^n+nr^n=(n+3)\,\allowbreak r^n$, which vanishes (for $r\ne0$) only for $n=-3$: the inverse-square field. The $2/r$ for the unit vector field reflects the way lines of $\hat{\mathbf r}$ spread out over a sphere of area $4\pi r^2$.</p>
+            </div>
+
+            <h2 id="curl">Lecture 5. Curl<a class="anchor" href="#curl" aria-label="Link to this section">#</a></h2>
             <div class="note def"><strong>Definition (curl)</strong>
             <p>$$\nabla\times\mathbf F=\begin{vmatrix}\hat{\mathbf x}&amp;\hat{\mathbf y}&amp;\hat{\mathbf z}\\\partial_x&amp;\partial_y&amp;\partial_z\\F_x&amp;F_y&amp;F_z\end{vmatrix}=\Bigl(\partial_yF_z-\partial_zF_y,\ \partial_zF_x-\partial_xF_z,\ \partial_xF_y-\partial_yF_x\Bigr).$$
             It is a vector measuring the local rotation of the field: its direction is the axis about which the field circulates, and its magnitude is the circulation per unit area around that axis.</p>
@@ -148,7 +171,7 @@
             <div class="demo" data-demo="vecfield"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="lap">6. The Laplacian<a class="anchor" href="#lap" aria-label="Link to this section">#</a></h2>
+            <h2 id="lap">Lecture 6. The Laplacian<a class="anchor" href="#lap" aria-label="Link to this section">#</a></h2>
             <p>The divergence of a gradient defines the <strong>Laplacian</strong>:
             $$\nabla^2f=\nabla\cdot\nabla f=\frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}+\frac{\partial^2f}{\partial z^2}.$$
             It tells you how the value at a point compares with its surroundings: where $\nabla^2f&gt;0$, $f$ is lower than the average of its neighbours (a local dip), and where $\nabla^2f&lt;0$ it is higher (a bump). Concretely, on a grid of spacing $h$ in two dimensions, Taylor expansion shows
@@ -167,7 +190,13 @@
             </div>
             <p>The extra factors are the geometry: the area of a surface of radius $r$ grows as $r$ (cylinder, per unit length) or $r^2$ (sphere), so a steady flux through a sphere must fall off as $1/r^2$.</p>
 
-            <h2 id="theorems">7. The integral theorems<a class="anchor" href="#theorems" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.1: the Laplacian in spherical form</strong>
+                <p class="given">Check $\nabla^2(r^2)=6$ and $\nabla^2(1/r)=0$ with $\nabla^2f=r^{-2}(r^2f')'$.</p>
+                <p>For $f=r^2$: $r^{-2}(r^2\cdot2r)'=r^{-2}\cdot6r^2=6$, matching $\partial_x^2+\partial_y^2+\partial_z^2$ of $x^2+y^2+z^2$. For $f=1/r$: $r^2f'=-1$ is constant, so its derivative is $0$. The condition for a harmonic radial function is $r^2f'=\text{constant}$, i.e. $f=A+B/r$, the steady-state profile around a sphere.</p>
+            </div>
+
+            <h2 id="theorems">Lecture 7. The integral theorems<a class="anchor" href="#theorems" aria-label="Link to this section">#</a></h2>
             <div class="note thm"><strong>Divergence theorem (Gauss)</strong>
             <p>For a region $V$ with closed boundary surface $\partial V$ and outward unit normal $\mathbf n$,
             $$\iiint_V\nabla\cdot\mathbf F\,\mathrm{d}V=\oiint_{\partial V}\mathbf F\cdot\mathbf n\,\mathrm{d}S .$$
@@ -180,7 +209,13 @@
             </div>
             <p>The divergence theorem is the statement that fluxes through internal faces between neighbouring small boxes cancel in pairs, so summing the boxes' net outflows leaves only the outer boundary. Stokes&rsquo; theorem works the same way with circulation around small loops. Together with the gradient theorem of section 2, all three say: <em>integrating a derivative over a region equals the quantity itself evaluated on the boundary</em>, a higher-dimensional version of the fundamental theorem of calculus.</p>
 
-            <h2 id="conservation">8. From conservation laws to equations<a class="anchor" href="#conservation" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 7.1: area from a boundary integral (Green&rsquo;s theorem)</strong>
+                <p class="given">Use Green&rsquo;s theorem to find the area of the ellipse $x=a\cos t$, $y=b\sin t$.</p>
+                <p>Take $\mathbf F=\tfrac12(-y,x)$, whose curl is $1$. Then $\text{area}=\iint1\,\allowbreak \mathrm dA=\oint\tfrac12(x\,\mathrm dy-y\,\mathrm dx)=\tfrac12\int_0^{2\pi}(ab\cos^2t+ab\sin^2t)\,\allowbreak \mathrm dt=\pi ab$. The same trick, summed over polygon edges, is how image-analysis software computes the area of a grain from its traced boundary.</p>
+            </div>
+
+            <h2 id="conservation">Lecture 8. From conservation laws to equations<a class="anchor" href="#conservation" aria-label="Link to this section">#</a></h2>
             <p>Here is the most important use of these theorems in this series. Let $c(\mathbf r,t)$ be the concentration of a conserved species (atoms per unit volume) and $\mathbf J$ its flux. For any fixed volume $V$ with no sources inside, the amount in $V$ changes only because of what flows through the boundary:
             $$\frac{\mathrm{d}}{\mathrm{d}t}\iiint_Vc\,\mathrm{d}V=-\oiint_{\partial V}\mathbf J\cdot\mathbf n\,\mathrm{d}S=-\iiint_V\nabla\cdot\mathbf J\,\mathrm{d}V,$$
             using the divergence theorem. Move everything to one side: $\iiint_V\bigl(\partial_tc+\nabla\cdot\mathbf J\bigr)\mathrm{d}V=0$. This holds for <em>every</em> volume, however small, so the integrand itself must vanish:</p>
@@ -189,9 +224,15 @@
             $$\frac{\partial c}{\partial t}=\nabla\cdot(D\nabla c)\ \xrightarrow{\ D\ \text{const}\ }\ \frac{\partial c}{\partial t}=D\,\nabla^2c .$$
             For heat, $\mathbf q=-\kappa\nabla T$ and energy density $\rho c_p T$ give $\rho c_p\,\allowbreak \partial_tT=\nabla\cdot(\kappa\nabla T)$. In the phase-field method (<a href="phase-field-modelling.html">Phase-field modelling</a>) the flux is driven instead by the gradient of the <em>chemical potential</em>, $\mathbf J=-M\nabla\mu$, but the continuity equation is exactly the same. Notice the logic: the structure ($\partial_tc+\nabla\cdot\mathbf J=0$) is exact, from conservation alone; only the closure ($\mathbf J=-D\nabla c$) is a model.</p>
 
-            <h2 id="identities">9. Summary of identities<a class="anchor" href="#identities" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 8.2: Joule heating of a wire</strong>
+                <p class="given">A wire (slab approximation) $-a&lt;x&lt;a$ generates heat $q=10^8$ W/m$^3$ uniformly and its surfaces are held at $T_0$. Find the temperature profile and the peak rise for $\kappa=400$ W m$^{-1}$K$^{-1}$, $a=1$ mm.</p>
+                <p>Steady state of the heat equation with a source, $\kappa T''=-q$. Integrating twice with $T(\pm a)=T_0$ (even in $x$): $T=T_0+\dfrac{q}{2\kappa}(a^2-x^2)$. The peak rise at the centre is $\dfrac{qa^2}{2\kappa}=\dfrac{10^8\times10^{-6}}{800}=0.125$ K. The Laplacian turns a uniform source into a parabolic profile; for a cylinder the same argument gives $T=T_0+\tfrac{q}{4\kappa}(a^2-r^2)$.</p>
+            </div>
+
+            <h2 id="identities">Reference table: summary of identities<a class="anchor" href="#identities" aria-label="Link to this section">#</a></h2>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="9. Summary of identities (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Reference table: summary of identities (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Identity</th><th>Comment</th></tr></thead>
                 <tbody>
                     <tr><td>$\nabla(fg)=f\nabla g+g\nabla f$</td><td>product rule</td></tr>
@@ -205,7 +246,7 @@
             </table></div>
             </div>
 
-            <h2 id="summary-m3">10. How the pieces fit together<a class="anchor" href="#summary-m3" aria-label="Link to this section">#</a></h2>
+            <h2 id="summary-m3">Summary of the unit<a class="anchor" href="#summary-m3" aria-label="Link to this section">#</a></h2>
             <p>The gradient turns potentials into forces and concentrations into fluxes. The divergence measures sources and sinks, and combined with the divergence theorem converts &ldquo;conservation in every volume&rdquo; into the local continuity equation. The curl detects rotation and obstructs the existence of a potential. The Laplacian measures local deviation from the average and drives smoothing processes. These ideas set up the PDEs of <a href="partial-differential-equations.html">M9</a>. First, though, we need the linear algebra that underlies tensors, vibrations and numerical methods.</p>
 
             <!-- takeaways:start -->
@@ -219,7 +260,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">11. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -359,7 +400,40 @@
             </details>
             </div>
 
-            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q3-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Operators</span></div>
+            <p>For $\mathbf F=(yz,\,xz,\,xy)$ compute $\nabla\cdot\mathbf F$ and $\nabla\times\mathbf F$, and find a potential if one exists.</p>
+            <details class="solution"><summary>Solution</summary><p>$\nabla\cdot\mathbf F=0+0+0=0$. Curl: $(x-x,\ y-y,\ z-z)=\mathbf0$. So $\mathbf F$ is conservative with $\phi=xyz$ ($\nabla\phi=(yz,xz,xy)$).</p></details>
+            </div>
+            <div class="problem" id="q3-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Identities</span></div>
+            <p>For which $n$ is $r^n\mathbf r$ divergence-free for $r\neq0$, and what physical field is it?</p>
+            <details class="solution"><summary>Solution</summary><p>$\nabla\cdot(r^n\mathbf r)=(n+3)r^n$, zero for $n=-3$: $\mathbf r/r^3$, the inverse-square field of a point source (Coulomb or a point source of atoms).</p></details>
+            </div>
+            <div class="problem" id="q3-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Line integral</span></div>
+            <p>Evaluate $\int\mathbf F\cdot\mathrm d\mathbf r$ for $\mathbf F=(2xy,\,x^2)$ along $y=x^2$ from $(0,0)$ to $(1,1)$.</p>
+            <details class="solution"><summary>Solution</summary><p>With $x=t$, $y=t^2$: $\mathbf F=(2t^3,t^2)$, $\mathrm d\mathbf r=(1,2t)\mathrm dt$, so $\int_0^1(2t^3+2t^3)\mathrm dt=1$. Check: $\mathbf F=\nabla(x^2y)$ and $x^2y$ goes from $0$ to $1$.</p></details>
+            </div>
+            <div class="problem" id="q3-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Divergence theorem</span></div>
+            <p>Find the outward flux of $\mathbf F=(x,y,z)$ through the surface of the cube $-1\le x,y,z\le1$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\nabla\cdot\mathbf F=3$ and the volume is $8$: flux $=24$. (Directly: each face has area $4$ and $\mathbf F\cdot\mathbf n=1$, six faces: $24$.)</p></details>
+            </div>
+            <div class="problem" id="q3-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Laplace</span></div>
+            <p>Show that $f=e^x\sin y$ is harmonic, and explain what that implies about its extrema.</p>
+            <details class="solution"><summary>Solution</summary><p>$f_{xx}=e^x\sin y$ and $f_{yy}=-e^x\sin y$, so $\nabla^2f=0$. By the maximum principle $f$ has no interior maximum or minimum in any region: extreme values lie on the boundary.</p></details>
+            </div>
+            <div class="problem" id="q3-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Diffusion</span></div>
+            <p>A species diffuses from a surface through a film of thickness $L=10\ \mu$m with $D=10^{-14}$ m$^2$/s. Estimate the time to equilibrate and the steady flux for surface concentration $c_0$ and zero on the far side.</p>
+            <details class="solution"><summary>Solution</summary><p>Time scale $\sim L^2/D=10^{-10}/10^{-14}=10^4$ s (about three hours; the slowest-mode time constant is $L^2/\pi^2D=1.0\times10^3$ s). In steady state $c$ is linear and $J=Dc_0/L=10^{-14}c_0/10^{-5}=10^{-9}c_0$ (m/s times $c_0$), flowing towards the low-concentration side.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Marsden, J. E. and Tromba, A. J., <em>Vector Calculus</em>, Freeman: a standard text on line and surface integrals and the integral theorems.</li>
                 <li>Schey, H. M., <em>Div, Grad, Curl, and All That</em>, Norton: a short, intuition-first introduction, with electromagnetic examples.</li>
@@ -386,7 +460,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=75820cef"></script>
+    <script src="../assets/topics.js?v=296a61e3"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

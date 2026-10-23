@@ -198,7 +198,7 @@ window.MIBEM_TOPICS = [
     "short": "Calculus I",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 29,
+    "minutes": 30,
     "title": "Calculus I: functions of one variable",
     "blurb": "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
     "builds": [
@@ -225,7 +225,7 @@ window.MIBEM_TOPICS = [
     "short": "Calculus II",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 21,
+    "minutes": 24,
     "title": "Calculus II: several variables and optimisation",
     "blurb": "Partial derivatives, the chain rule, gradients, Hessians, constrained optimisation with Lagrange multipliers, and multiple integrals.",
     "builds": [
@@ -251,7 +251,7 @@ window.MIBEM_TOPICS = [
     "short": "Vector calculus",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 20,
+    "minutes": 24,
     "title": "Vector calculus: fields, fluxes and conservation laws",
     "blurb": "Gradient, divergence, curl and Laplacian, line and surface integrals, the divergence theorem, and how they produce the continuity and diffusion equations.",
     "builds": [
@@ -277,7 +277,7 @@ window.MIBEM_TOPICS = [
     "short": "Linear algebra I",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 21,
+    "minutes": 25,
     "title": "Linear algebra I: vectors, matrices and lattices",
     "blurb": "Vectors, linear systems, matrix algebra, determinants, bases and coordinate changes, with crystal lattices as the running example.",
     "builds": [
@@ -302,7 +302,7 @@ window.MIBEM_TOPICS = [
     "short": "Linear algebra II",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 21,
+    "minutes": 25,
     "title": "Linear algebra II: eigenvalues and decompositions",
     "blurb": "Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.",
     "builds": [
