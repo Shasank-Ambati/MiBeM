@@ -453,7 +453,7 @@
 
             <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Run the scripts first (the folder is <code>labs/lab-201</code> in the repository). Then work out the answers by hand before you open the solutions.</p>
-            <div class="problem" id="p201-1">
+            <div class="problem" id="pl201-1">
             <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
             <p>(a) Show that the conventional bcc cell contains 2 atoms and compute the packing fraction from the iron data of Step 2 ($a=2.866$ &Aring;, nearest-neighbour distance $a\sqrt3/2$). (b) What is the density of iron (atomic mass $55.845$ u) from these numbers, and how does it compare with Step 2? (c) How many atoms does a $4\times4\times4$ supercell of the bcc conventional cell contain?</p>
             <details class="hint"><summary>Hint</summary><p>Corners count $1/8$ each, the centre counts 1. The atomic radius is half the nearest-neighbour distance.</p></details>
@@ -463,7 +463,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p201-2">
+            <div class="problem" id="pl201-2">
             <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Core</span></div>
             <p>In the symmetry experiment of Step 4, the noise of $0.0005$ &Aring; destroys the symmetry at <code>symprec=1e-3</code> but $0.05$ &Aring; does so only at $0.1$ &Aring;. (a) Explain why. (b) A relaxed DFT structure of a cubic crystal gives P1 with the default tolerance. List what you would check, in order. (c) Why is it wrong to choose the tolerance so large that every structure shows high symmetry?</p>
             <details class="hint"><summary>Hint</summary><p>Think of <code>symprec</code> as the largest displacement that spglib is willing to ignore.</p></details>
@@ -473,7 +473,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p201-3">
+            <div class="problem" id="pl201-3">
             <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
             <p>Use the relaxed vacancy energy of Step 6 ($1.234$ eV) in $c=\exp(-E_f/k_\mathrm BT)$ (no formation entropy). (a) Compute the equilibrium vacancy fraction at $1000$ K. (b) How would the answer change if the supercell had been $2\times2\times2$ ($1.237$ eV)? (c) What does this tell you about the accuracy needed in $E_f$?</p>
             <details class="hint"><summary>Hint</summary><p>$k_\mathrm B=8.617\times10^{-5}$ eV/K, so $k_\mathrm BT=0.08617$ eV at 1000 K.</p></details>
@@ -483,7 +483,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p201-4">
+            <div class="problem" id="pl201-4">
             <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
             <p>The slab energies of Step 7 are $\gamma=1.041$, $1.133$ and $1.230$ J/m$^2$ for (111), (100), (110), with areas $5.61$, $6.48$ and $9.16$ &Aring;$^2$ per surface atom. (a) Convert each to the energy per surface atom in eV ($1\ \mathrm{J/m^2}=0.06242$ eV/&Aring;$^2$). (b) A surface atom of fcc loses 3, 4 and 5 of its 12 nearest neighbours on (111), (100) and (110). Divide the energies of (a) by these numbers. (c) What do you conclude about the broken-bond model?</p>
             <details class="hint"><summary>Hint</summary><p>Multiply $\gamma$ by the area per atom; then divide by 3, 4, 5.</p></details>
@@ -493,7 +493,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p201-5">
+            <div class="problem" id="pl201-5">
             <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
             <p>An unknown cubic metal gives powder peaks (Cu K$\alpha_1$, $\lambda=1.5406$ &Aring;) at $2\theta=44.68^\circ$, $65.03^\circ$, $82.35^\circ$ and $98.96^\circ$. (a) Compute $\sin^2\theta$ for each and the ratios to the first. (b) Decide whether the lattice is primitive, bcc or fcc, and assign $(hkl)$. (c) Compute the lattice constant from the first and the last peak, and identify the metal. (d) What would the first two peaks of an fcc metal with the same $a$ be?</p>
             <details class="hint"><summary>Hint</summary><p>$\sin^2\theta\propto h^2+k^2+l^2$ for a cubic crystal. Compare the ratios with the allowed sums for each lattice.</p></details>

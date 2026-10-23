@@ -319,7 +319,7 @@
 
             <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Exercises 1 to 3 need only the numbers above; 4 and 5 use the scripts.</p>
-            <div class="problem" id="p504-1">
+            <div class="problem" id="pl504-1">
             <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
             <p>At the critical temperature $T_c=2.269$, (a) what is the probability of accepting a flip that raises the energy by $4$ and by $8$? (b) At $T=1.6$? (c) Why does a low temperature need more sweeps to reach equilibrium?</p>
             <details class="hint"><summary>Hint</summary><p>Use $p=e^{-\Delta E/T}$.</p></details>
@@ -329,7 +329,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p504-2">
+            <div class="problem" id="pl504-2">
             <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Core</span></div>
             <p>(a) Show that the Binder cumulant of a Gaussian distribution of $m$ with zero mean is $U=0$, and that of a two-peak distribution with $m=\pm m_0$ is $2/3$. (b) A run at $T=3.5$ gave $U=0.0115$ for $L=32$: is this consistent with zero? (c) Why does $U(T_c)$ not depend on $L$?</p>
             <details class="hint"><summary>Hint</summary><p>For a Gaussian, $\langle m^4\rangle=3\langle m^2\rangle^2$. For $m=\pm m_0$, $\langle m^4\rangle=m_0^4$ and $\langle m^2\rangle=m_0^2$.</p></details>
@@ -339,7 +339,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p504-3">
+            <div class="problem" id="pl504-3">
             <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
             <p>From the table of Step 6, (a) how many independent samples of $|m|$ are in $40\,000$ sweeps at $T_c$ and at $T=4$? (b) By what factor does the error of the mean differ between these two temperatures for the same run length (assume equal standard deviations)? (c) How long a run is needed at $T_c$ to reach the error that you get at $T=4$ with $40\,000$ sweeps?</p>
             <details class="hint"><summary>Hint</summary><p>The error is $\sigma\sqrt{2\tau/N}$.</p></details>
@@ -349,7 +349,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p504-4">
+            <div class="problem" id="pl504-4">
             <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
             <p>Modify the sweep so that the energy includes a magnetic field $h$: $H=-J\sum s_is_j-h\sum s_i$. (a) Write the new $\Delta E$ for a flip. (b) Run $T=2.0$, $h=0.05$ from the state with all spins $-1$ (<code>ising_field.py</code>) and describe what happens. (c) Why is there no phase transition in a field?</p>
             <details class="hint"><summary>Hint</summary><p>The field term of the flip is $+2hs_i$. The state $m=-1$ is the stable state for $h&lt;0$ but is not for $h&gt;0$.</p></details>
@@ -359,7 +359,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p504-5">
+            <div class="problem" id="pl504-5">
             <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
             <p>Determine the dynamic exponent $z$ by measuring $\tau$ at $T_c$ for $L=8,16,32$ (40 000 sweeps each, using <code>tau_int</code> of <code>ising_extra.py</code>), fitting $\tau\sim L^z$. (a) Explain how to organise the runs so that the answer has an error bar. (b) The measured $\tau(L=32)=161$; predict $\tau(L=16)$ and $\tau(L=64)$ if $z=2.2$. (c) How many sweeps would you need for $L=64$ for 100 independent samples?</p>
             <details class="hint"><summary>Hint</summary><p>$\tau(L)=\tau(32)(L/32)^z$.</p></details>

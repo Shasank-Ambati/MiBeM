@@ -391,7 +391,7 @@
 
             <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Work from the numbers above and from the TDB file; the solutions give the reasoning.</p>
-            <div class="problem" id="p505-1">
+            <div class="problem" id="pl505-1">
             <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
             <p>Evaluate by hand the molar Gibbs energies of the liquid and of alpha at $x_B=0.20$, $T=900$ K, using the formula of Step 2 and the TDB parameters, and decide which phase is more stable. (The software gives $G_\mathrm{liq}=-2904.5$ and $G_\alpha=-704.5$ J/mol.)</p>
             <details class="hint"><summary>Hint</summary><p>Reference terms: ${}^0G^\mathrm{liq}_A=10000-10T$, ${}^0G^\mathrm{liq}_B=14000-10T$, ${}^0G^\alpha_A=0$, ${}^0G^\alpha_B=4000$.</p></details>
@@ -401,7 +401,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p505-2">
+            <div class="problem" id="pl505-2">
             <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
             <p>At $700$ K the alloy $x_B=0.20$ contains alpha with $x_B=0.041$ and liquid with $x_B=0.348$. (a) Compute the fraction of liquid with the lever rule and compare it with the value of Step 3. (b) Compute the overall composition of the alloy from the amounts of Step 3 to check the mass balance. (c) At what composition would the alloy be entirely alpha at $700$ K?</p>
             <details class="hint"><summary>Hint</summary><p>$f_L=(x_0-x_\alpha)/(x_L-x_\alpha)$ and $x_0=f_Lx_L+f_\alpha x_\alpha$.</p></details>
@@ -411,7 +411,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p505-3">
+            <div class="problem" id="pl505-3">
             <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
             <p>The solubility of B in alpha is $0.032$ at $600$ K and $0.005$ at $400$ K (Step 3). (a) Show from the TDB parameters that in the dilute limit the solubility in equilibrium with beta is $x_B\approx\exp[-(G^\alpha_B-G^\beta_B+L^\alpha)/RT]$, and evaluate it at $400$ and $600$ K. (b) Compare with the computed values. (c) What energy does the slope of $\ln x_B$ against $1/T$ give?</p>
             <details class="hint"><summary>Hint</summary><p>In the dilute limit ($x_A\to1$), the chemical potential of B in alpha is ${}^0G^\alpha_B+RT\ln x_B+L^\alpha$ and in pure beta it is ${}^0G^\beta_B=0$.</p></details>
@@ -421,7 +421,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p505-4">
+            <div class="problem" id="pl505-4">
             <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
             <p>Use the table of Step 6. (a) By how much does the eutectic temperature fall when the liquid parameter changes from $0$ to $-12\,000$ J/mol? (b) Case D has solid parameters $0$ and a eutectic $190$ K higher than the base case B. Explain why the higher solid interaction in B <em>lowers</em> the eutectic. (c) Predict (then run, by changing the numbers in <code>sensitivity.py</code>) what happens to the solubility limits of the base case if both solid parameters are increased from $+14\,000$ to $+30\,000$.</p>
             <details class="hint"><summary>Hint</summary><p>The eutectic is where the liquid curve touches the common tangent of the solids; a solid with a large positive $L$ has a curve that is higher.</p></details>
@@ -431,7 +431,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p505-5">
+            <div class="problem" id="pl505-5">
             <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
             <p>(a) In the Scheil calculation of Step 7, explain why the liquid fraction at the eutectic is always larger than that of the lever rule (for $x_0&lt;0.382$). (b) Run <code>scheil.py</code> with $x_0=0.05$: is the eutectic fraction zero, as in equilibrium? (c) Which alloy compositions (if any) show no eutectic at all under Scheil conditions?</p>
             <details class="hint"><summary>Hint</summary><p>In the lever rule the solid has the time to adjust and takes more B; in Scheil it does not. What happens to the average composition of the solid?</p></details>

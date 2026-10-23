@@ -332,7 +332,7 @@
 <!-- takeaways:end -->
 
             <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <div class="problem" id="p101-1">
+            <div class="problem" id="pl101-1">
             <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
             <p>Run the random-walk script with 10 different seeds ($1,\ldots,10$) for $N=500$, $2000$ and $8000$ walkers and compute the mean and the standard deviation of the fitted slope. (Results of this experiment: $N=500$: $0.9991\pm0.0447$; $N=2000$: $1.0167\pm0.0286$; $N=8000$: $1.0065\pm0.0169$.) (a) How does the scatter scale with $N$? (b) Estimate the number of walkers needed to quote the slope to $1\%$ (one standard deviation). (c) Why is the single run with seed 42 ($0.9629$) not wrong?</p>
             <details class="hint"><summary>Hint</summary><p>For independent samples the error of an average falls as $1/\sqrt N$.</p></details>
@@ -342,7 +342,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p101-2">
+            <div class="problem" id="pl101-2">
             <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
             <p>After Step 6 the history has three commits. (a) Which command shows the difference between the first and the last commit? (b) You edit <code>scripts/random_walk.py</code> badly and want to return to the committed version. What do you type? (c) You want the version of the script from the first commit in a separate file without changing your branch. What do you type?</p>
             <details class="hint"><summary>Hint</summary><p>Commits are identified by their (abbreviated) hash numbers shown by <code>git log --oneline</code>.</p></details>
@@ -352,7 +352,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p101-3">
+            <div class="problem" id="pl101-3">
             <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
             <p>(a) In Step 7, why does the second environment give exactly the same slope as the first? (b) Name three things that could make a re-run give a different number although the script is unchanged. (c) What would you add to <code>run.json</code> to make the record more complete?</p>
             <details class="hint"><summary>Hint</summary><p>Think of what determines every random number and every floating-point sum.</p></details>
@@ -362,7 +362,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p101-4">
+            <div class="problem" id="pl101-4">
             <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
             <p>Using only the commands of Step 2, (a) write a command that prints the number of lines of <code>output/msd.csv</code> in which the MSD (second column) is larger than $3000$ (use <code>awk</code>, a standard tool: <code>awk -F, &#x27;&#36;2 &gt; 3000&#x27;</code> prints the lines whose second field is larger than 3000). (b) Write a command that saves the last ten lines of the file to <code>tail.csv</code>. (c) What is wrong with <code>rm output/*.csv &gt; log.txt</code> as a way of cleaning up?</p>
             <details class="hint"><summary>Hint</summary><p>Pipes connect commands: <code>cmd1 | cmd2</code>. For (c) think about what the redirection captures.</p></details>
@@ -372,7 +372,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p101-5">
+            <div class="problem" id="pl101-5">
             <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
             <p>Modify <code>random_walk.py</code> so that the seed is given on the command line (<code>python scripts/random_walk.py --seed 7</code>) and the run record is written to <code>output/run_7.json</code>. Then (a) write the SLURM array job of Step 8 so that ten seeds run as ten independent tasks, (b) write a small script that reads the ten records and prints the mean and the standard error of the slope, (c) explain why this is better than one run of ten times more walkers.</p>
             <details class="hint"><summary>Hint</summary><p>Use <code>argparse</code> from the standard library for the command line, and <code>glob</code> to find the records.</p></details>

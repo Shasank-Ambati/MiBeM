@@ -464,7 +464,7 @@
             <p>Do these in order. Each gives you a number to compare with the solution; mark them as solved when your own numbers agree within the statistical error.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <div class="problem" id="p502-1">
+            <div class="problem" id="pl502-1">
             <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
             <p>Run <code>scan_T.py</code> (four seeds at each of four temperatures). (a) Fit the Arrhenius form $D^*=D_0e^{-E_a/k_\mathrm BT}$ and give $E_a$ in meV and kcal/mol for argon. (b) Predict $D^*$ at $T^*=1.0$ from the fit and compare it with the measured $0.0518$. (c) Why do the individual runs scatter by $\pm10\%$?</p>
             <details class="hint"><summary>Hint</summary><p>Use <code>numpy.polyfit(1/T, log(D), 1)</code>; the slope is $-E_a/\varepsilon$. Convert with $\varepsilon=10.32$ meV.</p></details>
@@ -474,7 +474,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p502-2">
+            <div class="problem" id="pl502-2">
             <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
             <p>The $T^*=1.8$ run gave $D^*=0.1121$. Convert to real units for argon ($\sigma=3.405$ &Aring;, $\varepsilon/k_\mathrm B=119.8$ K, $m=39.948$ u): the temperature, the diffusion coefficient in cm$^2$/s, and the time step $0.004\tau$ in fs.</p>
             <details class="hint"><summary>Hint</summary><p>Use <code>convert.py</code>: the unit of $D$ is $\sigma\sqrt{\varepsilon/m}$.</p></details>
@@ -484,7 +484,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p502-3">
+            <div class="problem" id="pl502-3">
             <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
             <p>Neon has $\varepsilon/k_\mathrm B=35.6$ K, $\sigma=2.749$ &Aring;, $m=20.18$ u. (a) Find the real temperature, density and time step that correspond to the state point $T^*=0.85$, $\rho^*=0.8442$, $\Delta t^*=0.004$. (b) What do you conclude about running the same input file for different noble gases?</p>
             <details class="hint"><summary>Hint</summary><p>$\tau=\sigma\sqrt{m/\varepsilon}$, $\rho=\rho^*m/\sigma^3$.</p></details>
@@ -494,7 +494,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p502-4">
+            <div class="problem" id="pl502-4">
             <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
             <p>Use the cutoff table of Step 7. (a) How much does the pressure change between $r_c=2.5\sigma$ and $5.0\sigma$ without and with the tail correction? (b) Estimate the tail correction to the pressure analytically, $P_\mathrm{tail}=\dfrac{16}{3}\pi\rho^2\Bigl[\dfrac23r_c^{-9}-r_c^{-3}\Bigr]$, at $\rho^*=0.8442$, $r_c=2.5$, and compare with the difference of the table. (c) How does the cost of the force calculation scale with $r_c$?</p>
             <details class="hint"><summary>Hint</summary><p>The number of neighbours in the sphere is proportional to $r_c^3$.</p></details>
@@ -504,7 +504,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p502-5">
+            <div class="problem" id="pl502-5">
             <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
             <p>In the isotherm table at $T^*=0.85$ the pressure is negative for $0.2\le\rho^*\le0.7$. (a) Explain physically what a negative pressure means in a periodic box. (b) Suggest a simulation that would give the coexistence pressure of the liquid and the gas at $T^*=0.85$. (c) What is the pressure of the ideal gas at $\rho^*=0.3$ and what does the simulation say?</p>
             <details class="hint"><summary>Hint</summary><p>Think about what the system does if the volume is smaller than the one at which gas and liquid coexist.</p></details>
@@ -514,7 +514,7 @@
             </details>
             </div>
 
-            <div class="problem" id="p502-6">
+            <div class="problem" id="pl502-6">
             <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Challenge</span></div>
             <p>Change <code>in.lj_liquid</code> to a larger system ($8\times8\times8$ cells) and a thermostat damping of $0.04$ instead of $0.4$. (a) Which numbers change and which do not? (b) Why is a very strong thermostat bad for dynamical properties? (c) Propose a workflow that gives $D$ with $5\%$ accuracy.</p>
             <details class="hint"><summary>Hint</summary><p>A thermostat changes the velocities of all atoms; think about what it does to the correlations that determine diffusion.</p></details>
