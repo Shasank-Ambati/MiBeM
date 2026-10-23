@@ -987,6 +987,34 @@ window.MIBEM_TOPICS = [
       "Report averages with error bars from several independent runs, and test the cutoff (use a tail correction), the system size and the time step before trusting a number: single 80-time-unit runs gave D within about 10 per cent, but a 108-atom box was 20 per cent off."
     ],
     "katex": true
+  },
+  {
+    "id": 44,
+    "label": "LAB 503",
+    "code": "LAB 503",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-md-lammps-copper",
+    "short": "LAMMPS: copper",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 35,
+    "title": "Lab: A metal with LAMMPS: copper with an EAM potential",
+    "blurb": "Simulate copper with an embedded-atom potential: lattice constant, thermal expansion, elastic constants, vacancy and surface energies, and a tensile test with structure analysis.",
+    "builds": [
+      43,
+      42,
+      41
+    ],
+    "related": [],
+    "takeaways": [
+      "A metal is simulated with an embedded-atom-method (EAM) potential, pair_style eam in LAMMPS, in units metal (eV, angstrom, ps, bar); the potential file must be found through the working directory or the LAMMPS_POTENTIALS environment variable.",
+      "Properties are computed by small numerical experiments: the lattice constant and bulk modulus from E(a) (3.615 angstrom, 139 GPa), thermal expansion from NPT runs (16.7e-6 per K at 300 K), elastic constants from stresses under small strains (C11=167, C12=124, C44=76.5 GPa), and defect energies from energy differences (vacancy 1.28 eV, surfaces 1.18 to 1.41 J/m2).",
+      "A pitfall that costs hours: change_box and other commands interpret lengths in lattice units by default, so a shear of 0.002 became 0.0072 and gave C44 = 276 GPa instead of 76.5 until units box was added.",
+      "A tensile test is a deformation run: fix deform stretches the box at a constant strain rate while fix npt keeps the transverse stresses at zero; the stress is minus the pressure component, the strain is the relative box length, and the peak stress marks the nucleation of dislocations in the perfect crystal.",
+      "Always compare with experiment and with the limits of the method: EAM reproduces cohesive energy, lattice constant, elastic constants and the vacancy energy of copper because they were fitted, but it underestimates surface energies and cannot describe bonding changes or electronic effects."
+    ],
+    "katex": true
   }
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
@@ -1054,6 +1082,7 @@ window.MIBEM_PATHPLAN = [
       "CMS 501",
       "CMS 502",
       "LAB 502",
+      "LAB 503",
       "CMS 503",
       "CMS 504",
       "CMS 505",
