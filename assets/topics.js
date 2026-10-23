@@ -669,6 +669,35 @@ window.MIBEM_TOPICS = [
     "level": 3
   },
   {
+    "id": 41,
+    "label": "PHYS 302",
+    "code": "PHYS 302",
+    "dept": "PHYS",
+    "level": 3,
+    "slug": "solid-state-physics",
+    "short": "Solid state physics",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 31,
+    "title": "Solid state physics",
+    "blurb": "Lattice vibrations, free electrons, bands and the Bloch theorem: the physics behind density functional theory.",
+    "builds": [
+      40,
+      3,
+      2,
+      31
+    ],
+    "related": [],
+    "takeaways": [
+      "Solids are held together by ionic, covalent, metallic or van der Waals binding; the lattice energy of an ionic crystal is the Madelung sum $-\\alpha e^2/4\\pi\\varepsilon_0r_0(1-1/n)$ (about $-7.9$ eV per NaCl pair), and the curvature of the energy curve gives the bulk modulus.",
+      "Atoms in a crystal are coupled oscillators, so lattice vibrations are waves with a dispersion $\\omega(k)$ (for a monatomic chain $\\omega=2\\sqrt{K/m}\\,|\\sin(ka/2)|$); a diatomic crystal has acoustic and optical branches, and quantised vibrations are phonons with occupation $1/(e^{\\hbar\\omega/k_\\mathrm BT}-1)$ that give the Debye heat capacity.",
+      "Free electrons in a metal fill states up to the Fermi energy $E_F=\\hbar^2(3\\pi^2n)^{2/3}/2m$ (7.0 eV for copper); only electrons within $k_\\mathrm BT$ of $E_F$ respond to heat or fields, which explains the small linear electronic heat capacity $\\gamma T$.",
+      "A periodic potential gives Bloch states $e^{i\\mathbf k\\cdot\\mathbf r}u_\\mathbf k(\\mathbf r)$ and energy bands separated by gaps at Brillouin-zone boundaries; the curvature of a band defines the effective mass $m^*=\\hbar^2/(\\mathrm d^2E/\\mathrm dk^2)$.",
+      "Whether a solid is a metal, semiconductor or insulator depends on band filling and the gap; in semiconductors $np=n_i^2$ with $n_i\\propto e^{-E_g/2k_\\mathrm BT}$, doping sets the carrier type, and a p-n junction has a built-in potential $(k_\\mathrm BT/e)\\ln(N_aN_d/n_i^2)$; exchange gives magnetism and electron pairing gives superconductivity."
+    ],
+    "katex": true
+  },
+  {
     "id": 4,
     "slug": "thermodynamics-and-calphad",
     "short": "Thermodynamics and CALPHAD",
@@ -935,18 +964,6 @@ window.MIBEM_TOPICS = [
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
 window.MIBEM_PLANNED = [
-  {
-    "code": "PHYS 302",
-    "dept": "PHYS",
-    "level": 3,
-    "title": "Solid state physics",
-    "blurb": "Lattice vibrations, free electrons, bands and the Bloch theorem: the physics behind density functional theory.",
-    "needs": [
-      "PHYS 201",
-      "PHYS 301",
-      "MSE 201"
-    ]
-  },
   {
     "code": "MSE 302",
     "dept": "MSE",

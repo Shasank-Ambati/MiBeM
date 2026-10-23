@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solid state physics - MiBeM</title>
+    <meta name="description" content="University-level solid state physics for materials science: crystal binding, lattice vibrations and phonons, the free-electron gas, Bloch theorem and energy bands, metals, semiconductors and junctions, and magnetism and superconductivity, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/solid-state-physics.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Solid state physics - MiBeM">
+    <meta property="og:description" content="University-level solid state physics for materials science: crystal binding, lattice vibrations and phonons, the free-electron gas, Bloch theorem and energy bands, metals, semiconductors and junctions, and magnetism and superconductivity, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/solid-state-physics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=0e39a9cd">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="41">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#binding">Lecture 1. Crystal binding and cohesive energy</a></li>
+                <li><a href="#phonons">Lecture 2. Lattice vibrations and phonons</a></li>
+                <li><a href="#thermal">Lecture 3. Phonon thermodynamics and the Debye model</a></li>
+                <li><a href="#electrons">Lecture 4. The free-electron gas</a></li>
+                <li><a href="#bands">Lecture 5. Bloch&rsquo;s theorem and energy bands</a></li>
+                <li><a href="#semis">Lecture 6. Metals, insulators and semiconductors</a></li>
+                <li><a href="#collective">Lecture 7. Magnetism and superconductivity</a></li>
+                <li><a href="#summary-p302">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 302</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" class="here" aria-current="page" title="PHYS 302: Solid state physics">302</a></nav>
+<!-- coursenav:end -->
+            <h1>Solid state physics</h1>
+            <p class="lead">Why is copper a conductor, silicon a semiconductor and diamond an insulator? Why does a crystal have a heat capacity, a speed of sound and a thermal expansion? Solid state physics answers these by applying quantum and statistical mechanics to the periodic arrangement of atoms. It is the physics that density functional theory computes: the band structures, phonon spectra and magnetic moments of this unit are what first-principles codes output. This course covers the standard second- and third-year material, built on the quantum mechanics, statistical mechanics and crystal structure courses.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 31 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a><br><a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a><br><a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystals and cells</a><br><a href="fourier-analysis.html">MATH 205: Fourier analysis</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 3: advanced theory</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Estimate the cohesive energy and bulk modulus of an ionic crystal from the Madelung sum.</li>
+                    <li>Derive and use the dispersion relation of a monatomic and a diatomic chain, and explain acoustic and optical phonons.</li>
+                    <li>Compute the Fermi energy, velocity and electronic heat capacity of a free-electron metal.</li>
+                    <li>State Bloch&rsquo;s theorem, explain the origin of energy gaps, and use the tight-binding band and the effective mass.</li>
+                    <li>Classify solids by band filling, and calculate carrier concentrations, Fermi levels and junction potentials in semiconductors.</li>
+                    <li>Use the mean-field theory of ferromagnetism and describe the Meissner effect and the BCS gap.</li>
+                </ul>
+                <strong>You need:</strong> <a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a>, <a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a> and <a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystal structures</a> (lattices, reciprocal lattice, Bragg&rsquo;s law). The Fourier and eigenvalue methods of <a href="fourier-analysis.html">MATH 205</a> and <a href="eigenvalues-and-decompositions.html">MATH 202</a> are used throughout.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 2 (phonons) and 5 (bands) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="binding">Lecture 1. Crystal binding and cohesive energy<a class="anchor" href="#binding" aria-label="Link to this section">#</a></h2>
+            <p>A crystal is stable because its energy is lower than that of the separated atoms. The type of bonding depends on how the outer electrons behave (<a href="quantum-mechanics.html">PHYS 201</a>, Lecture 6):</p>
+            <ul>
+                <li><strong>Van der Waals (molecular) crystals</strong> (noble gases): fluctuating dipoles give an attraction $\propto-1/r^6$ with a repulsion at short range, as in the Lennard&ndash;Jones potential; cohesive energies $\sim0.01$&ndash;$0.1$ eV per atom, low melting points.</li>
+                <li><strong>Ionic crystals</strong> (NaCl, MgO): electrons are transferred, and the Coulomb attraction between ions dominates; $5$&ndash;$10$ eV per ion pair, hard, brittle, insulating.</li>
+                <li><strong>Covalent crystals</strong> (diamond, Si): electrons are shared in directional bonds (Lecture 7 of PHYS 201: bonding orbitals); $3$&ndash;$7$ eV per atom, hard and often semiconducting.</li>
+                <li><strong>Metals</strong>: valence electrons delocalise into a shared gas (Lecture 4) and bonding is non-directional; $1$&ndash;$8$ eV per atom, ductile, conducting.</li>
+            </ul>
+            <p><strong>The ionic crystal.</strong> The energy per ion pair is the sum of a Coulomb term over all other ions and a short-range repulsion, $U(r)=-\dfrac{\alpha e^2}{4\pi\varepsilon_0r}+\dfrac{B}{r^n}$, where $r$ is the nearest-neighbour distance, $\alpha$ the <strong>Madelung constant</strong> ($1.748$ for the rock-salt structure, $1.763$ for CsCl, $1.638$ for zinc blende) and $n\approx9$ the repulsion exponent. The sum converges because the alternating signs nearly cancel in neutral shells. At equilibrium $\mathrm dU/\mathrm dr=0$ fixes $B$ and gives
+            $$U(r_0)=-\frac{\alpha e^2}{4\pi\varepsilon_0r_0}\Bigl(1-\frac1n\Bigr),\qquad B_\mathrm{bulk}=\frac{(n-1)\,\alpha e^2}{4\pi\varepsilon_0\cdot18\,r_0^4}.$$
+            <em>Derivation of the bulk modulus.</em> The volume per pair is $2r^3$, so $B_\mathrm{bulk}=V\,\allowbreak \mathrm d^2U/\mathrm dV^2$ evaluated at $r_0$; with $U''(r_0)=(n-1)\alpha e^2/(4\pi\varepsilon_0r_0^3)$ and $\mathrm dV=6r^2\mathrm dr$ one obtains the stated result. The same procedure for any pair potential turns an energy curve into an elastic constant (<a href="tensors-stress-and-strain.html">MATH 302</a>).</p>
+            <div class="example">
+                <strong>Worked example 1.1: the lattice energy and compressibility of NaCl</strong>
+                <p class="given">Rock-salt NaCl has $r_0=0.282$ nm, $\alpha=1.7476$ and $n=9.1$. Find the lattice energy per ion pair and the bulk modulus.</p>
+                <p>$U=-\dfrac{1.440\ \mathrm{eV\,nm}\times1.7476}{0.282\ \mathrm{nm}}\Bigl(1-\dfrac1{9.1}\Bigr)=-8.92\times0.890=-7.94$ eV per ion pair, within a percent of the measured $7.9$ eV (the Born&ndash;Haber cycle value, after correcting for the ionisation energy of Na and electron affinity of Cl). The bulk modulus is $B=\dfrac{(n-1)\alpha e^2/4\pi\varepsilon_0}{18r_0^4}=\dfrac{(8.1)(1.7476)(2.307\times10^{-28}\ \mathrm{J\,m})}{18(0.282\times10^{-9}\ \mathrm{m})^4}=28.7$ GPa, against $24$ GPa measured: the order of magnitude of a real elastic constant comes out of pure electrostatics plus one repulsion exponent.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.2: from a pair potential to a stiffness</strong>
+                <p class="given">For the Lennard&ndash;Jones potential of argon ($\varepsilon=0.0103$ eV, $\sigma=3.405$ &Aring;), the nearest-neighbour distance in the fcc crystal is $3.76$ &Aring;. Estimate the cohesive energy per atom using the lattice sums $\sum r^{-12}=12.13$, $\sum r^{-6}=14.45$ (in units of the nearest-neighbour distance).</p>
+                <p>The energy per atom is $U=2\varepsilon\bigl[12.13(\sigma/r)^{12}-14.45(\sigma/r)^6\bigr]$ with $\sigma/r=3.405/3.76=0.9056$: $(\sigma/r)^6=0.5517$ and $(\sigma/r)^{12}=0.3044$, so $U=2(0.0103)[3.692-7.972]=-0.0882$ eV per atom, close to the measured $0.080$ eV. The long-range sum raises the binding $8.6$ times above that of a single pair ($-\varepsilon$ at the dimer minimum), because each atom has twelve neighbours and more distant shells. Cohesion in solids is a collective property.</p>
+            </div>
+
+            <h2 id="phonons">Lecture 2. Lattice vibrations and phonons<a class="anchor" href="#phonons" aria-label="Link to this section">#</a></h2>
+            <p>Atoms in a crystal oscillate about their sites, coupled to their neighbours by bonds that behave as springs (<a href="classical-mechanics.html">PHYS 101</a>, Lecture 5). The $N$ coupled atoms have $3N$ normal modes; because the crystal is periodic these are travelling waves, and their frequency depends on the wavevector, $\omega(\mathbf k)$: the <strong>dispersion relation</strong>.</p>
+            <div class="note thm"><strong>The monatomic chain</strong>
+            <p>Atoms of mass $m$ at spacing $a$ are joined by springs of stiffness $K$. With $u_n$ the displacement of atom $n$, $m\ddot u_n=K(u_{n+1}-2u_n+u_{n-1})$. Try a travelling wave $u_n=Ae^{i(kna-\omega t)}$: $-m\omega^2=K(e^{ika}-2+e^{-ika})=-2K(1-\cos ka)=-4K\sin^2(ka/2)$, so
+            $$\omega(k)=2\sqrt{\frac Km}\,\Bigl|\sin\frac{ka}2\Bigr|.$$
+            For small $k$ this is linear, $\omega=ck$ with sound speed $c=a\sqrt{K/m}$; the frequency reaches a maximum $2\sqrt{K/m}$ at the zone boundary $k=\pi/a$ (a wavelength of two atomic spacings, where neighbours move in antiphase). Wavevectors $k$ and $k+2\pi/a$ describe the same motion (the atoms exist only at $x=na$), so only the first <strong>Brillouin zone</strong> $-\pi/a&lt;k\le\pi/a$ is needed: the same aliasing as in sampling theory (<a href="fourier-analysis.html">MATH 205</a>). Each zone holds $N$ values of $k$, hence exactly $N$ modes for $N$ atoms.</p>
+            </div>
+            <p><strong>Diatomic chain: acoustic and optical branches.</strong> With two atoms per cell (masses $m&lt;M$, spacing $a$ per cell) there are two branches. At $k=0$ the <strong>acoustic</strong> branch has $\omega=0$ (all atoms move together; sound), while the <strong>optical</strong> branch has $\omega=\sqrt{2K(1/m+1/M)}$ (the two atom types move against each other, which in an ionic crystal creates an oscillating dipole that couples to light: hence &ldquo;optical&rdquo;). At the zone boundary the acoustic branch ends at $\sqrt{2K/M}$ and the optical branch begins at $\sqrt{2K/m}$, leaving a <strong>gap</strong> in which no wave propagates. A crystal with $p$ atoms per primitive cell has $3$ acoustic and $3p-3$ optical branches.</p>
+            <div class="demo" data-demo="modes"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p><strong>Phonons.</strong> Quantising each normal mode gives energies $(n+\tfrac12)\hbar\omega$ (<a href="quantum-mechanics.html">PHYS 201</a>); one speaks of $n$ <strong>phonons</strong> of wavevector $\mathbf k$, each a quantum of vibrational energy $\hbar\omega$ and crystal momentum $\hbar\mathbf k$. Phonons are bosons, so in equilibrium the mean number in a mode is $\langle n\rangle=1/(e^{\hbar\omega/k_\mathrm BT}-1)$ (Bose&ndash;Einstein; the geometric sum of Lecture 6 of <a href="thermal-physics.html">PHYS 102</a>). Phonons carry heat, scatter electrons (resistivity), scatter neutrons and light (spectroscopy), and are the quasi-particles that DFT-based phonon calculations (the dynamical matrix of <a href="eigenvalues-and-decompositions.html">MATH 202</a>) predict.</p>
+            <div class="note mat"><strong>In materials science: reading a phonon spectrum</strong>
+            <p>A computed or measured phonon dispersion contains much: the slopes at $k=0$ give sound speeds and hence elastic constants; imaginary frequencies (unstable modes) show that a structure is dynamically unstable and will transform (the soft modes of ferroelectrics and martensitic alloys); optical branches that couple to infrared light fix the dielectric response; and the density of states $g(\omega)$ gives the vibrational entropy that enters free energies and CALPHAD-type phase diagrams. Inelastic neutron scattering measures $\omega(\mathbf k)$ directly.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: a copper chain</strong>
+                <p class="given">A chain of atoms of mass $63.5$ u, spacing $0.255$ nm and spring constant $K=30$ N/m. Find the speed of sound and the maximum frequency.</p>
+                <p>$\sqrt{K/m}=\sqrt{30/(63.5\times1.6605\times10^{-27})}=1.687\times10^{13}\ \mathrm{s^{-1}}$. Sound speed $c=a\sqrt{K/m}=0.255\times10^{-9}\times1.687\times10^{13}=4.30$ km/s (the correct order for a metal, $2$&ndash;$5$ km/s). Maximum angular frequency $2\sqrt{K/m}=3.37\times10^{13}$ rad/s, i.e. $5.37$ THz and an energy $\hbar\omega=22$ meV, a temperature of $255$ K: phonons are thermally excited at room temperature, as the Debye temperatures of metals ($\sim300$ K) indicate. At $\sin(ka/2)=\tfrac12$ the frequency is half the maximum, which occurs at $ka=\pi/3$, not $\pi/2$: the dispersion is not a straight line.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.2: a diatomic chain</strong>
+                <p class="given">An ionic chain has masses $22.99$ u (Na) and $35.45$ u (Cl), $K=20$ N/m. Find the frequencies at the ends of each branch and the width of the gap.</p>
+                <p>With $m=22.99$ u and $M=35.45$ u: acoustic top (zone boundary) $\omega=\sqrt{2K/M}$, i.e. $f=\tfrac1{2\pi}\sqrt{40/(35.45\times1.6605\times10^{-27})}=4.15$ THz; optical bottom $\sqrt{2K/m}$, $f=5.15$ THz; optical top ($k=0$) $\sqrt{2K(1/m+1/M)}$, $f=6.61$ THz. The gap runs from $4.15$ to $5.15$ THz, $1.0$ THz wide, and exists because the masses differ: for equal masses the gap closes and the two branches merge into the monatomic chain.</p>
+            </div>
+
+            <h2 id="thermal">Lecture 3. Phonon thermodynamics and the Debye model<a class="anchor" href="#thermal" aria-label="Link to this section">#</a></h2>
+            <p>The energy of the lattice is the sum over modes of the mean phonon energy, $U=\sum_{\mathbf k,s}\hbar\omega_s(\mathbf k)\bigl[\langle n\rangle+\tfrac12\bigr]$, and the heat capacity $C_V=\partial U/\partial T$. Replacing the sum by an integral with a density of states $g(\omega)$ gives (after the Einstein, Debye models of <a href="thermal-physics.html">PHYS 102</a>)
+            $$C_V=\int g(\omega)\,k_\mathrm B\Bigl(\frac{\hbar\omega}{k_\mathrm BT}\Bigr)^2\frac{e^{\hbar\omega/k_\mathrm BT}}{(e^{\hbar\omega/k_\mathrm BT}-1)^2}\,\mathrm d\omega.$$
+            In the <strong>Debye model</strong> all three acoustic branches are linear, $\omega=vk$, up to a cut-off $k_D$ chosen so that the number of modes equals $3N$: $3N=3\cdot\dfrac{V}{(2\pi)^3}\dfrac{4\pi k_D^3}{3}$, i.e.
+            $$k_D=(6\pi^2n)^{1/3},\qquad\theta_D=\frac{\hbar vk_D}{k_\mathrm B}.$$
+            <em>Derivation.</em> The number of allowed wavevectors in a sphere of radius $k_D$ is the volume $\tfrac43\pi k_D^3$ divided by the volume per mode $(2\pi)^3/V$; there are three polarisations, and the total must be $3N$. The density of states is $g(\omega)=3V\omega^2/(2\pi^2v^3)$ and the low-temperature heat capacity $C_V=\tfrac{12\pi^4}5Nk_\mathrm B(T/\theta_D)^3$ follows from the integral above with the upper limit sent to infinity. The Debye temperature is the temperature at which the highest-frequency mode becomes excited; it measures the stiffness of the lattice through the sound speed.</p>
+            <p><strong>Anharmonic effects.</strong> A purely harmonic crystal would have infinite thermal conductivity, no thermal expansion and phonon frequencies independent of volume. Cubic and quartic terms in the potential (<a href="thermal-physics.html">PHYS 102</a>, Lecture 7) let phonons scatter from each other. In <strong>Umklapp</strong> processes, two phonons merge into one whose wavevector lies outside the first zone and is folded back by a reciprocal-lattice vector: this removes crystal momentum from the heat flow and limits the thermal conductivity $\kappa=\tfrac13Cv\ell$ to a finite value that falls as $1/T$ at high temperature. The <strong>Gr&uuml;neisen parameter</strong> $\gamma_G=-\mathrm d\ln\omega/\mathrm d\ln V$ links the volume dependence of the phonon frequencies to thermal expansion, $\alpha=\gamma_GC_V\kappa_T/V$ (with $\kappa_T$ the compressibility).</p>
+            <div class="example">
+                <strong>Worked example 3.1: the sound speed in copper from its Debye temperature</strong>
+                <p class="given">Copper has $n=8.49\times10^{28}\ \mathrm{m^{-3}}$ and $\theta_D=343$ K. Find $k_D$, the mean sound speed implied, and the occupation of a $5$ THz phonon at $300$ K.</p>
+                <p>$k_D=(6\pi^2n)^{1/3}=(5.03\times10^{30})^{1/3}=1.71\times10^{10}\ \mathrm{m^{-1}}$, a wavelength $2\pi/k_D=0.37$ nm, close to the atomic spacing. The mean sound speed is $v=k_B\theta_D/(\hbar k_D)=2.62$ km/s, within the range of the measured transverse ($2.3$) and longitudinal ($4.7$ km/s) speeds. A $5$ THz phonon has $\hbar\omega=20.7$ meV, so $\langle n\rangle=1/(e^{20.7/25.85}-1)=0.82$: about one phonon per mode at room temperature, so the classical estimate $k_\mathrm BT/\hbar\omega=1.25$ is only roughly right: the Dulong&ndash;Petit limit is approached but not fully reached at $300$ K for modes of this frequency.</p>
+            </div>
+
+            <h2 id="electrons">Lecture 4. The free-electron gas<a class="anchor" href="#electrons" aria-label="Link to this section">#</a></h2>
+            <p>In a simple metal the valence electrons are nearly free: treat them as non-interacting particles in a box (the crystal) of volume $V$ with density $n=N/V$. Each state is a plane wave $e^{i\mathbf k\cdot\mathbf r}$ with energy $E=\hbar^2k^2/2m$ and, by the Pauli principle (<a href="quantum-mechanics.html">PHYS 201</a>), holds two electrons of opposite spin. At $T=0$ the states are filled from the bottom up to the <strong>Fermi sphere</strong> of radius $k_F$; counting the states in it, $N=2\cdot\dfrac{V}{(2\pi)^3}\dfrac{4\pi}3k_F^3$, so
+            $$k_F=(3\pi^2n)^{1/3},\qquad E_F=\frac{\hbar^2k_F^2}{2m},\qquad v_F=\frac{\hbar k_F}m,\qquad T_F=\frac{E_F}{k_\mathrm B}.$$
+            The Fermi energy is of order several eV, a consequence of the exclusion principle and not of temperature: $T_F\sim10^4$&ndash;$10^5$ K, so a metal at room temperature is extremely degenerate. The density of states per volume at the Fermi level is $g(E_F)=\dfrac{3n}{2E_F}$, and the electrons that can respond to a field or to heat are those in a shell of thickness $\sim k_\mathrm BT$ around $E_F$, a fraction $\sim T/T_F$ of the total.</p>
+            <p><strong>Electronic heat capacity.</strong> Only that fraction is excited, each by $\sim k_\mathrm BT$, so $U-U_0\sim N(T/T_F)k_\mathrm BT$ and $C\propto T$. Sommerfeld&rsquo;s calculation gives
+            $$C_\mathrm{el}=\frac{\pi^2}2Nk_\mathrm B\frac T{T_F}=\gamma T,\qquad\gamma=\frac{\pi^2}{3}k_\mathrm B^2g(E_F)\ (\text{per volume}).$$
+            In a metal the total low-temperature heat capacity is $C=\gamma T+\beta T^3$ (electrons plus Debye phonons); a plot of $C/T$ against $T^2$ is a straight line whose intercept gives $\gamma$, the density of states at the Fermi level. Measured $\gamma$ differs from the free-electron value by a factor $m^*/m$ because of band structure and electron&ndash;phonon interactions. The same degenerate electrons carry both charge and heat, so the Wiedemann&ndash;Franz ratio $\kappa/\sigma T=\tfrac{\pi^2}3(k_\mathrm B/e)^2=2.44\times10^{-8}\ \mathrm{W\,\Omega\,K^{-2}}$ (<a href="thermal-physics.html">PHYS 102</a>) follows.</p>
+            <div class="note mat"><strong>In materials science: why metals are so stiff and conduct so well</strong>
+            <p>The kinetic energy of the degenerate electron gas, $\tfrac35E_F$ per electron, is a repulsive pressure that the lattice of positive ions must hold in; it is an important part of the bulk modulus and cohesion of simple metals ($B=\tfrac23nE_F$ in the free-electron model, $63.8$ GPa for Cu against $140$ measured: the right order). Electrons at $v_F\sim10^6$ m/s with mean free paths of $10$&ndash;$100$ nm give the high conductivity (<a href="electricity-magnetism-and-waves.html">PHYS 103</a>, Drude model), and the Fermi surface governs magnetoresistance, the Hall effect and quantum oscillations measured in experiments.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: Fermi quantities</strong>
+                <p class="given">Find $k_F$, $E_F$, $v_F$, $T_F$ and the Sommerfeld $\gamma$ for copper ($n=8.49\times10^{28}\ \mathrm{m^{-3}}$), and $E_F$ for Na, Al and Au ($n=2.65$, $18.1$, $5.9\times10^{28}\ \mathrm{m^{-3}}$).</p>
+                <p>$k_F=(3\pi^2n)^{1/3}=1.36\times10^{10}\ \mathrm{m^{-1}}$ ($1.36\ \mathrm{\AA^{-1}}$, comparable to the zone-boundary wavevector $\pi/a=0.87\ \mathrm{\AA^{-1}}$); $E_F=\hbar^2k_F^2/2m=7.04$ eV; $v_F=\hbar k_F/m=1.57\times10^6$ m/s; $T_F=8.2\times10^4$ K. The electronic heat capacity coefficient is $\gamma=\tfrac{\pi^2}2R\,\allowbreak k_\mathrm B/E_F=0.50\ \mathrm{mJ/mol\,K^2}$, against the measured $0.69$ (so $m^*/m\approx1.4$). Since $E_F\propto n^{2/3}$, Na has $3.24$ eV, Al $11.7$ eV and Au $5.53$ eV. The electrons therefore have a mean energy $\tfrac35E_F=4.2$ eV in Cu, $160$ times $k_\mathrm BT$ at $300$ K.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: electrons against phonons at low temperature</strong>
+                <p class="given">Compare the electronic and lattice heat capacities of copper ($\gamma=0.50\ \mathrm{mJ/mol\,K^2}$, $\theta_D=343$ K) at $10$ K, and find where they are equal.</p>
+                <p>At $10$ K, $C_\mathrm{el}=\gamma T=5.0$ mJ/(mol K) and $C_\mathrm{lat}=1944(10/343)^3=48$ mJ/(mol K): the lattice still dominates. The two are equal where $\gamma T=1944(T/\theta_D)^3$, i.e. $T^2=\gamma\theta_D^3/1944=(0.50\times10^{-3})(4.03\times10^7)/1944=10.4\ \mathrm{K^2}$, $T=3.2$ K. Below about $3$ K the electronic term dominates in a metal, and fitting $C/T=\gamma+\beta T^2$ to measurements below $\sim4$ K separates the two.</p>
+            </div>
+
+            <h2 id="bands">Lecture 5. Bloch&rsquo;s theorem and energy bands<a class="anchor" href="#bands" aria-label="Link to this section">#</a></h2>
+            <p>Real electrons move in the periodic potential of the ions, $V(\mathbf r+\mathbf R)=V(\mathbf r)$ for every lattice vector $\mathbf R$. <strong>Bloch&rsquo;s theorem</strong> says that the eigenstates of the Schr&ouml;dinger equation in such a potential can be written
+            $$\psi_{n\mathbf k}(\mathbf r)=e^{i\mathbf k\cdot\mathbf r}\,u_{n\mathbf k}(\mathbf r),\qquad u_{n\mathbf k}(\mathbf r+\mathbf R)=u_{n\mathbf k}(\mathbf r),$$
+            a plane wave modulated by a function with the periodicity of the lattice. Equivalently $\psi(\mathbf r+\mathbf R)=e^{i\mathbf k\cdot\mathbf R}\psi(\mathbf r)$: translating by a lattice vector changes the state only by a phase. <em>Why.</em> The translation operators $T_\mathbf R$ commute with the Hamiltonian, so the eigenstates can be chosen to be simultaneous eigenstates of $T_\mathbf R$ with eigenvalue of modulus one, $e^{i\mathbf k\cdot\mathbf R}$; and $\mathbf k$ is defined only modulo reciprocal-lattice vectors, so it is restricted to the first Brillouin zone. For each $\mathbf k$ there is a discrete set of energies $E_n(\mathbf k)$ labelled by a <strong>band index</strong> $n$: the <strong>band structure</strong>. The wavevector $\hbar\mathbf k$ is the <em>crystal momentum</em> (not a true momentum), and the group velocity $\mathbf v=\nabla_\mathbf kE/\hbar$ is the velocity of a wavepacket.</p>
+            <p><strong>Where gaps come from: nearly free electrons.</strong> Start from free electrons and add a weak periodic potential $V=\sum_\mathbf GV_\mathbf Ge^{i\mathbf G\cdot\mathbf r}$. Away from the zone boundary the energies hardly change. At the boundary, $k=\pi/a$ in one dimension, the plane waves $e^{i\pi x/a}$ and $e^{-i\pi x/a}$ have the same free energy $E_0=\hbar^2\pi^2/2ma^2$ and are coupled by $V_G$ ($G=2\pi/a$). Degenerate perturbation theory (<a href="quantum-mechanics.html">PHYS 201</a>, Lecture 7) with the two-level matrix $\begin{pmatrix}E_0&amp;V_G\\V_G&amp;E_0\end{pmatrix}$ gives the standing waves $\cos(\pi x/a)$ and $\sin(\pi x/a)$ with energies $E_0\pm|V_G|$: a <strong>band gap</strong> $E_g=2|V_G|$. One standing wave piles electron density on the ions (lower energy), the other between them (higher energy). Gaps open at every zone boundary where Bragg reflection ($\mathbf k$ and $\mathbf k-\mathbf G$ equivalent) occurs; this is Bragg&rsquo;s law for electrons (<a href="electricity-magnetism-and-waves.html">PHYS 103</a>, Lecture 7).</p>
+            <p><strong>Tight binding.</strong> From the opposite starting point, localised atomic orbitals with hopping $-t$ between neighbours give, in one dimension, $E(k)=\varepsilon-2t\cos ka$ (<a href="quantum-mechanics.html">PHYS 201</a>, Lecture 7): a band of width $4t$ centred on the atomic level. An atom with several orbitals gives several bands, and bands from separated atomic levels are separated by gaps. Near a band minimum the energy is parabolic, $E\approx E_0+\hbar^2k^2/2m^*$, which defines the <strong>effective mass</strong>
+            $$m^*=\hbar^2\Bigl(\frac{\mathrm d^2E}{\mathrm dk^2}\Bigr)^{-1},$$
+            the mass the electron appears to have in an applied field. A narrow band (small $t$) means a heavy electron; for the tight-binding band, $m^*=\hbar^2/(2ta^2)$. Near a band maximum $m^*&lt;0$: the electrons accelerate opposite to the force, and it is more convenient to describe the empty states as positively charged <strong>holes</strong>.</p>
+            <div class="note mat"><strong>In materials science: what a DFT band structure shows</strong>
+            <p>A band-structure plot shows $E_n(\mathbf k)$ along high-symmetry lines of the Brillouin zone. Read off the Fermi level (metals cross it), the band gap and whether it is direct (band minimum and maximum at the same $\mathbf k$, as in GaAs, favouring light emission) or indirect (Si), effective masses from the curvature, and the d-band width of a transition metal. The density of states, obtained by integrating over the zone, enters heat capacity, optical absorption and the free energy. The $\mathbf k$-point mesh in a calculation is a discretisation of the Brillouin-zone integral (<a href="density-functional-theory.html">CMS 501</a>).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: the gap and the effective mass</strong>
+                <p class="given">(a) In a one-dimensional crystal with $a=0.40$ nm, find the free-electron energy at the zone boundary, and the gap if the Fourier component of the potential is $|V_G|=1.0$ eV. (b) For a tight-binding band with $t=2.0$ eV and $a=0.30$ nm find the effective mass and the maximum group velocity.</p>
+                <p>(a) $E_0=\hbar^2\pi^2/2ma^2=2.35$ eV, so the two states at the boundary are at $2.35\pm1.0$ eV and the gap is $2|V_G|=2.0$ eV. (b) $m^*=\hbar^2/(2ta^2)=(1.112\times10^{-68})/(2\times3.204\times10^{-19}\times9\times10^{-20})=1.93\times10^{-31}$ kg $=0.21m_e$. The group velocity $v=\dfrac1\hbar\dfrac{\mathrm dE}{\mathrm dk}=\dfrac{2ta}\hbar\sin ka$ is largest at $ka=\pi/2$: $2ta/\hbar=1.82\times10^6$ m/s, comparable with Fermi velocities of metals. A broad band (large $t$ or small spacing) gives light, fast electrons; a narrow one (as for the localised f electrons) gives heavy, slow ones.</p>
+            </div>
+
+            <h2 id="semis">Lecture 6. Metals, insulators and semiconductors<a class="anchor" href="#semis" aria-label="Link to this section">#</a></h2>
+            <p>How many electrons does a band hold? In a crystal with $N$ primitive cells each band has $N$ allowed $\mathbf k$-values and, with two spin states, room for $2N$ electrons. The electronic properties follow from how the bands are filled:</p>
+            <ul>
+                <li><strong>Metal</strong>: the highest occupied band is only partly filled (or bands overlap), so electrons near the Fermi level can move into empty states under a field. A crystal with an odd number of valence electrons per cell (alkali metals, Cu, Ag, Au) is always a metal.</li>
+                <li><strong>Insulator</strong>: an even number of electrons fills bands completely, and the next empty band lies above a large gap $E_g\gtrsim3$ eV (diamond $5.5$ eV, SiO$_2$ $9$ eV). A completely filled band carries no current.</li>
+                <li><strong>Semiconductor</strong>: an insulator at $T=0$ with a modest gap ($0.3$&ndash;$3$ eV: Ge $0.67$, Si $1.12$, GaAs $1.42$ eV), so that thermal excitation or doping supplies carriers. Light of $\hbar\omega&gt;E_g$ is absorbed, giving the optical edge at $\lambda=1240/E_g\ \mathrm{nm}$.</li>
+            </ul>
+            <p><strong>Carriers in a semiconductor.</strong> Electrons in the conduction band (near the minimum $E_c$) and holes in the valence band (near the maximum $E_v$) behave like free particles with effective masses. In equilibrium, with the Fermi level $E_F$ in the gap (more than a few $k_\mathrm BT$ from either band edge), the Boltzmann statistics of <a href="thermal-physics.html">PHYS 102</a> give
+            $$n=N_ce^{-(E_c-E_F)/k_\mathrm BT},\qquad p=N_ve^{-(E_F-E_v)/k_\mathrm BT},\qquad np=N_cN_ve^{-E_g/k_\mathrm BT}=n_i^2.$$
+            The last result (the <strong>law of mass action</strong>) holds whatever the doping; the effective densities of states $N_{c,v}=2(2\pi m^*_{e,h}k_\mathrm BT/h^2)^{3/2}$ are of order $10^{19}\ \mathrm{cm^{-3}}$ at $300$ K. In a pure (intrinsic) semiconductor $n=p=n_i\propto e^{-E_g/2k_\mathrm BT}$, exponentially small: $n_i\approx10^{10}\ \mathrm{cm^{-3}}$ for Si at $300$ K compared with $5\times10^{22}$ atoms per cm$^3$. <strong>Doping</strong> adds donors (P in Si) that give conduction electrons or acceptors (B) that bind electrons and leave holes, controlling $n$ or $p$ over many orders of magnitude; the majority carrier density is about the dopant density, and the minority density follows from $np=n_i^2$. The Fermi level moves towards the conduction band for n-type, $E_F-E_i=k_\mathrm BT\ln(n/n_i)$. The conductivity is $\sigma=e(n\mu_n+p\mu_p)$ with the mobilities $\mu=e\tau/m^*$.</p>
+            <p><strong>The p&ndash;n junction.</strong> When p-type and n-type regions join, electrons diffuse to the p side and holes to the n side, leaving fixed ionised dopants: a <strong>depletion region</strong> with an electric field that stops further diffusion at equilibrium. The Fermi level is constant across the junction, so the bands bend by the <strong>built-in potential</strong>
+            $$V_{bi}=\frac{k_\mathrm BT}e\ln\frac{N_aN_d}{n_i^2},\qquad W=\sqrt{\frac{2\varepsilon V_{bi}}{e}\Bigl(\frac1{N_a}+\frac1{N_d}\Bigr)}.$$
+            A forward bias lowers the barrier, and the current rises exponentially, $I\propto e^{eV/k_\mathrm BT}$; reverse bias raises the barrier and the current saturates: the rectifying diode. The same physics runs LEDs, solar cells (photons generate pairs that the junction field separates) and transistors.</p>
+            <div class="note mat"><strong>In materials science: designing the gap</strong>
+            <p>Alloys tune the gap continuously (Al$_x$Ga$_{1-x}$As, In$_x$Ga$_{1-x}$N), strain shifts band edges, and quantum confinement raises them (<a href="quantum-mechanics.html">PHYS 201</a>, quantum dots). Defects in semiconductors create levels in the gap that trap carriers or dope the material, and computing their formation energies and charge-transition levels by DFT is a central application. Standard DFT underestimates band gaps (often by $30$&ndash;$50\%$), which motivates hybrid functionals and the GW method.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 6.1: intrinsic and doped silicon</strong>
+                <p class="given">For Si at $300$ K take $E_g=1.12$ eV, $N_c=2.8\times10^{19}$ and $N_v=1.04\times10^{19}\ \mathrm{cm^{-3}}$. Find $n_i$. Silicon is doped with $10^{16}\ \mathrm{cm^{-3}}$ phosphorus: find the electron and hole concentrations and the Fermi level relative to the intrinsic level.</p>
+                <p>$n_i=\sqrt{N_cN_v}\,\allowbreak e^{-E_g/2k_\mathrm BT}=1.71\times10^{19}\times e^{-21.66}=6.7\times10^{9}\ \mathrm{cm^{-3}}$, usually quoted as about $10^{10}$ (the difference comes from the effective masses used). Doping with donors at $N_d=10^{16}$ gives $n\approx N_d=10^{16}$, and $p=n_i^2/n=(6.7\times10^9)^2/10^{16}=4.5\times10^3\ \mathrm{cm^{-3}}$, a factor $10^{12}$ below $n$. The Fermi level lies $k_\mathrm BT\ln(n/n_i)=0.0259\ln(1.5\times10^6)=0.37$ eV above the intrinsic level, about $0.19$ eV below the conduction band edge. Doping with $10^{16}$ (one dopant in five million atoms) raises the conductivity by $10^6$: $\sigma=en\mu=(1.6\times10^{-19})(10^{16})(1400)=2.2\ \mathrm{S/cm}$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: a silicon p&ndash;n junction</strong>
+                <p class="given">A junction has $N_a=10^{17}$ and $N_d=10^{16}\ \mathrm{cm^{-3}}$ in Si ($n_i=6.7\times10^9\ \mathrm{cm^{-3}}$, $\varepsilon=11.7\varepsilon_0$). Find the built-in potential and the depletion width.</p>
+                <p>$V_{bi}=0.0259\ln\dfrac{10^{17}\times10^{16}}{(6.7\times10^9)^2}=0.0259\ln(2.2\times10^{13})=0.77$ V. The width is $$W=\sqrt{\frac{2(11.7)(8.854\times10^{-12})(0.77)}{1.602\times10^{-19}}\Bigl(\frac1{10^{23}}+\frac1{10^{22}}\Bigr)}=0.33\ \mu\text{m},$$ mostly in the lightly doped (n) side ($0.30\ \mu$m). The field at the junction is of order $V_{bi}/W=2\times10^6$ V/m. Forward bias of $0.6$ to $0.7$ V brings the barrier nearly to zero, which is why silicon diodes turn on at about $0.6$&ndash;$0.7$ V.</p>
+            </div>
+
+            <h2 id="collective">Lecture 7. Magnetism and superconductivity<a class="anchor" href="#collective" aria-label="Link to this section">#</a></h2>
+            <p>Two of the most striking solid-state phenomena arise from interactions between electrons that the independent-electron picture misses.</p>
+            <p><strong>Ferromagnetism.</strong> The exchange interaction (<a href="quantum-mechanics.html">PHYS 201</a>, Lecture 6) favours parallel spins on neighbouring atoms; it is described by the <strong>Heisenberg model</strong> $\hat H=-J\sum_{\langle ij\rangle}\mathbf S_i\cdot\mathbf S_j$ with $J&gt;0$ for ferromagnetism. In the <strong>mean-field</strong> approximation each spin feels the average field of its $z$ neighbours, giving a spontaneous magnetisation below the Curie temperature
+            $$T_C=\frac{zJS(S+1)}{3k_\mathrm B}.$$
+            Above $T_C$ the material is paramagnetic with the <strong>Curie&ndash;Weiss</strong> susceptibility $\chi=C/(T-T_C)$, which diverges at $T_C$ (as the stiffness of the order parameter vanishes, in the language of Landau theory, <a href="ordinary-differential-equations.html">MATH 203</a>). Antiferromagnets (neighbouring spins antiparallel, $J&lt;0$) have a N&eacute;el temperature and no net moment. In iron, cobalt and nickel the moments come from itinerant d electrons: the Stoner picture says that the exchange energy gain from spin-splitting the bands exceeds the kinetic cost when the density of states at the Fermi level is large, $Ig(E_F)&gt;1$.</p>
+            <p><strong>Superconductivity.</strong> Below a critical temperature $T_c$ (from $0.001$ K to $\sim130$ K) some materials lose all electrical resistance and expel magnetic fields from their interior (the <strong>Meissner effect</strong>: $\mathbf B=0$ inside, so superconductors are perfect diamagnets, not merely perfect conductors). In the BCS theory (1957), electrons attract each other weakly through the lattice (an electron distorts the ions, which attract a second electron) and form bound <strong>Cooper pairs</strong> of opposite momentum and spin. Pairs are bosons and condense into a single quantum state separated from excitations by an energy gap
+            $$2\Delta=3.53\,k_\mathrm BT_c.$$
+            Because $\Delta\propto T_c$ is tiny, thermal energy is enough to break the pairs at low temperatures. The field penetrates a surface layer of thickness $\lambda_L=\sqrt{m/\mu_0n_se^2}$ (London), and the pair size is $\xi\approx\hbar v_F/\pi\Delta$. The isotope effect $T_c\propto M^{-1/2}$ was the experimental clue that phonons are involved. High-$T_c$ cuprates and iron-based superconductors have mechanisms still under study.</p>
+            <div class="note mat"><strong>In materials science: what simulations can and cannot do here</strong>
+            <p>DFT predicts the ground-state magnetic structure (ferro-, antiferro-, ferrimagnetic) and moments of most materials, and exchange constants $J$ can be extracted from energy differences between spin configurations and then fed into Monte Carlo simulations of $T_C$ (<a href="monte-carlo-methods.html">CMS 503</a>, the Ising and Heisenberg models). For conventional superconductors, electron&ndash;phonon coupling computed from first principles predicts $T_c$ well (the discovery route for hydrides under pressure), but for strongly correlated materials, such as the cuprates, standard DFT fails, because exchange and correlation are the physics.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: the exchange constant of iron</strong>
+                <p class="given">Iron has $T_C=1043$ K, $z=8$ (bcc) and an atomic moment of $2.2\,\mu_\mathrm B$ ($S\approx1.1$). Estimate $J$ from mean-field theory and compare with $k_\mathrm BT$ at $300$ K.</p>
+                <p>$S(S+1)=1.1\times2.1=2.31$. $J=3k_\mathrm BT_C/[zS(S+1)]=3(8.617\times10^{-5})(1043)/(8\times2.31)=14.6$ meV, which is comparable with $k_\mathrm BT=25.9$ meV at $300$ K, but it acts through eight neighbours at once, so the cooperative alignment survives to $1043$ K. (Mean-field theory overestimates $T_C$ by neglecting fluctuations, so the real $J$ is somewhat larger; first-principles values are $\sim20$&ndash;$25$ meV.) The extremely large ratio $T_C/T_\mathrm{room}$ is why iron remains magnetised in everyday conditions.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.2: a conventional superconductor</strong>
+                <p class="given">Aluminium has $T_c=1.2$ K and $n_s=1.8\times10^{29}\ \mathrm{m^{-3}}$ at low temperature, $v_F=2.0\times10^6$ m/s. Find the BCS gap, the photon frequency that breaks a Cooper pair, the London depth and the pair size.</p>
+                <p>The gap $2\Delta=3.53k_\mathrm BT_c=0.365$ meV ($\Delta=0.18$ meV), so photons with $f=2\Delta/h=88$ GHz (microwaves, $3.4$ mm) break pairs: the transition into the superconducting state changes the absorption of microwaves. $$\lambda_L=\sqrt{\frac{m}{\mu_0n_se^2}}=\sqrt{\frac{9.109\times10^{-31}}{(1.2566\times10^{-6})(1.8\times10^{29})(2.567\times10^{-38})}}=12.5\ \text{nm}$$ (measured $\approx16$ nm). The pair size is $\xi=\hbar v_F/\pi\Delta=2.3\ \mu$m, a hundred times larger than $\lambda_L$ and thousands of times the atomic spacing: Cooper pairs overlap enormously, which is why a mean-field theory like BCS works so well here.</p>
+            </div>
+
+            <h2 id="summary-p302">Summary of the unit<a class="anchor" href="#summary-p302" aria-label="Link to this section">#</a></h2>
+            <p>Crystals bind through electrostatic, covalent and van der Waals forces, and the curvature of the energy curve gives elastic constants. Their vibrations are phonon waves whose dispersion determines sound speeds and heat capacity. Electrons in a metal form a degenerate Fermi gas; in a periodic potential their states become Bloch waves forming bands, with gaps at zone boundaries and effective masses from the curvature. The filling of bands sorts solids into metals, insulators and semiconductors, and doping and junctions turn semiconductors into devices. Exchange and electron pairing give magnetism and superconductivity. These are the quantities computed in <a href="density-functional-theory.html">CMS 501</a> and measured by the characterisation methods of the field.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Solids are held together by ionic, covalent, metallic or van der Waals binding; the lattice energy of an ionic crystal is the Madelung sum $-\alpha e^2/4\pi\varepsilon_0r_0(1-1/n)$ (about $-7.9$ eV per NaCl pair), and the curvature of the energy curve gives the bulk modulus.</li>
+<li>Atoms in a crystal are coupled oscillators, so lattice vibrations are waves with a dispersion $\omega(k)$ (for a monatomic chain $\omega=2\sqrt{K/m}\,|\sin(ka/2)|$); a diatomic crystal has acoustic and optical branches, and quantised vibrations are phonons with occupation $1/(e^{\hbar\omega/k_\mathrm BT}-1)$ that give the Debye heat capacity.</li>
+<li>Free electrons in a metal fill states up to the Fermi energy $E_F=\hbar^2(3\pi^2n)^{2/3}/2m$ (7.0 eV for copper); only electrons within $k_\mathrm BT$ of $E_F$ respond to heat or fields, which explains the small linear electronic heat capacity $\gamma T$.</li>
+<li>A periodic potential gives Bloch states $e^{i\mathbf k\cdot\mathbf r}u_\mathbf k(\mathbf r)$ and energy bands separated by gaps at Brillouin-zone boundaries; the curvature of a band defines the effective mass $m^*=\hbar^2/(\mathrm d^2E/\mathrm dk^2)$.</li>
+<li>Whether a solid is a metal, semiconductor or insulator depends on band filling and the gap; in semiconductors $np=n_i^2$ with $n_i\propto e^{-E_g/2k_\mathrm BT}$, doping sets the carrier type, and a p-n junction has a built-in potential $(k_\mathrm BT/e)\ln(N_aN_d/n_i^2)$; exchange gives magnetism and electron pairing gives superconductivity.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p302-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Magnesium oxide has the rock-salt structure with $r_0=0.2106$ nm, $\alpha=1.7476$ and repulsion exponent $n\approx7$; the ions are Mg$^{2+}$ and O$^{2-}$. Find the lattice energy per ion pair and compare with NaCl.</p>
+            <details class="hint"><summary>Hint</summary><p>$U=-\dfrac{\alpha(q_1q_2/e^2)\,1.440\ \mathrm{eV\,nm}}{r_0}\bigl(1-\tfrac1n\bigr)$ with $q_1q_2/e^2=4$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$U=-\dfrac{(1.7476)(4)(1.440)}{0.2106}\Bigl(1-\dfrac17\Bigr)=-47.8\times0.857=-41.0$ eV per pair (measured about $40$ eV). This is five times the NaCl value ($7.9$ eV): the product of charges is four times larger and the spacing smaller. The greater cohesion explains why MgO melts at $3100$ K (NaCl: $1074$ K) and is a refractory ceramic.</p>
+            <p class="answer">$-41$ eV per ion pair</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>A chain of aluminium atoms ($26.98$ u) has spacing $0.286$ nm and $K=25$ N/m. Find the speed of sound, the maximum frequency, and the frequency at $k=\pi/2a$.</p>
+            <details class="hint"><summary>Hint</summary><p>$c=a\sqrt{K/m}$, $\omega_\mathrm{max}=2\sqrt{K/m}$, $\omega(k)=\omega_\mathrm{max}\sin(ka/2)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\sqrt{K/m}=2.36\times10^{13}\ \mathrm s^{-1}$. $c=0.286\times10^{-9}\times2.36\times10^{13}=6.76$ km/s (aluminium: $6.4$ km/s longitudinal). $f_\mathrm{max}=2(2.36\times10^{13})/2\pi=7.52$ THz. At $ka=\pi/2$, $\omega=\omega_\mathrm{max}\sin(\pi/4)$, $f=5.32$ THz. The linear law $f=ck/2\pi$ would give $5.9$ THz at this wavevector, so the true dispersion lies $10\%$ below it.</p>
+            <p class="answer">$6.76$ km/s; $7.52$ THz; $5.32$ THz</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>Find $k_F$, $E_F$, $v_F$ and $T_F$ for aluminium ($n=18.1\times10^{28}\ \mathrm{m^{-3}}$) and gold ($n=5.9\times10^{28}\ \mathrm{m^{-3}}$).</p>
+            <details class="hint"><summary>Hint</summary><p>$k_F=(3\pi^2n)^{1/3}$, $E_F=\hbar^2k_F^2/2m$, $v_F=\hbar k_F/m$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Al: $k_F=1.75\times10^{10}\ \mathrm{m^{-1}}$, $E_F=11.7$ eV, $v_F=2.03\times10^6$ m/s, $T_F=1.35\times10^5$ K. Au: $k_F=1.20\times10^{10}\ \mathrm{m^{-1}}$, $E_F=5.53$ eV, $v_F=1.39\times10^6$ m/s, $T_F=6.4\times10^4$ K. Aluminium has three valence electrons per atom, hence a much larger $n$, $E_F$ and Fermi wavevector (the Fermi sphere reaches beyond the first Brillouin zone).</p>
+            <p class="answer">Al: $11.7$ eV, $2.03\times10^6$ m/s; Au: $5.53$ eV, $1.39\times10^6$ m/s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Silicon carbide is modelled as a diatomic chain with masses $12.011$ u (C) and $28.086$ u (Si) and $K=100$ N/m. Find the frequencies at the ends of the acoustic and optical branches in THz and the width of the gap. What happens if both masses are $20$ u?</p>
+            <details class="hint"><summary>Hint</summary><p>Acoustic top $\sqrt{2K/M}$, optical bottom $\sqrt{2K/m}$, optical top $\sqrt{2K(1/m+1/M)}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Acoustic top: $\sqrt{2K/M}\to10.4$ THz; optical bottom: $\sqrt{2K/m}\to15.9$ THz; optical top at $k=0$: $\sqrt{2K(1/m+1/M)}\to19.0$ THz. The gap spans $10.4$ to $15.9$ THz, $5.5$ THz wide (the very large mass ratio makes it wide). With equal masses the gap closes ($\sqrt{2K/M}=\sqrt{2K/m}$) and the two branches are the folded zone of a monatomic chain with lattice constant $a/2$.</p>
+            <p class="answer">$10.4$; $15.9$; $19.0$ THz; gap $5.5$ THz; no gap for equal masses</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Aluminium has $\theta_D=428$ K and $n=18.1\times10^{28}\ \mathrm{m^{-3}}$. (a) Find $k_D$ and the mean sound speed. (b) Find the Debye frequency in THz and the energy $\hbar\omega_D$. (c) What is the mean number of $5$ THz phonons per mode at $100$ K?</p>
+            <details class="hint"><summary>Hint</summary><p>$k_D=(6\pi^2n)^{1/3}$, $v=k_\mathrm B\theta_D/\hbar k_D$, $\omega_D=vk_D=k_\mathrm B\theta_D/\hbar$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $k_D=2.20\times10^{10}\ \mathrm{m^{-1}}$ and $v=2.54$ km/s (an average over the polarisations, weighted to the slower transverse waves). (b) $f_D=k_\mathrm B\theta_D/h=8.92$ THz, $\hbar\omega_D=36.9$ meV. (c) $\hbar\omega=20.7$ meV and $k_\mathrm BT=8.62$ meV at $100$ K, so $\langle n\rangle=1/(e^{2.40}-1)=0.10$: the mode is mostly empty, in contrast with $0.82$ at $300$ K in copper (Worked example 3.1).</p>
+            <p class="answer">(a) $2.20\times10^{10}\ \mathrm{m^{-1}}$, $2.54$ km/s; (b) $8.92$ THz, $36.9$ meV; (c) $0.10$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>(a) Calculate the free-electron $\gamma$ for aluminium (three electrons per atom, $E_F=11.7$ eV) and compare with the measured $1.35\ \mathrm{mJ/mol\,K^2}$. (b) Find the thermal effective mass ratio. (c) At what temperature do the electronic and lattice heat capacities of Al ($\theta_D=428$ K) cross?</p>
+            <details class="hint"><summary>Hint</summary><p>$\gamma=Z\,\allowbreak \tfrac{\pi^2}2R\,\allowbreak k_\mathrm B/E_F$ with $Z$ electrons per atom; crossover: $\gamma T=1944(T/\theta_D)^3$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) For one electron per atom $\gamma_1=\tfrac{\pi^2}2Rk_\mathrm B/E_F=0.303$ mJ/mol K$^2$; with $Z=3$, $\gamma=0.91$. (b) $m^*/m=1.35/0.91=1.5$: electron&ndash;phonon and band-structure effects raise the density of states at $E_F$ by $50\%$. (c) $T^2=\gamma\theta_D^3/1944=(1.35\times10^{-3})(428^3)/1944=54.5$, $T=7.4$ K. Below this the electrons dominate.</p>
+            <p class="answer">(a) $0.91$; (b) $1.5$; (c) $7.4$ K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>A tight-binding band $E=\varepsilon-2t\cos ka$ has $t=1.5$ eV and $a=0.25$ nm. (a) Find the band width, the effective mass at the bottom and the maximum velocity. (b) If the band is half filled (one electron per site), where is the Fermi level and what is $v_F$? (c) What is the effective mass at the top of the band?</p>
+            <details class="hint"><summary>Hint</summary><p>$m^*=\hbar^2/(2ta^2)$; half filling means $k_F=\pi/2a$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Width $4t=6.0$ eV. $m^*=\hbar^2/2ta^2=0.41m_e$. $v=\tfrac{2ta}\hbar\sin ka$, with maximum $2ta/\hbar=1.14\times10^6$ m/s at $ka=\pi/2$. (b) Half filling means the Fermi level is at $ka=\pi/2$, where $E=\varepsilon$ (the band centre) and $v_F=1.14\times10^6$ m/s, the maximum: a half-filled band conducts well. (c) At the top, $\mathrm d^2E/\mathrm dk^2=2ta^2\cos ka=-2ta^2$ is negative, so $m^*=-0.41m_e$: the electrons there behave like positive holes of mass $0.41m_e$.</p>
+            <p class="answer">(a) $6.0$ eV, $0.41m_e$, $1.14\times10^6$ m/s; (b) band centre; (c) $-0.41m_e$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>Aluminium has fcc lattice parameter $a=0.405$ nm. Treat a $[100]$ chain with spacing $a$ and potential Fourier component $|V_G|=0.5$ eV. (a) Find the free-electron energy at $k=\pi/a$. (b) Find the gap and the two energies at the boundary. (c) A photon excites an electron across it: find the wavelength. (d) Why does a band gap of $1.0$ eV in a metal not make it an insulator?</p>
+            <details class="hint"><summary>Hint</summary><p>Two plane waves $e^{\pm i\pi x/a}$ mixed by $V_G$ split by $2|V_G|$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E_0=\hbar^2\pi^2/(2ma^2)=2.29$ eV. (b) $E_g=2|V_G|=1.0$ eV with the two states at $2.29\pm0.5$ eV, $1.79$ and $2.79$ eV. (c) $\lambda=1240/1.0=1240$ nm (infrared). (d) The gap is local in $\mathbf k$ (at this zone boundary only); in the metal the Fermi level lies elsewhere in a partly filled band, with states available at the Fermi energy in other directions of the zone, so conduction is unaffected.</p>
+            <p class="answer">(a) $2.29$ eV; (b) $1.0$ eV; (c) $1240$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>(a) Find $n_i$ for GaAs ($E_g=1.42$ eV, $N_c=4.7\times10^{17}$, $N_v=7.0\times10^{18}\ \mathrm{cm^{-3}}$) at $300$ K. (b) By what factor does $n_i$ of silicon rise from $300$ K to $400$ K ($N_{c,v}\propto T^{3/2}$, $n_i=6.7\times10^9$ at $300$ K)? (c) Why does this limit the operating temperature of silicon devices?</p>
+            <details class="hint"><summary>Hint</summary><p>$n_i=\sqrt{N_cN_v}\,\allowbreak e^{-E_g/2k_\mathrm BT}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $n_i=\sqrt{(4.7\times10^{17})(7.0\times10^{18})}\,\allowbreak e^{-1.42/(2\times0.02585)}=5.7\times10^{18}\times3.7\times10^{-13}=2.1\times10^6\ \mathrm{cm^{-3}}$: a thousand times less than in Si, because the gap is larger. (b) At $400$ K, $$n_i=\sqrt{N_cN_v}\Bigl(\frac{400}{300}\Bigr)^{3/2}e^{-1.12/(2\times0.03447)}=2.3\times10^{12}\ \text{cm}^{-3},$$ a factor $346$ increase. (c) When $n_i$ approaches the doping level ($10^{14}$&ndash;$10^{16}$) the thermally generated carriers swamp the dopants, junctions stop rectifying and devices fail; wide-gap materials (SiC, GaN) work at much higher temperatures.</p>
+            <p class="answer">(a) $2.1\times10^6\ \mathrm{cm^{-3}}$; (b) $\times346$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Silicon ($n_i=6.7\times10^9\ \mathrm{cm^{-3}}$) is doped with $5\times10^{16}$ donors and $2\times10^{16}$ acceptors per cm$^3$. (a) Find $n$ and $p$. (b) Find the Fermi level relative to $E_i$. (c) Estimate $\sigma$ with $\mu_n=1200\ \mathrm{cm^2/Vs}$.</p>
+            <details class="hint"><summary>Hint</summary><p>Compensation: the net donor concentration is $N_d-N_a$; $np=n_i^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $n=N_d-N_a=3\times10^{16}$, $p=n_i^2/n=1.5\times10^3\ \mathrm{cm^{-3}}$. (b) $E_F-E_i=k_\mathrm BT\ln(n/n_i)=0.0259\ln(4.5\times10^6)=0.40$ eV. (c) $\sigma=en\mu_n=1.6\times10^{-19}\times3\times10^{16}\times1200=5.8$ S/cm. Mobility would in practice be lower since the ionised impurities of both kinds scatter carriers.</p>
+            <p class="answer">(a) $3\times10^{16}$, $1.5\times10^3$; (b) $0.40$ eV; (c) $5.8$ S/cm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>(a) Use $T_C=zJS(S+1)/3k_\mathrm B$ to find $J$ for nickel ($T_C=627$ K, $z=12$, moment $0.6\,\mu_\mathrm B$, $S=0.3$). (b) Predict $T_C$ for iron if $J=20$ meV and compare with $1043$ K. (c) For a paramagnet with $\chi=C/(T-T_C)$, find how $\chi$ at $1.5T_C$ compares with $\chi$ at $2T_C$.</p>
+            <details class="hint"><summary>Hint</summary><p>$J=3k_\mathrm BT_C/[zS(S+1)]$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $S(S+1)=0.39$: $J=3(8.617\times10^{-5})(627)/(12\times0.39)=34.6$ meV. (b) $T_C=8(0.020)(2.31)/(3\times8.617\times10^{-5})=1430$ K, $37\%$ above the measured $1043$ K, because mean-field theory ignores spin fluctuations. (c) $\chi(1.5T_C)/\chi(2T_C)=\dfrac{2T_C-T_C}{1.5T_C-T_C}=2$: the susceptibility doubles as the Curie point is approached.</p>
+            <p class="answer">(a) $34.6$ meV; (b) $1430$ K; (c) $2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>Niobium has $T_c=9.2$ K, $v_F=1.4\times10^6$ m/s and $n_s=5.6\times10^{28}\ \mathrm{m^{-3}}$. Find (a) the BCS gap, (b) the frequency of photons that break Cooper pairs, (c) the London penetration depth, (d) the pair size $\xi=\hbar v_F/\pi\Delta$. Is niobium a type I or type II superconductor?</p>
+            <details class="hint"><summary>Hint</summary><p>$2\Delta=3.53k_\mathrm BT_c$; $\lambda_L=\sqrt{m/\mu_0n_se^2}$. Type II if $\lambda_L&gt;\xi/\sqrt2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $2\Delta=3.53k_\mathrm BT_c=2.80$ meV, $\Delta=1.40$ meV. (b) $f=2\Delta/h=676$ GHz (sub-millimetre waves). (c) $$\lambda_L=\sqrt{\frac{9.109\times10^{-31}}{(1.2566\times10^{-6})(5.6\times10^{28})(2.567\times10^{-38})}}=22\ \text{nm}.$$ (d) $\xi=\hbar v_F/\pi\Delta=(1.055\times10^{-34})(1.4\times10^6)/(\pi\times2.24\times10^{-22})=0.21\ \mu$m (the clean-limit estimate; the measured value is $39$ nm in dirty films). Niobium is borderline: pure Nb is type II with $\kappa=\lambda/\xi$ about $0.8$, near the boundary $1/\sqrt2$. Type II superconductors carry fields as quantised vortices, and Nb alloys (Nb$_3$Sn, NbTi) are used for the high-field magnets of MRI scanners and accelerators.</p>
+            <p class="answer">(a) $1.40$ meV; (b) $676$ GHz; (c) $22$ nm; (d) $\sim0.2\ \mu$m</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q302-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Binding</span></div>
+            <p>Why is the lattice energy of MgO about five times that of NaCl? Which ion-pair formula gives the energy?</p>
+            <details class="solution"><summary>Solution</summary><p>The Madelung energy is $-\alpha(q_1q_2)e^2/4\pi\varepsilon_0r_0(1-1/n)$. For MgO $q_1q_2=4e^2$ (charges $2+$, $2-$) and $r_0$ is smaller, so the energy ($41$ eV) is about five times the NaCl value ($7.9$ eV).</p></details>
+            </div>
+            <div class="problem" id="q302-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Phonons</span></div>
+            <p>A monatomic chain has $K=30$ N/m, $m=63.5$ u and $a=0.255$ nm. Give the sound speed and the maximum phonon frequency.</p>
+            <details class="solution"><summary>Solution</summary><p>$c=a\sqrt{K/m}=4.3$ km/s; $f_\mathrm{max}=\tfrac1\pi\sqrt{K/m}=5.37$ THz.</p></details>
+            </div>
+            <div class="problem" id="q302-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Fermi gas</span></div>
+            <p>Find $E_F$ for $n=8.49\times10^{28}\ \mathrm{m^{-3}}$ and say what fraction of the electrons contributes to the heat capacity at $300$ K.</p>
+            <details class="solution"><summary>Solution</summary><p>$E_F=7.04$ eV, $T_F=8.2\times10^4$ K, so about $T/T_F=0.4\%$ of the electrons are thermally active, which is why the electronic heat capacity of a metal is small and linear in $T$.</p></details>
+            </div>
+            <div class="problem" id="q302-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Bands</span></div>
+            <p>What does the effective mass measure and what is its value for the tight-binding band $E=\varepsilon-2t\cos ka$?</p>
+            <details class="solution"><summary>Solution</summary><p>The curvature of $E(k)$: $m^*=\hbar^2/(\mathrm d^2E/\mathrm dk^2)$. For the tight-binding band $m^*=\hbar^2/(2ta^2)$ at the band bottom: larger hopping $t$ gives a lighter electron.</p></details>
+            </div>
+            <div class="problem" id="q302-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Semiconductors</span></div>
+            <p>Silicon is doped n-type with $10^{16}\ \mathrm{cm^{-3}}$ donors. Find $p$ if $n_i=6.7\times10^9$. How does the junction built-in potential depend on doping?</p>
+            <details class="solution"><summary>Solution</summary><p>$n\approx10^{16}$, $p=n_i^2/n=4.5\times10^3\ \mathrm{cm^{-3}}$. $V_{bi}=(k_\mathrm BT/e)\ln(N_aN_d/n_i^2)$ grows logarithmically with doping, about $0.77$ V for $10^{17}$ and $10^{16}$.</p></details>
+            </div>
+            <div class="problem" id="q302-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Collective effects</span></div>
+            <p>State the BCS gap relation and what the mean-field Curie temperature depends on.</p>
+            <details class="solution"><summary>Solution</summary><p>$2\Delta=3.53k_\mathrm BT_c$. $T_C=zJS(S+1)/3k_\mathrm B$: it grows with the number of neighbours, the exchange constant and the spin.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: the standard undergraduate text for all seven lectures.</li>
+                <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Saunders: the classic, more advanced and rigorous treatment.</li>
+                <li>Simon, S. H., <em>The Oxford Solid State Basics</em>, Oxford University Press: a clear, modern introduction with a wide range of topics.</li>
+                <li>Hook, J. R. and Hall, H. E., <em>Solid State Physics</em>, Wiley: a concise, well-illustrated second-year text.</li>
+                <li>Sze, S. M. and Ng, K. K., <em>Physics of Semiconductor Devices</em>, Wiley: junctions, carriers and devices.</li>
+                <li>Martin, R. M., <em>Electronic Structure: Basic Theory and Practical Methods</em>, Cambridge University Press: how band structures and phonons are computed.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="statistical-mechanics.html"><span class="dir">Previous course</span>Statistical mechanics for simulation</a>
+<span class="spacer"></span>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=94393714"></script>
+    <script src="../assets/pathdata.js?v=5cdaf57d"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
+</body>
+</html>
