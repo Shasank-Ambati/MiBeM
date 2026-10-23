@@ -1,0 +1,11 @@
+structure              space group   no.  point grp    ops  atoms Wyckoff letters (conventional cell)
+Cu (fcc)               Fm-3m         225  m-3m         192      4 aaaa
+Fe (bcc)               Im-3m         229  m-3m          96      2 aa
+Mg (hcp)               P6_3/mmc      194  6/mmm         24      2 dd
+Si (diamond)           Fd-3m         227  m-3m         192      8 aaaaaaaa
+NaCl (rocksalt)        Fm-3m         225  m-3m         192      8 abababab
+CsCl                   Pm-3m         221  m-3m          48      2 ab
+ZnS (zincblende)       F-43m         216  -43m          96      8 acacacac
+CaF2 (fluorite)        Fm-3m         225  m-3m         192     12 aaaacccccccc
+SrTiO3 (perovskite)    Pm-3m         221  m-3m          48      5 abccc
+alpha-quartz SiO2      P3_121        152  32             6     12 cccccccccccc

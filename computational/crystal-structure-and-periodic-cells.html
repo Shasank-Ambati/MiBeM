@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crystal Structures, Supercells and Periodic Boundaries - MiBeM</title>
-    <meta name="description" content="Lattices, unit cells, defects, supercell construction and periodic boundary conditions for atomistic simulation.">
+    <title>Crystal structures, supercells and periodic boundaries - MiBeM</title>
+    <meta name="description" content="University-level crystallography for computational materials science: lattices, bases and unit cells, symmetry (point groups and space groups), common crystal structures, Miller indices and interplanar spacings, the reciprocal lattice and diffraction, the Brillouin zone, and periodic cells and supercells for simulations, with worked examples and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Crystal Structures, Supercells and Periodic Boundaries - MiBeM">
-    <meta property="og:description" content="Lattices, unit cells, defects, supercell construction and periodic boundary conditions for atomistic simulation.">
+    <meta property="og:title" content="Crystal structures, supercells and periodic boundaries - MiBeM">
+    <meta property="og:description" content="University-level crystallography for computational materials science: lattices, bases and unit cells, symmetry (point groups and space groups), common crystal structures, Miller indices and interplanar spacings, the reciprocal lattice and diffraction, the Brillouin zone, and periodic cells and supercells for simulations, with worked examples and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/crystal-structure-and-periodic-cells.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="2">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,17 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#lattice">1. Lattice and basis</a></li>
-                <li><a href="#structures">2. Common structures</a></li>
-                <li><a href="#indices">3. Directions and planes</a></li>
-                <li><a href="#reciprocal">4. Reciprocal lattice</a></li>
-                <li><a href="#defects">5. Defects</a></li>
-                <li><a href="#supercell">6. Building supercells</a></li>
-                <li><a href="#pbc">7. Periodic boundary conditions</a></li>
-                <li><a href="#surfaces">8. Surfaces and interfaces</a></li>
-                <li><a href="#tools">9. Tools and file formats</a></li>
-                <li><a href="#check">10. Check your understanding</a></li>
-                <li><a href="#refs">11. References</a></li>
+                <li><a href="#lattices">Lecture 1. Lattices, bases and cells</a></li>
+                <li><a href="#symmetry">Lecture 2. Symmetry: point groups and space groups</a></li>
+                <li><a href="#structures">Lecture 3. Common crystal structures and why atoms choose them</a></li>
+                <li><a href="#planes">Lecture 4. Planes, directions and the reciprocal lattice</a></li>
+                <li><a href="#hex">Lecture 5. Non-cubic lattices and interplanar spacings</a></li>
+                <li><a href="#periodic">Lecture 6. Periodic cells, supercells and k-point sampling in simulations</a></li>
+                <li><a href="#real">Lecture 7. Real crystals: structure files, databases and disorder</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -55,11 +55,11 @@
 <nav class="course-nav" aria-label="Materials science courses"><span class="cn-dept">MSE</span><a href="materials-science-essentials.html" title="MSE 101: Materials science essentials">101</a><a href="crystal-structure-and-periodic-cells.html" class="here" aria-current="page" title="MSE 201: Crystal structures, supercells and periodic boundaries">201</a><a href="thermodynamics-and-calphad.html" title="MSE 301: Thermodynamics and CALPHAD">301</a><a href="mechanical-behaviour-of-materials.html" title="MSE 302: Mechanical behaviour of materials">302</a></nav>
 <!-- coursenav:end -->
             <h1>Crystal structures, supercells and periodic boundaries</h1>
-            <p class="lead">Almost every atomistic simulation starts by writing down where the atoms are. For crystals, a handful of numbers describes an infinite solid; for defects, the same description is stretched into a finite, repeating box that must be chosen with care.</p>
+            <p class="lead">Almost every simulation of a solid begins with a crystal structure, and every diffraction pattern, band structure and phonon spectrum is plotted in terms of its reciprocal lattice. This unit is the language of that world: how to describe a periodic arrangement of atoms exactly, how to classify it by its symmetry, how to read the structure from a diffraction experiment, and how a periodic simulation cell relates to the real crystal. It continues the introduction of <a href="materials-science-essentials.html">MSE 101</a> with the mathematics that is needed to compute with crystals, and every number was checked with the code of <a href="lab-structures-ase.html">LAB 201</a>.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Reading time</dt><dd>about 42 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="materials-science-essentials.html">MSE 101: Materials essentials</a><br><a href="linear-algebra-foundations.html">MATH 103: Linear algebra I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="lab-structures-ase.html">LAB 201: ASE: structures</a><br><a href="solid-state-physics.html">PHYS 302: Solid state physics</a><br><a href="mechanical-behaviour-of-materials.html">MSE 302: Mechanical behaviour</a><br><a href="density-functional-theory.html">CMS 501: Density functional theory</a><br><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a></dd></div>
 <div><dt>Level</dt><dd>Year 2: core tools</dd></div>
@@ -67,153 +67,407 @@
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Describe a crystal as a lattice plus a basis and count atoms, neighbours and packing for common structures.</li>
-                    <li>Use Miller indices for directions and planes, and relate real and reciprocal lattices.</li>
-                    <li>Choose a supercell for a point defect, surface or interface, and estimate the defect concentration it implies.</li>
-                    <li>Apply the minimum-image convention and explain the size effects that periodic boundaries introduce.</li>
+                    <li>Describe a crystal by its lattice vectors and basis, convert between Cartesian and fractional coordinates, and compute the cell volume.</li>
+                    <li>Name the crystal systems and Bravais lattices, and explain what point groups and space groups classify.</li>
+                    <li>Describe the important structure types (fcc, bcc, hcp, diamond, rocksalt, CsCl, zincblende, fluorite, perovskite) and compute their densities and coordination numbers.</li>
+                    <li>Use Miller indices and compute interplanar spacings for cubic and hexagonal lattices.</li>
+                    <li>Construct the reciprocal lattice, apply Bragg&rsquo;s law and the structure factor, and index a powder pattern.</li>
+                    <li>Define the Brillouin zone and the high-symmetry points of fcc, bcc and hexagonal lattices.</li>
+                    <li>Build supercells and choose k-point meshes, and explain the role of periodic boundary conditions in simulations.</li>
                 </ul>
+                <strong>You need:</strong> <a href="materials-science-essentials.html">MSE 101</a> (crystal structures, Miller indices), the vectors and matrices of <a href="linear-algebra-foundations.html">MATH 103: Linear algebra</a> (determinants, inverses) and <a href="vector-calculus.html">MATH 201: Vector calculus</a> (dot and cross products); the Fourier ideas of <a href="fourier-analysis.html">MATH 205</a> help in Lecture 4. Labs: <a href="lab-structures-ase.html">LAB 201</a> builds and analyses crystals with ASE and spglib.
             </div>
 
-            <h2 id="lattice">1. Lattice and basis<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
-            <p>An ideal crystal is invariant under translation by any vector of a <strong>Bravais lattice</strong>:</p>
-            <span class="eq">R = n<sub>1</sub>a<sub>1</sub> + n<sub>2</sub>a<sub>2</sub> + n<sub>3</sub>a<sub>3</sub>, &nbsp; n<sub>i</sub> integers</span>
-            <p>where <strong>a</strong><sub>1,2,3</sub> are the primitive lattice vectors. The parallelepiped they span is the <em>primitive cell</em>: the smallest volume that tiles space by translation and contains exactly one lattice point. The crystal is the lattice decorated with a <strong>basis</strong>, a set of atoms at positions <strong>r</strong><sub><em>j</em></sub> inside each cell, usually given as <em>fractional coordinates</em> (<em>x</em>, <em>y</em>, <em>z</em>) between 0 and 1 along the lattice vectors:</p>
-            <span class="eq">position of atom j in cell n: &nbsp; r = R<sub>n</sub> + (x<sub>j</sub>a<sub>1</sub> + y<sub>j</sub>a<sub>2</sub> + z<sub>j</sub>a<sub>3</sub>)</span>
-            <p>A cell can be described by six numbers: three lengths <em>a</em>, <em>b</em>, <em>c</em> and three angles &alpha;, &beta;, &gamma;. Symmetry sorts all lattices into <strong>seven crystal systems</strong> (cubic, tetragonal, orthorhombic, hexagonal, trigonal, monoclinic, triclinic) and <strong>fourteen Bravais lattices</strong> once centring is included (primitive P, body-centred I, face-centred F, base-centred C). Adding the basis and its symmetry gives <strong>230 space groups</strong>. Symmetry matters computationally: it reduces the number of distinct <em>k</em>-points in electronic-structure calculations and the number of independent elastic constants (3 for cubic, 5 for hexagonal, 21 for triclinic).</p>
-            <p>Often a <em>conventional</em> cell larger than the primitive cell is used because it shows the symmetry more clearly. The face-centred cubic conventional cell holds 4 lattice points, the body-centred cubic one holds 2.</p>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>Seven <strong>lectures</strong> with worked examples; a <strong>problem set</strong> of twelve problems with hints and full solutions; a <strong>unit quiz</strong>. The symmetry table of Lecture 2 was computed with spglib (<code>labs/mse-201</code>).</p>
+            </div>
 
-            <h2 id="structures">2. Common structures<a class="anchor" href="#structures" aria-label="Link to this section">#</a></h2>
-            <div class="table-scroll" role="region" aria-label="2. Common structures (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Structure</th><th>Lattice</th><th>Atoms per conventional cell</th><th>Nearest neighbours</th><th>Packing fraction</th><th>Examples</th></tr></thead>
-                <tbody>
-                    <tr><td>Face-centred cubic (fcc)</td><td>cubic F</td><td>4</td><td>12</td><td>0.74</td><td>Al, Cu, Ni, Au, austenite (&gamma;-Fe)</td></tr>
-                    <tr><td>Body-centred cubic (bcc)</td><td>cubic I</td><td>2</td><td>8 (6 more at 15% larger distance)</td><td>0.68</td><td>&alpha;-Fe (ferrite), W, Cr, Mo</td></tr>
-                    <tr><td>Hexagonal close-packed (hcp)</td><td>hexagonal P, 2-atom basis</td><td>2 (in the hexagonal cell)</td><td>12</td><td>0.74 at ideal c/a = &radic;(8/3) &asymp; 1.633</td><td>Mg, Ti, Zn, Co</td></tr>
-                    <tr><td>Diamond cubic</td><td>fcc, 2-atom basis</td><td>8</td><td>4</td><td>0.34</td><td>Si, Ge, C (diamond)</td></tr>
-                    <tr><td>Rock salt (B1)</td><td>fcc, 2-atom basis</td><td>8 (4 cation + 4 anion)</td><td>6 (unlike ions)</td><td>depends on radii</td><td>NaCl, MgO, TiC</td></tr>
-                    <tr><td>Perovskite (ABO<sub>3</sub>)</td><td>simple cubic (ideal)</td><td>5</td><td>B: 6 O; A: 12 O</td><td>&mdash;</td><td>SrTiO<sub>3</sub>, BaTiO<sub>3</sub></td></tr>
-                </tbody>
-            </table></div>
-            <p>Close packing arises from stacking triangular layers. The sequence ABAB&hellip; gives hcp and ABCABC&hellip; gives fcc, which explains why the two structures have the same density and coordination but different symmetry, and why stacking faults in fcc metals locally look like hcp. Bcc is less densely packed and has no single close-packed slip plane; the mobility of its screw dislocations depends strongly on temperature, which is the origin of the ductile-to-brittle transition that bcc metals show and fcc metals do not.</p>
-            <p>Lattice parameters at room temperature are the first numbers to check against any model: Cu fcc <em>a</em> &asymp; 3.61 &Aring;, Al fcc 4.05 &Aring;, &alpha;-Fe bcc 2.87 &Aring;, Si diamond 5.43 &Aring;. If a calculation or potential reproduces these to within a percent or two, the basic bonding description is plausible; if not, nothing downstream can be trusted.</p>
+            <h2 id="lattices">Lecture 1. Lattices, bases and cells<a class="anchor" href="#lattices" aria-label="Link to this section">#</a></h2>
+            <p>An <strong>ideal crystal</strong> is invariant under translation by any vector $\mathbf R=n_1\mathbf a_1+n_2\mathbf a_2+n_3\mathbf a_3$ with integers $n_i$. The set of all such points is the <strong>Bravais lattice</strong>, and $\mathbf a_1$, $\mathbf a_2$, $\mathbf a_3$ are <strong>primitive vectors</strong>: the parallelepiped they span is a <strong>primitive cell</strong>, the smallest volume that, repeated, fills space; it contains exactly one lattice point. The crystal is the lattice together with the <strong>basis</strong>: the atoms placed at the same positions $\mathbf r_j$ relative to every lattice point. In short, <em>crystal = lattice + basis</em>. The volume of the primitive cell is
+            $$V=|\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)|=|\det\mathbf A|,\qquad\mathbf A=\begin{pmatrix}\mathbf a_1\\\mathbf a_2\\\mathbf a_3\end{pmatrix}\text{ (rows)}.$$
+            The choice of primitive vectors is not unique (any other set related by an integer matrix of determinant $\pm1$ describes the same lattice), and neither is the shape of the cell; a unique choice is the <strong>Wigner&ndash;Seitz cell</strong>, the region closer to one lattice point than to any other, which has the full symmetry of the lattice. For convenience one often uses a larger <strong>conventional cell</strong> that shows the symmetry in its shape (a cube for fcc and bcc), containing $2$ or $4$ lattice points.</p>
+            <p>An atom position is written in <strong>fractional (scaled) coordinates</strong> $(s_1,s_2,s_3)$ with $$\mathbf r=s_1\mathbf a_1+s_2\mathbf a_2+s_3\mathbf a_3,$$ each between $0$ and $1$ inside the cell; with the matrix $\mathbf A$ above, $\mathbf r=\mathbf s\mathbf A$ and $\mathbf s=\mathbf r\mathbf A^{-1}$ (row vectors). Most structure files (CIF, POSCAR) and all electronic-structure codes use fractional coordinates, because they do not change when the cell is strained.</p>
+            <div class="example">
+                <strong>Worked example 1.1: the primitive cell of fcc</strong>
+                <p class="given">The fcc lattice with cubic lattice constant $a$ has the primitive vectors $\mathbf a_1=\tfrac a2(0,1,1)$, $\mathbf a_2=\tfrac a2(1,0,1)$, $\mathbf a_3=\tfrac a2(1,1,0)$. Compute the volume of the primitive cell for copper ($a=0.3615$ nm), the number of atoms per conventional cell, and the fractional coordinates of the atom at the centre of the face $(\tfrac12,\tfrac12,0)a$.</p>
+                <p>$\det\mathbf A=(a/2)^3\det\begin{pmatrix}0&amp;1&amp;1\\1&amp;0&amp;1\\1&amp;1&amp;0\end{pmatrix}=(a/2)^3\times2=a^3/4$ (the determinant of the matrix is $2$). For copper $V=0.3615^3/4=0.01181$ nm$^3$ $=11.81$ &Aring;$^3$ per atom, and the conventional cell is four times larger, $a^3=47.24$ &Aring;$^3$, containing $4$ atoms. The face-centre atom: solve $\mathbf s\mathbf A=\mathbf r$, i.e. $\mathbf s=\mathbf r\mathbf A^{-1}$ with $\mathbf r=(\tfrac12,\tfrac12,0)a$; since $\mathbf a_3=\tfrac a2(1,1,0)$ we have $\mathbf r=\mathbf a_3$ and $\mathbf s=(0,0,1)$, which is lattice-equivalent to the origin: the face-centre atom is a lattice point of the primitive description. An atom at $(\tfrac12,\tfrac12,0)a$ is not a second atom of the basis but another lattice point: the fcc crystal has a one-atom basis. (In ASE, <code>bulk("Cu", "fcc", a=3.615)</code> returns the one-atom primitive cell and <code>cubic=True</code> the four-atom conventional cell: LAB 201, Step 2.)</p>
+            </div>
 
-            <h2 id="indices">3. Directions and planes<a class="anchor" href="#indices" aria-label="Link to this section">#</a></h2>
-            <p><strong>Directions</strong> are written [<em>uvw</em>]: the smallest integers proportional to the components of the vector in lattice coordinates, with negative values shown by a bar. A family of equivalent directions is written &lang;<em>uvw</em>&rang;. <strong>Planes</strong> use <strong>Miller indices</strong> (<em>hkl</em>): take the intercepts of the plane with the axes in units of the lattice parameters, invert them, and clear fractions. A family of equivalent planes is written {<em>hkl</em>}. In cubic crystals, [<em>hkl</em>] is perpendicular to (<em>hkl</em>), but this is not true in general for other systems.</p>
-            <p>The spacing of (<em>hkl</em>) planes in a cubic crystal is</p>
-            <span class="eq">d<sub>hkl</sub> = a / &radic;(h&sup2; + k&sup2; + l&sup2;)</span>
-            <p>which is used directly in diffraction (Bragg&rsquo;s law, <em>n</em>&lambda; = 2<em>d</em> sin&theta;) and to compare simulated structures with X-ray or electron diffraction. Close-packed planes and directions control plasticity: slip occurs most readily on {111}&lang;110&rang; in fcc and on {110}, {112} and {123} planes along &lang;111&rang; in bcc. Surface energy also depends on orientation, with close-packed surfaces such as fcc (111) typically lowest.</p>
-            <p>Hexagonal crystals use four-index Miller&ndash;Bravais notation (<em>hkil</em>) with <em>i</em> = &minus;(<em>h</em> + <em>k</em>), which makes equivalent planes look alike.</p>
+            <h3>The seven crystal systems and fourteen Bravais lattices</h3>
+            <p>The lattice has a point-group symmetry (rotations and reflections that map it onto itself): there are only $7$ possibilities for the shape of the cell, the <strong>crystal systems</strong>, defined by the lattice parameters $a$, $b$, $c$, $\alpha$, $\beta$, $\gamma$, and if one allows centred cells (additional lattice points at the body centre I, face centres F, the centre of one pair of faces A/B/C, or the rhombohedral R setting) one finds $14$ <strong>Bravais lattices</strong> (Bravais, 1848).</p>
+            <div class="table-scroll" role="region" aria-label="The seven crystal systems and fourteen Bravais lattices (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>System</th><th>Cell parameters</th><th>Bravais lattices</th><th>Examples</th></tr></thead>
+            <tbody>
+            <tr><td>Cubic</td><td>$a=b=c$; $\alpha=\beta=\gamma=90^\circ$</td><td>P, I, F</td><td>Cu (F), Fe (I), NaCl (F), CsCl (P)</td></tr>
+            <tr><td>Tetragonal</td><td>$a=b\ne c$; all $90^\circ$</td><td>P, I</td><td>white tin (I), TiO$_2$ rutile (P)</td></tr>
+            <tr><td>Orthorhombic</td><td>$a\ne b\ne c$; all $90^\circ$</td><td>P, C, I, F</td><td>$\alpha$-S (F), cementite Fe$_3$C (P)</td></tr>
+            <tr><td>Hexagonal</td><td>$a=b\ne c$; $\gamma=120^\circ$</td><td>P</td><td>Mg, Zn, Ti ($\alpha$), graphite</td></tr>
+            <tr><td>Trigonal (rhombohedral)</td><td>$a=b=c$; $\alpha=\beta=\gamma\ne90^\circ$</td><td>R (or hexagonal P)</td><td>Bi, $\alpha$-Al$_2$O$_3$, quartz (hex. P)</td></tr>
+            <tr><td>Monoclinic</td><td>$a\ne b\ne c$; $\alpha=\gamma=90^\circ\ne\beta$</td><td>P, C</td><td>$\beta$-S, gypsum</td></tr>
+            <tr><td>Triclinic</td><td>$a\ne b\ne c$; no right angles</td><td>P</td><td>kyanite, K$_2$Cr$_2$O$_7$</td></tr>
+            </tbody></table></div>
+            <p>The volume of a general cell is $$V=abc\sqrt{1-\cos^2\alpha-\cos^2\beta-\cos^2\gamma+2\cos\alpha\cos\beta\cos\gamma},$$ which for a hexagonal cell reduces to $V=\tfrac{\sqrt3}2a^2c$, which gives $46.47$ &Aring;$^3$ for magnesium ($a=3.209$, $c=5.211$ &Aring;; two atoms per cell). Note that the face-centred cubic lattice can also be described as a simple cubic lattice with a four-point basis, and the body-centred one as simple cubic with a two-point basis: the conventional cubic cell is a convenient but redundant description, and the true (smallest) lattice cell is the primitive rhombohedron of the fcc lattice, with angle $60^\circ$ between the vectors, containing one lattice point.</p>
+            <div class="note thm"><strong>Hexagonal close-packed is not a Bravais lattice</strong>
+            <p>The hcp structure has a hexagonal lattice with a <em>two-atom basis</em>, at $(0,0,0)$ and $(\tfrac23,\tfrac13,\tfrac12)$ in fractional coordinates, because the atoms of the second layer are not related to those of the first by a lattice translation (the stacking is $ABAB$). The ideal axial ratio is $c/a=\sqrt{8/3}=1.633$ for touching spheres; real metals deviate: Mg $1.624$, Zn $1.856$, Ti $1.588$, Cd $1.886$. The deviation tells which interatomic forces dominate: when $c/a&lt;1.633$ the atoms in the basal plane are further apart than the out-of-plane neighbours (the twelve neighbours are no longer at the same distance: for Mg, $3.209$ &Aring; in the plane and $3.197$ &Aring; out of the plane, found in <a href="lab-structures-ase.html">LAB 201</a>).</p>
+            </div>
+            <h2 id="symmetry">Lecture 2. Symmetry: point groups and space groups<a class="anchor" href="#symmetry" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>symmetry operation</strong> maps the crystal onto itself. The operations that leave a point fixed are rotations ($n=1, 2, 3, 4, 6$ only: a lattice cannot have a five-fold axis because pentagons do not tile the plane, which is why quasicrystals are not periodic), reflections in mirror planes, inversion through a point, and rotoinversions. The set of them for a crystal is its <strong>point group</strong>; there are $32$ crystallographic point groups. Beyond these, a crystal has operations that include a translation by a fraction of a lattice vector: a <em>screw axis</em> (rotation plus translation along the axis) and a <em>glide plane</em> (reflection plus translation parallel to the plane). The complete set is the <strong>space group</strong>; there are exactly $230$ (Fedorov, Sch&ouml;nflies, Barlow, 1890s). A space group is named by the Hermann&ndash;Mauguin symbol, which gives the lattice type (P, I, F, C, R) and the main symmetry elements along the principal directions: $Fm\bar3m$ (No. 225) is a face-centred cubic lattice with mirror planes ($m$) and a three-fold rotoinversion axis ($\bar3$) along $\langle111\rangle$; $Fd\bar3m$ (227) has a diamond glide ($d$); $P6_3/mmc$ (194) has a $6_3$ screw axis.</p>
+            <p>The atoms of a crystal that are equivalent under the symmetry form an <strong>orbit</strong>, and the position of the orbit is given by its <strong>Wyckoff letter</strong>: the multiplicity (number of equivalent atoms in the cell) and the site symmetry. A structure is specified completely by the space group, the lattice parameters and the coordinates of one atom of each orbit (the <em>asymmetric unit</em>). This is how a CIF file describes a structure: for NaCl, space group $Fm\bar3m$, $a=5.640$ &Aring;, Na at $4a$ $(0,0,0)$ and Cl at $4b$ $(\tfrac12,\tfrac12,\tfrac12)$. spglib returns exactly this information; the table below was computed for ten structures built with ASE:</p>
+            <pre data-file="symmetry_table.py"><code>&quot;&quot;&quot;Space group, Wyckoff positions and number of symmetry operations of common structures, found with spglib.&quot;&quot;&quot;
+            import numpy as np, spglib
+            from ase.build import bulk
+            from ase.spacegroup import crystal
 
-            <h2 id="reciprocal">4. Reciprocal lattice<a class="anchor" href="#reciprocal" aria-label="Link to this section">#</a></h2>
-            <p>Waves in a periodic solid, whether electrons, phonons or X-rays, are best described in <strong>reciprocal space</strong>. The reciprocal lattice vectors satisfy</p>
-            <span class="eq">a<sub>i</sub> &middot; b<sub>j</sub> = 2&pi; &delta;<sub>ij</sub>, &nbsp; i.e. &nbsp; b<sub>1</sub> = 2&pi; (a<sub>2</sub> &times; a<sub>3</sub>) / [a<sub>1</sub> &middot; (a<sub>2</sub> &times; a<sub>3</sub>)] and cyclic permutations</span>
-            <p>The Wigner&ndash;Seitz cell of the reciprocal lattice is the first <strong>Brillouin zone</strong>. A key rule: the larger the real-space cell, the smaller its Brillouin zone, so a supercell needs fewer <em>k</em>-points. The reciprocal lattice vector <strong>G</strong><sub><em>hkl</em></sub> = <em>h</em><strong>b</strong><sub>1</sub> + <em>k</em><strong>b</strong><sub>2</sub> + <em>l</em><strong>b</strong><sub>3</sub> is perpendicular to the (<em>hkl</em>) planes and has length 2&pi;/<em>d</em><sub><em>hkl</em></sub>, which links this section to Section 3.</p>
+            structures = {
+                &quot;Cu (fcc)&quot;:               bulk(&quot;Cu&quot;, &quot;fcc&quot;, a=3.615, cubic=True),
+                &quot;Fe (bcc)&quot;:               bulk(&quot;Fe&quot;, &quot;bcc&quot;, a=2.866, cubic=True),
+                &quot;Mg (hcp)&quot;:               bulk(&quot;Mg&quot;, &quot;hcp&quot;, a=3.209, c=5.211),
+                &quot;Si (diamond)&quot;:           bulk(&quot;Si&quot;, &quot;diamond&quot;, a=5.431, cubic=True),
+                &quot;NaCl (rocksalt)&quot;:        bulk(&quot;NaCl&quot;, &quot;rocksalt&quot;, a=5.640, cubic=True),
+                &quot;CsCl&quot;:                   bulk(&quot;CsCl&quot;, &quot;cesiumchloride&quot;, a=4.123),
+                &quot;ZnS (zincblende)&quot;:       bulk(&quot;ZnS&quot;, &quot;zincblende&quot;, a=5.409, cubic=True),
+                &quot;CaF2 (fluorite)&quot;:        crystal([&quot;Ca&quot;, &quot;F&quot;], basis=[(0, 0, 0), (0.25, 0.25, 0.25)], spacegroup=225, cellpar=[5.463] * 3 + [90] * 3),
+                &quot;SrTiO3 (perovskite)&quot;:    crystal([&quot;Sr&quot;, &quot;Ti&quot;, &quot;O&quot;], basis=[(0, 0, 0), (0.5, 0.5, 0.5), (0.5, 0.5, 0)], spacegroup=221, cellpar=[3.905] * 3 + [90] * 3),
+                &quot;alpha-quartz SiO2&quot;:      crystal([&quot;Si&quot;, &quot;O&quot;], basis=[(0.4697, 0, 0), (0.4135, 0.2669, 0.1191)], spacegroup=152, cellpar=[4.916, 4.916, 5.405, 90, 90, 120]),
+            }
+            print(&quot;%-22s %-12s %4s  %-10s %5s  %5s %s&quot; % (&quot;structure&quot;, &quot;space group&quot;, &quot;no.&quot;, &quot;point grp&quot;, &quot;ops&quot;, &quot;atoms&quot;, &quot;Wyckoff letters (conventional cell)&quot;))
+            for name, a in structures.items():
+                ds = spglib.get_symmetry_dataset((a.cell.array, a.get_scaled_positions(), a.numbers), symprec=1e-3)
+                print(&quot;%-22s %-12s %4d  %-10s %5d  %5d %s&quot; % (name, ds.international, ds.number, ds.pointgroup, len(ds.rotations), len(a), &quot;&quot;.join(ds.wyckoffs)))</code></pre>
+            <pre class="out"><code>structure              space group   no.  point grp    ops  atoms Wyckoff letters (conventional cell)
+            Cu (fcc)               Fm-3m         225  m-3m         192      4 aaaa
+            Fe (bcc)               Im-3m         229  m-3m          96      2 aa
+            Mg (hcp)               P6_3/mmc      194  6/mmm         24      2 dd
+            Si (diamond)           Fd-3m         227  m-3m         192      8 aaaaaaaa
+            NaCl (rocksalt)        Fm-3m         225  m-3m         192      8 abababab
+            CsCl                   Pm-3m         221  m-3m          48      2 ab
+            ZnS (zincblende)       F-43m         216  -43m          96      8 acacacac
+            CaF2 (fluorite)        Fm-3m         225  m-3m         192     12 aaaacccccccc
+            SrTiO3 (perovskite)    Pm-3m         221  m-3m          48      5 abccc
+            alpha-quartz SiO2      P3_121        152  32             6     12 cccccccccccc</code></pre>
+            <p>Read the table. Copper, NaCl and fluorite all have the same space group $Fm\bar3m$ (225) but different atom positions: the number of Wyckoff positions occupied tells the difference (&ldquo;aaaa&rdquo;: one orbit of four atoms in copper; &ldquo;abababab&rdquo;: two orbits in NaCl, $4a$ for Na and $4b$ for Cl; fluorite has Ca on $4a$ and F on $8c$). The number of operations ($192$ for $Fm\bar3m$) is the order of the point group ($48$) times the number of lattice translations in the conventional cell ($4$ for F). The same structure type can occur in different space groups: diamond cubic silicon is $Fd\bar3m$ (227) but the zincblende ZnS, with the same atom arrangement but two kinds of atoms, has lost the inversion centre and is $F\bar43m$ (216): lower symmetry because the two sites are no longer equivalent. Quartz ($P3_121$, No. 152) has only $6$ operations and no centre of symmetry; consequently it is piezoelectric, whereas $Fm\bar3m$ crystals cannot be: <strong>physical properties are constrained by the symmetry</strong> (<a href="tensors-stress-and-strain.html">MATH 302</a>: a crystal with a centre of symmetry has no piezoelectric tensor; cubic crystals have three independent elastic constants).</p>
+            <div class="note thm"><strong>Symmetry in simulations</strong>
+            <p>Electronic-structure codes use the space group to reduce the work: the forces and the electron density have the symmetry of the crystal, so the Brillouin-zone sum can be restricted to its irreducible part (for fcc, $1/48$ of the zone). A structure that is slightly distorted from the ideal one by noise loses the symmetry in the code and costs up to $48$ times more; the tolerance with which symmetry is detected (<code>symprec</code>) therefore matters (LAB 201, Step 4: with $0.0005$ &Aring; of noise, copper is $Fm\bar3m$ at a tolerance of $0.1$ &Aring; but $P1$ at $0.001$ &Aring;). The opposite happens in a study of a phase transition: a symmetry-breaking distortion must be allowed to appear, so the calculation is started from a slightly distorted structure.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: counting atoms from Wyckoff multiplicities</strong>
+                <p class="given">The fluorite structure of CaF$_2$ ($Fm\bar3m$) has Ca at the Wyckoff position $4a$ and F at $8c$. How many atoms are in the conventional cell, what is the formula unit per cell, and what is the density for $a=5.463$ &Aring;? (Atomic masses: Ca $40.078$, F $18.998$.)</p>
+                <p>The multiplicities are $4$ and $8$: $4$ Ca and $8$ F, so $12$ atoms and $4$ formula units of CaF$_2$ per cell, in agreement with the Wyckoff string &ldquo;aaaacccccccc&rdquo; of the table. The mass of the cell is $4(40.078+2\times18.998)=312.3$ u. With $V=(5.463\times10^{-8}\ \mathrm{cm})^3=1.630\times10^{-22}$ cm$^3$: $\rho=312.3/(6.022\times10^{23}\times1.630\times10^{-22})=3.18$ g/cm$^3$, equal to the measured density of fluorite ($3.18$). Each Ca is surrounded by $8$ F (cube) and each F by $4$ Ca (tetrahedron): coordination $8{:}4$.</p>
+            </div>
 
-            <h2 id="defects">5. Defects<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
-            <p>Real materials are defined as much by their defects as by their ideal structure, and most of the interesting simulation questions concern them. Defects are classified by dimension.</p>
-            <div class="table-scroll" role="region" aria-label="5. Defects (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Dimension</th><th>Defect</th><th>Typical simulation question</th></tr></thead>
-                <tbody>
-                    <tr><td>0D (point)</td><td>Vacancy, self-interstitial, substitutional or interstitial solute, antisite</td><td>Formation energy, migration barrier, binding to other defects, concentration at equilibrium</td></tr>
-                    <tr><td>1D (line)</td><td>Edge, screw and mixed dislocations; disclinations</td><td>Core structure, Peierls stress, interaction with solutes and precipitates</td></tr>
-                    <tr><td>2D (planar)</td><td>Grain boundaries, stacking faults, twin boundaries, phase boundaries, free surfaces</td><td>Interface energy, segregation, sliding and migration, fracture energy</td></tr>
-                    <tr><td>3D (volume)</td><td>Voids, precipitates, inclusions</td><td>Nucleation barrier, coherency strain, growth rate</td></tr>
-                </tbody>
-            </table></div>
-            <p>A point defect&rsquo;s equilibrium concentration follows from the competition between the energy it costs and the configurational entropy it gains:</p>
-            <span class="eq">c<sub>v</sub> &asymp; exp( &minus;E<sub>f</sub> / k<sub>B</sub>T ) &nbsp; (times a vibrational-entropy factor)</span>
-            <p>Because the formation energy <em>E</em><sub>f</sub> of a vacancy is of order 1 eV in many metals, equilibrium vacancy fractions near the melting point are about 10<sup>&minus;4</sup> to 10<sup>&minus;3</sup> and fall steeply on cooling. Computing <em>E</em><sub>f</sub> from DFT or an interatomic potential is one of the most common first tasks in atomistic modelling.</p>
+            <h2 id="structures">Lecture 3. Common crystal structures and why atoms choose them<a class="anchor" href="#structures" aria-label="Link to this section">#</a></h2>
+            <p>Why does NaCl have the rocksalt structure and CsCl another one? In <strong>metals</strong> the bonding is non-directional and atoms pack as densely as possible: fcc, hcp ($74\%$) or, with a more open packing but a favourable electronic structure, bcc ($68\%$). In <strong>covalent crystals</strong> the structure follows the number and the geometry of the bonds: four tetrahedral $sp^3$ bonds give the diamond cubic structure (C, Si, Ge: $34\%$ packing), three $sp^2$ bonds give the layers of graphite. In <strong>ionic crystals</strong> the cations and anions arrange to maximise the electrostatic attraction of unlike ions while avoiding contact between like ions, subject to charge neutrality (Pauling&rsquo;s rules). The first rule: each cation is surrounded by anions at the corners of a polyhedron, and the coordination number is fixed by the <strong>radius ratio</strong> $r_c/r_a$: the cation should touch all its anion neighbours, and the neighbours should not touch each other.</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. Common crystal structures and why atoms choose them (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>$r_c/r_a$</th><th>Coordination</th><th>Polyhedron</th><th>Structure type</th></tr></thead>
+            <tbody>
+            <tr><td>$0.155$&ndash;$0.225$</td><td>3</td><td>triangle</td><td>B$_2$O$_3$</td></tr>
+            <tr><td>$0.225$&ndash;$0.414$</td><td>4</td><td>tetrahedron</td><td>zincblende ZnS, SiO$_2$ quartz</td></tr>
+            <tr><td>$0.414$&ndash;$0.732$</td><td>6</td><td>octahedron</td><td>rocksalt NaCl, MgO, rutile TiO$_2$</td></tr>
+            <tr><td>$0.732$&ndash;$1.0$</td><td>8</td><td>cube</td><td>CsCl, fluorite CaF$_2$ (for the cation)</td></tr>
+            </tbody></table></div>
+            <p>The limits follow from geometry: for octahedral coordination the cation touches the six anions, which in the plane form a square of side $2r_a$ with diagonal $2(r_a+r_c)$ along which the anions would just touch, so $(r_a+r_c)=\sqrt2r_a$ and $r_c/r_a=\sqrt2-1=0.414$ (below this, the anions touch each other and the cation rattles: the structure becomes unstable and the coordination drops to four). For the cube, the body diagonal is $2(r_a+r_c)=\sqrt3\cdot2r_a$ and $r_c/r_a=\sqrt3-1=0.732$. The rule is only a first guide (covalent character and polarisation matter): with the Shannon radii, Na$^+$ ($1.02$ &Aring;, six-coordinate) and Cl$^-$ ($1.81$ &Aring;) give $0.564$, octahedral (rocksalt); Cs$^+$ ($1.67$ &Aring;) gives $0.923$, cubic (CsCl); and Zn$^{2+}$ ($0.60$ &Aring;, four-coordinate) and S$^{2-}$ ($1.84$ &Aring;) give $0.326$, tetrahedral (zincblende).</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. Common crystal structures and why atoms choose them (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Structure</th><th>Space group</th><th>Description</th><th>Atoms per cell</th><th>Examples ($a$ in &Aring;)</th></tr></thead>
+            <tbody>
+            <tr><td>Rocksalt</td><td>$Fm\bar3m$</td><td>two interpenetrating fcc lattices displaced by $(\tfrac12,0,0)$; coordination $6{:}6$</td><td>8</td><td>NaCl ($5.640$), MgO ($4.212$), TiN</td></tr>
+            <tr><td>Caesium chloride</td><td>$Pm\bar3m$</td><td>simple cubic with a central atom of the other kind; $8{:}8$</td><td>2</td><td>CsCl ($4.123$), CuZn ($\beta$-brass)</td></tr>
+            <tr><td>Zincblende</td><td>$F\bar43m$</td><td>diamond with two kinds of atoms; $4{:}4$</td><td>8</td><td>ZnS ($5.409$), GaAs, SiC</td></tr>
+            <tr><td>Fluorite</td><td>$Fm\bar3m$</td><td>cations fcc, anions at all eight tetrahedral holes; $8{:}4$</td><td>12</td><td>CaF$_2$ ($5.463$), UO$_2$, CeO$_2$</td></tr>
+            <tr><td>Perovskite</td><td>$Pm\bar3m$ (ideal)</td><td>ABO$_3$: A at the cube corners, B at the centre, O at the face centres</td><td>5</td><td>SrTiO$_3$ ($3.905$), BaTiO$_3$ (distorted)</td></tr>
+            <tr><td>Wurtzite</td><td>$P6_3mc$</td><td>hexagonal analogue of zincblende; $4{:}4$</td><td>4</td><td>ZnO, GaN, AlN</td></tr>
+            <tr><td>Rutile</td><td>$P4_2/mnm$</td><td>Ti in octahedra sharing edges</td><td>6</td><td>TiO$_2$</td></tr>
+            </tbody></table></div>
+            <div class="example">
+                <strong>Worked example 3.1: densities of ionic crystals</strong>
+                <p class="given">Compute the density of (a) rocksalt NaCl ($a=5.640$ &Aring;; $M=58.44$ g/mol per formula unit; $4$ formula units per cell), (b) CsCl ($a=4.123$ &Aring;; $M=168.36$; $1$ per cell), and (c) perovskite SrTiO$_3$ ($a=3.905$ &Aring;; $M=183.49$; $1$ per cell). Compare the volume per formula unit.</p>
+                <p>(a) $V=(5.640\times10^{-8})^3=1.794\times10^{-22}$ cm$^3$; $\rho=4(58.44)/(6.022\times10^{23}\times1.794\times10^{-22})=2.164$ g/cm$^3$ (measured $2.165$). (b) $V=7.009\times10^{-23}$ cm$^3$; $\rho=168.36/(6.022\times10^{23}\times7.009\times10^{-23})=3.989$ g/cm$^3$ (measured $3.99$). (c) $V=5.955\times10^{-23}$ cm$^3$ and $\rho=183.49/(6.022\times10^{23}\times5.955\times10^{-23})=5.117$ g/cm$^3$ (measured $5.12$). The volumes per formula unit are $44.8$, $70.1$ and $59.6$ &Aring;$^3$ for NaCl, CsCl and SrTiO$_3$ (the last one has three ions per formula unit). The densities agree with the values printed by <code>build.py</code> of LAB 201 ($2.164$, $3.989$, $5.117$), a check of structure and lattice constant at once.</p>
+            </div>
 
-            <h2 id="supercell">6. Building supercells<a class="anchor" href="#supercell" aria-label="Link to this section">#</a></h2>
-            <p>A simulation cell cannot be infinite, so a <strong>supercell</strong> is built by repeating the unit cell <em>n</em><sub>1</sub>&times;<em>n</em><sub>2</sub>&times;<em>n</em><sub>3</sub> times and then modifying it, for example by removing one atom to create a vacancy. Because the supercell is itself periodically repeated, the defect interacts with its own periodic images. The artefact shrinks as the cell grows, and the cost grows too, so supercell size is a convergence parameter (see the convergence section of the <a href="density-functional-theory.html">density functional theory</a> page).</p>
-            <p>The defect concentration implied by a single vacancy in a <em>n</em>&times;<em>n</em>&times;<em>n</em> fcc supercell is 1/(4<em>n</em>&sup3;):</p>
-            <div class="table-scroll" role="region" aria-label="6. Building supercells (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>fcc supercell</th><th>Atoms (before removing one)</th><th>Vacancy concentration</th></tr></thead>
-                <tbody>
-                    <tr><td>2&times;2&times;2</td><td>32</td><td>3.1%</td></tr>
-                    <tr><td>3&times;3&times;3</td><td>108</td><td>0.93%</td></tr>
-                    <tr><td>4&times;4&times;4</td><td>256</td><td>0.39%</td></tr>
-                    <tr><td>6&times;6&times;6</td><td>864</td><td>0.12%</td></tr>
-                </tbody>
-            </table></div>
-            <p>These are far above the equilibrium concentration, so the vacancies are strongly interacting in small cells: elastic strain fields overlap and the computed formation energy drifts with size. The standard remedy is to repeat the calculation in several sizes and extrapolate, or to use a cell large enough that the result changes by less than the accuracy required. For charged defects in insulators, long-range Coulomb interactions converge very slowly and need explicit correction schemes.</p>
-            <p>A supercell does not have to be a simple multiple. A general transformation matrix <strong>M</strong> (integer entries) gives new lattice vectors <strong>a</strong>&prime; = <strong>M</strong><strong>a</strong>, which allows a nearly cubic cell to be built from a hexagonal or primitive fcc cell, or a cell oriented along a chosen crystallographic direction. For dislocations and grain boundaries, the cell axes are chosen along specific directions so that the periodic boundary can accommodate the defect geometry.</p>
-            <p>Here is how a 4&times;4&times;4 copper cell with one vacancy looks in the Atomic Simulation Environment (ASE), a Python library:</p>
-<pre><code>from ase.build import bulk
+            <h2 id="planes">Lecture 4. Planes, directions and the reciprocal lattice<a class="anchor" href="#planes" aria-label="Link to this section">#</a></h2>
+            <p>A family of parallel lattice planes with Miller indices $(hkl)$ is described by its normal. The <strong>reciprocal lattice</strong> encodes all such families at once. Given the primitive vectors $\mathbf a_i$ define $\mathbf b_i$ by
+            $$\mathbf a_i\cdot\mathbf b_j=2\pi\delta_{ij},\qquad\mathbf b_1=2\pi\frac{\mathbf a_2\times\mathbf a_3}{\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)}\ (\text{and cyclic}).$$
+            In matrix form, with the $\mathbf a_i$ as the rows of $\mathbf A$, the $\mathbf b_i$ are the rows of $2\pi(\mathbf A^{-1})^\mathrm T$. A vector of the reciprocal lattice is $\mathbf G_{hkl}=h\mathbf b_1+k\mathbf b_2+l\mathbf b_3$. Three facts connect it to the planes of Lecture 2 of MSE 101:</p>
+            <ol>
+            <li>$\mathbf G_{hkl}$ is <em>perpendicular</em> to the planes $(hkl)$;</li>
+            <li>the interplanar spacing is $d_{hkl}=2\pi/|\mathbf G_{hkl}|$ (for cubic lattices $d=a/\sqrt{h^2+k^2+l^2}$);</li>
+            <li>the plane wave $e^{i\mathbf G\cdot\mathbf r}$ has the periodicity of the lattice: every periodic function (the electron density, the potential) is a Fourier series in the $\mathbf G$ (<a href="fourier-analysis.html">MATH 205</a>), which is the reason why the reciprocal lattice is the natural language of diffraction and of band theory (<a href="solid-state-physics.html">PHYS 302</a>).</li>
+            </ol>
+            <p><em>Proof of (2).</em> The plane $(hkl)$ intercepts the axes at $\mathbf a_1/h$, $\mathbf a_2/k$, $\mathbf a_3/l$; the distance from the origin to the plane is the projection of $\mathbf a_1/h$ on the unit normal $\hat{\mathbf n}=\mathbf G/|\mathbf G|$: $d=\dfrac{\mathbf a_1\cdot\mathbf G}{h|\mathbf G|}=\dfrac{2\pi}{|\mathbf G|}$, since $\mathbf a_1\cdot\mathbf G=2\pi h$. $\square$</p>
+            <p>The reciprocal lattice of fcc (cube of side $a$) is a <strong>bcc</strong> lattice (with cube side $4\pi/a$) and that of bcc is fcc: with $\mathbf a_1=\tfrac a2(0,1,1)$ etc., the reciprocal vectors are $\mathbf b_1=\tfrac{2\pi}a(-1,1,1)$, $\mathbf b_2=\tfrac{2\pi}a(1,-1,1)$ and $\mathbf b_3=\tfrac{2\pi}a(1,1,-1)$ (checked numerically for $a=4.05$ &Aring;). The volume of the reciprocal primitive cell is $(2\pi)^3/V$; for the fcc primitive cell with $V=a^3/4$ it is $4(2\pi/a)^3$.</p>
+            <h3>Diffraction</h3>
+            <p>X-rays, electrons and neutrons are scattered by a crystal; the wavelets from the planes interfere constructively when the path difference between neighbouring planes is a whole number of wavelengths. <strong>Bragg&rsquo;s law</strong> is $n\lambda=2d\sin\theta$ ($\theta$ the angle between the beam and the planes, so the scattering angle is $2\theta$); equivalently, the von Laue condition says that the change of wave vector on scattering equals a reciprocal-lattice vector, $\mathbf k'-\mathbf k=\mathbf G$ (elastic: $|\mathbf k'|=|\mathbf k|=2\pi/\lambda$; with $|\mathbf G|=2\pi n/d$ this is Bragg&rsquo;s law). In a powder pattern the crystallites have all orientations and each family $(hkl)$ gives one ring at the angle $2\theta_{hkl}$, with intensity proportional to $|F_{hkl}|^2$, where the <strong>structure factor</strong> sums the scattering of the atoms in the cell,
+            $$F_{hkl}=\sum_jf_j\,e^{2\pi i(hx_j+ky_j+lz_j)}$$
+            ($f_j$ the atomic scattering factor, roughly proportional to the atomic number for X-rays; $(x_j,y_j,z_j)$ the fractional coordinates). The lattice type alone gives <strong>systematic absences</strong>: for a body-centred lattice, $F=0$ unless $h+k+l$ is even; for a face-centred lattice, $F=0$ unless $h,k,l$ are all odd or all even; for the diamond structure the all-even reflections also vanish unless $h+k+l=4n$. The positions of the peaks give the lattice, the intensities the atomic positions.</p>
+            <div class="example">
+                <strong>Worked example 4.1: the X-ray pattern of NaCl</strong>
+                <p class="given">Compute the positions (Cu K$\alpha_1$, $\lambda=1.5406$ &Aring;) and the relative structure factors of the first reflections of NaCl ($a=5.640$ &Aring;). Use $f_\mathrm{Na}=11$ and $f_\mathrm{Cl}=17$ (the atomic numbers, as a crude estimate of the scattering factor).</p>
+                <p>$d_{hkl}=a/\sqrt{h^2+k^2+l^2}$ and $2\theta=2\arcsin(\lambda/2d)$: $(111)$: $d=3.256$ &Aring;, $2\theta=27.37^\circ$; $(200)$: $2.820$ &Aring;, $31.70^\circ$; $(220)$: $1.994$ &Aring;, $45.45^\circ$; $(311)$: $1.700$ &Aring;, $53.87^\circ$; $(222)$: $1.628$ &Aring;, $56.47^\circ$; $(400)$: $1.410$ &Aring;, $66.23^\circ$. The mixed reflections $(100)$ and $(110)$ are absent (fcc rule). The structure factor: Na at $(0,0,0)$ and the three face-centring translations, Cl at $(\tfrac12,0,0)$ plus the same translations. For all-even $hkl$ all the Na and the Cl contributions are in phase: $F=4(f_\mathrm{Na}+f_\mathrm{Cl})=112$; for all-odd, the Cl contributions change sign: $F=4(f_\mathrm{Na}-f_\mathrm{Cl})=-24$. The intensity ratio of the all-odd to the all-even reflections is therefore $|F|^2=576$ against $12\,544$, a factor of $22$: the $(111)$ and $(311)$ peaks of NaCl are weak because Na$^+$ and Cl$^-$ scatter almost equally (for KCl, where K$^+$ and Cl$^-$ have the same number of electrons, they vanish altogether and KCl looks simple cubic with $a/2$). This is the kind of information used to locate atoms in an unknown structure.</p>
+            </div>
 
-cell = bulk("Cu", "fcc", a=3.61, cubic=True).repeat((4, 4, 4))   # 256 atoms
-del cell[0]                                                      # one vacancy: 255 atoms
-print(len(cell), cell.get_volume())</code></pre>
+            <h3>The Brillouin zone</h3>
+            <p>The Wigner&ndash;Seitz cell of the reciprocal lattice is the <strong>first Brillouin zone</strong> (BZ): the set of wave vectors closer to the origin $\Gamma$ than to any other reciprocal lattice point. A wave of wave vector $\mathbf k$ and one with $\mathbf k+\mathbf G$ are indistinguishable in a crystal (<a href="solid-state-physics.html">PHYS 302</a>), so all the physics of electrons and phonons can be described by $\mathbf k$ in the first BZ. Its volume is $(2\pi)^3/V$ and the number of allowed $\mathbf k$ points in it equals the number of unit cells $N$ of the crystal. For fcc the BZ is a truncated octahedron; the standard high-symmetry points, in units of $2\pi/a$ (cubic $a$), are:</p>
+            <div class="table-scroll" role="region" aria-label="The Brillouin zone (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Point</th><th>Position ($2\pi/a$)</th><th>Distance from $\Gamma$</th><th>Location</th></tr></thead>
+            <tbody>
+            <tr><td>$\Gamma$</td><td>$(0,0,0)$</td><td>$0$</td><td>zone centre</td></tr>
+            <tr><td>X</td><td>$(1,0,0)$</td><td>$1$</td><td>centre of a square face</td></tr>
+            <tr><td>L</td><td>$(\tfrac12,\tfrac12,\tfrac12)$</td><td>$0.866$</td><td>centre of a hexagonal face</td></tr>
+            <tr><td>K</td><td>$(\tfrac34,\tfrac34,0)$</td><td>$1.061$</td><td>middle of an edge between two hexagons</td></tr>
+            <tr><td>W</td><td>$(1,\tfrac12,0)$</td><td>$1.118$</td><td>corner</td></tr>
+            </tbody></table></div>
+            <p>The band structure and the phonon dispersion of copper in <a href="lab-phonons-phonopy.html">LAB 301</a> are plotted along $\Gamma$&ndash;X&ndash;W&ndash;K&ndash;$\Gamma$&ndash;L, a path that visits these points. The bcc BZ is a rhombic dodecahedron (points $\Gamma$, H, N, P) and the hexagonal one a hexagonal prism ($\Gamma$, M, K, A, L, H).</p>
+            <h2 id="hex">Lecture 5. Non-cubic lattices and interplanar spacings<a class="anchor" href="#hex" aria-label="Link to this section">#</a></h2>
+            <p>The spacing formulae of the cubic lattice generalise through the reciprocal lattice: for a hexagonal lattice (Miller indices $(hkl)$ with the three-index convention),
+            $$\frac1{d_{hkl}^2}=\frac43\,\frac{h^2+hk+k^2}{a^2}+\frac{l^2}{c^2},$$
+            for a tetragonal lattice $\dfrac1{d^2}=\dfrac{h^2+k^2}{a^2}+\dfrac{l^2}{c^2}$, and for an orthorhombic one $\dfrac1{d^2}=\dfrac{h^2}{a^2}+\dfrac{k^2}{b^2}+\dfrac{l^2}{c^2}$. In the hexagonal system a four-index notation $(hkil)$ with $i=-(h+k)$ is also used to make the symmetry visible: the three equivalent directions in the basal plane are $[2\bar1\bar10]$, $[\bar12\bar10]$ and $[\bar1\bar120]$, which have the same indices after permutation of the first three entries.</p>
+            <div class="example">
+                <strong>Worked example 5.1: the X-ray pattern of magnesium</strong>
+                <p class="given">Magnesium is hcp with $a=3.209$ &Aring; and $c=5.211$ &Aring;. Compute the spacings and the diffraction angles ($\lambda=1.5406$ &Aring;) of the reflections $(100)$, $(002)$, $(101)$, $(102)$ and $(110)$.</p>
+                <p>Using the hexagonal formula: $(100)$: $1/d^2=\tfrac43/a^2=0.12948$, $d=2.779$ &Aring;, $2\theta=32.18^\circ$. $(002)$: $d=c/2=2.606$ &Aring;, $2\theta=34.39^\circ$. $(101)$: $1/d^2=0.12948+1/c^2=0.16631$, $d=2.452$ &Aring;, $2\theta=36.62^\circ$. $(102)$: $1/d^2=0.12948+4/c^2=0.27680$, $d=1.901$ &Aring;, $2\theta=47.81^\circ$. $(110)$: $1/d^2=\tfrac43\cdot3/a^2=0.38845$, $d=1.605$ &Aring;, $2\theta=57.38^\circ$. These are the five strongest lines of Mg ($32.2^\circ$, $34.4^\circ$, $36.6^\circ$, $47.8^\circ$, $57.4^\circ$): the triplet $(100)$, $(002)$, $(101)$ at $32$&ndash;$37^\circ$ is the fingerprint of an hcp metal. The axial ratio follows from the first two spacings alone: $d_{100}=\tfrac{\sqrt3}2a$ and $d_{002}=c/2$ give $c/a=\sqrt3\,d_{002}/d_{100}=1.732\times2.606/2.779=1.624$, a way of measuring $c/a$ from the positions of two peaks.</p>
+            </div>
 
-            <h2 id="pbc">7. Periodic boundary conditions<a class="anchor" href="#pbc" aria-label="Link to this section">#</a></h2>
-            <p>With <strong>periodic boundary conditions</strong> (PBC) the cell is surrounded by an infinite array of copies of itself. An atom that leaves through one face re-enters through the opposite face, so the simulation has no surfaces and a small number of atoms mimics bulk. Follow the highlighted atom in the figure: it leaves on the right and reappears on the left.</p>
-            <figure>
-                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/periodic-boundary.poster.png"><img src="../assets/animations/periodic-boundary.svg" alt="Animation showing atoms leaving a simulation cell on one side and re-entering on the opposite side" width="720" height="270" loading="lazy" decoding="async"></picture>
-                <figcaption>The simulation cell (solid outline) and two of its periodic images (dashed). The same atoms appear in every image.</figcaption>
-            </figure>
-            <h3>Minimum image convention</h3>
-            <p>Each atom should interact with the nearest <em>image</em> of every other atom, not with a distant one. For an orthogonal box of side <em>L</em>, the separation component is wrapped back into the interval [&minus;<em>L</em>/2, <em>L</em>/2]:</p>
-            <span class="eq">&Delta;x &larr; &Delta;x &minus; L &middot; round(&Delta;x / L)</span>
-            <p>This is only correct if every interaction cutoff <em>r</em><sub>c</sub> satisfies <em>r</em><sub>c</sub> &lt; <em>L</em>/2 (more generally, less than half the smallest perpendicular width of a triclinic cell). Otherwise an atom could interact with two images of the same neighbour. A typical metallic potential has a cutoff of 5 to 6 &Aring;, so each box edge must exceed about 10 to 12 &Aring;.</p>
-            <h3>What periodicity imposes</h3>
+            <h2 id="periodic">Lecture 6. Periodic cells, supercells and k-point sampling in simulations<a class="anchor" href="#periodic" aria-label="Link to this section">#</a></h2>
+            <p>A real crystal has $10^{23}$ atoms; a simulation can handle $10^2$&ndash;$10^6$. <strong>Periodic boundary conditions</strong> solve this: the simulation cell is repeated infinitely in all directions, so that an atom leaving the cell on one side re-enters on the opposite side, and the cell represents a bulk crystal (and a bulk liquid: the box of <a href="your-first-simulation.html">COMP 102</a>). The properties of the infinite periodic system follow from the cell, but not all of the properties of the real crystal, in three ways.</p>
             <ul>
-                <li><strong>Size limit on correlations.</strong> No fluctuation or structure can have a wavelength longer than the box. Near phase transitions, where correlation lengths diverge, results depend strongly on box size.</li>
-                <li><strong>Image interactions.</strong> Defects, charges and strain fields interact with their images, as in Section 6.</li>
-                <li><strong>Net momentum and drift.</strong> Total momentum is conserved in MD with PBC and should be set to zero; the centre of mass otherwise drifts.</li>
-                <li><strong>Diffusion bookkeeping.</strong> To compute diffusion from displacements, positions must be <em>unwrapped</em> (a running count of boundary crossings is kept), otherwise atoms appear to jump across the box.</li>
-                <li><strong>Compatibility of the defect with the box.</strong> A grain boundary must be compatible with the periodicity in the plane, and a single dislocation cannot be placed in a fully periodic cell because it would leave a net Burgers vector; dislocation dipoles or quadrupoles are used instead, so that opposite dislocations cancel.</li>
+            <li><strong>Supercells for defects.</strong> A single vacancy, an impurity or a dislocation breaks the periodicity. It is modelled in a <em>supercell</em>, an $n_1\times n_2\times n_3$ repetition of the primitive or conventional cell with one defect, which is then repeated periodically: the defect interacts with its own images. The fraction of vacancies is $1/N$, with $N=4n^3$ sites for a cubic fcc supercell: $32$ sites ($3.1\%$) for $n=2$, $108$ ($0.93\%$), $256$ ($0.39\%$), $500$ ($0.2\%$), $864$ ($0.12\%$). The vacancy formation energy of copper converged at $108$ atoms with a short-range potential in <a href="lab-structures-ase.html">LAB 201</a> but would need several hundred atoms with the long-range elastic interaction of a DFT calculation: the supercell size is a convergence parameter, tested as in COMP 102 for the time step.</li>
+            <li><strong>Commensurability.</strong> A periodic cell can only contain periodic structures whose period fits in the cell: a $2\times2\times2$ supercell of fcc describes phonons with $\mathbf q$ at X and $\Gamma$ but not at a general point (LAB 301), and a cell for an antiferromagnetic order or a charge-density wave must contain at least one period of the ordering.</li>
+            <li><strong>Shape and boundary.</strong> Surfaces are modelled with a <em>slab</em> (periodic in $x$ and $y$, with vacuum in $z$; LAB 201, Step 7). Periodic cells cannot represent a long-range-ordered stress field or an electric field without special treatment; and a cell that is too small (a few atoms across) constrains correlations to the box size: finite-size effects (the diffusion coefficient $9\%$ lower for $108$ atoms in COMP 102).</li>
             </ul>
+            <h3>k-point sampling</h3>
+            <p>For a periodic cell, band theory expresses quantities (the total energy, the electron density) as integrals over the Brillouin zone of the cell, approximated by a sum over a finite <strong>k-point mesh</strong>, usually a regular $m_1\times m_2\times m_3$ grid (Monkhorst&ndash;Pack). Two relations are essential: <strong>(1)</strong> the larger the real-space cell, the smaller its Brillouin zone and the fewer k points are needed: a supercell with $8$ primitive cells ($2\times2\times2$) has a BZ $8$ times smaller, and a $4\times4\times4$ mesh on the primitive cell corresponds to a $2\times2\times2$ mesh on that supercell (the same sampling). <strong>(2)</strong> A $m\times m\times m$ mesh on the primitive cell is equivalent to a $\Gamma$-point-only calculation in an $m\times m\times m$ supercell: the $\Gamma$-point calculation of a $432$-atom supercell of silicon ($6\times6\times6$ cells of $2$ atoms) has the same sampling as a $6\times6\times6$ k mesh on the two-atom primitive cell, at a cost that is much higher (the cost of DFT grows as $N^3$ with the number of atoms). Insulators and semiconductors converge quickly with the mesh, because the occupied bands are smooth and filled, while metals need many more k points because the Fermi surface cuts through the zone and needs smearing. In <a href="lab-dft-pyscf.html">LAB 501</a> the total energy of silicon changed by $1274$, $284$, $64$ and $0$ meV/atom (relative to the $5\times5\times5$ mesh) for meshes $2^3$, $3^3$, $4^3$ and $5^3$, showing the exponential convergence that is typical of insulators; always test the convergence of the quantity you care about, which for a difference of energies (a lattice constant, a defect energy) converges faster than the absolute energy.</p>
+            <div class="example">
+                <strong>Worked example 6.1: the size of a supercell for a vacancy</strong>
+                <p class="given">You want to compute the vacancy formation energy in fcc copper with periodic supercells made of $n\times n\times n$ conventional cells. How many atoms are in each, what vacancy concentration does the periodic arrangement correspond to, and how far apart are the nearest vacancy images ($a=3.615$ &Aring;)?</p>
+                <p>$N=4n^3$: $32$, $108$, $256$, $500$, $864$ atoms for $n=2$ to $6$, so the concentration $1/N$ is $3.1\%$, $0.93\%$, $0.39\%$, $0.20\%$ and $0.12\%$ (equilibrium vacancy fractions are $\sim10^{-5}$, so every supercell is much more concentrated than reality). The nearest images are one supercell edge apart, $na=7.2$, $10.8$, $14.5$, $18.1$ and $21.7$ &Aring;. The vacancy energy in EMT (LAB 201) is $1.2369$, $1.2339$, $1.2339$ and $1.2339$ eV for $n=2$ to $5$ (the unrelaxed values do not depend on the size because EMT has a short range): convergence at $108$ atoms; for a DFT calculation of the same defect the elastic interaction between images is long-ranged and $n=3$ or $4$ would be a minimum to test.</p>
+            </div>
 
-            <h2 id="surfaces">8. Surfaces and interfaces<a class="anchor" href="#surfaces" aria-label="Link to this section">#</a></h2>
-            <p>To model a surface, periodicity is kept in two directions and broken in the third by adding a <strong>vacuum layer</strong>. This is called a <em>slab</em> model. The slab must be thick enough that the two surfaces do not interact (the middle layers should look like bulk), and the vacuum must be wide enough, often 10 &Aring; or more, that neighbouring slabs do not interact through the vacuum. Surface energy follows from</p>
-            <span class="eq">&gamma; = ( E<sub>slab</sub> &minus; N E<sub>bulk</sub> ) / (2A)</span>
-            <p>where <em>E</em><sub>bulk</sub> is the energy per atom of the bulk crystal, <em>N</em> the number of atoms in the slab, <em>A</em> the surface area and the factor 2 counts both faces. Using the same computational settings for the slab and the bulk reference is essential, otherwise numerical differences swamp the small difference being measured.</p>
-            <p>For <strong>grain boundaries</strong>, two crystals with relative misorientation are joined. Geometric descriptions such as the <em>coincidence site lattice</em> (&Sigma;) count how many lattice points of the two grains coincide: low-&Sigma; boundaries (for example the &Sigma;3 coherent twin) have high symmetry and low energy. A fully periodic cell contains <em>two</em> boundaries (the second appears where the two grains meet across the periodic boundary), so the excess energy is divided by twice the area. Many initial atomic arrangements (rigid-body translations, atom deletion) should be relaxed and the lowest-energy result kept, because boundary structure is a global-optimisation problem.</p>
-
-            <h2 id="tools">9. Tools and file formats<a class="anchor" href="#tools" aria-label="Link to this section">#</a></h2>
+            <h2 id="real">Lecture 7. Real crystals: structure files, databases and disorder<a class="anchor" href="#real" aria-label="Link to this section">#</a></h2>
+            <p>A simulation starts from a structure that someone measured and wrote down in a file. The standard exchange format is the <strong>Crystallographic Information File (CIF)</strong>, a text file with the cell parameters, the space group, and the atoms of the asymmetric unit in fractional coordinates, with an occupancy and thermal parameters. The programs that read it generate all the symmetry-equivalent atoms. A complete CIF for NaCl needs only one atom of each kind:</p>
+            <pre data-file="nacl.cif"><code>data_NaCl
+            _chemical_formula_sum &#x27;Na Cl&#x27;
+            _cell_length_a 5.640
+            _cell_length_b 5.640
+            _cell_length_c 5.640
+            _cell_angle_alpha 90
+            _cell_angle_beta 90
+            _cell_angle_gamma 90
+            _symmetry_space_group_name_H-M &#x27;F m -3 m&#x27;
+            _symmetry_Int_Tables_number 225
+            loop_
+              _atom_site_label
+              _atom_site_type_symbol
+              _atom_site_fract_x
+              _atom_site_fract_y
+              _atom_site_fract_z
+              _atom_site_occupancy
+              Na1 Na 0.0 0.0 0.0 1.0
+              Cl1 Cl 0.5 0.5 0.5 1.0</code></pre>
+            <pre data-file="read_cif.py"><code>&quot;&quot;&quot;Read a CIF with only the asymmetric unit and the space group: ASE expands it to the full cell; then check density and symmetry.&quot;&quot;&quot;
+            import spglib
+            from ase.io import read
+            a = read(&quot;nacl.cif&quot;)
+            print(a)
+            print(&quot;atoms in the conventional cell:&quot;, len(a), &quot;  formula:&quot;, a.get_chemical_formula())
+            print(&quot;scaled positions of Na:&quot;, a[[s == &quot;Na&quot; for s in a.get_chemical_symbols()]].get_scaled_positions().round(3).tolist())
+            mass = a.get_masses().sum(); V = a.get_volume()
+            print(&quot;volume %.2f A^3, density %.3f g/cm3 (measured 2.165)&quot; % (V, mass / V * 1.66054))
+            ds = spglib.get_symmetry_dataset((a.cell.array, a.get_scaled_positions(), a.numbers))
+            print(&quot;spglib:&quot;, ds.international, ds.number, &quot;Wyckoff&quot;, &quot;&quot;.join(ds.wyckoffs))
+            d = a.get_all_distances(mic=True); import numpy as np
+            print(&quot;shortest interatomic distance %.3f A (Na-Cl; sum of ionic radii 1.02 + 1.81 = 2.83 A)&quot; % d[d &gt; 0].min())</code></pre>
+            <pre class="out"><code>Atoms(symbols=&#x27;Na4Cl4&#x27;, pbc=True, cell=[5.64, 5.64, 5.64], spacegroup_kinds=...)
+            atoms in the conventional cell: 8   formula: Cl4Na4
+            scaled positions of Na: [[0.0, 0.0, 0.0], [0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]
+            volume 179.41 A^3, density 2.164 g/cm3 (measured 2.165)
+            spglib: Fm-3m 225 Wyckoff aaaabbbb
+            shortest interatomic distance 2.820 A (Na-Cl; sum of ionic radii 1.02 + 1.81 = 2.83 A)</code></pre>
+            <p>Two atoms in the file became eight in the cell: ASE applied the $192$ operations of $Fm\bar3m$ to the asymmetric unit and kept the distinct positions (the four Na at the face-centred positions, the four Cl at their $(\tfrac12,\tfrac12,\tfrac12)$ translations). The checks the lecture advocates are all in the output: the number of atoms and formula; the density ($2.164$ against the measured $2.165$); the space group recovered by spglib ($Fm\bar3m$, Wyckoff positions $4a$ and $4b$); and the shortest interatomic distance ($2.820$ &Aring; $=a/2$), consistent with the sum of the ionic radii ($1.02+1.81=2.83$ &Aring;). <strong>Always make these checks on a structure that you did not build yourself.</strong> Free databases of experimental structures are the <em>Crystallography Open Database</em> (COD, <code>crystallography.net</code>), the American Mineralogist Crystal Structure Database for minerals; the <em>ICSD</em> (commercial) is the reference for inorganic structures, and <em>Materials Project</em>, <em>OQMD</em>, <em>AFLOW</em> and <em>NOMAD</em> provide computed structures with energies.</p>
+            <h3>What a CIF does not give you</h3>
             <ul>
-                <li><strong>Building and manipulating:</strong> ASE and pymatgen (Python), Atomsk (command line, good for dislocations and polycrystals), VESTA (visual).</li>
-                <li><strong>Visualisation and analysis:</strong> OVITO (defect and structure identification such as common neighbour analysis and dislocation extraction), VESTA, VMD.</li>
-                <li><strong>Common file formats:</strong> CIF (crystallographic information file, from experiment databases), POSCAR (VASP), LAMMPS data files, XYZ (plain coordinates), and the formats of Quantum ESPRESSO inputs. ASE reads and converts between most of them.</li>
-                <li><strong>Symmetry analysis:</strong> spglib (used inside ASE and pymatgen) identifies space groups and primitive cells from coordinates.</li>
+            <li><strong>Partial occupancy and disorder.</strong> In a solid solution such as Fe$_{0.5}$Ni$_{0.5}$ the CIF lists one site with an occupancy of $0.5$ for each element: the average structure. A simulation needs actual atoms, so an ordered configuration must be chosen. For a $2\times2\times2$ fcc supercell ($32$ sites) with $16$ Ni atoms there are $\binom{32}{16}=6.0\times10^8$ arrangements; a <em>special quasirandom structure</em> (SQS) is one arrangement chosen so that its short-range correlation functions match those of a truly random alloy, giving an accurate energy with a small cell. A <em>virtual-crystal approximation</em> (averaged pseudopotentials) is another route for weakly different atoms.</li>
+            <li><strong>Missing light atoms.</strong> Hydrogen atoms are almost invisible to X-rays and are often absent from CIFs of hydrates, organic and hydride structures; a calculation on such a structure is of a different compound. Check the stoichiometry against the formula.</li>
+            <li><strong>Temperature and thermal parameters.</strong> The CIF structure is measured at a given temperature (often $300$ K); a DFT calculation relaxes the structure at $0$ K, so the lattice constants differ by $0.1$&ndash;$1\%$ for the thermal expansion and by up to $2\%$ for the functional (<a href="density-functional-theory.html">CMS 501</a>).</li>
+            <li><strong>Errors.</strong> CIFs from the literature contain errors in space-group settings, unit-cell parameters and symmetry-equivalent atoms that coincide ($0$ distance) or overlap: a check of the shortest distance catches many.</li>
             </ul>
-
+            <h3>Polymorphism, disorder and amorphous solids</h3>
+            <p>The same composition can crystallise in different structures (<strong>polymorphs</strong>) that differ in energy by only a few meV per atom or by tenths of an eV: carbon as diamond ($Fd\bar3m$) or graphite ($P6_3/mmc$); SiO$_2$ as $\alpha$-quartz ($P3_121$, below $573{}^\circ$C), $\beta$-quartz, cristobalite, and glass; TiO$_2$ as rutile, anatase and brookite; iron as bcc ($\alpha$), fcc ($\gamma$) and hcp ($\varepsilon$, at high pressure). A <strong>phase transition</strong> is often a loss of symmetry: BaTiO$_3$ is cubic perovskite ($Pm\bar3m$) above $393$ K and distorts to tetragonal ($P4mm$), orthorhombic and rhombohedral structures on cooling, each with a lower symmetry and a spontaneous polarisation (ferroelectricity, allowed only in structures without a centre of symmetry). In an <strong>amorphous solid</strong> (a glass) the long-range order is absent: the diffraction pattern has no sharp peaks, only broad humps, and the structure is described statistically by the radial distribution function $g(r)$ (<a href="your-first-simulation.html">COMP 102</a>), which shows well-defined first neighbours (a rigid tetrahedron in SiO$_2$) and a decaying oscillation instead of the sharp lines of a crystal. The first peaks of $g(r)$ of a dense liquid and a glass are similar; the difference is the absence of flow.</p>
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>A crystal is a lattice plus a basis. Count atoms and neighbours to sanity-check a structure: fcc has 4 atoms per cubic cell and 12 neighbours, bcc has 2 and 8.</li>
-<li>Miller indices label planes and directions; the reciprocal lattice links real-space cells to diffraction and to k-point sampling.</li>
-<li>Defects are the subject of most simulations. Supercell size is a convergence parameter, and one vacancy in an N-atom cell is a concentration of 1/N.</li>
-<li>Periodic boundaries remove walls but make a defect interact with its own images; every cutoff must be smaller than half the box.</li>
-<li>Surfaces use slabs with vacuum; a grain boundary in a fully periodic cell always comes as a pair.</li>
+<li>A crystal is a lattice (three translation vectors a1, a2, a3, with cell volume V = |a1 . (a2 x a3)|) plus a basis of atoms; 14 Bravais lattices in 7 crystal systems, 32 point groups and 230 space groups classify all crystals, and spglib finds the space group of a structure (Fm-3m 225 for fcc copper and rocksalt, Fd-3m 227 for diamond, P6_3/mmc 194 for hcp, Pm-3m 221 for CsCl and perovskite).</li>
+<li>Common ionic structures follow from the radius ratio r(cation)/r(anion): NaCl (0.56, coordination 6), CsCl (0.92, coordination 8), zincblende (about 0.33, coordination 4); density follows from the cell, for example NaCl 2.164 g/cm3 (a = 5.640 angstrom, 4 formula units), CsCl 3.989, SrTiO3 5.117.</li>
+<li>Diffraction measures the reciprocal lattice: Bragg&#x27;s law lambda = 2 d sin(theta) gives for NaCl with Cu K-alpha peaks at 27.4, 31.7, 45.5 and 53.9 degrees for (111), (200), (220) and (311); the structure factor removes the mixed-parity reflections of the fcc lattice and makes the all-odd ones weak (|F|^2 = 576 against 12 544 for all-even, since f(Cl) - f(Na) is small compared with the sum).</li>
+<li>The first Brillouin zone is the Wigner-Seitz cell of the reciprocal lattice, with volume (2 pi)^3/V; for fcc it is a truncated octahedron with the high-symmetry points Gamma, X (1,0,0), L (1/2,1/2,1/2), K and W in units of 2 pi/a, the points along which band structures and phonons are plotted.</li>
+<li>Simulations use periodic cells: a supercell of n x n x n conventional fcc cells has 4 n^3 atoms (32, 108, 256 and 500 for n = 2 to 5), so one vacancy is 3.1 per cent to 0.2 per cent of the sites; and a k-point mesh of m x m x m for the primitive cell is equivalent to a Gamma-point calculation in an m x m x m supercell.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>How many atoms are in a 5&times;5&times;5 bcc supercell, and what is the concentration from one vacancy?</summary>
-                <p>The conventional bcc cell holds 2 atoms, so the supercell has 2 &times; 125 = 250 atoms. One vacancy gives 1/250 = 0.4%.</p>
-            </details>
-            <details>
-                <summary>Why must a box edge be larger than twice the cutoff radius?</summary>
-                <p>The minimum image convention picks only the nearest copy of each neighbour. If the cutoff exceeded half the box edge, an atom could be within range of two images of the same neighbour, and the force would be counted wrongly or only once.</p>
-            </details>
-            <details>
-                <summary>A surface-energy calculation gives a negative value. What should you check first?</summary>
-                <p>Whether the slab and the bulk reference were computed with identical settings (cutoff, <em>k</em>-point density, number of layers, smearing). Inconsistent settings are the usual cause, because the quantity being computed is a small difference of two large energies.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pms201-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Iron is bcc with $a=2.866$ &Aring;. The primitive vectors are $\mathbf a_1=\tfrac a2(-1,1,1)$, $\mathbf a_2=\tfrac a2(1,-1,1)$, $\mathbf a_3=\tfrac a2(1,1,-1)$. (a) Compute the primitive cell volume. (b) How many atoms are in the primitive and in the conventional cell? (c) What is the volume per atom and the nearest-neighbour distance?</p>
+            <details class="hint"><summary>Hint</summary><p>$\det\begin{pmatrix}-1&amp;1&amp;1\\1&amp;-1&amp;1\\1&amp;1&amp;-1\end{pmatrix}=4$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $V=(a/2)^3\times4=a^3/2=2.866^3/2=11.78$ &Aring;$^3$. (b) One atom in the primitive cell (a Bravais lattice with a one-atom basis) and two in the conventional cube (corner $+$ centre), so the conventional cell volume is $a^3=23.54$ &Aring;$^3=2V$. (c) $11.78$ &Aring;$^3$ per atom. The nearest neighbours of the body-centre atom are the $8$ corners at $\sqrt3a/2=2.482$ &Aring;; the second neighbours ($6$ at $a=2.866$ &Aring;) are only $15\%$ farther, which is why bcc is often said to have $8+6=14$ neighbours.</p>
+            <p class="answer">(a) $11.78$ &Aring;$^3$  (b) 1 and 2  (c) $11.78$ &Aring;$^3$; $2.482$ &Aring;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>The second atom of the hcp basis is at the fractional coordinates $(\tfrac23,\tfrac13,\tfrac12)$ with the lattice vectors $\mathbf a_1=(a,0,0)$, $\mathbf a_2=(-a/2,\sqrt3a/2,0)$, $\mathbf a_3=(0,0,c)$. (a) Find its Cartesian position for Mg ($a=3.209$, $c=5.211$ &Aring;). (b) Compute its distance from the atom at the origin. (c) Compare with the in-plane distance $a$.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathbf r=s_1\mathbf a_1+s_2\mathbf a_2+s_3\mathbf a_3$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $x=a(\tfrac23-\tfrac13\cdot\tfrac12)=a/2=1.6045$, $y=\tfrac13\cdot\tfrac{\sqrt3}2a=a/(2\sqrt3)=0.9264$, $z=c/2=2.6055$ &Aring;. (b) $r=\sqrt{1.6045^2+0.9264^2+2.6055^2}=\sqrt{10.221}=3.197$ &Aring;. (c) The in-plane neighbours are at $a=3.209$ &Aring;: the three nearest atoms of the next layer (and the three below) are at $3.197$ &Aring;, $0.4\%$ closer than the in-plane ones. The two distances would be equal for the ideal $c/a=1.633$; the actual value $1.624$ gives the small splitting seen in LAB 201 ($3.197$ and $3.209$ &Aring;, six neighbours each).</p>
+            <p class="answer">(a) $(1.6045,0.9264,2.6055)$ &Aring;  (b) $3.197$ &Aring;  (c) $3.209$ &Aring; in plane</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>Use the radius-ratio rule to predict the coordination of the cation in MgO ($r_\mathrm{Mg}=0.72$, $r_\mathrm O=1.40$ &Aring;), CaO ($1.00$) and BeO ($0.27$), and of KCl ($r_\mathrm K=1.38$, $r_\mathrm{Cl}=1.81$ &Aring;). Compare with the observed structures (MgO, CaO: rocksalt; BeO: wurtzite, 4-fold; KCl: rocksalt).</p>
+            <details class="hint"><summary>Hint</summary><p>Limits: $0.225$, $0.414$, $0.732$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>MgO: $0.514$ (6, rocksalt &check;). CaO: $0.714$: just below the limit $0.732$, so 6 (rocksalt &check;), close to the boundary with 8. BeO: $0.193$: below $0.225$, the rule predicts coordination 3, but BeO has tetrahedral coordination (wurtzite): the rule fails for covalent character and for very small cations; the estimate is within the uncertainty of ionic radii. KCl: $1.38/1.81=0.762$, so the rule predicts 8 (CsCl) but KCl is rocksalt at room temperature (and becomes CsCl-type at $\sim2$ GPa): a clear failure of the rule near the boundary $0.732$, since the polarisability of the ions and the energy balance (the Madelung constant is $1.748$ for NaCl and $1.763$ for CsCl, almost the same) decide, and the radii depend on the coordination number. The rule is a rough guide, not a law.</p>
+            <p class="answer">6, 6, 3 (observed 4), 8 (observed 6)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>(a) Compute the density of MgO (rocksalt, $a=4.212$ &Aring;, $M=40.304$ g/mol). (b) How many Mg and O atoms are in the conventional cell and what are their Wyckoff positions? (c) Compare the volume per formula unit with NaCl.</p>
+            <details class="hint"><summary>Hint</summary><p>Rocksalt: $4$ formula units per cell.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\rho=4(40.304)/[6.022\times10^{23}(4.212\times10^{-8})^3]=3.583$ g/cm$^3$ (measured $3.58$). (b) $4$ Mg on $4a$ $(0,0,0)$ and $4$ O on $4b$ $(\tfrac12,\tfrac12,\tfrac12)$ ($8$ atoms), space group $Fm\bar3m$. (c) MgO: $a^3/4=18.7$ &Aring;$^3$ per formula unit; NaCl: $5.640^3/4=44.9$ &Aring;$^3$. The smaller volume of MgO reflects its smaller ions ($\mathrm{Mg^{2+}}$ is smaller than $\mathrm{Na^+}$ and charges $\pm2$ pull the ions closer): the nearest-neighbour distance is $2.106$ &Aring;, against $2.820$ &Aring;; the lattice energy is correspondingly $4$ times larger ($3.8$ MJ/mol against $0.79$ MJ/mol) and MgO melts at $2850{}^\circ$C against $801{}^\circ$C for NaCl.</p>
+            <p class="answer">(a) $3.58$ g/cm$^3$  (b) $4a$, $4b$  (c) $18.7$ against $44.9$ &Aring;$^3$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Copper ($a=3.615$ &Aring;) is measured with Mo K$\alpha$ radiation ($\lambda=0.7107$ &Aring;). (a) Find $2\theta$ for the $(111)$ and $(200)$ reflections. (b) What would the same reflections be with Cu K$\alpha$ ($1.5406$ &Aring;): $43.32^\circ$ and $50.45^\circ$? (c) Why are the angles smaller with the shorter wavelength, and how many reflections can be observed in each case?</p>
+            <details class="hint"><summary>Hint</summary><p>$2\theta=2\arcsin(\lambda/2d)$; $d_{111}=2.0871$ &Aring;, $d_{200}=1.8075$ &Aring;.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $2\theta_{111}=2\arcsin(0.7107/4.1742)=2\arcsin(0.17026)=19.61^\circ$; $2\theta_{200}=2\arcsin(0.7107/3.615)=2\arcsin(0.19660)=22.67^\circ$. (b) With Cu K$\alpha$: $43.32^\circ$ and $50.45^\circ$ (LAB 201). (c) Bragg&rsquo;s law gives $\sin\theta=\lambda/2d$, so a shorter $\lambda$ gives a smaller angle for the same planes. The reflections of a given family exist only if $\lambda/2d\le1$: for Cu K$\alpha$ ($\lambda/2=0.7703$ &Aring;) only planes with $d\ge0.77$ &Aring;, for Mo K$\alpha$ ($0.355$ &Aring;) those with $d\ge0.355$ &Aring;, so Mo radiation records many more reflections (for fcc Cu, $d_{hkl}=3.615/\sqrt{h^2+k^2+l^2}\ge0.355$ allows $h^2+k^2+l^2\le103$) and gives more information for structure refinement; a larger wavelength gives better resolution of low-angle peaks.</p>
+            <p class="answer">(a) $19.61^\circ$, $22.67^\circ$  (b) $43.32^\circ$, $50.45^\circ$  (c) $\sin\theta\propto\lambda$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>CsCl has Cs at $(0,0,0)$ and Cl at $(\tfrac12,\tfrac12,\tfrac12)$ in a simple cubic cell. (a) Show that $F_{hkl}=f_\mathrm{Cs}+(-1)^{h+k+l}f_\mathrm{Cl}$. (b) Compute $|F|^2$ for $(100)$ and $(110)$ using $f_\mathrm{Cs}=55$ and $f_\mathrm{Cl}=17$. (c) What would the pattern look like if the two atoms were identical?</p>
+            <details class="hint"><summary>Hint</summary><p>$e^{2\pi i(h+k+l)/2}=(-1)^{h+k+l}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $F=f_\mathrm{Cs}e^{0}+f_\mathrm{Cl}e^{2\pi i(h+k+l)/2}=f_\mathrm{Cs}+f_\mathrm{Cl}(-1)^{h+k+l}$. (b) $(100)$: $h+k+l=1$, $F=55-17=38$, $|F|^2=1444$. $(110)$: $h+k+l=2$, $F=72$, $|F|^2=5184$. The ratio is $0.279$ (the multiplicities $6$ and $12$ would modify the observed intensities by a further factor of two). (c) If the atoms were identical ($f_\mathrm{Cs}=f_\mathrm{Cl}$) the odd reflections would vanish and only $h+k+l$ even would appear: the pattern of a bcc crystal of cube side $a$. The weak odd reflections of CsCl are the signature that the centre atom differs from the corner atom, which is how an ordered alloy (e.g. B2 FeAl or $\beta$-brass) is distinguished from a disordered bcc solid solution: ordering gives &ldquo;superlattice&rdquo; reflections.</p>
+            <p class="answer">(b) $1444$ and $5184$  (c) odd reflections vanish: bcc</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>A powder pattern with Cu K$\alpha_1$ ($1.5406$ &Aring;) has peaks at $2\theta=38.47^\circ$, $44.72^\circ$, $65.10^\circ$, $78.23^\circ$ and $82.44^\circ$. (a) Compute $\sin^2\theta$ and its ratios to the first peak times $3$. (b) Identify the lattice type and the indices. (c) Find $a$ and identify the metal (Al $4.05$, Cu $3.62$, Ni $3.52$ &Aring;).</p>
+            <details class="hint"><summary>Hint</summary><p>For fcc the $\sin^2\theta$ ratios are $3:4:8:11:12$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sin^2\theta=0.1085$, $0.1447$, $0.2895$, $0.3980$, $0.4342$; multiplying the ratio to the first by $3$: $3.00$, $4.00$, $8.00$, $11.0$, $12.0$. (b) These are $h^2+k^2+l^2=3$, $4$, $8$, $11$, $12$: the allowed fcc reflections $(111)$, $(200)$, $(220)$, $(311)$, $(222)$. (c) $a=\lambda\sqrt{h^2+k^2+l^2}/(2\sin\theta)=1.5406\sqrt3/(2\sin19.235^\circ)=4.050$ &Aring;: aluminium. (Check with the last peak: $1.5406\sqrt{12}/(2\sin41.22^\circ)=4.05$ &Aring;.)</p>
+            <p class="answer">(a) $3, 4, 8, 11, 12$  (b) fcc: $(111)$, $(200)$, $(220)$, $(311)$, $(222)$  (c) $a=4.05$ &Aring;: Al</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>For magnesium (hcp, $a=3.209$, $c=5.211$ &Aring;, $V=46.47$ &Aring;$^3$): (a) find the length of the reciprocal lattice vector $\mathbf G_{100}$; (b) the volume of the Brillouin zone; (c) the number of $\mathbf k$ points in the zone for a crystal of $10^6$ cells.</p>
+            <details class="hint"><summary>Hint</summary><p>$|\mathbf G_{hkl}|=2\pi/d_{hkl}$; $V_\mathrm{BZ}=(2\pi)^3/V$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $d_{100}=2.779$ &Aring;, so $|\mathbf G_{100}|=2\pi/2.779=2.261$ &Aring;$^{-1}$. (b) $V_\mathrm{BZ}=(2\pi)^3/46.47=248.05/46.47=5.338$ &Aring;$^{-3}$. (c) Exactly one allowed $\mathbf k$ per unit cell of the crystal: $10^6$ points (with periodic boundary conditions), uniformly spread in the zone, with a density $10^6/5.338$ &Aring;$^3=1.9\times10^5$ per &Aring;$^{-3}$. A coarse mesh of $12\times12\times8$ ($1152$ points) samples this with a spacing of $\sim0.2$ &Aring;$^{-1}$, which is what a DFT calculation of a metal uses.</p>
+            <p class="answer">(a) $2.261$ &Aring;$^{-1}$  (b) $5.338$ &Aring;$^{-3}$  (c) $10^6$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>A DFT calculation on silicon (diamond structure, $2$ atoms per primitive cell) uses a $4\times4\times4$ k-point mesh. (a) To which Gamma-point-only supercell calculation is the sampling equivalent and how many atoms does it contain? (b) What is the cost ratio if the cost scales as $N^3$? (c) Why do metals need denser meshes than silicon?</p>
+            <details class="hint"><summary>Hint</summary><p>A supercell of $n\times n\times n$ primitive cells has a Brillouin zone $n^3$ times smaller.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) A $4\times4\times4$ supercell of the primitive cell: $64$ cells and $128$ atoms. (b) With the cost $\propto N^3$: the $\Gamma$-only $128$-atom calculation is $(128/2)^3=64^3=2.6\times10^5$ times as costly as one k point of the primitive cell, while the mesh needs about $64$ k points (fewer after symmetry): the k-point mesh is cheaper by a factor of $\sim4000$. This is why a primitive cell with a k mesh is always preferred to a large cell at $\Gamma$, unless the cell must be large for another reason. (c) In an insulator or semiconductor all occupied bands are full and smooth functions of $\mathbf k$, so the integral over the zone converges exponentially with the number of points (the silicon energies of LAB 501: $1274$, $284$, $64$, $0$ meV/atom for meshes $2$ to $5$); in a metal the occupation changes abruptly at the Fermi surface, the integrand is discontinuous, and the convergence is much slower (algebraic), requiring smearing and meshes of $20\times20\times20$ or more.</p>
+            <p class="answer">(a) $4\times4\times4$ supercell, $128$ atoms  (b) $\sim4000\times$ more expensive  (c) metals have a Fermi surface</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>(a) For a $4\times4\times4$ conventional supercell of fcc copper with one vacancy, give the number of atoms, the vacancy fraction and the nearest distance between periodic images. (b) A calculation gives a vacancy energy that converges at $E_f=1.30\pm0.01$ eV for supercells of $108$ atoms and above: which supercell would you use and why? (c) Why does a vacancy in a $32$-atom supercell have a different energy from one in a $108$-atom supercell?</p>
+            <details class="hint"><summary>Hint</summary><p>$N_\mathrm{perfect}=4n^3$ and the vacancy cell has $N-1$ atoms.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The perfect supercell has $4\times4^3=256$ atoms and the cell with the vacancy $255$; the vacancy fraction is $1/256=0.39\%$; the images are $4a=14.46$ &Aring; apart. (b) The $108$-atom cell ($n=3$): it is the smallest in the converged range, so it gives the result at a minimum cost (the calculation time grows as $N^3$ for plane-wave DFT, i.e. $(256/108)^3=13$ times for the larger cell); test the convergence with one larger cell to confirm. (c) In the small cell each vacancy interacts with its $6$ nearest images, only $7.2$ &Aring; ($2a$) away: through the elastic strain field of the relaxation (the neighbouring atoms move toward the vacancy) and, in a metal, through the Friedel oscillations of the electron density; the energy depends on the cell size until the images are far enough that the interaction is negligible compared with the required accuracy.</p>
+            <p class="answer">(a) $256$, $0.39\%$, $14.46$ &Aring;  (b) $n=3$ (108 atoms), verified with $n=4$  (c) interaction of the vacancy with its images</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>Zincblende ZnS has $192/2=96$ symmetry operations ($F\bar43m$) while diamond silicon has $192$ ($Fd\bar3m$). (a) Which operation is lost? (b) What physical properties become allowed for GaAs (zincblende) that are forbidden for Si? (c) Why is it important in a DFT calculation not to symmetrise the structure wrongly?</p>
+            <details class="hint"><summary>Hint</summary><p>Diamond has an inversion centre at the midpoint of the bond, zincblende does not.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) In diamond, the midpoint between two neighbouring atoms is an inversion centre; in zincblende the two sites are occupied by different atoms, so the inversion that exchanges them is lost. The point group falls from $m\bar3m$ (order $48$) to $\bar43m$ (order $24$); with the $4$ centring translations, $192\to96$ operations. (b) A crystal without a centre of symmetry can have a non-zero piezoelectric tensor, second-order nonlinear optical susceptibility (second-harmonic generation) and, in the polar subgroups, pyroelectricity. GaAs is piezoelectric (and has a nonlinear optical response), Si is not; the reduction of symmetry also splits the degeneracies of the electronic bands (spin&ndash;orbit effects). Si, with the inversion, has an infrared-inactive optical phonon at $\Gamma$ (no dipole), while the optical phonon of GaAs is infrared active and splits into a longitudinal and a transverse branch (LO&ndash;TO splitting). (c) The symmetry operations determine the irreducible k-point set and the symmetrisation of forces and densities: if the symmetry that is imposed (found with too large a tolerance) is higher than the true one, the calculation silently imposes a wrong constraint; if a distortion that lowers the symmetry (a phase transition, a Jahn&ndash;Teller distortion) is the physics of interest, a symmetrised starting structure can never find it (the state stays on the saddle point). Hence the tolerance of <code>symprec</code> must match the precision of the structure and the possibility of symmetry breaking must be tested by starting from a perturbed structure.</p>
+            <p class="answer">(a) inversion  (b) piezoelectricity, second-harmonic generation, LO&ndash;TO splitting  (c) wrong symmetry gives wrong constraints</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms201-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>A CIF for a Ni$_{0.5}$Fe$_{0.5}$ solid solution (fcc, $a=3.58$ &Aring;) lists one site with $50\%$ occupancy of each element. (a) How many atoms and how many different arrangements are there in a $2\times2\times2$ conventional supercell with $16$ Ni? (b) Why is a single random arrangement not enough, and what is an SQS? (c) What property of the CIF should you check against the supercell you build?</p>
+            <details class="hint"><summary>Hint</summary><p>$\binom{32}{16}=\dfrac{32!}{16!\,16!}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $4\times8=32$ atoms; the number of arrangements is $\binom{32}{16}=601\,080\,390$ (about $6\times10^8$; many are equivalent by symmetry, but a large number remain). (b) A single random arrangement has fluctuations in the local environments (the number of Ni neighbours of each atom varies by chance), so its energy differs from the ensemble average of the random alloy by an amount of order $1/\sqrt N$, large for $32$ atoms; one needs the average over many arrangements, or one arrangement chosen to reproduce the pair and higher correlation functions of the infinite random alloy up to some distance: a <em>special quasirandom structure</em>, whose energy is close to the average with a single small cell. (c) The composition (the number of Ni and Fe atoms in the supercell must reproduce the occupancy), the density from the average lattice parameter, and that the space group of the supercell (which will be low, P1 or a subgroup of $Fm\bar3m$) is not used to symmetrise it back into the average structure. Magnetism adds a further choice: the Fe&ndash;Ni alloy is ferromagnetic and the initial moments must be set.</p>
+            <p class="answer">(a) $32$ atoms; $6.0\times10^8$ arrangements  (b) fluctuations; SQS matches correlation functions  (c) composition, density, symmetry, magnetic moments</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qms201-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>What is the difference between a lattice and a crystal structure? Give an example of a crystal that is not a Bravais lattice.</p>
+            <details class="solution"><summary>Solution</summary><p>The lattice is a set of points generated by three translation vectors; the crystal structure is the lattice plus a basis of atoms attached to each lattice point. hcp is not a Bravais lattice: it is a hexagonal lattice with a two-atom basis. Diamond is an fcc lattice with a two-atom basis; NaCl is an fcc lattice with a basis of one Na and one Cl.</p></details>
+            </div>
+            <div class="problem" id="qms201-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Basic</span></div>
+            <p>How many atoms are in the conventional unit cell of rocksalt NaCl and what are their Wyckoff positions?</p>
+            <details class="solution"><summary>Solution</summary><p>Eight: four Na at $4a$ $(0,0,0)$ and four Cl at $4b$ $(\tfrac12,\tfrac12,\tfrac12)$, space group $Fm\bar3m$ (No. 225); four formula units per cell.</p></details>
+            </div>
+            <div class="problem" id="qms201-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>State Bragg&rsquo;s law and the von Laue condition, and show that they say the same thing.</p>
+            <details class="solution"><summary>Solution</summary><p>Bragg: $\lambda=2d\sin\theta$. Laue: $\mathbf k^{\prime}-\mathbf k=\mathbf G$ with $|\mathbf k^{\prime}|=|\mathbf k|=2\pi/\lambda$ for elastic scattering. The magnitude of $\mathbf k^{\prime}-\mathbf k$ is $2|\mathbf k|\sin\theta=4\pi\sin\theta/\lambda$ (for scattering angle $2\theta$), and $|\mathbf G|=2\pi/d$ for the first-order reflection from planes of spacing $d$; equating them gives $\lambda=2d\sin\theta$.</p></details>
+            </div>
+            <div class="problem" id="qms201-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>Which reflections are absent in an fcc crystal and in a bcc crystal? Why does the $(111)$ reflection of NaCl have a small intensity?</p>
+            <details class="solution"><summary>Solution</summary><p>fcc: reflections with mixed even and odd indices vanish (only all-odd or all-even are present); bcc: $h+k+l$ must be even. In NaCl, the all-odd reflections have $F=4(f_\mathrm{Na}-f_\mathrm{Cl})$, small because Na$^+$ and Cl$^-$ scatter X-rays similarly (here $-24$, against $112$ for the all-even ones), so $|F|^2$ is $22$ times smaller.</p></details>
+            </div>
+            <div class="problem" id="qms201-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>How is a $4\times4\times4$ k-point mesh on the primitive cell related to a supercell calculation, and why is the mesh much cheaper?</p>
+            <details class="solution"><summary>Solution</summary><p>It samples the same wave vectors as a $\Gamma$-point calculation on a $4\times4\times4$ supercell ($64$ times as many atoms). The cost of DFT grows as $N^3$ with the number of atoms, so one large cell costs $\sim64^3$ times a small cell, whereas the mesh needs only $\sim64$ (fewer with symmetry) calculations of the small cell.</p></details>
+            </div>
+            <div class="problem" id="qms201-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>Why can a structure from a CIF file give a wrong simulation even if the file is read without errors? List three checks.</p>
+            <details class="solution"><summary>Solution</summary><p>The file can have missing atoms (hydrogen), partial occupancies that need an ordering model, wrong symmetry settings or coordinates, a temperature-dependent lattice constant, or a polymorph different from the one intended. Checks: the formula and the number of atoms against the expected stoichiometry; the density against the measured one; the shortest interatomic distance against the sum of radii (no overlaps); the space group found by spglib against the one in the file; and the coordination numbers of the atoms.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley.</li>
-                <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Saunders.</li>
-                <li>Hammond, C., <em>The Basics of Crystallography and Diffraction</em>, Oxford University Press.</li>
-                <li>Hirth, J. P. and Lothe, J., <em>Theory of Dislocations</em>, Krieger.</li>
-                <li>Larsen, A. H. et al., The Atomic Simulation Environment, <em>J. Phys.: Condens. Matter</em> 29, 273002 (2017).</li>
-                <li>Hirel, P., Atomsk: a tool for manipulating and converting atomic data files, <em>Comput. Phys. Commun.</em> 197, 212 (2015).</li>
-                <li>Stukowski, A., Visualization and analysis of atomistic simulation data with OVITO, <em>Modelling Simul. Mater. Sci. Eng.</em> 18, 015012 (2010).</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: Chapters 1&ndash;2 (crystal structure, reciprocal lattice, diffraction); Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Chapters 4&ndash;7; Hammond, C., <em>The Basics of Crystallography and Diffraction</em>, Oxford University Press: an accessible introduction.</li>
+                <li>Hahn, T. (ed.), <em>International Tables for Crystallography, Volume A: Space-group symmetry</em>: the reference for the 230 space groups and Wyckoff positions; the Bilbao Crystallographic Server (<code>cryst.ehu.es</code>) offers free online tools.</li>
+                <li>Cullity, B. D. and Stock, S. R., <em>Elements of X-ray Diffraction</em>; Warren, B. E., <em>X-ray Diffraction</em>: the structure factor and powder diffraction (Lecture 4).</li>
+                <li>Pauling, L., <em>The Nature of the Chemical Bond</em>, and the Shannon radii (<em>Acta Crystallographica A</em> <strong>32</strong>, 751 (1976)): ionic structures (Lecture 3). Zunger, A. et al., &ldquo;Special quasirandom structures&rdquo;, <em>Physical Review Letters</em> <strong>65</strong>, 353 (1990): the SQS method of Lecture 7.</li>
+                <li>Togo, A., Shinohara, K. and Tanaka, I., &ldquo;Spglib: a software library for crystal symmetry search&rdquo;, <em>Science and Technology of Advanced Materials: Methods</em> <strong>4</strong>, 2384822 (2024); the ASE documentation (<code>ase-lib.org</code>). Code of this unit: <code>labs/mse-201</code>. Labs: <a href="lab-structures-ase.html">LAB 201</a> (build and analyse the crystals of this unit), <a href="lab-dft-pyscf.html">LAB 501</a> (k points in practice). Next: <a href="thermodynamics-and-calphad.html">MSE 301</a> and <a href="solid-state-physics.html">PHYS 302</a>.</li>
             </ul>
 
             <!-- pager:start -->
@@ -231,8 +485,11 @@ print(len(cell), cell.get_volume())</code></pre>
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=5bf667db"></script>
-    <script src="../assets/pathdata.js?v=d5769f80"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=79540848"></script>
+    <script src="../assets/pathdata.js?v=b689cf0c"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>

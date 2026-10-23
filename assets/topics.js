@@ -470,7 +470,7 @@ window.MIBEM_TOPICS = [
     "short": "Crystals and cells",
     "part": "Materials science",
     "tone": "a",
-    "minutes": 12,
+    "minutes": 42,
     "title": "Crystal structures, supercells and periodic boundaries",
     "blurb": "Lattices, Miller indices, defects, building simulation cells and periodic boundary conditions.",
     "builds": [
@@ -479,16 +479,17 @@ window.MIBEM_TOPICS = [
     ],
     "related": [],
     "takeaways": [
-      "A crystal is a lattice plus a basis. Count atoms and neighbours to sanity-check a structure: fcc has 4 atoms per cubic cell and 12 neighbours, bcc has 2 and 8.",
-      "Miller indices label planes and directions; the reciprocal lattice links real-space cells to diffraction and to k-point sampling.",
-      "Defects are the subject of most simulations. Supercell size is a convergence parameter, and one vacancy in an N-atom cell is a concentration of 1/N.",
-      "Periodic boundaries remove walls but make a defect interact with its own images; every cutoff must be smaller than half the box.",
-      "Surfaces use slabs with vacuum; a grain boundary in a fully periodic cell always comes as a pair."
+      "A crystal is a lattice (three translation vectors a1, a2, a3, with cell volume V = |a1 . (a2 x a3)|) plus a basis of atoms; 14 Bravais lattices in 7 crystal systems, 32 point groups and 230 space groups classify all crystals, and spglib finds the space group of a structure (Fm-3m 225 for fcc copper and rocksalt, Fd-3m 227 for diamond, P6_3/mmc 194 for hcp, Pm-3m 221 for CsCl and perovskite).",
+      "Common ionic structures follow from the radius ratio r(cation)/r(anion): NaCl (0.56, coordination 6), CsCl (0.92, coordination 8), zincblende (about 0.33, coordination 4); density follows from the cell, for example NaCl 2.164 g/cm3 (a = 5.640 angstrom, 4 formula units), CsCl 3.989, SrTiO3 5.117.",
+      "Diffraction measures the reciprocal lattice: Bragg's law lambda = 2 d sin(theta) gives for NaCl with Cu K-alpha peaks at 27.4, 31.7, 45.5 and 53.9 degrees for (111), (200), (220) and (311); the structure factor removes the mixed-parity reflections of the fcc lattice and makes the all-odd ones weak (|F|^2 = 576 against 12 544 for all-even, since f(Cl) - f(Na) is small compared with the sum).",
+      "The first Brillouin zone is the Wigner-Seitz cell of the reciprocal lattice, with volume (2 pi)^3/V; for fcc it is a truncated octahedron with the high-symmetry points Gamma, X (1,0,0), L (1/2,1/2,1/2), K and W in units of 2 pi/a, the points along which band structures and phonons are plotted.",
+      "Simulations use periodic cells: a supercell of n x n x n conventional fcc cells has 4 n^3 atoms (32, 108, 256 and 500 for n = 2 to 5), so one vacancy is 3.1 per cent to 0.2 per cent of the sites; and a k-point mesh of m x m x m for the primitive cell is equivalent to a Gamma-point calculation in an m x m x m supercell."
     ],
     "label": "MSE 201",
     "code": "MSE 201",
     "dept": "MSE",
-    "level": 2
+    "level": 2,
+    "katex": true
   },
   {
     "id": 15,

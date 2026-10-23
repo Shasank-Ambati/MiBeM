@@ -1,0 +1,6 @@
+Atoms(symbols='Na4Cl4', pbc=True, cell=[5.64, 5.64, 5.64], spacegroup_kinds=...)
+atoms in the conventional cell: 8   formula: Cl4Na4
+scaled positions of Na: [[0.0, 0.0, 0.0], [0.0, 0.5, 0.5], [0.5, 0.0, 0.5], [0.5, 0.5, 0.0]]
+volume 179.41 A^3, density 2.164 g/cm3 (measured 2.165)
+spglib: Fm-3m 225 Wyckoff aaaabbbb
+shortest interatomic distance 2.820 A (Na-Cl; sum of ionic radii 1.02 + 1.81 = 2.83 A)
