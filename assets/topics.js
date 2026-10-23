@@ -160,6 +160,33 @@ window.MIBEM_TOPICS = [
     "katex": true
   },
   {
+    "id": 38,
+    "label": "PHYS 102",
+    "code": "PHYS 102",
+    "dept": "PHYS",
+    "level": 1,
+    "slug": "thermal-physics",
+    "short": "Thermal physics",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 34,
+    "title": "Thermal physics",
+    "blurb": "Temperature, heat, entropy and the laws of thermodynamics, with the kinetic theory of gases.",
+    "builds": [
+      24,
+      37
+    ],
+    "related": [],
+    "takeaways": [
+      "Temperature measures the mean thermal kinetic energy per degree of freedom: $\\tfrac12k_\\mathrm BT$ each (equipartition), so $pV=Nk_\\mathrm BT$ and the rms speed is $\\sqrt{3k_\\mathrm BT/m}$; the Maxwell speed distribution describes how that energy is spread over atoms.",
+      "The first law $\\Delta U=Q+W$ is energy conservation; for an ideal gas $C_p-C_v=R$, an isothermal expansion does work $nRT\\ln(V_2/V_1)$ and a reversible adiabatic one obeys $pV^\\gamma=\\text{const}$.",
+      "Entropy $S=k_\\mathrm B\\ln\\Omega$ counts microstates and satisfies $\\mathrm dS=\\delta Q_\\mathrm{rev}/T$; an isolated system's entropy never decreases, which sets the direction of heat flow and gives the Carnot limit $\\eta=1-T_c/T_h$.",
+      "At constant temperature and pressure a system evolves to minimum Gibbs free energy $G=H-TS$; phase equilibria follow from equal chemical potentials, and the Clausius-Clapeyron equation $\\mathrm dp/\\mathrm dT=L/(T\\Delta V)$ gives the slope of a phase boundary.",
+      "Thermal populations follow the Boltzmann factor $e^{-E/k_\\mathrm BT}$, which gives defect concentrations $e^{-E_f/k_\\mathrm BT}$ and the heat capacity of solids (Dulong-Petit $3R$ at high temperature, falling as $T^3$ at low temperature); heat is transported by conduction ($q=-\\kappa\\nabla T$), convection and radiation."
+    ],
+    "katex": true
+  },
+  {
     "id": 14,
     "label": "MSE 101",
     "code": "MSE 101",
@@ -852,17 +879,6 @@ window.MIBEM_TOPICS = [
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
 window.MIBEM_PLANNED = [
-  {
-    "code": "PHYS 102",
-    "dept": "PHYS",
-    "level": 1,
-    "title": "Thermal physics",
-    "blurb": "Temperature, heat, entropy and the laws of thermodynamics, with the kinetic theory of gases.",
-    "needs": [
-      "MATH 101",
-      "PHYS 101"
-    ]
-  },
   {
     "code": "PHYS 103",
     "dept": "PHYS",

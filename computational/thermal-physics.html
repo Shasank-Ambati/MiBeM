@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thermal physics - MiBeM</title>
+    <meta name="description" content="University-level thermal physics for materials science: kinetic theory of gases, heat and the first law, entropy and the second law, free energy and phase equilibrium, the Boltzmann distribution, heat capacity of solids and heat transport, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/thermal-physics.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Thermal physics - MiBeM">
+    <meta property="og:description" content="University-level thermal physics for materials science: kinetic theory of gases, heat and the first law, entropy and the second law, free energy and phase equilibrium, the Boltzmann distribution, heat capacity of solids and heat transport, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/thermal-physics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="38">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#gas">Lecture 1. Temperature, gases and kinetic theory</a></li>
+                <li><a href="#first">Lecture 2. Heat, work and the first law</a></li>
+                <li><a href="#entropy">Lecture 3. Entropy and the second law</a></li>
+                <li><a href="#free">Lecture 4. Free energy and phase equilibrium</a></li>
+                <li><a href="#boltz">Lecture 5. The Boltzmann distribution</a></li>
+                <li><a href="#solids">Lecture 6. Heat capacity of solids</a></li>
+                <li><a href="#transport">Lecture 7. Heat transport and thermal expansion</a></li>
+                <li><a href="#summary-p102">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 102</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" class="here" aria-current="page" title="PHYS 102: Thermal physics">102</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a></nav>
+<!-- coursenav:end -->
+            <h1>Thermal physics</h1>
+            <p class="lead">Materials are hot or cold, expand when heated, melt, evaporate and conduct heat, and every one of these facts comes from the random motion of atoms. Thermal physics is the subject that connects the microscopic world of atoms to the large-scale quantities we measure: temperature, pressure, heat, entropy and free energy. This course covers the thermodynamics and elementary statistical physics of a first-year university degree, with the focus on what a materials scientist needs: defects, phases, heat capacity and heat flow.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 34 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">MATH 101: Calculus I</a><br><a href="classical-mechanics.html">PHYS 101: Classical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Use the ideal gas law and kinetic theory, including equipartition and the Maxwell speed distribution.</li>
+                    <li>Apply the first law to isothermal, isobaric, isochoric and adiabatic processes and compute heat, work and internal energy changes.</li>
+                    <li>Calculate entropy changes, use the second law to decide the direction of a process, and compute heat-engine efficiencies.</li>
+                    <li>Use Helmholtz and Gibbs free energies, chemical potential and the Clausius&ndash;Clapeyron equation.</li>
+                    <li>Use the Boltzmann factor to find populations and equilibrium defect concentrations.</li>
+                    <li>Explain and calculate the heat capacity of solids, and solve elementary problems of heat conduction, radiation and thermal expansion.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">MATH 101: Calculus I</a> and the energy concepts of <a href="classical-mechanics.html">PHYS 101: Classical mechanics</a>; partial derivatives from <a href="multivariable-calculus.html">MATH 102</a> are used in Lecture 4.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 3 (entropy) and 5 (the Boltzmann distribution) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="gas">Lecture 1. Temperature, gases and kinetic theory<a class="anchor" href="#gas" aria-label="Link to this section">#</a></h2>
+            <p><strong>Temperature</strong> is the quantity that is equal for two bodies in thermal equilibrium (the zeroth law). The absolute (Kelvin) scale starts at absolute zero, $T=0$ K, with $T/\mathrm K=\theta/{}^\circ\mathrm C+273.15$. For a dilute gas the pressure, volume and temperature obey the <strong>ideal gas law</strong>
+            $$pV=Nk_\mathrm BT=nRT,$$
+            with $N$ molecules or $n$ moles, $k_\mathrm B=1.381\times10^{-23}$ J/K (Boltzmann&rsquo;s constant) and $R=N_\mathrm Ak_\mathrm B=8.314$ J/(mol K). One mole of any ideal gas occupies $22.4$ L at $0^\circ$C and $1$ atm ($101\,325$ Pa).</p>
+            <div class="note thm"><strong>Pressure from kinetic theory</strong>
+            <p>A molecule of mass $m$ and velocity component $v_x$ bouncing elastically off a wall of the box transfers momentum $2mv_x$ each time, and returns to hit it again after a time $2L/v_x$ in a box of length $L$. The average force it exerts is $2mv_x/(2L/v_x)=mv_x^2/L$. For $N$ molecules, $F=Nm\langle v_x^2\rangle/L$, so the pressure on a wall of area $A=V/L$ is $p=Nm\langle v_x^2\rangle/V$. Isotropy gives $\langle v_x^2\rangle=\tfrac13\langle v^2\rangle$, so
+            $$pV=\tfrac13Nm\langle v^2\rangle=\tfrac23N\langle\tfrac12mv^2\rangle.$$
+            Comparing with $pV=Nk_\mathrm BT$ shows that the mean translational kinetic energy per molecule is $\tfrac32k_\mathrm BT$: <em>temperature is a measure of the average kinetic energy of random motion.</em></p>
+            </div>
+            <p>More generally the <strong>equipartition theorem</strong> states that in thermal equilibrium every independent quadratic term in the energy (each translational velocity component, each rotation, each vibrational kinetic and potential term) has an average energy $\tfrac12k_\mathrm BT$. A monatomic gas has $3$ such terms, a diatomic gas at room temperature $5$ (three translations and two rotations; vibrations are frozen out by quantum mechanics, Lecture 6), a harmonic solid $6$ per atom (three kinetic, three potential), giving $\langle E\rangle=3k_\mathrm BT$ per atom.</p>
+            <p><strong>Speeds.</strong> The distribution of molecular speeds in equilibrium is the Maxwell&ndash;Boltzmann distribution
+            $$f(v)=4\pi\Bigl(\frac{m}{2\pi k_\mathrm BT}\Bigr)^{3/2}v^2e^{-mv^2/2k_\mathrm BT},$$
+            whose peak (most probable speed), mean and rms speed are $v_\mathrm{mp}=\sqrt{2k_\mathrm BT/m}$, $\bar v=\sqrt{8k_\mathrm BT/\pi m}$ and $v_\mathrm{rms}=\sqrt{3k_\mathrm BT/m}$ in the ratio $1:1.128:1.225$. The factor $e^{-E/k_\mathrm BT}$ is the Boltzmann factor of Lecture 5, and the $v^2$ counts how many velocities share a given speed. Molecules collide: with a collision cross-section $\pi d^2$ the <strong>mean free path</strong> is $\lambda=\dfrac1{\sqrt2\pi d^2n}$ with $n=N/V$ the number density.</p>
+            <div class="example">
+                <strong>Worked example 1.1: speeds in air</strong>
+                <p class="given">Find the rms speed of N$_2$ and He at $300$ K, and the mean free path and collision rate of N$_2$ at $1$ atm ($d=0.37$ nm).</p>
+                <p>For N$_2$ ($28.01$ u, $m=4.652\times10^{-26}$ kg): $$v_\mathrm{rms}=\sqrt{\frac{3(1.381\times10^{-23})(300)}{4.652\times10^{-26}}}=517\ \text{m/s},$$ with $v_\mathrm{mp}=422$ m/s and $\bar v=476$ m/s. For He ($4.003$ u), $v_\mathrm{rms}=1367$ m/s: lighter molecules are faster by $\sqrt{28.01/4.003}=2.65$, which is why helium diffuses and effuses faster (Graham&rsquo;s law) and why light gases escape from planetary atmospheres. At $1$ atm and $300$ K the number density is $n=p/k_\mathrm BT=2.45\times10^{25}\ \mathrm{m^{-3}}$, so $\lambda=1/(\sqrt2\pi(0.37\times10^{-9})^2n)=67$ nm, about $180$ molecular diameters, and each molecule makes $\bar v/\lambda=7\times10^9$ collisions per second. A solid or liquid is dense enough that atoms are always in contact, which is why molecular dynamics of a liquid needs a time step far shorter than the collision time of a gas.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.2: a tyre</strong>
+                <p class="given">A tyre of volume $30$ L holds air at $2.2$ bar (absolute) at $20^\circ$C. How many moles are there, and what is the pressure after warming to $50^\circ$C at constant volume?</p>
+                <p>$n=pV/RT=(2.2\times10^5)(0.030)/(8.314\times293.15)=2.71$ mol. At constant $V$ and $n$, $p\propto T$: $p_2=2.2\times323.15/293.15=2.43$ bar, a rise of $10\%$ for a $30$ K change. The ideal gas law is accurate for air near atmospheric pressure to better than $1\%$.</p>
+            </div>
+
+            <h2 id="first">Lecture 2. Heat, work and the first law<a class="anchor" href="#first" aria-label="Link to this section">#</a></h2>
+            <p>The <strong>internal energy</strong> $U$ of a system is the total energy of its microscopic motion and interaction (kinetic plus potential energy of all atoms), a function of the state. It changes by heat $Q$ added to the system and work $W$ done on it:
+            $$\Delta U=Q+W,\qquad\mathrm dU=\delta Q+\delta W.$$
+            This is the <strong>first law of thermodynamics</strong>, the conservation of energy. Heat and work are not state functions: they depend on the path. For a gas, the work done <em>on</em> it during a slow (quasi-static) volume change is $\delta W=-p\,\mathrm dV$, so the work done <em>by</em> the gas is $\int p\,\mathrm dV$, the area under the path in the $p$&ndash;$V$ diagram. For an ideal gas $U$ depends on temperature only: $U=\tfrac f2nRT$ with $f$ the number of quadratic degrees of freedom ($3$ for monatomic, $5$ for diatomic at room temperature).</p>
+            <p>The <strong>heat capacity</strong> is the heat needed per unit temperature rise, $C=\delta Q/\mathrm dT$, which depends on the conditions: at constant volume no work is done so $C_V=(\partial U/\partial T)_V$; at constant pressure the gas also does work $p\,\mathrm dV$, so $C_p&gt;C_V$. For $n$ moles of ideal gas, enthalpy $H=U+pV=U+nRT$ gives
+            $$C_p-C_V=nR,\qquad\gamma=\frac{C_p}{C_V}=\frac{f+2}{f}=\tfrac53\ \text{(monatomic)},\ \tfrac75\ \text{(diatomic)}.$$
+            <em>Proof.</em> At constant pressure, $\delta Q=\mathrm dU+p\,\allowbreak \mathrm dV=C_V\mathrm dT+nR\,\allowbreak \mathrm dT$ since $p\,\mathrm dV=nR\,\mathrm dT$.</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 2. Heat, work and the first law (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Process</th><th>Condition</th><th>Work done on the gas</th><th>Heat added</th></tr></thead>
+                <tbody>
+                    <tr><td>Isochoric</td><td>$V$ constant</td><td>$0$</td><td>$nC_{V,m}\Delta T$</td></tr>
+                    <tr><td>Isobaric</td><td>$p$ constant</td><td>$-p\Delta V$</td><td>$nC_{p,m}\Delta T$</td></tr>
+                    <tr><td>Isothermal</td><td>$T$ constant</td><td>$-nRT\ln(V_2/V_1)$</td><td>$nRT\ln(V_2/V_1)$ ($\Delta U=0$)</td></tr>
+                    <tr><td>Adiabatic (reversible)</td><td>$Q=0$, $pV^\gamma$ constant</td><td>$nC_{V,m}\Delta T$</td><td>$0$</td></tr>
+                </tbody>
+            </table></div>
+            <div class="note thm"><strong>The reversible adiabat</strong>
+            <p>With $\delta Q=0$, $\mathrm dU=-p\,\mathrm dV$ gives $nC_{V,m}\mathrm dT=-nRT\,\allowbreak \mathrm dV/V$, i.e. $\dfrac{\mathrm dT}T=-\dfrac R{C_{V,m}}\dfrac{\mathrm dV}V=-(\gamma-1)\dfrac{\mathrm dV}V$. Integrating, $TV^{\gamma-1}=\text{const}$, equivalently $pV^\gamma=\text{const}$. A compressed gas heats up and an expanded gas cools, as in a bicycle pump and in the cooling of an adiabatically expanding gas.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: heat and work for one mole</strong>
+                <p class="given">One mole of nitrogen ($C_{V,m}=\tfrac52R$) is heated by $100$ K (a) at constant volume and (b) at constant pressure. Find $Q$ and the work done by the gas.</p>
+                <p>(a) $Q=nC_{V,m}\Delta T=2.5(8.314)(100)=2079$ J, all of it goes to internal energy, work $=0$. (b) $Q=nC_{p,m}\Delta T=3.5R(100)=2910$ J; the internal energy rises by the same $2079$ J and the gas does $nR\Delta T=831$ J of expansion work on its surroundings, so $2079+831=2910$ &check;. Thus $29\%$ of the heat added at constant pressure leaves as work: the reason the heat capacity at constant pressure is larger.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.2: isothermal against adiabatic expansion</strong>
+                <p class="given">One mole of a monatomic ideal gas at $300$ K doubles its volume (a) isothermally, (b) reversibly adiabatically. Find the work done by the gas and the final temperature.</p>
+                <p>(a) $W=RT\ln2=8.314(300)(0.693)=1729$ J, with heat $1729$ J absorbed from the surroundings and $T$ unchanged. (b) $\gamma=5/3$, so $T_2=T_1(V_1/V_2)^{\gamma-1}=300\times2^{-2/3}=189$ K and the work done is $-\Delta U=C_V(T_1-T_2)=1.5(8.314)(111)=1385$ J, less than in the isothermal case because the gas cools as it expands and its pressure falls faster. In a hundred-fold compression of a diatomic gas the temperature can rise by a factor of $10^{0.4}\approx2.5$, which is how a diesel engine ignites fuel by compression alone ($300$ K to $754$ K at compression ratio $10$).</p>
+            </div>
+
+            <h2 id="entropy">Lecture 3. Entropy and the second law<a class="anchor" href="#entropy" aria-label="Link to this section">#</a></h2>
+            <p>The first law does not say which processes happen. Heat flows from hot to cold and never the reverse; a gas expands to fill its container but never compresses itself spontaneously. The quantity that decides the direction is <strong>entropy</strong>. It has two equivalent definitions.</p>
+            <ul>
+                <li><strong>Statistical (Boltzmann):</strong> $S=k_\mathrm B\ln\Omega$, where $\Omega$ is the number of microscopic arrangements (microstates) compatible with the macroscopic state. A state with more microstates is more probable, and is the one a system tends to.</li>
+                <li><strong>Thermodynamic (Clausius):</strong> for a reversible process, $\mathrm dS=\dfrac{\delta Q_\mathrm{rev}}T$, so that $\Delta S=\int\delta Q_\mathrm{rev}/T$ between two states, along any reversible path joining them.</li>
+            </ul>
+            <p>The <strong>second law</strong>: for an isolated system, $\Delta S\ge0$, with equality only for reversible processes. In terms of a system plus its surroundings, $\Delta S_\mathrm{total}=\Delta S_\mathrm{sys}+\Delta S_\mathrm{surr}\ge0$. <em>The statistical view makes this plausible:</em> with $N$ molecules, the arrangements with all of them on one side of a box number $1$ against $2^N$ in total, so the chance of finding all $N=10^{23}$ on one side is utterly negligible: not forbidden, but never seen.</p>
+            <div class="note thm"><strong>Two consequences</strong>
+            <p><em>Free expansion.</em> One mole of ideal gas expands into a vacuum to twice its volume; no heat, no work, no temperature change. Each molecule has twice as many positions, so $\Omega\to2^{N}\Omega$ and $\Delta S=k_\mathrm B\ln2^N=Nk_\mathrm B\ln2=nR\ln2=5.76$ J/K $&gt;0$: irreversible. The same $\Delta S$ results from a reversible isothermal expansion, $\int\delta Q/T=nR\ln(V_2/V_1)$, because $S$ is a state function.</p>
+            <p><em>Heat flows from hot to cold.</em> If $\delta Q$ flows from a body at $T_h$ to one at $T_c&lt;T_h$, $\Delta S=\delta Q\bigl(\tfrac1{T_c}-\tfrac1{T_h}\bigr)&gt;0$; the reverse would decrease the total entropy and is forbidden.</p>
+            </div>
+            <p>Entropy has a third law: $S\to0$ as $T\to0$ for a perfect crystal, so that absolute entropies can be tabulated. Heating a body of heat capacity $C$ from $T_1$ to $T_2$ raises its entropy by $\Delta S=\int C\,\allowbreak \mathrm dT/T=C\ln(T_2/T_1)$ for constant $C$; melting at $T_m$ with latent heat $L$ adds $L/T_m$, the entropy jump between ordered solid and disordered liquid.</p>
+            <p><strong>Heat engines.</strong> An engine absorbs $Q_h$ from a hot reservoir at $T_h$, rejects $Q_c$ to a cold one at $T_c$ and delivers work $W=Q_h-Q_c$. The second law ($\Delta S_\mathrm{total}=Q_c/T_c-Q_h/T_h\ge0$) bounds the efficiency $\eta=W/Q_h$:
+            $$\eta\le\eta_\mathrm{Carnot}=1-\frac{T_c}{T_h}.$$
+            A refrigerator or heat pump run in reverse has a coefficient of performance at most $T_h/(T_h-T_c)$ for heating. The lost work in an irreversible process is $T_c\,\Delta S_\mathrm{generated}$ (the Gouy&ndash;Stodola theorem).</p>
+            <div class="example">
+                <strong>Worked example 3.1: entropy changes in heating and heat flow</strong>
+                <p class="given">(a) Heat $1$ kg of water ($c=4186$ J/kg K) from $20^\circ$C to $80^\circ$C. (b) A $2$ kg copper block ($c=385$ J/kg K) at $400$ K is placed in contact with a large reservoir at $300$ K. Find the total entropy change.</p>
+                <p>(a) $\Delta S=mc\ln(T_2/T_1)=4186\ln(353.15/293.15)=779$ J/K. (b) The block loses $Q=mc\Delta T=2(385)(100)=77\,000$ J and its entropy changes by $mc\ln(300/400)=-221.5$ J/K; the reservoir gains $Q$ at $300$ K: $+256.7$ J/K. The total is $+35.2$ J/K, positive: heat flowing across a finite temperature difference is irreversible. If the block were cooled in many small steps with reservoirs at intermediate temperatures, the total entropy change would approach zero.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.2: a real engine</strong>
+                <p class="given">A heat engine operates between $800$ K and $300$ K. Per cycle it takes $1000$ J from the hot reservoir and delivers $400$ J of work. Compare it with a Carnot engine.</p>
+                <p>The Carnot limit is $1-300/800=0.625$, so the best possible work is $625$ J. The real engine has $\eta=0.40$ and rejects $600$ J, generating entropy $600/300-1000/800=0.75$ J/K per cycle. The lost work is $T_c\Delta S=300\times0.75=225$ J $=625-400$ J &check;. Every irreversibility (friction, finite-rate heat transfer, a fast expansion) shows up as generated entropy and a corresponding loss of available work.</p>
+            </div>
+
+            <h2 id="free">Lecture 4. Free energy and phase equilibrium<a class="anchor" href="#free" aria-label="Link to this section">#</a></h2>
+            <p>The second law in the form $\Delta S_\mathrm{total}\ge0$ requires the surroundings to be tracked. For a system in contact with a heat bath at temperature $T$, this can be recast as a property of the system alone. Define the <strong>Helmholtz free energy</strong> $F=U-TS$ and, for processes at constant pressure, the <strong>Gibbs free energy</strong> $G=H-TS=U+pV-TS$. Then:
+            $$\text{at constant }T,V:\ \Delta F\le0;\qquad\text{at constant }T,p:\ \Delta G\le0,$$
+            so a system at constant $T$ and $p$ evolves to <strong>minimum $G$</strong>, and equilibrium is the minimum. <em>Proof for constant $T,p$.</em> The heat $Q$ absorbed by the system is $\Delta H$, so the surroundings change by $-\Delta H/T$ and $\Delta S_\mathrm{total}=\Delta S-\Delta H/T=-\Delta G/T\ge0$. Free energy is a competition between low energy (or enthalpy) and high entropy: at low $T$ the energy term dominates and the ordered structure wins; at high $T$ the $-TS$ term favours disorder, which is why solids melt.</p>
+            <p>The natural variables are $\mathrm dG=-S\,\allowbreak \mathrm dT+V\,\allowbreak \mathrm dp+\sum_i\mu_i\,\allowbreak \mathrm dN_i$, so $S=-(\partial G/\partial T)_p$, $V=(\partial G/\partial p)_T$ and the <strong>chemical potential</strong> $\mu_i=(\partial G/\partial N_i)_{T,p}$ is the free energy per particle of species $i$. Two phases (or two regions of a sample) in equilibrium have equal chemical potential for each species; atoms move from high to low $\mu$, which is the true driving force of diffusion (<a href="partial-differential-equations.html">MATH 301</a>) and of phase transformations.</p>
+            <div class="note thm"><strong>The Clausius&ndash;Clapeyron equation</strong>
+            <p>Along a boundary between phases 1 and 2 the chemical potentials are equal, $\mu_1(T,p)=\mu_2(T,p)$, so a small move along the boundary has $\mathrm d\mu_1=\mathrm d\mu_2$: $-s_1\mathrm dT+v_1\mathrm dp=-s_2\mathrm dT+v_2\mathrm dp$ with molar quantities. Hence
+            $$\frac{\mathrm dp}{\mathrm dT}=\frac{s_2-s_1}{v_2-v_1}=\frac{L}{T\,\Delta v},$$
+            using $\Delta s=L/T$ at the transition. For boiling, with $\Delta v\approx RT/p$ (the vapour is ideal and the liquid volume is negligible), $\dfrac{\mathrm d\ln p}{\mathrm dT}=\dfrac L{RT^2}$, so $\ln p=-L/RT+\text{const}$. Ice melts under pressure because $\Delta v&lt;0$ for melting of water (the slope is negative); most solids have $\Delta v&gt;0$ and a positive slope.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: boiling water at altitude</strong>
+                <p class="given">Water has $L=40.7$ kJ/mol. Find the vapour pressure at $90^\circ$C, and the boiling temperature on a mountain where the pressure is $60$ kPa.</p>
+                <p>Integrating, $\ln\dfrac{p_2}{p_1}=-\dfrac LR\Bigl(\dfrac1{T_2}-\dfrac1{T_1}\Bigr)$ with $p_1=101.3$ kPa at $T_1=373.15$ K. At $T_2=363.15$ K the exponent is $-4896\,\allowbreak (2.7536\times10^{-3}-2.6799\times10^{-3})=-0.361$, so $p_2=70.6$ kPa (tabulated: $70.1$ kPa). For $p=60$ kPa, $\ln(60/101.3)=-0.524$ and $1/T=1/373.15+0.524R/L$, giving $T=358.8$ K ($85.7^\circ$C): food cooks more slowly at altitude. The same exponential form $e^{-L/RT}$ describes the vapour pressure of a metal in a vacuum furnace and the sublimation of a coating in physical vapour deposition.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: why does melting happen at a fixed temperature?</strong>
+                <p class="given">A solid has $G_s(T)=H_s-TS_s$ and a liquid $G_l(T)=H_l-TS_l$ with $H_l&gt;H_s$ and $S_l&gt;S_s$. Find the melting temperature.</p>
+                <p>At constant pressure, the phase with the lower $G$ is stable. $G_s=G_l$ when $H_s-TS_s=H_l-TS_l$, i.e. $T_m=\dfrac{H_l-H_s}{S_l-S_s}=\dfrac{L}{\Delta S}$. Below $T_m$ the solid has the lower $G$ (the enthalpy term wins), above it the liquid does (the entropy term wins). For aluminium, $L=10.7$ kJ/mol and $T_m=933$ K give $\Delta S=11.5$ J/(mol K) $\approx1.4R$, which is typical for metals (Richards&rsquo; rule: $\Delta S_m\approx R$). This is the idea behind the free-energy curves of CALPHAD in <a href="thermodynamics-and-calphad.html">MSE 301</a>.</p>
+            </div>
+
+            <h2 id="boltz">Lecture 5. The Boltzmann distribution<a class="anchor" href="#boltz" aria-label="Link to this section">#</a></h2>
+            <p>Thermodynamics tells us what <em>can</em> happen; the Boltzmann distribution tells us how the microscopic states are populated. A system in thermal equilibrium with a large bath at temperature $T$ is found in a particular microstate $i$ of energy $E_i$ with probability
+            $$p_i=\frac{e^{-E_i/k_\mathrm BT}}{Z},\qquad Z=\sum_ie^{-E_i/k_\mathrm BT}.$$
+            $Z$ is the <strong>partition function</strong>; it normalises the probabilities and contains all the thermodynamics (Lecture 5 of <a href="statistical-mechanics.html">PHYS 301</a> develops this: $F=-k_\mathrm BT\ln Z$).</p>
+            <div class="note thm"><strong>Why the Boltzmann factor?</strong>
+            <p>Let the system plus bath be isolated with total energy $E_\mathrm{tot}$. If the system is in microstate $i$, the bath has energy $E_\mathrm{tot}-E_i$ and can be in $\Omega_B(E_\mathrm{tot}-E_i)$ microstates; since all microstates of the isolated whole are equally likely, $p_i\propto\Omega_B(E_\mathrm{tot}-E_i)=e^{S_B(E_\mathrm{tot}-E_i)/k_\mathrm B}$. The bath is large, so expand $S_B(E_\mathrm{tot}-E_i)\approx S_B(E_\mathrm{tot})-E_i\,\allowbreak \dfrac{\partial S_B}{\partial E}=S_B(E_\mathrm{tot})-\dfrac{E_i}T$, using $\partial S/\partial E=1/T$. Hence $p_i\propto e^{-E_i/k_\mathrm BT}$. <em>The cost of borrowing energy from a bath is an exponentially smaller number of bath states.</em></p>
+            </div>
+            <p>The ratio of the populations of two states depends only on their energy difference: $p_2/p_1=e^{-(E_2-E_1)/k_\mathrm BT}$. At $300$ K, $k_\mathrm BT=0.0259$ eV, so a state $0.1$ eV higher is occupied with probability $e^{-3.87}=2\%$ relative to the ground state, and at $1000$ K ($k_\mathrm BT=0.0862$ eV) with $31\%$. Energy differences of order $k_\mathrm BT$ are therefore &ldquo;thermally accessible&rdquo;; differences of several eV are frozen out. Because of the exponential, rates of thermally activated processes, such as diffusion jumps, chemical reactions and dislocation climb, follow the <strong>Arrhenius law</strong> $\text{rate}\propto e^{-E_a/k_\mathrm BT}$, with $E_a$ the activation barrier.</p>
+            <div class="note thm"><strong>Equilibrium vacancy concentration</strong>
+            <p>Let a crystal of $N$ sites contain $n$ vacancies, each costing energy $E_f$ (the formation energy). The $n$ vacancies can be placed in $\Omega=\dfrac{N!}{n!(N-n)!}$ ways, so the configurational entropy is $S=k_\mathrm B\ln\Omega\approx k_\mathrm B[N\ln N-n\ln n-(N-n)\ln(N-n)]$ (Stirling). The free energy $F=nE_f-TS$ is minimal when $\dfrac{\partial F}{\partial n}=E_f-k_\mathrm BT\ln\dfrac{N-n}n=0$, so
+            $$\frac nN\approx e^{-E_f/k_\mathrm BT}\quad(n\ll N).$$
+            A defect is always present at equilibrium at $T&gt;0$: the entropy gained by spreading $n$ defects over many sites outweighs the energy cost. Including the vibrational entropy of formation $S_f$ multiplies the result by $e^{S_f/k_\mathrm B}$.</p>
+            </div>
+            <div class="demo" data-demo="boltzmann"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <div class="note mat"><strong>In materials science: where the Boltzmann factor appears</strong>
+            <p>Equilibrium concentrations of vacancies, interstitials and solute atoms; the rate of diffusion, $D=D_0e^{-Q/k_\mathrm BT}$; thermally activated dislocation glide and creep; the probability of accepting a move in a Metropolis Monte Carlo simulation, $\min(1,e^{-\Delta E/k_\mathrm BT})$ (<a href="monte-carlo-methods.html">CMS 503</a>); and the weighting of configurations in every simulation at constant temperature. If you remember one formula from thermal physics, remember this one.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: vacancies in copper</strong>
+                <p class="given">The vacancy formation energy in copper is $E_f=1.28$ eV. Find the equilibrium vacancy fraction at $300$ K and at $1300$ K ($T_m=1358$ K), and the temperature at which it reaches $10^{-6}$.</p>
+                <p>At $1300$ K, $k_\mathrm BT=0.1120$ eV and $n/N=e^{-11.43}=1.1\times10^{-5}$ (about one site in $10^5$ is empty); with a formation entropy $S_f=2k_\mathrm B$ this becomes $8\times10^{-5}$, matching experimental values near the melting point. At $300$ K, $e^{-49.5}=3\times10^{-22}$: essentially no thermal vacancies, which is why vacancies in a room-temperature sample are all &ldquo;quenched in&rdquo; from higher temperatures or created by irradiation. A fraction $10^{-6}$ needs $T=E_f/(k_\mathrm B\ln10^6)=14\,\allowbreak 854/13.82=1075$ K.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: populations, mean energy and activation</strong>
+                <p class="given">(a) Three levels at $0$, $0.1$ and $0.2$ eV are in equilibrium at $500$ K. Find the populations and the mean energy. (b) By what factor does a process with $E_a=1.0$ eV speed up when heated from $300$ K to $310$ K?</p>
+                <p>(a) $k_\mathrm BT=0.04309$ eV. The weights are $1$, $e^{-2.321}=0.0982$ and $e^{-4.642}=0.00964$; $Z=1.1078$, so the populations are $0.9027$, $0.0886$, $0.0087$. The mean energy is $\sum p_iE_i=0.0886(0.1)+0.0087(0.2)=0.0106$ eV, much less than $k_\mathrm BT$ because the levels are widely spaced compared with it. (b) The ratio is $\exp\Bigl[\dfrac{E_a}{k_\mathrm B}\Bigl(\dfrac1{300}-\dfrac1{310}\Bigr)\Bigr]=e^{11\,604.5\times1.075\times10^{-4}}=e^{1.248}=3.5$: a 10 K rise more than triples the rate. Rates in materials are extremely temperature-sensitive, and this is why a thermocouple error of a few kelvin in a heat treatment matters.</p>
+            </div>
+
+            <h2 id="solids">Lecture 6. Heat capacity of solids<a class="anchor" href="#solids" aria-label="Link to this section">#</a></h2>
+            <p>Measuring how much heat a solid absorbs per kelvin tests the whole microscopic picture. <strong>Classical (Dulong&ndash;Petit)</strong>: each atom is a three-dimensional harmonic oscillator, with six quadratic energy terms, so equipartition gives $\langle E\rangle=3k_\mathrm BT$ per atom, $U=3N_\mathrm Ak_\mathrm BT=3RT$ per mole, and
+            $$C_V=3R=24.9\ \mathrm{J/(mol\,K)}$$
+            independent of the material and the temperature. This works well for many metals at room temperature (Cu: $24.4$) but fails at low temperature, where $C_V\to0$, and for light, stiff solids at any ordinary temperature (diamond at $300$ K has $C_V=6$).</p>
+            <p><strong>Einstein&rsquo;s model (1907).</strong> Quantum mechanics permits an oscillator of frequency $\omega$ only the energies $\hbar\omega(n+\tfrac12)$. If every atom oscillates in each of three directions with the same frequency, the mean energy of one oscillator in equilibrium is $\hbar\omega/(e^{\hbar\omega/k_\mathrm BT}-1)$ (plus a constant zero-point term; from the sum $Z=\sum_ne^{-n\hbar\omega/k_\mathrm BT}$ of Lecture 5), so
+            $$U=\frac{3N\hbar\omega}{e^{\theta_E/T}-1},\qquad C_V=3R\Bigl(\frac{\theta_E}T\Bigr)^2\frac{e^{\theta_E/T}}{(e^{\theta_E/T}-1)^2},\qquad\theta_E=\frac{\hbar\omega}{k_\mathrm B}.$$
+            For $T\gg\theta_E$ this tends to $3R\bigl[1-\tfrac1{12}(\theta_E/T)^2+\dots\bigr]$: the Dulong&ndash;Petit value. For $T\ll\theta_E$ the oscillators are frozen in their ground state, each mode needs a quantum $\hbar\omega\gg k_\mathrm BT$ to be excited, and $C_V\to0$ exponentially. The model explains the trend but gets the low-$T$ shape wrong, because a real solid has oscillators of all frequencies down to zero (long-wavelength sound waves).</p>
+            <p><strong>Debye&rsquo;s model.</strong> Treat the solid as an elastic continuum with a linear dispersion $\omega=vk$ up to a cut-off frequency set by the number of atoms; the number of modes below $\omega$ grows as $\omega^2$ (<a href="fourier-analysis.html">MATH 205</a>, reciprocal space). The result is
+            $$C_V=\frac{12\pi^4}5R\Bigl(\frac T{\theta_D}\Bigr)^3\qquad(T\ll\theta_D),$$
+            the <strong>Debye $T^3$ law</strong>, with the Debye temperature $\theta_D$ a measure of the stiffness of the lattice: $\theta_D=428$ K for Al, $343$ K for Cu, $470$ K for Fe, $645$ K for Si and $2230$ K for diamond. The full Debye curve is a universal function of $T/\theta_D$ that tends to $3R$ for $T\gg\theta_D$. In metals the conduction electrons add a term linear in temperature, $C_\mathrm{el}=\gamma T$ ($\gamma\sim1\ \mathrm{mJ/mol\,K^2}$), which dominates below a few kelvin; free-electron theory and band structure explain its size (<a href="physics-for-simulation.html">PHYS 100</a>).</p>
+            <div class="example">
+                <strong>Worked example 6.1: Einstein and Debye numbers</strong>
+                <p class="given">(a) Take $\theta_E=240$ K. Find $C_V$ at $100$ K and $300$ K from the Einstein formula and from the high-temperature expansion. (b) Estimate the heat capacity of aluminium at $20$ K from the $T^3$ law.</p>
+                <p>(a) At $100$ K, $x=\theta_E/T=2.4$, so $C_V=3R\,\allowbreak x^2e^x/(e^x-1)^2=24.94\times5.76\times11.02/100.5=15.8$ J/(mol K), only $63\%$ of $3R$. At $300$ K, $x=0.8$ and $C_V=23.65$ J/(mol K), $95\%$ of $3R$; the expansion gives $3R[1-0.8^2/12]=23.61$, accurate to $0.2\%$. (b) $C_V=1944\,\allowbreak (T/\theta_D)^3=1944(20/428)^3=0.198$ J/(mol K): at $20$ K aluminium absorbs only $0.8\%$ of the Dulong&ndash;Petit heat capacity. Cooling a sample from $20$ K to $2$ K needs a thousand times less heat per kelvin than at $20$ K in this regime, which is why low-temperature experiments cool so quickly.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: why diamond is different</strong>
+                <p class="given">Estimate the heat capacity at $300$ K of Si ($\theta_D=645$ K) and diamond ($\theta_D=2230$ K).</p>
+                <p>The Debye function at $T/\theta_D=0.465$ (Si) gives $C_V=20.0$ J/(mol K), about $80\%$ of $3R$. For diamond $T/\theta_D=0.135$ and the model gives about $4$ J/(mol K) (measured: $6.1$), only a quarter of the classical value: the strongly bonded light carbon atoms vibrate at such high frequency ($\hbar\omega\gg k_\mathrm BT$ at $300$ K) that most modes are frozen out. Classical simulations such as molecular dynamics, which treat vibrations as classical oscillators, overestimate heat capacities for stiff materials at low $T$; quantum corrections are needed.</p>
+            </div>
+
+            <h2 id="transport">Lecture 7. Heat transport and thermal expansion<a class="anchor" href="#transport" aria-label="Link to this section">#</a></h2>
+            <p>Heat is transported by three mechanisms: conduction, convection and radiation. <strong>Conduction</strong> obeys Fourier&rsquo;s law: the heat flux (power per unit area) is proportional to the temperature gradient,
+            $$\mathbf q=-\kappa\nabla T,$$
+            with the <strong>thermal conductivity</strong> $\kappa$ (W/m K). Through a slab of thickness $L$ with faces at $T_1$ and $T_2$, the steady flux is $q=\kappa(T_1-T_2)/L=\Delta T/R_\mathrm{th}$, with the thermal resistance $R_\mathrm{th}=L/\kappa$ per unit area; resistances of layers in series add, as for electrical resistors. Combining Fourier&rsquo;s law with energy conservation (the continuity equation of <a href="vector-calculus.html">MATH 201</a>) gives the <strong>heat equation</strong>
+            $$\rho c\,\frac{\partial T}{\partial t}=\kappa\nabla^2T,\qquad\frac{\partial T}{\partial t}=\alpha\nabla^2T,\quad\alpha=\frac\kappa{\rho c},$$
+            a diffusion equation (<a href="partial-differential-equations.html">MATH 301</a>) for the temperature, with <strong>thermal diffusivity</strong> $\alpha$ (m$^2$/s); a temperature disturbance spreads over a distance $L$ in a time $\sim L^2/\alpha$. <strong>Convection</strong> is transport by moving fluid, described for surfaces by Newton&rsquo;s law of cooling, $q=h(T_s-T_\infty)$, with the heat-transfer coefficient $h$ ($5$&ndash;$25$ W/m$^2$K in natural convection in air, $10^3$&ndash;$10^4$ in boiling water). <strong>Radiation</strong>: a black surface emits $q=\sigma T^4$ with $\sigma=5.67\times10^{-8}$ W/m$^2$K$^4$ (Stefan&ndash;Boltzmann); the net exchange between a body and its surroundings is $\sigma(T^4-T_\mathrm{surr}^4)$, which for small $\Delta T$ acts like convection with $h_\mathrm{rad}=4\sigma T^3$.</p>
+            <div class="demo" data-demo="cooling"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p><strong>Conductivity of solids.</strong> In insulators heat is carried by phonons. A kinetic argument analogous to the gas result gives $\kappa=\tfrac13C\,v\,\ell$, with $C$ the heat capacity per unit volume, $v$ the sound speed and $\ell$ the phonon mean free path, limited by phonon&ndash;phonon scattering, defects and boundaries. In metals the conduction electrons carry most of the heat, and the Wiedemann&ndash;Franz law relates $\kappa$ to the electrical conductivity $\sigma_e$: $\kappa/(\sigma_eT)=L_0=2.44\times10^{-8}\ \mathrm{W\,\Omega\,K^{-2}}$ (<a href="physics-for-simulation.html">PHYS 100</a>).</p>
+            <p><strong>Thermal expansion.</strong> Most solids expand on heating, $\Delta L/L=\alpha\Delta T$, with a linear coefficient $\alpha\sim10^{-5}\ \mathrm K^{-1}$. A purely harmonic solid would not expand at all: the origin is the asymmetry of the interatomic potential.</p>
+            <div class="note thm"><strong>Expansion needs anharmonicity</strong>
+            <p>For a bond with $U(x)=\tfrac12k_sx^2-gx^3$ (the cubic term makes it softer when stretched), the Boltzmann average displacement is $\langle x\rangle=\dfrac{\int xe^{-U/k_\mathrm BT}\mathrm dx}{\int e^{-U/k_\mathrm BT}\mathrm dx}\approx\dfrac{g}{k_\mathrm BT}\dfrac{\langle x^4\rangle_0}{1}$ to first order in $g$, where $\langle x^4\rangle_0=3(k_\mathrm BT/k_s)^2$ for the Gaussian of the harmonic part. So $\langle x\rangle=\dfrac{3gk_\mathrm BT}{k_s^2}$, proportional to $T$: the mean bond length grows linearly with temperature, with $\alpha=\dfrac{3gk_\mathrm B}{a\,k_s^2}$ ($a$ the bond length). For $g=0$ there is no expansion; atoms vibrate more but the mean position does not shift.</p>
+            </div>
+            <div class="note mat"><strong>In materials science: thermal stress and thermal management</strong>
+            <p>If expansion is prevented, a stress $\sigma=E\alpha\Delta T$ arises; mismatched $\alpha$ between layers causes warping and cracking of coatings, solder joints and ceramic&ndash;metal seals, and quench cracks form when the surface contracts before the core. Heat sinks in electronics need high $\kappa$ (copper $400$, diamond $2000$ W/m K), insulation needs low $\kappa$ (aerogels $0.02$, ceramics for thermal-barrier coatings $1$&ndash;$2$ W/m K), and engineered nanostructures lower the phonon mean free path to improve thermoelectric materials.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: conduction through a composite wall</strong>
+                <p class="given">A steel plate $5$ mm thick ($\kappa=20$ W/m K) is covered by $20$ mm of insulation ($\kappa=0.04$ W/m K), with $100$ K across the whole. Find the heat flux and compare with the bare steel.</p>
+                <p>The resistances add: $R=\dfrac{0.005}{20}+\dfrac{0.020}{0.04}=0.00025+0.50=0.50025\ \mathrm{m^2K/W}$ and $q=100/0.50025=200$ W/m$^2$. Bare steel would give $q=20(100)/0.005=4\times10^5$ W/m$^2$, two thousand times more. The insulation dominates the resistance and the steel is irrelevant (its temperature drop is $0.05$ K): a general lesson, that in a series path the highest resistance controls the flux.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.2: how fast does a steel plate equilibrate?</strong>
+                <p class="given">Steel has $\kappa=20$ W/m K, $\rho=7800$ kg/m$^3$, $c=500$ J/kg K. How long does it take heat to cross $1$ cm and $10$ cm? What happens to $h_\mathrm{rad}$ between $300$ K and $1000$ K?</p>
+                <p>$\alpha=20/(7800\times500)=5.13\times10^{-6}$ m$^2$/s. The time scale $L^2/\alpha$ is $19.5$ s for $1$ cm and $1950$ s ($32$ min) for $10$ cm: the time grows as the square of the thickness, so a thick forging must soak much longer than a thin sheet to equalise. The radiative coefficient $h_\mathrm{rad}=4\sigma T^3$ is $6.1$ W/m$^2$K at $300$ K (the same as natural convection in air) but $227$ W/m$^2$K at $1000$ K, where radiation dominates a furnace. The net radiative flux from a $1000$ K black wall onto a $300$ K sample is $\sigma(1000^4-300^4)=56.2$ kW/m$^2$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.3: thermal expansion and thermal stress</strong>
+                <p class="given">A copper rod ($\alpha=16.5\times10^{-6}\ \mathrm K^{-1}$, $E=130$ GPa) is heated by $100$ K. Find its elongation if free, and the stress if it is held between rigid walls. What mean free path do the phonons have in silicon ($\kappa=148$ W/m K, $C=1.66\times10^6$ J/m$^3$K, $v=6400$ m/s)?</p>
+                <p>Free: $\Delta L=\alpha L\Delta T=1.65$ mm per metre. Held: the elastic strain needed to cancel the expansion is $\alpha\Delta T=1.65\times10^{-3}$, giving a compressive stress $E\alpha\Delta T=130\times10^9\times1.65\times10^{-3}=215$ MPa, comparable with the yield strength of annealed copper (so a constrained rod yields plastically rather than staying elastic). For silicon, $\ell=3\kappa/(Cv)=3(148)/(1.66\times10^6\times6400)=42$ nm. In a silicon nanowire of $20$ nm diameter, boundary scattering limits $\ell$ to about $20$ nm and $\kappa$ falls to about $70$ W/m K, as observed; this size effect is exploited in thermoelectrics.</p>
+            </div>
+
+            <h2 id="summary-p102">Summary of the unit<a class="anchor" href="#summary-p102" aria-label="Link to this section">#</a></h2>
+            <p>The macroscopic laws of thermodynamics follow from atoms in motion. Temperature measures random kinetic energy; the first law conserves energy; entropy counts microstates and fixes the direction of change; free energy folds the second law into a minimum principle for systems at fixed temperature; and the Boltzmann factor $e^{-E/k_\mathrm BT}$ sets every thermal population, defect concentration and activated rate. The heat capacity of solids shows where classical physics fails and quantum mechanics takes over, and heat transport turns thermodynamics into diffusion equations. The next steps are the statistical mechanics of <a href="statistical-mechanics.html">PHYS 301</a>, which derives these results systematically, and the thermodynamics of materials in <a href="thermodynamics-and-calphad.html">MSE 301</a>.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Temperature measures the mean thermal kinetic energy per degree of freedom: $\tfrac12k_\mathrm BT$ each (equipartition), so $pV=Nk_\mathrm BT$ and the rms speed is $\sqrt{3k_\mathrm BT/m}$; the Maxwell speed distribution describes how that energy is spread over atoms.</li>
+<li>The first law $\Delta U=Q+W$ is energy conservation; for an ideal gas $C_p-C_v=R$, an isothermal expansion does work $nRT\ln(V_2/V_1)$ and a reversible adiabatic one obeys $pV^\gamma=\text{const}$.</li>
+<li>Entropy $S=k_\mathrm B\ln\Omega$ counts microstates and satisfies $\mathrm dS=\delta Q_\mathrm{rev}/T$; an isolated system&#x27;s entropy never decreases, which sets the direction of heat flow and gives the Carnot limit $\eta=1-T_c/T_h$.</li>
+<li>At constant temperature and pressure a system evolves to minimum Gibbs free energy $G=H-TS$; phase equilibria follow from equal chemical potentials, and the Clausius-Clapeyron equation $\mathrm dp/\mathrm dT=L/(T\Delta V)$ gives the slope of a phase boundary.</li>
+<li>Thermal populations follow the Boltzmann factor $e^{-E/k_\mathrm BT}$, which gives defect concentrations $e^{-E_f/k_\mathrm BT}$ and the heat capacity of solids (Dulong-Petit $3R$ at high temperature, falling as $T^3$ at low temperature); heat is transported by conduction ($q=-\kappa\nabla T$), convection and radiation.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p102-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>A $30$ L tyre holds air at $2.2$ bar absolute at $20^\circ$C. (a) How many moles of air does it contain? (b) What is the pressure if the temperature rises to $50^\circ$C at constant volume?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $pV=nRT$ with temperatures in kelvin; at constant $V$ and $n$, $p\propto T$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $n=\dfrac{pV}{RT}=\dfrac{(2.2\times10^5)(0.030)}{8.314\times293.15}=2.71$ mol.</p><p>(b) $p_2=p_1\dfrac{T_2}{T_1}=2.2\times\dfrac{323.15}{293.15}=2.43$ bar.</p>
+            <p class="answer">(a) $2.71$ mol; (b) $2.43$ bar</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>Compare the rms speeds of He and N$_2$ at $300$ K, and the speeds of hydrogen atoms ($1.008$ u) in a $5000$ K stellar atmosphere. How long does a N$_2$ molecule take to cross a $1$ m room at its mean speed, and why is this much longer than the diffusion of a scent?</p>
+            <details class="hint"><summary>Hint</summary><p>$v_\mathrm{rms}=\sqrt{3k_\mathrm BT/m}$; the ratio of speeds for equal $T$ is $\sqrt{m_2/m_1}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$v_\mathrm{rms}(\mathrm{N_2})=517$ m/s, $v_\mathrm{rms}(\mathrm{He})=1367$ m/s, ratio $\sqrt{28.01/4.003}=2.65$. For H at $5000$ K: $\sqrt{3(1.381\times10^{-23})(5000)/(1.008\times1.661\times10^{-27})}=1.11\times10^4$ m/s. Crossing $1$ m at the mean speed $476$ m/s takes only $2$ ms, but a scent takes minutes because each molecule collides $7\times10^9$ times per second with a mean free path of $67$ nm, so it random-walks: the distance after $N$ collisions is only $\lambda\sqrt N$ (MATH 204), giving $D\approx\tfrac13\bar v\lambda=1\times10^{-5}\ \mathrm{m^2/s}$ and a time $L^2/D\sim10^5$ s for $1$ m without air currents.</p>
+            <p class="answer">$517$ and $1367$ m/s; $11$ km/s for H at $5000$ K; $2$ ms against diffusion over hours</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>A $0.50$ kg copper block ($c=385$ J/kg K) at $200^\circ$C is dropped into $1.0$ kg of water ($c=4186$ J/kg K) at $20^\circ$C inside an insulated container. Find the final temperature and the entropy change of the universe.</p>
+            <details class="hint"><summary>Hint</summary><p>Heat lost by the copper equals heat gained by the water. Entropy change is $mc\ln(T_f/T_i)$ for each.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$0.5(385)(200-T)=1.0(4186)(T-20)$ gives $T=27.9^\circ$C. Entropy: copper $\Delta S=0.5(385)\ln(301.06/473.15)=-87.0$ J/K; water $\Delta S=4186\ln(301.06/293.15)=+111.5$ J/K. The total is $+24.5$ J/K $&gt;0$, as the second law requires.</p>
+            <p class="answer">$27.9^\circ$C; $+24.5$ J/K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>One mole of a monatomic ideal gas ($\gamma=5/3$) at $300$ K and $10$ L expands to $20$ L (a) isothermally and reversibly, (b) adiabatically and reversibly. For each find the final temperature, the work done by the gas, the heat absorbed and $\Delta S$.</p>
+            <details class="hint"><summary>Hint</summary><p>Isothermal: $\Delta U=0$. Adiabatic: $TV^{\gamma-1}$ constant and $W=-\Delta U$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $T=300$ K; $W_\mathrm{by}=RT\ln2=1729$ J; $Q=+1729$ J; $\Delta S=Q/T=R\ln2=5.76$ J/K.</p><p>(b) $T_2=300(1/2)^{2/3}=189$ K; $W_\mathrm{by}=C_V(T_1-T_2)=1.5(8.314)(111)=1385$ J; $Q=0$; $\Delta S=0$ (reversible and adiabatic: isentropic). The adiabatic gas does less work and cools; the entropy gained by the volume increase ($R\ln2$) is exactly offset by the entropy lost on cooling, $C_V\ln(T_2/T_1)=-5.76$ J/K.</p>
+            <p class="answer">(a) $300$ K, $1729$ J, $1729$ J, $5.76$ J/K; (b) $189$ K, $1385$ J, $0$, $0$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>A $2$ kg copper block ($c=385$ J/kg K) at $400$ K is placed against a large reservoir at $300$ K and cools to $300$ K. (a) Find the entropy change of the block, the reservoir and the total. (b) How much work could have been extracted by running a reversible engine between the block and the reservoir?</p>
+            <details class="hint"><summary>Hint</summary><p>The reservoir receives $Q=mc\Delta T$ at constant $T$. For (b) the maximum work is $Q_\mathrm{block}-T_0\Delta S_\mathrm{block}$ magnitude... use $W_\mathrm{max}=T_c\Delta S_\mathrm{gen}$ for the lost work.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Q=2(385)(100)=77\,000$ J. $\Delta S_\mathrm{block}=mc\ln(300/400)=-221.5$ J/K; $\Delta S_\mathrm{res}=77\,\allowbreak 000/300=+256.7$ J/K; total $+35.2$ J/K.</p><p>(b) The work that was wasted is $T_c\Delta S_\mathrm{gen}=300\times35.2=10.5$ kJ. This is the maximum work a reversible engine could have delivered: $W_\mathrm{max}=Q-T_c\,\allowbreak mc\ln(400/300)=77\,\allowbreak 000-300(221.5)=10\,\allowbreak 550$ J, $14\%$ of the heat. Cooling the block directly against the reservoir throws all of this away.</p>
+            <p class="answer">(a) $-221.5$, $+256.7$, $+35.2$ J/K; (b) $10.5$ kJ</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>An engine operates between $800$ K and $300$ K. (a) What is the largest possible efficiency? (b) If it absorbs $1000$ J per cycle and delivers $400$ J, find the entropy generated per cycle and the lost work. (c) A heat pump delivers heat to a house at $300$ K from outside air at $270$ K: what is the maximum coefficient of performance?</p>
+            <details class="hint"><summary>Hint</summary><p>Carnot: $1-T_c/T_h$. Entropy generated per cycle is $Q_c/T_c-Q_h/T_h$. Heat-pump COP$=T_h/(T_h-T_c)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $1-300/800=0.625$. (b) $Q_c=600$ J; $\Delta S=600/300-1000/800=0.75$ J/K; lost work $=T_c\Delta S=225$ J, which equals $625-400$ J. (c) COP$_\mathrm{max}=300/30=10$: a heat pump can deliver up to ten joules of heat per joule of electricity because it moves heat rather than creating it; real units reach $3$&ndash;$5$.</p>
+            <p class="answer">(a) $62.5\%$; (b) $0.75$ J/K, $225$ J; (c) $10$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>(a) Derive the Clausius&ndash;Clapeyron relation $\mathrm d\ln p/\mathrm dT=L/RT^2$ for vapour pressure, treating the vapour as ideal and neglecting the liquid volume. (b) With $L=40.7$ kJ/mol, find the vapour pressure of water at $90^\circ$C and the boiling temperature at $60$ kPa.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathrm dp/\mathrm dT=L/(T\Delta v)$ with $\Delta v\approx v_\mathrm{gas}=RT/p$ per mole.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac{\mathrm dp}{\mathrm dT}=\dfrac L{T\,RT/p}=\dfrac{Lp}{RT^2}$, so $\dfrac{\mathrm d\ln p}{\mathrm dT}=\dfrac L{RT^2}$, integrating to $\ln\dfrac{p_2}{p_1}=-\dfrac LR\Bigl(\dfrac1{T_2}-\dfrac1{T_1}\Bigr)$ for constant $L$.</p><p>(b) $p(90^\circ\mathrm C)=101.3\exp[-4896(1/363.15-1/373.15)]=70.6$ kPa. At $60$ kPa, $\dfrac1T=\dfrac1{373.15}+\dfrac{R}{L}\ln\dfrac{101.3}{60}=2.680\times10^{-3}+1.07\times10^{-4}=2.787\times10^{-3}$, so $T=358.8$ K $=85.7^\circ$C.</p>
+            <p class="answer">(b) $70.6$ kPa; $85.7^\circ$C</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>(a) Derive the equilibrium vacancy fraction $n/N=e^{-E_f/k_\mathrm BT}$. (b) Cu has $E_f=1.28$ eV. At what temperature is the vacancy fraction $10^{-6}$ and what is it at $1300$ K? (c) A quench from $1300$ K to $300$ K freezes in the vacancies: estimate the vacancy concentration in atoms/cm$^3$ ($n_\mathrm{Cu}=8.5\times10^{22}\ \mathrm{cm^{-3}}$) and compare with the equilibrium value at $300$ K.</p>
+            <details class="hint"><summary>Hint</summary><p>Minimise $F=nE_f-k_\mathrm BT\ln\binom Nn$ using Stirling&rsquo;s approximation.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $\ln\binom Nn\approx N\ln N-n\ln n-(N-n)\ln(N-n)$, $\partial F/\partial n=E_f-k_\mathrm BT\ln[(N-n)/n]=0$, so $n/(N-n)=e^{-E_f/k_\mathrm BT}$, i.e. $n/N\approx e^{-E_f/k_\mathrm BT}$ for $n\ll N$.</p><p>(b) $T=E_f/(k_\mathrm B\ln10^6)=14\,\allowbreak 854/13.82=1075$ K. At $1300$ K, $n/N=e^{-11.43}=1.1\times10^{-5}$.</p><p>(c) Frozen in: $1.1\times10^{-5}\times8.5\times10^{22}=9\times10^{17}\ \mathrm{cm^{-3}}$. The equilibrium value at $300$ K is $3\times10^{-22}\times8.5\times10^{22}=0.03\ \mathrm{cm^{-3}}$, so the quenched sample has $3\times10^{19}$ times more vacancies than equilibrium: strongly supersaturated, which anneals out by diffusion to sinks and lets the quenched-in vacancies drive precipitation and hardening.</p>
+            <p class="answer">(b) $1075$ K; $1.1\times10^{-5}$; (c) $9\times10^{17}\ \mathrm{cm^{-3}}$ against $0.03\ \mathrm{cm^{-3}}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>A two-level system has levels $0$ and $\Delta=0.10$ eV. (a) Find the populations at $300$ K and $1000$ K. (b) Find the mean energy and the heat capacity per system at $1000$ K. (c) What is the limiting population ratio as $T\to\infty$ and the limiting entropy?</p>
+            <details class="hint"><summary>Hint</summary><p>$p_1=e^{-\beta\Delta}/(1+e^{-\beta\Delta})$. $C=\dfrac{\mathrm d\langle E\rangle}{\mathrm dT}=k_\mathrm B(\beta\Delta)^2p_0p_1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) At $300$ K, $e^{-3.869}=0.0209$ and $p_1=0.0205$. At $1000$ K, $e^{-1.160}=0.3133$ and $p_1=0.2386$, $p_0=0.7614$.</p><p>(b) $\langle E\rangle=\Delta p_1=0.0239$ eV. $C=k_\mathrm B(\Delta/k_\mathrm BT)^2p_0p_1=k_\mathrm B(1.160)^2(0.7614)(0.2386)=0.244\,\allowbreak k_\mathrm B$.</p><p>(c) $p_1/p_0\to1$ as $T\to\infty$ (both levels equally populated, because the energy gap is small compared with $k_\mathrm BT$); the entropy tends to its maximum $k_\mathrm B\ln2$ per system. The heat capacity is peaked (the Schottky anomaly), near $k_\mathrm BT\approx0.42\Delta$, because it measures the thermal energy absorbed as levels become accessible.</p>
+            <p class="answer">(a) $2.05\%$, $23.9\%$; (b) $0.0239$ eV, $0.244k_\mathrm B$; (c) ratio $\to1$, $S\to k_\mathrm B\ln2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>(a) Show from the Einstein formula that $C_V\to3R\bigl[1-\tfrac1{12}(\theta_E/T)^2\bigr]$ at high temperature. (b) Evaluate it for $\theta_E=240$ K at $T=100$ K and $300$ K. (c) The Debye law gives $C_V=1944(T/\theta_D)^3$ J/(mol K): how much heat is needed to warm $1$ mol of copper ($\theta_D=343$ K) from $2$ K to $10$ K?</p>
+            <details class="hint"><summary>Hint</summary><p>Expand $\dfrac{x^2e^x}{(e^x-1)^2}=\dfrac{x^2}{4\sinh^2(x/2)}$ for small $x$. For (c) integrate $C_V\,\mathrm dT$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac{x^2e^x}{(e^x-1)^2}=\dfrac{x^2}{4\sinh^2(x/2)}$ and $\sinh(x/2)\approx\tfrac x2(1+\tfrac{x^2}{24})$, so the ratio is $\approx(1+\tfrac{x^2}{24})^{-2}\approx1-\tfrac{x^2}{12}$.</p><p>(b) At $300$ K the exact value is $23.65$ J/(mol K) and the expansion $23.61$. At $100$ K, $x=2.4$ and the expansion would fail (it gives $3R(1-0.48)=13.0$ against the exact $15.8$): the series is good only for $T\gtrsim\theta_E$.</p><p>(c) $Q=\int C\,\allowbreak \mathrm dT=\dfrac{1944}{\theta_D^3}\dfrac{T_2^4-T_1^4}4=\dfrac{1944}{343^3}\cdot\dfrac{10^4-16}4=0.120$ J/mol (the electronic term $\gamma T$ in copper adds a comparable amount at these temperatures).</p>
+            <p class="answer">(b) $23.65$ and $15.8$ J/(mol K); (c) $0.12$ J/mol</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>A steel plate ($\alpha=5.1\times10^{-6}\ \mathrm{m^2/s}$) of thickness $L=1.0$ cm at a uniform $100^\circ$C has both faces suddenly held at $0^\circ$C. (a) Use the separation-of-variables result for the slab to find the time constant of the slowest mode. (b) Estimate the centre temperature after $5$ s. (c) How long would the same cooling take if the plate were $10$ cm thick?</p>
+            <details class="hint"><summary>Hint</summary><p>The slowest mode decays with $\tau_1=L^2/(\pi^2\alpha)$ and the first term of the series has amplitude $\tfrac4\pi$ at the centre.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau_1=\dfrac{L^2}{\pi^2\alpha}=\dfrac{10^{-4}}{9.87\times5.13\times10^{-6}}=1.98$ s.</p><p>(b) At the centre only the first term matters after the first second: $T(0,t)\approx\dfrac4\pi T_0e^{-t/\tau_1}=1.273(100)e^{-5/1.98}=10.1^\circ$C.</p><p>(c) $\tau\propto L^2$, so for $10$ cm the time scale is $100\times1.98=198$ s, and the centre has the same $10.1^\circ$C after $500$ s ($8.4$ min). A quench in oil or water then has two time scales: the surface is cooled by the bath (set by $h$) and the interior by conduction (set by $\alpha$); the Biot number $hL/\kappa$ says which controls (<a href="partial-differential-equations.html">MATH 301</a>).</p>
+            <p class="answer">(a) $1.98$ s; (b) $10.1^\circ$C; (c) $198$ s scale, $500$ s for the same state</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p102-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>A furnace wall at $1000$ K faces a sample at $300$ K (both black bodies). (a) Find the net radiative flux. (b) At what temperature difference does radiation equal natural convection with $h=10$ W/m$^2$K for a surface near $300$ K? (c) A $1$ m long Cu rod is raised by $100$ K while held between rigid walls: find the stress and compare with a yield stress of $70$ MPa for annealed copper.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $\sigma(T_1^4-T_2^4)$. (b) $h_\mathrm{rad}=4\sigma T^3$. (c) $E\alpha\Delta T$ with $E=130$ GPa, $\alpha=16.5\times10^{-6}\ \mathrm K^{-1}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $q=5.67\times10^{-8}(1000^4-300^4)=5.62\times10^4$ W/m$^2$. (b) $h_\mathrm{rad}=4\sigma T^3=4(5.67\times10^{-8})(300)^3=6.1$ W/m$^2$K, comparable to $h=10$: even at room temperature radiation carries about $40\%$ of the heat from a surface to its surroundings. Equal contributions need $h_\mathrm{rad}=10$, i.e. $T=\bigl(10/4\sigma\bigr)^{1/3}=353$ K. (c) $\sigma=E\alpha\Delta T=130\times10^9\times16.5\times10^{-6}\times100=215$ MPa, three times the yield stress, so the rod yields plastically and ends up shortened when cooled again. A bar must be allowed to expand, or the constraint must be designed for the stress.</p>
+            <p class="answer">(a) $56$ kW/m$^2$; (b) $6.1$ W/m$^2$K at $300$ K; (c) $215$ MPa</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q102-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Gases</span></div>
+            <p>Find the rms speed of an oxygen molecule ($32$ u) at $300$ K and the mean kinetic energy of a molecule.</p>
+            <details class="solution"><summary>Solution</summary><p>$\sqrt{3(1.381\times10^{-23})(300)/(32\times1.661\times10^{-27})}=484$ m/s; the mean translational kinetic energy is $\tfrac32k_\mathrm BT=6.2\times10^{-21}$ J $=0.039$ eV.</p></details>
+            </div>
+            <div class="problem" id="q102-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">First law</span></div>
+            <p>One mole of diatomic gas is heated by $100$ K at constant pressure. Find $Q$, $\Delta U$ and the work done by the gas.</p>
+            <details class="solution"><summary>Solution</summary><p>$Q=\tfrac72R(100)=2910$ J; $\Delta U=\tfrac52R(100)=2079$ J; work by the gas $=831$ J.</p></details>
+            </div>
+            <div class="problem" id="q102-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Entropy</span></div>
+            <p>Find the entropy change when $1$ mol of ideal gas triples its volume at constant temperature, and when $1$ kg of water ($4186$ J/kg K) is heated from $20^\circ$C to $80^\circ$C.</p>
+            <details class="solution"><summary>Solution</summary><p>$R\ln3=9.13$ J/K; $4186\ln(353.15/293.15)=779$ J/K.</p></details>
+            </div>
+            <div class="problem" id="q102-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Engines</span></div>
+            <p>What is the maximum efficiency of an engine between $600$ K and $300$ K? What is the maximum COP of a refrigerator between $270$ K (inside) and $300$ K (outside)?</p>
+            <details class="solution"><summary>Solution</summary><p>$1-300/600=0.50$; refrigerator COP $=T_c/(T_h-T_c)=270/30=9$.</p></details>
+            </div>
+            <div class="problem" id="q102-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Boltzmann</span></div>
+            <p>What fraction of vacancy sites is occupied at $1000$ K if $E_f=1.0$ eV? By what factor does a process with $E_a=0.5$ eV speed up from $300$ K to $600$ K?</p>
+            <details class="solution"><summary>Solution</summary><p>$e^{-1.0/0.08617}=e^{-11.60}=9.2\times10^{-6}$. Factor $=\exp\bigl[\tfrac{0.5}{8.617\times10^{-5}}(\tfrac1{300}-\tfrac1{600})\bigr]=\exp(9.67)=1.6\times10^4$.</p></details>
+            </div>
+            <div class="problem" id="q102-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Solids and heat flow</span></div>
+            <p>Why is $C_V$ of diamond at $300$ K far below $3R$? A $5$ mm steel plate ($20$ W/m K) is covered by $20$ mm insulation ($0.04$ W/m K) with $100$ K across it: find the heat flux.</p>
+            <details class="solution"><summary>Solution</summary><p>The carbon atoms are light and the bonds stiff, so the vibration quanta $\hbar\omega$ are much larger than $k_\mathrm BT$ at $300$ K and most modes are frozen out ($\theta_D=2230$ K). Flux $=100/(0.00025+0.5)=200$ W/m$^2$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Schroeder, D. V., <em>An Introduction to Thermal Physics</em>, Addison&ndash;Wesley: the clearest first course, built on the microscopic picture used here.</li>
+                <li>Blundell, S. J. and Blundell, K. M., <em>Concepts in Thermal Physics</em>, Oxford University Press: thermodynamics and statistical mechanics together, with many applications.</li>
+                <li>Kittel, C. and Kroemer, H., <em>Thermal Physics</em>, W. H. Freeman: free energy, chemical potential and phase equilibrium.</li>
+                <li>Callen, H. B., <em>Thermodynamics and an Introduction to Thermostatistics</em>, Wiley: a rigorous treatment of the postulates and the Legendre transforms.</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: the Einstein and Debye models and the conductivity of solids.</li>
+                <li>Incropera, F. P. and DeWitt, D. P., <em>Fundamentals of Heat and Mass Transfer</em>, Wiley: conduction, convection and radiation with engineering data.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="classical-mechanics.html"><span class="dir">Previous course</span>Classical mechanics</a>
+<a class="next" href="statistical-mechanics.html"><span class="dir">Next course</span>Statistical mechanics for simulation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=af0d8e79"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
+</body>
+</html>
