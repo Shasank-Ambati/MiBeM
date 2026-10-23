@@ -5,6 +5,7 @@ Input files, scripts and figures for the hands-on labs of the site (`computation
 | Folder | Lab | Software |
 | --- | --- | --- |
 | `lab-201` | Crystal structures in Python with ASE | ASE, spglib, numpy, matplotlib (no LAMMPS needed) |
+| `lab-504` | Monte Carlo of the Ising model | Python, numba, numpy, scipy, matplotlib |
 | `lab-502` | Molecular dynamics of liquid argon | LAMMPS, Python (numpy, matplotlib) |
 | `lab-503` | A metal with LAMMPS: copper with an EAM potential | LAMMPS, ASE |
 

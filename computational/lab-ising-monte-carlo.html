@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab: Monte Carlo of the Ising model - MiBeM</title>
+    <meta name="description" content="Hands-on Monte Carlo simulation of the two-dimensional Ising model in Python with numba: the Metropolis algorithm, comparison with the exact solution of Onsager, finite-size effects, the Binder cumulant, critical slowing down and error analysis.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/lab-ising-monte-carlo.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Lab: Monte Carlo of the Ising model - MiBeM">
+    <meta property="og:description" content="Hands-on Monte Carlo simulation of the two-dimensional Ising model in Python with numba: the Metropolis algorithm, comparison with the exact solution of Onsager, finite-size effects, the Binder cumulant, critical slowing down and error analysis.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/lab-ising-monte-carlo.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="46">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#model">Step 1. The model and the algorithm</a></li>
+                <li><a href="#install">Step 2. Install and write the code</a></li>
+                <li><a href="#scan">Step 3. A temperature scan for three sizes</a></li>
+                <li><a href="#exact">Step 4. Validation against the exact solution</a></li>
+                <li><a href="#snap">Step 5. Snapshots, metastability and the Binder crossing</a></li>
+                <li><a href="#tau">Step 6. Critical slowing down and honest error bars</a></li>
+                <li><a href="#errors">Step 7. Typical problems</a></li>
+                <li><a href="#check">Exercises</a></li>
+                <li><a href="#refs">Going further and references</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 504</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a><a href="lab-ising-monte-carlo.html" class="here" aria-current="page" title="LAB 504: Lab: Monte Carlo of the Ising model">504</a></nav>
+<!-- coursenav:end -->
+            <h1>Lab: Monte Carlo of the Ising model</h1>
+            <p class="lead">Monte Carlo (MC) is the other great simulation method besides molecular dynamics: instead of integrating the equations of motion it samples configurations with the Boltzmann probability. The 2D Ising model is the standard test case because it has an <em>exact</em> solution (Onsager, 1944), so you can verify your code number by number. This lab writes the Metropolis algorithm in 25 lines of Python, runs it for lattices of $8^2$ to $64^2$ spins, and uses it to learn the practical points of MC: equilibration, finite-size effects, the Binder cumulant, critical slowing down and error bars. The whole lab runs in about two and a half minutes on one core.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="monte-carlo-methods.html">CMS 503: Monte Carlo and kMC</a><br><a href="probability-for-simulation.html">MATH 204: Probability</a><br><a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>By the end of this lab you will be able to:</strong>
+                <ul>
+                    <li>Implement the Metropolis algorithm for a lattice model and justify every line from detailed balance.</li>
+                    <li>Validate a simulation against an exact solution.</li>
+                    <li>Measure energy, magnetisation, specific heat, susceptibility and Binder cumulant, and locate a phase transition from finite-size data.</li>
+                    <li>Measure an autocorrelation time and compute an honest statistical error.</li>
+                    <li>Recognise metastable states and other traps (quench into stripes, too short runs, compilation seeds).</li>
+                </ul>
+                <strong>Companion courses:</strong> <a href="monte-carlo-methods.html">CMS 503</a> (theory), <a href="statistical-mechanics.html">PHYS 301</a> (the Ising model and phase transitions), <a href="probability-for-simulation.html">MATH 204</a> (Markov chains). <strong>Before this lab:</strong> <a href="programming-and-workflow.html">COMP 101</a>.
+            </div>
+            <div class="lab-meta"><div><b>Time</b>2 to 3 hours</div><div><b>Software</b>Python 3.9+, numpy, numba, scipy, matplotlib</div><div><b>System</b>L x L square lattice, L = 8 to 64</div><div><b>Run time</b>about 30 s + 2 min for the two scripts</div></div>
+            <h2 id="model">Step 1. The model and the algorithm<a class="anchor" href="#model" aria-label="Link to this section">#</a></h2>
+            <p>Each site $i$ of an $L\times L$ square lattice with periodic boundaries carries a spin $s_i=\pm1$. The energy is $H=-J\sum_{\langle ij\rangle}s_is_j$ over nearest-neighbour pairs, and we choose $J=k_\mathrm B=1$, so temperatures are in units of $J/k_\mathrm B$. At low $T$ the spins align (ferromagnet, $|m|\to1$, $e=H/N\to-2$); at high $T$ they are random ($m\to0$, $e\to0$). In between is a continuous transition at the exact critical temperature
+            $$T_c=\frac{2}{\ln(1+\sqrt2)}=2.2692.$$
+            The Metropolis algorithm generates a Markov chain whose stationary distribution is the Boltzmann distribution $P(\mathbf s)\propto e^{-H/T}$ (<a href="monte-carlo-methods.html">CMS 503</a>). Each step: (1) choose a site at random; (2) compute the energy change $\Delta E$ if its spin were flipped; (3) accept the flip with probability $\min(1,e^{-\Delta E/T})$, otherwise keep the old state. This satisfies detailed balance because the proposal is symmetric. For a spin with neighbour sum $\Sigma$, the flip changes the energy by $\Delta E=2s_i\Sigma$, which can only take the values $-8,-4,0,4,8$, so the cheap integer arithmetic is the whole cost. A <em>sweep</em> is $L^2$ attempted flips, so that every spin is visited once on average; we measure after each sweep.</p>
+            <h2 id="install">Step 2. Install and write the code<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+            <p>Python loops are too slow for this (a $32^2$ lattice for $20\,000$ sweeps is $2\times10^7$ spin updates), so the inner loop is compiled with <strong>numba</strong>, which turns a decorated Python function into machine code the first time it is called:</p>
+            <pre data-file="shell"><code>python3 -m venv ~/venvs/mc &amp;&amp; source ~/venvs/mc/bin/activate
+            pip install numpy numba scipy matplotlib</code></pre>
+            <pre data-file="ising.py"><code>&quot;&quot;&quot;2D Ising model, Metropolis Monte Carlo, with numba for speed.  H = -J sum_&lt;ij&gt; s_i s_j, J = 1, k_B = 1.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
+
+            @njit(cache=True)
+            def sweep(s, beta, rng_state=0):
+                L = s.shape[0]
+                for _ in range(L * L):                                   # one sweep = L*L attempted flips
+                    i = np.random.randint(L); j = np.random.randint(L)
+                    nb = s[(i + 1) % L, j] + s[(i - 1) % L, j] + s[i, (j + 1) % L] + s[i, (j - 1) % L]
+                    dE = 2.0 * s[i, j] * nb                              # energy change if s[i,j] flips
+                    if dE &lt;= 0 or np.random.random() &lt; np.exp(-beta * dE):
+                        s[i, j] = -s[i, j]
+
+            @njit(cache=True)
+            def energy(s):
+                L = s.shape[0]; E = 0.0
+                for i in range(L):
+                    for j in range(L):
+                        E -= s[i, j] * (s[(i + 1) % L, j] + s[i, (j + 1) % L])   # count each bond once
+                return E
+
+            @njit(cache=True)
+            def seed(n):
+                np.random.seed(n)
+
+            def run(L, T, nequil=2000, nprod=10000, sd=1, start=&quot;random&quot;):
+                seed(sd)
+                rng = np.random.default_rng(sd)
+                s = rng.choice(np.array([-1, 1], dtype=np.int64), size=(L, L)) if start == &quot;random&quot; else np.ones((L, L), dtype=np.int64)
+                for _ in range(nequil): sweep(s, 1.0 / T)
+                E = np.empty(nprod); M = np.empty(nprod)
+                for k in range(nprod):
+                    sweep(s, 1.0 / T)
+                    E[k] = energy(s) / L**2; M[k] = abs(s.sum()) / L**2
+                return s, E, M</code></pre>
+            <p>Points to understand before running: the compiled function uses <em>numba's own</em> random-number generator, which is not seeded by <code>numpy.random.default_rng</code>, so the helper <code>seed()</code> seeds it separately (without it each run differs, and the results cannot be reproduced); the spin array uses 64-bit integers so that sums of $L^2$ spins cannot overflow (with 8-bit integers, <code>s.sum()</code> would overflow for $L\ge12$); and <code>energy()</code> counts every bond once by using only the right and the lower neighbour. The first call to a numba function takes a moment to compile; later calls are fast, and <code>cache=True</code> stores the compiled code on disk.</p>
+            <h2 id="scan">Step 3. A temperature scan for three sizes<a class="anchor" href="#scan" aria-label="Link to this section">#</a></h2>
+            <p>The script runs $L=8,16,32$ at 21 temperatures, with $3000$ sweeps of equilibration and $20\,000$ sweeps of measurement each, and computes from the time series of the energy per spin $e$ and the absolute magnetisation per spin $|m|$:</p>
+            <ul>
+            <li>the specific heat $C_v=N\,\mathrm{Var}(e)/T^2$ (the fluctuation&ndash;dissipation relation of <a href="statistical-mechanics.html">PHYS 301</a>);</li>
+            <li>the susceptibility $\chi=N(\langle m^2\rangle-\langle|m|\rangle^2)/T$;</li>
+            <li>the Binder cumulant $U=1-\langle m^4\rangle/(3\langle m^2\rangle^2)$.</li>
+            </ul>
+            <pre data-file="ising_scan.py"><code>&quot;&quot;&quot;Temperature scan for three lattice sizes: magnetisation, energy, specific heat, susceptibility and Binder cumulant.&quot;&quot;&quot;
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from ising import run
+
+            Ts = np.round(np.concatenate([np.arange(1.6, 2.1, 0.2), np.arange(2.1, 2.5, 0.05), np.arange(2.5, 3.6, 0.25)]), 3)
+            res = {}
+            for L in (8, 16, 32):
+                rows = []
+                for T in Ts:
+                    s, E, M = run(L, T, nequil=3000, nprod=20000, sd=int(T * 100) + L)
+                    N = L * L
+                    m2, m4 = np.mean(M**2), np.mean(M**4)
+                    rows.append((T, np.mean(E), np.mean(M), N * np.var(E) / T**2, N * (m2 - np.mean(M)**2) / T, 1 - m4 / (3 * m2**2)))
+                res[L] = np.array(rows)
+                print(f&quot;L = {L}&quot;)
+                print(&quot;    T      &lt;e&gt;      &lt;|m|&gt;     C_v      chi     Binder U&quot;)
+                for r in res[L][::3]: print(&quot;  %5.3f  %7.4f  %7.4f  %7.3f  %8.3f  %7.4f&quot; % tuple(r))
+            fig, ax = plt.subplots(2, 2, figsize=(8, 6))
+            for L, r in res.items():
+                for a, c, lab in zip(ax.flat, (2, 1, 3, 5), (r&quot;$\langle|m|\rangle$&quot;, r&quot;$\langle e\rangle$&quot;, r&quot;$C_v$&quot;, &quot;Binder cumulant $U$&quot;)):
+                    a.plot(r[:, 0], r[:, c], &quot;o-&quot;, ms=3, label=f&quot;L={L}&quot;); a.set_ylabel(lab); a.set_xlabel(&quot;T (J/k_B)&quot;)
+            for a in ax.flat: a.axvline(2.269, color=&quot;grey&quot;, ls=&quot;:&quot;)
+            ax[0, 0].legend(); fig.tight_layout(); fig.savefig(&quot;ising_scan.png&quot;, dpi=130)
+            np.save(&quot;ising_scan.npy&quot;, np.array([res[L] for L in (8, 16, 32)]))</code></pre>
+            <pre class="out"><code>L = 8
+                T      &lt;e&gt;      &lt;|m|&gt;     C_v      chi     Binder U
+              1.600  -1.9284   0.9796    0.265     0.044   0.6653
+              2.100  -1.6612   0.8700    0.930     0.668   0.6435
+              2.250  -1.5067   0.7874    1.137     1.131   0.6172
+              2.400  -1.3319   0.6788    1.169     1.574   0.5694
+              2.750  -0.9917   0.4436    0.732     1.504   0.3943
+              3.500  -0.6639   0.2479    0.255     0.569   0.1445
+            L = 16
+                T      &lt;e&gt;      &lt;|m|&gt;     C_v      chi     Binder U
+              1.600  -1.9286   0.9797    0.253     0.042   0.6663
+              2.100  -1.6685   0.8746    0.901     0.649   0.6587
+              2.250  -1.4862   0.7437    1.443     3.469   0.6235
+              2.400  -1.2417   0.4950    1.372     6.220   0.4804
+              2.750  -0.9368   0.2216    0.561     2.278   0.1571
+              3.500  -0.6589   0.1241    0.249     0.627   0.0395
+            L = 32
+                T      &lt;e&gt;      &lt;|m|&gt;     C_v      chi     Binder U
+              1.600  -1.9280   0.9795    0.266     0.044   0.6666
+              2.100  -1.6622   0.8682    0.946     0.927   0.6635
+              2.250  -1.4664   0.6927    1.830    12.226   0.6230
+              2.400  -1.2125   0.3035    1.206    14.766   0.3308
+              2.750  -0.9334   0.1088    0.552     2.491  -0.0081
+              3.500  -0.6604   0.0634    0.247     0.671   0.0115</code></pre>
+            <figure class="lab-fig"><img src="../assets/labs/lab-504/ising_scan.png" alt="Magnetisation, energy, specific heat and Binder cumulant of the 2D Ising model against temperature for L = 8, 16 and 32" loading="lazy"><figcaption>Results of the scan for three lattice sizes. The dotted line is the exact critical temperature $T_c=2.269$.</figcaption></figure>
+            <p>Read the figure and the table together.</p>
+            <ul>
+            <li><strong>Low temperature</strong> ($T=1.6$): $\langle|m|\rangle=0.980$ and $\langle e\rangle=-1.928$ for every size. The energy is not the ground-state value $-2$ because a few spins are flipped by thermal excitation: an isolated flipped spin costs $\Delta E=8$ and occurs with probability $e^{-8/1.6}=0.0067$, which alone would raise the energy by $8\times0.0067=0.054$; the measured $0.072$ includes pairs and other small clusters.</li>
+            <li><strong>Magnetisation:</strong> falls from $1$ to $0$, more sharply for larger $L$. In a finite system $\langle m\rangle$ is exactly zero (the system flips between $+m$ and $-m$ in a long run), so we measure $\langle|m|\rangle$, which is nonzero even above $T_c$ ($0.06$ at $T=3.5$ for $L=32$, scaling as $1/L$: a pure finite-size effect).</li>
+            <li><strong>Energy</strong> is smooth and almost independent of $L$.</li>
+            <li><strong>Specific heat</strong> has a peak that grows with the size ($1.18$ at $L=8$, $1.54$ at $L=16$, $1.85$ at $L=32$). In the thermodynamic limit it diverges logarithmically at $T_c$; a finite system can only have a rounded maximum. The peak is also located slightly <em>above</em> $T_c$ (near $2.35$ here), approaching it as $L$ grows.</li>
+            <li><strong>Susceptibility</strong> peaks much more strongly ($1.6$, $6.2$, $14.8$ at $L=8$, $16$, $32$ on this coarse grid).</li>
+            <li><strong>Binder cumulant</strong> goes from $U=0.667=2/3$ in the ordered phase to $0$ in the disordered phase. The curves for different $L$ cross close to $T_c$: the value of $U$ at $T_c$ does not depend on the size, which is the basis of the standard method for finding $T_c$ (Step 5).</li>
+            </ul>
+            <h2 id="exact">Step 4. Validation against the exact solution<a class="anchor" href="#exact" aria-label="Link to this section">#</a></h2>
+            <p>Before trusting a code for an unsolved problem, run it for a solved one. Onsager&rsquo;s exact spontaneous magnetisation is $m(T)=[1-\sinh^{-4}(2/T)]^{1/8}$ for $T&lt;T_c$ and the exact energy per spin is $e=-\coth(2\beta)\,\allowbreak [1+\tfrac2\pi(2\tanh^2 2\beta-1)K(k)]$ with $k=2\sinh2\beta/\cosh^22\beta$ and $K$ the complete elliptic integral (<code>scipy.special.ellipk</code> takes the parameter $k^2$). The script <code>ising_extra.py</code> compares the simulation with these formulae, makes snapshots, locates the Binder crossing and measures the autocorrelation time; its four parts are explained in this and the following steps:</p>
+            <pre data-file="ising_extra.py"><code>&quot;&quot;&quot;Snapshots, comparison with Onsager&#x27;s exact results, Binder-cumulant crossing and critical slowing down.&quot;&quot;&quot;
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from ising import run
+
+            Tc = 2 / np.log(1 + np.sqrt(2))
+            print(&quot;exact Tc = 2/ln(1+sqrt2) = %.4f&quot; % Tc)
+
+            # 1. snapshots
+            fig, ax = plt.subplots(1, 3, figsize=(8.5, 3))
+            for a, T in zip(ax, (1.8, 2.27, 3.5)):
+                s, E, M = run(64, T, nequil=3000, nprod=10, sd=3)
+                a.imshow(s, cmap=&quot;gray&quot;, interpolation=&quot;nearest&quot;); a.set_title(f&quot;T = {T}&quot;); a.axis(&quot;off&quot;)
+            fig.tight_layout(); fig.savefig(&quot;ising_snap.png&quot;, dpi=130)
+
+            # 2. magnetisation and energy against Onsager
+            print(&quot;\n   T    &lt;|m|&gt; L=32   exact m(T)    &lt;e&gt; L=32   exact e(T)&quot;)
+            from scipy.special import ellipk
+            def e_exact(T):
+                b = 1 / T; k = 2 * np.sinh(2 * b) / np.cosh(2 * b)**2
+                return -(1 / np.tanh(2 * b)) * (1 + 2 / np.pi * (2 * np.tanh(2 * b)**2 - 1) * ellipk(k**2))
+            for T in (1.8, 2.0, 2.1, 2.2):
+                s, E, M = run(32, T, nequil=3000, nprod=20000, sd=int(T * 100))
+                m_ex = (1 - np.sinh(2 / T)**-4)**0.125
+                print(&quot;  %.2f    %.4f       %.4f      %7.4f    %7.4f&quot; % (T, M.mean(), m_ex, E.mean(), e_exact(T)))
+
+            # 3. Binder crossing
+            Ts = np.arange(2.15, 2.401, 0.025)
+            print(&quot;\nBinder cumulant U(T, L)&quot;)
+            print(&quot;   T     &quot; + &quot;&quot;.join(f&quot;  L={L:&lt;3d}&quot; for L in (8, 16, 32, 64)))
+            U = {}
+            for L in (8, 16, 32, 64):
+                u = []
+                for T in Ts:
+                    s, E, M = run(L, T, nequil=3000, nprod=30000 if L &lt; 64 else 20000, sd=int(T * 1000) + L)
+                    m2, m4 = np.mean(M**2), np.mean(M**4); u.append(1 - m4 / (3 * m2**2))
+                U[L] = np.array(u)
+            for k, T in enumerate(Ts): print(&quot;  %.3f  &quot; % T + &quot;&quot;.join(f&quot;  {U[L][k]:.3f}&quot; for L in (8, 16, 32, 64)))
+            def cross(a, b):
+                d = U[a] - U[b]; i = np.where(np.sign(d[:-1]) != np.sign(d[1:]))[0][0]
+                return Ts[i] - d[i] * (Ts[i + 1] - Ts[i]) / (d[i + 1] - d[i])
+            print(&quot;crossing L=16/32: T = %.3f ;  L=32/64: T = %.3f ;  exact %.3f&quot; % (cross(16, 32), cross(32, 64), Tc))
+
+            # 4. critical slowing down: integrated autocorrelation time of |m|
+            def tau_int(x):
+                x = x - x.mean(); n = len(x); f = np.fft.rfft(x, 2 * n); ac = np.fft.irfft(f * np.conj(f))[:n]; ac /= ac[0]
+                tau = 0.5
+                for t in range(1, n):
+                    tau += ac[t]
+                    if t &gt; 6 * tau: break
+                return tau
+            print(&quot;\nautocorrelation time of |m| (sweeps), L = 32&quot;)
+            for T in (1.8, 2.0, 2.2, 2.269, 2.4, 3.0, 4.0):
+                s, E, M = run(32, T, nequil=3000, nprod=40000, sd=int(T * 1000))
+                print(&quot;  T = %.3f   tau = %6.1f&quot; % (T, tau_int(M)))</code></pre>
+            <pre class="out"><code>exact Tc = 2/ln(1+sqrt2) = 2.2692
+
+               T    &lt;|m|&gt; L=32   exact m(T)    &lt;e&gt; L=32   exact e(T)
+              1.80    0.9573       0.9569      -1.8603    -1.8593
+              2.00    0.9099       0.9113      -1.7445    -1.7456
+              2.10    0.8680       0.8687      -1.6612    -1.6621
+              2.20    0.7836       0.7848      -1.5426    -1.5465</code></pre>
+            <p>The simulated magnetisation agrees with the exact formula to $0.001$&ndash;$0.002$ at $T\le2.1$ and the energy to $0.001$; at $T=2.2$, close to $T_c$, the magnetisation is $0.0012$ lower and the energy $0.004$ higher than the exact infinite-system values; the statistical errors are largest there (Step 6) and finite-size rounding also contributes. This is the right kind of agreement: statistical errors of the order of $10^{-3}$ and systematic finite-size deviations that grow near $T_c$. A disagreement at low $T$ (say in $e$ at the second decimal) would reveal an error in the code, typically in the sign of $\Delta E$ or in counting the bonds twice.</p>
+            <h2 id="snap">Step 5. Snapshots, metastability and the Binder crossing<a class="anchor" href="#snap" aria-label="Link to this section">#</a></h2>
+            <figure class="lab-fig"><img src="../assets/labs/lab-504/ising_snap.png" alt="Spin configurations of a 64 by 64 Ising lattice at T = 1.8, 2.27 and 3.5" loading="lazy"><figcaption>Configurations after 3000 sweeps from a random start (black $-1$, white $+1$). Left: ordered, but with a band of minority spins; centre: critical clusters of all sizes; right: disordered.</figcaption></figure>
+            <p>The pictures show the three regimes (ordered, critical with clusters on all length scales, disordered) and a warning. At $T=1.8$ the lattice has fallen into a <strong>striped state</strong>: a band of minus spins spanning the lattice in a sea of plus spins. The band has two straight interfaces, each costing $2$ energy units per unit of length, so it is higher in energy than the uniform state, but removing it requires moving an interface across the whole lattice, a slow process at low $T$. Starting from a random configuration and cooling suddenly (a <em>quench</em>) is a common way of getting stuck in such a metastable state; the measured $|m|$ would then be clearly lower than the $0.96$ of the uniform state. Remedies: start from the ordered state ($s_i=1$ everywhere; the <code>start="ordered"</code> option of <code>run</code>) at low $T$ and from the random state at high $T$, compare the two, anneal slowly, and always look at a configuration.</p>
+            <p>The Binder cumulant crossing on a fine grid ($T=2.15$ to $2.40$ in steps of $0.025$, $30\,000$ sweeps for $L\le32$ and $20\,000$ for $L=64$):</p>
+            <pre class="out"><code>Binder cumulant U(T, L)
+               T       L=8    L=16   L=32   L=64 
+              2.150    0.640  0.652  0.656  0.665
+              2.175    0.632  0.644  0.656  0.664
+              2.200    0.627  0.643  0.656  0.660
+              2.225    0.625  0.627  0.653  0.647
+              2.250    0.616  0.625  0.633  0.641
+              2.275    0.613  0.603  0.592  0.614
+              2.300    0.599  0.592  0.593  0.550
+              2.325    0.591  0.576  0.444  0.484
+              2.350    0.590  0.536  0.473  0.200
+              2.375    0.586  0.534  0.385  0.152
+              2.400    0.573  0.517  0.312  0.168
+            crossing L=16/32: T = 2.260 ;  L=32/64: T = 2.211 ;  exact 2.269</code></pre>
+            <p>Near $T_c$ the curves of $L=8$ to $64$ lie within $0.04$ of each other at $T\approx2.25$&ndash;$2.30$ and fan out on both sides: for $T&lt;T_c$ larger systems have a larger $U$ (toward $2/3$), for $T&gt;T_c$ a smaller one (toward $0$). Interpolating the crossing of the $L=16$ and $L=32$ curves gives $T=2.260$, close to the exact $2.269$. The $L=32/64$ crossing ($2.211$) is <em>worse</em>, not better, and the $L=64$ column is irregular ($0.647$ at $2.225$, then $0.614$, $0.550$, $0.484$, $0.200$). This is not physics: the errors of $U$ near $T_c$ are large because the samples are strongly correlated (next step) and $20\,000$ sweeps contain only about a hundred independent samples. The lesson is that finite-size scaling needs error bars: more sweeps, several seeds, and finer grids near the crossing.</p>
+            <h2 id="tau">Step 6. Critical slowing down and honest error bars<a class="anchor" href="#tau" aria-label="Link to this section">#</a></h2>
+            <p>Consecutive configurations of a Markov chain are correlated. The <em>integrated autocorrelation time</em> $\tau$ (in sweeps) of an observable is defined from its autocorrelation function $A(t)$ as $\tau=\tfrac12+\sum_{t\ge1}A(t)$, and the statistical error of the mean of $N$ measurements is $\sigma\sqrt{2\tau/N}$: only $N/(2\tau)$ of the samples are independent. The script computes $A(t)$ by FFT and sums it until $t&gt;6\tau$. Results for the magnetisation of the $32\times32$ lattice, $40\,000$ sweeps per temperature:</p>
+            <pre class="out"><code>autocorrelation time of |m| (sweeps), L = 32
+              T = 1.800   tau =    3.1
+              T = 2.000   tau =    7.5
+              T = 2.200   tau =   78.6
+              T = 2.269   tau =  161.5
+              T = 2.400   tau =   84.6
+              T = 3.000   tau =    5.9
+              T = 4.000   tau =    1.7</code></pre>
+            <p>The time rises by a factor of $50$ from $T=1.8$ ($3$ sweeps) to $T_c$ ($161$ sweeps) and falls again on the other side. Close to the transition the correlation length is large, regions of size $\xi$ fluctuate coherently, and a local update algorithm needs many sweeps to change them: $\tau\sim\xi^z\sim L^z$ at $T_c$ with $z\approx2.2$ for Metropolis (the literature value; you will determine it in Exercise 5). With $\tau=161$, the $40\,000$ sweeps at $T_c$ give $40\,000/(2\times161)=124$ independent samples, so the statistical error of $\langle|m|\rangle$ is about $9\%$ of its standard deviation. Cluster algorithms (Swendsen&ndash;Wang, Wolff) flip whole clusters at once and reduce $z$ to $\approx0.25$ (<a href="monte-carlo-methods.html">CMS 503</a>); they are the method of choice for critical phenomena, but they do not apply to most models with continuous or multi-component variables, where Metropolis remains the standard.</p>
+            <div class="table-scroll" role="region" aria-label="Step 6. Critical slowing down and honest error bars (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Check</th><th>How to do it here</th><th>What it reveals</th></tr></thead>
+            <tbody>
+            <tr><td>Equilibration</td><td>Plot $e$ and $|m|$ against the sweep number; start from two different states</td><td>Drift, metastable states (stripes)</td></tr>
+            <tr><td>Known limits</td><td>$e\to-2$ and $U\to2/3$ at low $T$, $U\to0$ and $m\to0$ at high $T$</td><td>Sign errors, wrong bond counting</td></tr>
+            <tr><td>Exact results</td><td>Onsager $m(T)$ and $e(T)$ (Step 4)</td><td>Bugs, wrong random numbers</td></tr>
+            <tr><td>Correlation</td><td>$\tau$ from the autocorrelation function</td><td>The true error bar</td></tr>
+            <tr><td>Finite size</td><td>Repeat for several $L$</td><td>What is a property of the model and what of the box</td></tr>
+            <tr><td>Reproducibility</td><td>Fix and record the random seed</td><td>Results that cannot be repeated</td></tr>
+            </tbody></table></div>
+            <h2 id="errors">Step 7. Typical problems<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 7. Typical problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr><td>Energy per spin at low $T$ is $-4$ instead of $-2$ (or $+2$ at high $T$)</td><td>each bond counted twice, or $\Delta E$ with the wrong sign</td><td>Use only two neighbours in <code>energy()</code>; check $\Delta E=2s_i\Sigma$ on a $2\times2$ example by hand</td></tr>
+            <tr><td>Results differ between identical runs</td><td>the compiled code is not seeded by numpy&rsquo;s generator</td><td>Seed from inside a jitted function (<code>seed()</code> above)</td></tr>
+            <tr><td>Magnetisation never reaches zero at high $T$</td><td>$|m|$ has a positive bias $\propto1/L$ in a finite system</td><td>Compare with $\langle m^2\rangle$ or larger $L$; this is physical</td></tr>
+            <tr><td>Magnetisation of the ordered phase is far below the exact value</td><td>the quench got stuck in a striped state</td><td>Start ordered, or anneal; look at a snapshot</td></tr>
+            <tr><td>Binder crossing is irregular</td><td>too few independent samples near $T_c$</td><td>Run $\ge10^5$ sweeps near $T_c$, several seeds, estimate $\tau$</td></tr>
+            <tr><td>Code is 100 times slower than expected</td><td>numba falls back to the Python interpreter</td><td>Use <code>@njit</code> (not <code>@jit</code> without nopython) and only numpy arrays and numbers inside</td></tr>
+            </tbody></table></div>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>The Metropolis algorithm for the 2D Ising model proposes to flip one spin and accepts it with probability min(1, exp(-dE/kT)); a sweep is L*L proposals, and the energy change of a flip is dE = 2 s_i (sum of the four neighbours), so it takes only integer arithmetic.</li>
+<li>Simulation results are checked against exact ones: Onsager gives Tc = 2/ln(1+sqrt2) = 2.2692 J/kB, and the simulated magnetisation (0.9573, 0.9099, 0.8680 at T = 1.8, 2.0, 2.1) and energy (-1.860, -1.745, -1.661) of a 32x32 lattice agree with the exact values to about 0.002.</li>
+<li>Finite systems have no sharp transition: the specific-heat peak grows with L (1.18, 1.54, 1.85 for L = 8, 16, 32) and moves towards Tc, and the Binder cumulant U = 1 - &lt;m4&gt;/(3&lt;m2&gt;^2) goes from 2/3 (ordered) to 0 (disordered) with curves for different L crossing near Tc.</li>
+<li>Near Tc the sampling becomes inefficient (critical slowing down): the autocorrelation time of the magnetisation of a 32x32 lattice is 3 sweeps at T = 1.8, 161 sweeps at Tc and 2 sweeps at T = 4, so the number of independent samples in 40 000 sweeps at Tc is only about 120.</li>
+<li>Always report an error bar that accounts for correlation (error = sigma*sqrt(2 tau / N)), start from several different initial states, and look at snapshots: a quench from a random state can get stuck in a striped state with two domains that has higher energy than the ground state.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Exercises 1 to 3 need only the numbers above; 4 and 5 use the scripts.</p>
+            <div class="problem" id="p504-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>At the critical temperature $T_c=2.269$, (a) what is the probability of accepting a flip that raises the energy by $4$ and by $8$? (b) At $T=1.6$? (c) Why does a low temperature need more sweeps to reach equilibrium?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $p=e^{-\Delta E/T}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $e^{-4/2.269}=0.171$ and $e^{-8/2.269}=0.029$. (b) $e^{-4/1.6}=0.082$ and $e^{-8/1.6}=0.0067$. (c) At low $T$ almost every proposed flip raises the energy and is rejected, so the system moves very slowly through configuration space: the acceptance rate for the uniform state is $0.0067$, so an interface between domains moves only when a rare fluctuation occurs and the relaxation times become very long (the stripe state of Step 5).</p>
+            <p class="answer">(a) $0.171$, $0.029$  (b) $0.082$, $0.0067$  (c) most flips rejected</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p504-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Core</span></div>
+            <p>(a) Show that the Binder cumulant of a Gaussian distribution of $m$ with zero mean is $U=0$, and that of a two-peak distribution with $m=\pm m_0$ is $2/3$. (b) A run at $T=3.5$ gave $U=0.0115$ for $L=32$: is this consistent with zero? (c) Why does $U(T_c)$ not depend on $L$?</p>
+            <details class="hint"><summary>Hint</summary><p>For a Gaussian, $\langle m^4\rangle=3\langle m^2\rangle^2$. For $m=\pm m_0$, $\langle m^4\rangle=m_0^4$ and $\langle m^2\rangle=m_0^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Gaussian: $\langle m^4\rangle=3\sigma^4=3\langle m^2\rangle^2$, so $U=1-1=0$. Two peaks at $\pm m_0$: $U=1-m_0^4/(3m_0^4)=2/3$. (b) Yes, within the statistical error: at $T=3.5$ the correlation time is of a few sweeps and the distribution of $m$ is close to Gaussian; $0.0115$ corresponds to a very small non-Gaussian correction. (c) At $T_c$ the only length scale of the system is $L$ (the correlation length is larger than the system), so dimensionless ratios of moments of the order parameter are universal functions of $L/\xi=0$: the same number for all $L$ (about $0.61$ for the 2D Ising model).</p>
+            <p class="answer">(a) $0$ and $2/3$  (b) yes  (c) $L$ is the only length scale</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p504-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>From the table of Step 6, (a) how many independent samples of $|m|$ are in $40\,000$ sweeps at $T_c$ and at $T=4$? (b) By what factor does the error of the mean differ between these two temperatures for the same run length (assume equal standard deviations)? (c) How long a run is needed at $T_c$ to reach the error that you get at $T=4$ with $40\,000$ sweeps?</p>
+            <details class="hint"><summary>Hint</summary><p>The error is $\sigma\sqrt{2\tau/N}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $N/(2\tau)=40\,000/323=124$ at $T_c$ and $40\,000/3.4=11\,800$ at $T=4$ ($\tau=1.7$). (b) The ratio of errors is $\sqrt{\tau_c/\tau_4}=\sqrt{161.5/1.7}=9.7$. (c) $N$ must be $\tau_c/\tau_4=95$ times larger: $3.8\times10^6$ sweeps. This is why one avoids studying the critical point with local updates, or uses a cluster algorithm.</p>
+            <p class="answer">(a) $124$ and $11\,800$  (b) $9.7$  (c) $3.8\times10^6$ sweeps</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p504-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Modify the sweep so that the energy includes a magnetic field $h$: $H=-J\sum s_is_j-h\sum s_i$. (a) Write the new $\Delta E$ for a flip. (b) Run $T=2.0$, $h=0.05$ from the state with all spins $-1$ (<code>ising_field.py</code>) and describe what happens. (c) Why is there no phase transition in a field?</p>
+            <details class="hint"><summary>Hint</summary><p>The field term of the flip is $+2hs_i$. The state $m=-1$ is the stable state for $h&lt;0$ but is not for $h&gt;0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Delta E=2s_i(\Sigma+h)$: replace <code>nb</code> by <code>nb + h</code>. (b) The initial state is metastable: the field favours $+1$, but flipping one spin costs $8-2h=7.9$, so single flips are almost always undone ($e^{-7.9/2}=0.019$ per attempt) and the magnetisation stays near $-0.9$ for a long time. After a random waiting time a droplet of plus spins nucleates and grows, and the magnetisation jumps to about $+0.95$. The output shows that this takes $197$ to $3916$ sweeps for $L=16$ and $2161$ to $10\,595$ sweeps for $L=32$, depending on the seed:</p><pre class="out"><code>L = 16 seed 1  ... first sweep with m>0: 3916\nL = 16 seed 2  ... first sweep with m>0: 197\nL = 16 seed 3  ... first sweep with m>0: 305\nL = 32 seed 1  ... first sweep with m>0: 10595\nL = 32 seed 2  ... first sweep with m>0: 2161\nL = 32 seed 3  ... first sweep with m>0: 7169</code></pre><p>The waiting time is random (three seeds differ by a factor of $20$), which is the signature of nucleation: you need an average over many runs to quote a lifetime. (c) For $h\ne0$ the symmetry $m\to-m$ is broken explicitly and the magnetisation is a smooth function of $T$; there is no singularity, only a rounded crossover. The phase transition exists only along the line $h=0$.</p>
+            <p class="answer">(a) $\Delta E=2s_i(\Sigma+h)$  (b) metastable, then nucleation after a random time  (c) no symmetry to break</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p504-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
+            <p>Determine the dynamic exponent $z$ by measuring $\tau$ at $T_c$ for $L=8,16,32$ (40 000 sweeps each, using <code>tau_int</code> of <code>ising_extra.py</code>), fitting $\tau\sim L^z$. (a) Explain how to organise the runs so that the answer has an error bar. (b) The measured $\tau(L=32)=161$; predict $\tau(L=16)$ and $\tau(L=64)$ if $z=2.2$. (c) How many sweeps would you need for $L=64$ for 100 independent samples?</p>
+            <details class="hint"><summary>Hint</summary><p>$\tau(L)=\tau(32)(L/32)^z$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Run each size with at least 8 different seeds, compute $\tau$ for each, take the mean and the standard error, and fit $\ln\tau$ against $\ln L$ with these weights; use runs of $\ge1000\,\tau$ so that $\tau$ itself is well determined; and use the temperature $T_c=2.2692$ exactly (a small offset changes $\tau$ strongly because of the peak). (b) $\tau(16)=161\times2^{-2.2}=35$ sweeps and $\tau(64)=161\times2^{2.2}=740$ sweeps. (c) $N=100\times2\tau=1.5\times10^5$ sweeps of $4096$ spins each, i.e. $6\times10^8$ spin updates: about half a minute of CPU time with numba (this lab&rsquo;s scan did about $2\times10^7$ updates per second). A lattice of $L=256$ ($\tau\approx3400$) would already need $7\times10^5$ sweeps of $65\,536$ spins: this is the problem that cluster algorithms solve.</p>
+            <p class="answer">(b) $\tau(16)\approx35$, $\tau(64)\approx740$  (c) $1.5\times10^5$ sweeps</p>
+            </details>
+            </div>
+
+            <h2 id="refs">Going further and references<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Newman, M. E. J. and Barkema, G. T., <em>Monte Carlo Methods in Statistical Physics</em>, Oxford University Press: the standard text; Chapters 3&ndash;4 cover the Ising model, equilibration and error analysis in detail, and Chapter 4 the cluster algorithms.</li>
+                <li>Landau, D. P. and Binder, K., <em>A Guide to Monte Carlo Simulations in Statistical Physics</em>, Cambridge University Press: finite-size scaling and the Binder cumulant.</li>
+                <li>Onsager, L., &ldquo;Crystal statistics. I. A two-dimensional model with an order-disorder transition&rdquo;, <em>Physical Review</em> <strong>65</strong>, 117 (1944); Yang, C. N., <em>Physical Review</em> <strong>85</strong>, 808 (1952): the exact solution and the spontaneous magnetisation.</li>
+                <li>Metropolis, N. et al., <em>Journal of Chemical Physics</em> <strong>21</strong>, 1087 (1953): the original algorithm.</li>
+                <li>Binder, K., <em>Zeitschrift f&uuml;r Physik B</em> <strong>43</strong>, 119 (1981): the cumulant.</li>
+                <li>Go further: replace the spins by atoms on a lattice (an alloy, $s_i=\pm1$ meaning A or B), use Kawasaki spin-exchange dynamics to conserve the composition, and obtain the phase diagram of a binary alloy: the connection with <a href="thermodynamics-and-calphad.html">MSE 301</a> and with <a href="phase-field-modelling.html">CMS 505</a>.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="lab-md-lammps-copper.html"><span class="dir">Previous course</span>Lab: A metal with LAMMPS: copper with an EAM potential</a>
+<span class="spacer"></span>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=c7776ca5"></script>
+    <script src="../assets/pathdata.js?v=876ed95a"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>

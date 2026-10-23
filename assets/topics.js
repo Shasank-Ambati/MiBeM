@@ -1042,6 +1042,34 @@ window.MIBEM_TOPICS = [
       "Always compare with experiment and with the limits of the method: EAM reproduces cohesive energy, lattice constant, elastic constants and the vacancy energy of copper because they were fitted, but it underestimates surface energies and cannot describe bonding changes or electronic effects."
     ],
     "katex": true
+  },
+  {
+    "id": 46,
+    "label": "LAB 504",
+    "code": "LAB 504",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-ising-monte-carlo",
+    "short": "Monte Carlo: Ising",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 21,
+    "title": "Lab: Monte Carlo of the Ising model",
+    "blurb": "Write the Metropolis algorithm, validate it against Onsager's exact solution, find the critical point with the Binder cumulant, and measure autocorrelation times and honest error bars.",
+    "builds": [
+      7,
+      33,
+      3
+    ],
+    "related": [],
+    "takeaways": [
+      "The Metropolis algorithm for the 2D Ising model proposes to flip one spin and accepts it with probability min(1, exp(-dE/kT)); a sweep is L*L proposals, and the energy change of a flip is dE = 2 s_i (sum of the four neighbours), so it takes only integer arithmetic.",
+      "Simulation results are checked against exact ones: Onsager gives Tc = 2/ln(1+sqrt2) = 2.2692 J/kB, and the simulated magnetisation (0.9573, 0.9099, 0.8680 at T = 1.8, 2.0, 2.1) and energy (-1.860, -1.745, -1.661) of a 32x32 lattice agree with the exact values to about 0.002.",
+      "Finite systems have no sharp transition: the specific-heat peak grows with L (1.18, 1.54, 1.85 for L = 8, 16, 32) and moves towards Tc, and the Binder cumulant U = 1 - <m4>/(3<m2>^2) goes from 2/3 (ordered) to 0 (disordered) with curves for different L crossing near Tc.",
+      "Near Tc the sampling becomes inefficient (critical slowing down): the autocorrelation time of the magnetisation of a 32x32 lattice is 3 sweeps at T = 1.8, 161 sweeps at Tc and 2 sweeps at T = 4, so the number of independent samples in 40 000 sweeps at Tc is only about 120.",
+      "Always report an error bar that accounts for correlation (error = sigma*sqrt(2 tau / N)), start from several different initial states, and look at snapshots: a quench from a random state can get stuck in a striped state with two domains that has higher energy than the ground state."
+    ],
+    "katex": true
   }
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
@@ -1112,6 +1140,7 @@ window.MIBEM_PATHPLAN = [
       "LAB 502",
       "LAB 503",
       "CMS 503",
+      "LAB 504",
       "CMS 504",
       "CMS 505",
       "CMS 506",

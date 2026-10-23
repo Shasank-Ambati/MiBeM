@@ -1,0 +1,6 @@
+L = 16 seed 1  m at sweeps 10, 100, 1000, 5000, 20000: -0.95 -0.78 -0.90 +0.91 +0.96 ;  first sweep with m>0: 3916
+L = 16 seed 2  m at sweeps 10, 100, 1000, 5000, 20000: -0.78 -0.98 +0.97 +0.84 +0.91 ;  first sweep with m>0: 197
+L = 16 seed 3  m at sweeps 10, 100, 1000, 5000, 20000: -0.94 -0.91 +0.95 +0.91 +0.93 ;  first sweep with m>0: 305
+L = 32 seed 1  m at sweeps 10, 100, 1000, 5000, 20000: -0.89 -0.89 -0.84 -0.93 +0.96 ;  first sweep with m>0: 10595
+L = 32 seed 2  m at sweeps 10, 100, 1000, 5000, 20000: -0.86 -0.88 -0.92 +0.93 +0.95 ;  first sweep with m>0: 2161
+L = 32 seed 3  m at sweeps 10, 100, 1000, 5000, 20000: -0.92 -0.90 -0.94 -0.92 +0.95 ;  first sweep with m>0: 7169
