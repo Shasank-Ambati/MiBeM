@@ -21,3 +21,9 @@
    Birch-Murnaghan fit: a0 = 5.520 A   B = 84.8 GPa     (experiment: 5.431 A, 99 GPa)
 
 3. band gap at the fitted lattice constant
+   a0 = 5.520 A:  valence-band maximum at Gamma, conduction-band minimum at 0.82 of the way from Gamma to X
+   indirect gap = 0.69 eV ; direct gap at Gamma = 2.57 eV   (experiment: 1.12 eV and 3.4 eV)
+
+real	19m50.185s
+user	59m4.369s
+sys	12m38.277s

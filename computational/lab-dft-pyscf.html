@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab: Electronic structure with PySCF - MiBeM</title>
+    <meta name="description" content="Hands-on electronic-structure calculations with the open-source Python package PySCF: Hartree-Fock and DFT for H2 and water (dissociation, basis sets, geometries) and periodic DFT for silicon (k-point convergence, equation of state, band gap), plus a template for Quantum ESPRESSO.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/lab-dft-pyscf.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Lab: Electronic structure with PySCF - MiBeM">
+    <meta property="og:description" content="Hands-on electronic-structure calculations with the open-source Python package PySCF: Hartree-Fock and DFT for H2 and water (dissociation, basis sets, geometries) and periodic DFT for silicon (k-point convergence, equation of state, band gap), plus a template for Quantum ESPRESSO.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/lab-dft-pyscf.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="52">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#install">Step 1. Install and a first calculation</a></li>
+                <li><a href="#h2">Step 2. The hydrogen molecule: Hartree&ndash;Fock, DFT and the exact answer</a></li>
+                <li><a href="#water">Step 3. Water: basis sets, functionals and geometry optimisation</a></li>
+                <li><a href="#silicon">Step 4. Silicon: periodic DFT, k points, lattice constant and band gap</a></li>
+                <li><a href="#qe">Step 5. The same calculation with a plane-wave code (template; not run)</a></li>
+                <li><a href="#errors">Step 6. Typical problems</a></li>
+                <li><a href="#check">Exercises</a></li>
+                <li><a href="#refs">Going further and references</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 501</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-workstation-setup.html" title="LAB 101: Lab: Setting up a computational workstation">101</a><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-phonons-phonopy.html" title="LAB 301: Lab: Phonons with phonopy">301</a><a href="lab-dft-pyscf.html" class="here" aria-current="page" title="LAB 501: Lab: Electronic structure with PySCF">501</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a><a href="lab-ising-monte-carlo.html" title="LAB 504: Lab: Monte Carlo of the Ising model">504</a><a href="lab-calphad-pycalphad.html" title="LAB 505: Lab: Phase diagrams with CALPHAD and pycalphad">505</a><a href="lab-diffusion-fipy.html" title="LAB 506: Lab: Diffusion and phase separation with FiPy">506</a><a href="lab-fem-scikit-fem.html" title="LAB 507: Lab: Finite elements with scikit-fem">507</a></nav>
+<!-- coursenav:end -->
+            <h1>Lab: Electronic structure with PySCF</h1>
+            <p class="lead">Density-functional theory (DFT) and the methods around it are the workhorse for computing the energies, structures and electronic properties of materials from first principles. In this lab you use the open-source Python package <strong>PySCF</strong> to run electronic-structure calculations yourself: a hydrogen molecule, where you can compare Hartree&ndash;Fock, two density functionals and the exact answer; a water molecule, to see basis sets and functionals at work and optimise a geometry; and a silicon crystal with periodic boundary conditions, where you converge k-points and compute a lattice constant, a bulk modulus and a band gap. The page shows real outputs; the calculations are small enough for a laptop. A template for the plane-wave code Quantum ESPRESSO is given at the end, but since that program was not available here, it is clearly marked as not executed.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 27 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="density-functional-theory.html">CMS 501: Density functional theory</a><br><a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a><br><a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystals and cells</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>By the end of this lab you will be able to:</strong>
+                <ul>
+                    <li>Install PySCF and run Hartree&ndash;Fock and DFT calculations on atoms and molecules.</li>
+                    <li>Choose a basis set and test its convergence, and understand atomic units (Hartree, Bohr).</li>
+                    <li>Compare functionals with an exact reference and recognise the failure of restricted Hartree&ndash;Fock at dissociation and the delocalisation error of DFT.</li>
+                    <li>Optimise a molecular geometry and compare bond lengths and angles with experiment.</li>
+                    <li>Set up a periodic crystal calculation and converge it with k points; fit an equation of state; compute a band gap and understand why DFT underestimates it.</li>
+                    <li>Translate the workflow to a plane-wave code.</li>
+                </ul>
+                <strong>Companion courses:</strong> <a href="density-functional-theory.html">CMS 501</a> (theory), <a href="quantum-mechanics.html">PHYS 201</a> (quantum mechanics), <a href="crystal-structure-and-periodic-cells.html">MSE 201</a> (periodic cells and k points). <strong>Before this lab:</strong> <a href="lab-structures-ase.html">LAB 201</a> (the same silicon structure, with ASE).
+            </div>
+            <div class="lab-meta"><div><b>Time</b>3 to 4 hours</div><div><b>Software</b>Python 3.9+, PySCF, ASE, geomeTRIC, numpy</div><div><b>System</b>H$_2$, H$_2$O, bulk Si</div><div><b>Run time</b>seconds (molecules) to about 20 minutes (silicon)</div></div>
+            <h2 id="install">Step 1. Install and a first calculation<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+            <pre data-file="shell"><code>python3 -m venv ~/venvs/dft &amp;&amp; source ~/venvs/dft/bin/activate
+            pip install pyscf geometric ase numpy
+            python -c &quot;import pyscf; print(pyscf.__version__)&quot;</code></pre>
+            <pre class="out"><code>2.14.0</code></pre>
+            <p>PySCF is a Python library with a C core: you describe the molecule (<code>gto.M</code>), choose a method (<code>scf.RHF</code>, <code>dft.RKS</code>) and call <code>.kernel()</code> or <code>.run()</code>; the result is the total energy in <strong>Hartree</strong> ($1\ \mathrm{Ha}=27.2114$ eV, the atomic unit of energy), with lengths in &Aring; in the input (internally Bohr, $0.529177$ &Aring;). Everything below is a variation of this pattern:</p>
+            <pre data-file="first.py"><code>from pyscf import gto, scf
+
+            h_atom = gto.M(atom=&quot;H 0 0 0&quot;, basis=&quot;cc-pvtz&quot;, spin=1)       # one unpaired electron: spin = 2S = 1
+            print(&quot;H atom, UHF:&quot;, scf.UHF(h_atom).kernel())
+            h2 = gto.M(atom=&quot;H 0 0 0; H 0 0 0.74&quot;, basis=&quot;cc-pvtz&quot;)
+            print(&quot;H2, RHF:   &quot;, scf.RHF(h2).kernel())</code></pre>
+            <pre class="out"><code>H atom, UHF: -0.4998098...
+            H2, RHF:    -1.1329...</code></pre>
+            <p>(The numbers are those of the full tables below, to four decimals: $-0.499810$ and $-1.132968$ Ha.) The energy of the hydrogen atom is $-0.4998$ Ha against the exact $-0.5000$: the remaining $0.2$ mHa is the error of the finite basis. A molecule has an <em>electronic energy</em> only: the energy needed to separate it into atoms is a difference of energies, never the total energy itself. <code>spin</code> is the number of unpaired electrons (the atom has one electron, so $\mathrm{spin}=1$); a restricted calculation (RHF, RKS) puts two electrons with opposite spins in each orbital and cannot describe an unpaired electron.</p>
+            <h2 id="h2">Step 2. The hydrogen molecule: Hartree&ndash;Fock, DFT and the exact answer<a class="anchor" href="#h2" aria-label="Link to this section">#</a></h2>
+            <p>With two electrons the problem can be solved essentially exactly in a given basis by <strong>full configuration interaction</strong> (FCI: the exact diagonalisation of the Hamiltonian in the space of all Slater determinants), which gives a reference to judge approximate methods against. The script computes the energy of H$_2$ at ten bond lengths with five methods: restricted Hartree&ndash;Fock (RHF), unrestricted Hartree&ndash;Fock (UHF; the guess breaks the spin symmetry by putting more up-spin density on one atom and more down-spin density on the other), the local-density approximation (LDA) and the PBE generalised-gradient functional, and FCI, all in the cc-pVTZ basis:</p>
+            <pre data-file="h2_scan.py"><code>&quot;&quot;&quot;Hydrogen molecule: dissociation curve with restricted and unrestricted Hartree-Fock, DFT (LDA, PBE) and the exact answer (full CI), basis cc-pVTZ.&quot;&quot;&quot;
+            import numpy as np
+            from pyscf import gto, scf, dft, fci
+
+            BASIS = &quot;cc-pvtz&quot;
+            def molecule_energies(r):
+                mol = gto.M(atom=f&quot;H 0 0 0; H 0 0 {r}&quot;, basis=BASIS, verbose=0)
+                rhf = scf.RHF(mol).run()
+                out = {&quot;RHF&quot;: rhf.e_tot}
+                # unrestricted solution started from a broken-symmetry guess: extra alpha density on atom 0 and extra beta density on atom 1
+                uhf = scf.UHF(mol); dm = np.array(uhf.get_init_guess())
+                idx = mol.search_ao_label(&quot;0 H 1s&quot;)[0], mol.search_ao_label(&quot;1 H 1s&quot;)[0]
+                dm[0][idx[0], idx[0]] += 0.5; dm[1][idx[1], idx[1]] += 0.5
+                out[&quot;UHF&quot;] = uhf.run(dm).e_tot
+                for name, xc in ((&quot;LDA&quot;, &quot;lda,vwn&quot;), (&quot;PBE&quot;, &quot;pbe,pbe&quot;)):
+                    ks = dft.RKS(mol); ks.xc = xc; out[name] = ks.run().e_tot
+                out[&quot;FCI&quot;] = fci.FCI(rhf).kernel()[0]                 # exact within the basis (two electrons)
+                return out
+
+            def atom_energies():
+                atom = gto.M(atom=&quot;H 0 0 0&quot;, basis=BASIS, spin=1, verbose=0)
+                out = {&quot;RHF&quot;: scf.UHF(atom).run().e_tot}              # for one electron, UHF is exact in the basis; RHF is not defined for an open shell
+                out[&quot;UHF&quot;] = out[&quot;RHF&quot;]
+                for name, xc in ((&quot;LDA&quot;, &quot;lda,vwn&quot;), (&quot;PBE&quot;, &quot;pbe,pbe&quot;)):
+                    ks = dft.UKS(atom); ks.xc = xc; out[name] = ks.run().e_tot
+                out[&quot;FCI&quot;] = out[&quot;UHF&quot;]
+                return out
+
+            methods = [&quot;RHF&quot;, &quot;UHF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;FCI&quot;]
+            rs = [0.5, 0.6, 0.7, 0.74, 0.8, 1.0, 1.5, 2.0, 3.0, 5.0]
+            print(&quot;  r (A)     RHF         UHF         LDA         PBE      exact (FCI)      [Hartree]&quot;)
+            rows = []
+            for r in rs:
+                e = molecule_energies(r); rows.append([e[m] for m in methods])
+                print(&quot;  %4.2f  &quot; % r + &quot;&quot;.join(&quot;%11.6f &quot; % v for v in rows[-1]))
+            rows = np.array(rows); eh = atom_energies()
+            print(&quot;\nenergy of one H atom (open-shell, same method):  &quot; + &quot;  &quot;.join(&quot;%s %.6f&quot; % (m, eh[m]) for m in methods))
+            print(&quot;exact hydrogen atom: -0.500000 Ha\n&quot;)
+            print(&quot;method   E_min(H2) (Ha)   r_min on the grid (A)   D_e = 2E(H) - E_min (eV)&quot;)
+            for k, m in enumerate(methods):
+                i = rows[:, k].argmin(); print(&quot;  %-4s    %10.6f           %.2f                  %5.2f&quot; % (m, rows[i, k], rs[i], (2 * eh[m] - rows[i, k]) * 27.2114))
+            print(&quot;experiment: r_e = 0.741 A, D_e = 4.75 eV (with zero-point energy removed)&quot;)</code></pre>
+            <pre class="out"><code>  r (A)     RHF         UHF         LDA         PBE      exact (FCI)      [Hartree]
+              0.50    -1.063307   -1.063307   -1.056585   -1.091911   -1.100870 
+              0.60    -1.115410   -1.115410   -1.113264   -1.145679   -1.153518 
+              0.70    -1.132076   -1.132076   -1.134261   -1.164317   -1.171015 
+              0.74    -1.132968   -1.132968   -1.136827   -1.166072   -1.172332 
+              0.80    -1.130292   -1.130292   -1.136609   -1.164763   -1.170406 
+              1.00    -1.102062   -1.102062   -1.116207   -1.141609   -1.145759 
+              1.50    -1.004304   -1.022708   -1.036850   -1.059206   -1.066168 
+              2.00    -0.925164   -1.003907   -0.975770   -0.997931   -1.020455 
+              3.00    -0.831767   -0.999771   -0.915685   -0.939929   -1.000726 
+              5.00    -0.767744   -0.999621   -0.891750   -0.918114   -0.999625 
+
+            energy of one H atom (open-shell, same method):  RHF -0.499810  UHF -0.499810  LDA -0.478348  PBE -0.499619  FCI -0.499810
+            exact hydrogen atom: -0.500000 Ha
+
+            method   E_min(H2) (Ha)   r_min on the grid (A)   D_e = 2E(H) - E_min (eV)
+              RHF      -1.132968           0.74                   3.63
+              UHF      -1.132968           0.74                   3.63
+              LDA      -1.136827           0.74                   4.90
+              PBE      -1.166072           0.74                   4.54
+              FCI      -1.172332           0.74                   4.70
+            experiment: r_e = 0.741 A, D_e = 4.75 eV (with zero-point energy removed)</code></pre>
+            <p>Study the table in four parts.</p>
+            <ul>
+            <li><strong>Near equilibrium</strong> ($0.74$ &Aring;; experiment $0.741$ &Aring;) all methods give a minimum at the grid point $0.74$ &Aring;. The energies are ordered RHF $-1.1330$ &gt; LDA $-1.1368$ &gt; PBE $-1.1661$ &gt; FCI $-1.1723$ Ha; for a given basis the exact energy is the lowest (variational principle) for the wave-function methods, while density functionals are not variational in this sense and can lie above or below the exact energy; here PBE and LDA are above FCI, but their error ($6$ and $35$ mHa) is much smaller than the correlation energy that RHF misses ($39$ mHa $=1.06$ eV).</li>
+            <li><strong>The failure of RHF at large separation.</strong> At $5$ &Aring; the exact energy is $-0.99962$ Ha, twice the energy of a hydrogen atom ($-0.49981$), as it should be. RHF gives $-0.7677$ Ha: $0.23$ Ha ($6.3$ eV) too high, because the restricted wave function forces both electrons into the same bonding orbital, which at large distance puts them equally on one atom (an H$^+$&hellip;H$^-$ ionic component) with a weight of $50\%$, a physical absurdity: the molecule does not dissociate into two neutral atoms. This is the best-known failure of Hartree&ndash;Fock and the reason why bond breaking needs a multi-reference description.</li>
+            <li><strong>UHF repairs it by breaking the symmetry.</strong> Up to $1.0$ &Aring; the unrestricted solution coincides with RHF; beyond the <em>Coulson&ndash;Fischer point</em> (here between $1.0$ and $1.5$ &Aring;) the lower-energy solution has the up and down electrons on different atoms, and at $5$ &Aring; UHF gives $-0.99962$ Ha, exactly the sum of two atoms. The price is that the wave function is no longer an eigenfunction of the total spin ($\langle S^2\rangle\approx1$ for a mixture of singlet and triplet).</li>
+            <li><strong>DFT is in between.</strong> LDA and PBE at $5$ &Aring; give $-0.8918$ and $-0.9181$ Ha, $0.108$ and $0.081$ Ha ($2.9$ and $2.2$ eV) too high: the <em>delocalisation error</em> (or self-interaction error) of the approximate functionals, which favour a fractional charge on each atom over a localised electron on each. It is much smaller than for RHF and is the reason why approximate DFT can describe bond breaking qualitatively but overbinds charge-transfer states and underestimates reaction barriers and band gaps.</li>
+            </ul>
+            <p>The atomisation energy $D_e=2E(\mathrm H)-E_\mathrm{min}(\mathrm H_2)$ is $3.63$ eV for Hartree&ndash;Fock, $4.90$ eV for LDA (the typical overbinding of LDA), $4.54$ eV for PBE (a little underbound) and $4.70$ eV for FCI, against $4.75$ eV measured (the small difference of FCI is the finite basis and neglected relativistic and non-adiabatic corrections). Note the role of the atom energies: LDA gives $-0.4783$ Ha for the H atom ($0.0215$ Ha too high, the self-interaction error again), so the LDA $D_e$ is a cancellation of two errors, and PBE nearly removes it ($-0.4996$). An accurate $D_e$ needs the molecule and the atom treated with the same method and a good basis.</p>
+            <h2 id="water">Step 3. Water: basis sets, functionals and geometry optimisation<a class="anchor" href="#water" aria-label="Link to this section">#</a></h2>
+            <p>The second script computes the energy of the water molecule at its experimental geometry ($r_\mathrm{OH}=0.9572$ &Aring;, angle $104.52^\circ$) with PBE in five basis sets, and then optimises the geometry with four methods. Basis sets are sets of atom-centred Gaussian functions: <code>sto-3g</code> is a minimal basis (one function per orbital), <code>6-31g</code> a split-valence basis, and the correlation-consistent <code>cc-pVXZ</code> family (X = D, T, Q for double, triple, quadruple zeta) converges systematically to the complete-basis limit. The optimisation uses the geomeTRIC library, which minimises the energy with respect to the atomic positions with the forces computed analytically:</p>
+            <pre data-file="water.py"><code>&quot;&quot;&quot;Water molecule: basis-set convergence, geometry optimisation and the dependence on the functional.&quot;&quot;&quot;
+            import numpy as np, time
+            from pyscf import gto, scf, dft
+            from pyscf.geomopt.geometric_solver import optimize
+
+            exp_geom = &quot;O 0 0 0.1173; H 0 0.7572 -0.4692; H 0 -0.7572 -0.4692&quot;      # experimental: r(OH) = 0.9572 A, angle 104.52 deg
+            def build(basis, atom=exp_geom): return gto.M(atom=atom, basis=basis, verbose=0)
+
+            print(&quot;1. basis-set convergence at the experimental geometry (PBE)&quot;)
+            print(&quot;   basis        functions   E (Hartree)     E - E(QZ) (mHa)   time (s)&quot;)
+            res = {}
+            for b in (&quot;sto-3g&quot;, &quot;6-31g&quot;, &quot;cc-pvdz&quot;, &quot;cc-pvtz&quot;, &quot;cc-pvqz&quot;):
+                t0 = time.time(); mol = build(b); mf = dft.RKS(mol); mf.xc = &quot;pbe,pbe&quot;; e = mf.run().e_tot; res[b] = (mol.nao, e, time.time() - t0)
+            for b, (n, e, t) in res.items(): print(&quot;   %-10s   %5d     %12.6f     %10.2f         %5.1f&quot; % (b, n, e, 1000 * (e - res[&quot;cc-pvqz&quot;][1]), t))
+
+            def geometry(mol):
+                c = mol.atom_coords(unit=&quot;Angstrom&quot;); v1, v2 = c[1] - c[0], c[2] - c[0]
+                r = np.linalg.norm(v1); ang = np.degrees(np.arccos(v1 @ v2 / np.linalg.norm(v1) / np.linalg.norm(v2))); return r, ang
+
+            print(&quot;\n2. geometry optimisation with cc-pVTZ&quot;)
+            print(&quot;   method     r(OH) (A)   angle (deg)   E (Hartree)&quot;)
+            for name, kind in ((&quot;HF&quot;, None), (&quot;LDA&quot;, &quot;lda,vwn&quot;), (&quot;PBE&quot;, &quot;pbe,pbe&quot;), (&quot;B3LYP&quot;, &quot;b3lyp&quot;)):
+                mol0 = build(&quot;cc-pvtz&quot;, &quot;O 0 0 0; H 0 0.76 0.59; H 0 -0.76 0.59&quot;)                       # a rough starting structure
+                mf = scf.RHF(mol0) if kind is None else dft.RKS(mol0)
+                if kind is not None: mf.xc = kind
+                mol = optimize(mf, maxsteps=50)
+                mf2 = scf.RHF(mol) if kind is None else dft.RKS(mol)
+                if kind is not None: mf2.xc = kind
+                e = mf2.run().e_tot; r, ang = geometry(mol); print(&quot;   %-7s    %.4f      %6.2f     %12.6f&quot; % (name, r, ang, e))
+            print(&quot;experiment    0.9572      104.52&quot;)</code></pre>
+            <pre class="out"><code>1. basis-set convergence at the experimental geometry (PBE)
+               basis        functions   E (Hartree)     E - E(QZ) (mHa)   time (s)
+               sto-3g           7       -75.225567        1157.50           4.7
+               6-31g           13       -76.298106          84.96           5.0
+               cc-pvdz         24       -76.333442          49.63           7.7
+               cc-pvtz         58       -76.372843          10.23           5.8
+               cc-pvqz        115       -76.383070           0.00          23.5
+            2. geometry optimisation with cc-pVTZ
+               method     r(OH) (A)   angle (deg)   E (Hartree)
+               HF         0.9406      106.00       -76.057770
+               LDA        0.9706      104.34       -75.898655
+               PBE        0.9697      103.53       -76.373102
+               B3LYP      0.9613      104.53       -76.459841
+            experiment    0.9572      104.52</code></pre>
+            <p><strong>Basis set.</strong> The energy decreases monotonically as the basis grows ($-75.226$ Ha for the minimal basis, $-76.383$ for cc-pVQZ with $115$ functions): by the variational principle a larger basis can only lower the energy of the same method. The error relative to the largest basis is $1157$ mHa for the minimal basis, $85$ for 6-31G, $50$ for cc-pVDZ and $10$ for cc-pVTZ. Absolute energies converge slowly, but <em>differences</em> of energy converge faster; the cost grows as the third to fourth power of the number of functions ($4.7$ s for $7$ functions, $23.5$ s for $115$ in this small test, dominated by overheads for the smallest ones). A triple-zeta basis is the usual compromise for molecules. <strong>Never compare energies obtained with different basis sets or functionals</strong>: the last column of the geometry table ($-76.0578$ for HF, $-75.8987$ for LDA, $-76.3731$ for PBE, $-76.4598$ for B3LYP) is not a ranking of accuracy, because each functional has its own energy zero.</p>
+            <p><strong>Geometry.</strong> The O&ndash;H bond length is $0.9406$ &Aring; with HF (too short: HF overbinds covalent bonds because of the lack of correlation), $0.9706$ and $0.9697$ &Aring; with LDA and PBE (too long by $1.4$&ndash;$1.5\%$, the typical overestimate of semilocal functionals), and $0.9613$ &Aring; with the hybrid functional B3LYP ($+0.4\%$), against the experimental $0.9572$ &Aring;. The angle is $106.0^\circ$ (HF), $104.3^\circ$, $103.5^\circ$ and $104.53^\circ$ (B3LYP; experiment $104.52^\circ$). Hybrid functionals, which mix a fraction of exact exchange, give the best geometry here at a higher cost; for solids with plane waves the cost of exact exchange is much larger, which is why semilocal functionals dominate materials calculations.</p>
+            <div class="note warn"><strong>Units and the &ldquo;wrong&rdquo; second-column of the first table</strong>
+            <p>All energies printed by PySCF are in Hartree. A common mistake is to compare a Hartree number with an eV number in the literature: multiply by $27.2114$. A second common mistake is to forget <code>spin</code> for an odd number of electrons: PySCF then stops with an error (<em>Electron number 1 and spin 0 are not consistent</em>), which is the safe behaviour; for radicals and for triplet states (O$_2$) the spin must be set and an unrestricted method used.</p>
+            </div>
+            <h2 id="silicon">Step 4. Silicon: periodic DFT, k points, lattice constant and band gap<a class="anchor" href="#silicon" aria-label="Link to this section">#</a></h2>
+            <p>For a crystal, PySCF&rsquo;s periodic module <code>pyscf.pbc</code> expands the orbitals in Gaussians as before, but uses periodic boundary conditions and Bloch states, with the Brillouin zone sampled on a k-point mesh (<a href="crystal-structure-and-periodic-cells.html">MSE 201</a>, Lecture 6). Core electrons are replaced by a norm-conserving pseudopotential (<code>gth-pbe</code>, the Goedecker&ndash;Teter&ndash;Hutter family), and the valence is described with the double-zeta basis <code>gth-dzvp</code>. The cell is the two-atom primitive cell of the diamond structure, built exactly as in <a href="lab-structures-ase.html">LAB 201</a>. The script runs three tests: k-point convergence at the experimental lattice constant, an equation-of-state fit with six lattice constants, and the band gap at the fitted lattice constant (non-self-consistent bands along $\Gamma$&ndash;X):</p>
+            <pre data-file="silicon.py"><code>&quot;&quot;&quot;Bulk silicon with periodic DFT in PySCF (Gaussian basis, GTH-PBE pseudopotential, PBE): k points, lattice constant, bulk modulus and band gap.&quot;&quot;&quot;
+            import numpy as np, time
+            from pyscf.pbc import gto, dft
+            from ase.eos import EquationOfState
+            from ase.units import Hartree, GPa, Bohr
+
+            def make_cell(a, basis=&quot;gth-dzvp&quot;):
+                cell = gto.Cell()
+                cell.atom = [[&quot;Si&quot;, (0, 0, 0)], [&quot;Si&quot;, (a / 4, a / 4, a / 4)]]                   # diamond structure, two atoms in the primitive cell
+                cell.a = a / 2 * np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]])
+                cell.basis = basis; cell.pseudo = &quot;gth-pbe&quot;; cell.verbose = 0; cell.build()
+                return cell
+
+            def run(a, k, basis=&quot;gth-dzvp&quot;):
+                cell = make_cell(a, basis)
+                mf = dft.KRKS(cell, cell.make_kpts([k, k, k])); mf.xc = &quot;pbe&quot;; mf.conv_tol = 1e-8
+                mf.kernel(); return cell, mf
+
+            if __name__ == &quot;__main__&quot;:
+                print(&quot;1. k-point convergence (a = 5.43 A, basis gth-dzvp)&quot;)
+                print(&quot;   k mesh   k points   E per cell (Ha)   E - E(k=5)  (meV/atom)   time (s)&quot;)
+                res = {}
+                for k in (2, 3, 4, 5):
+                    t0 = time.time(); cell, mf = run(5.43, k); res[k] = (len(mf.kpts), mf.e_tot, time.time() - t0)
+                    print(&quot;   %d x %d x %d   %4d     %14.6f&quot; % (k, k, k, res[k][0], res[k][1]), flush=True)
+                print(&quot;\n   (differences from the densest mesh)&quot;)
+                for k, (n, e, t) in res.items(): print(&quot;   %d x %d x %d   %4d   %8.1f meV/atom   %5.0f s&quot; % (k, k, k, n, 1000 * Hartree * (e - res[5][1]) / 2, t))
+
+                print(&quot;\n2. equation of state (k = 4)&quot;)
+                V, E = [], []
+                for a in (5.33, 5.38, 5.43, 5.48, 5.53, 5.58):
+                    cell, mf = run(a, 4); V.append(cell.vol * Bohr**3); E.append(mf.e_tot * Hartree)      # PySCF volumes are in bohr^3
+                    print(&quot;   a = %.2f A   V = %7.3f A^3   E = %.5f eV&quot; % (a, V[-1], E[-1]), flush=True)
+                v0, e0, B = EquationOfState(V, E, eos=&quot;birchmurnaghan&quot;).fit()
+                a0 = (4 * v0) ** (1 / 3)
+                print(&quot;   Birch-Murnaghan fit: a0 = %.3f A   B = %.1f GPa     (experiment: 5.431 A, 99 GPa)&quot; % (a0, B / GPa))
+
+                print(&quot;\n3. band gap at the fitted lattice constant&quot;)
+                cell, mf = run(a0, 4)
+                occ = cell.nelectron // 2
+                # non-self-consistent bands along Gamma -&gt; X (scaled coordinates of the reciprocal lattice)
+                path = np.array([[0, 0, 0]]) + np.linspace(0, 1, 41)[:, None] * np.array([[0.5, 0, 0.5]])
+                eps = np.array(mf.get_bands(cell.get_abs_kpts(path))[0])
+                vbm = eps[:, occ - 1].max(); cbm = eps[:, occ].min(); i = eps[:, occ].argmin()
+                print(&quot;   a0 = %.3f A:  valence-band maximum at Gamma, conduction-band minimum at %.2f of the way from Gamma to X&quot; % (a0, i / 40))
+                print(&quot;   indirect gap = %.2f eV ; direct gap at Gamma = %.2f eV   (experiment: 1.12 eV and 3.4 eV)&quot; % ((cbm - vbm) * Hartree, (eps[0, occ] - eps[0, occ - 1]) * Hartree))</code></pre>
+            <pre class="out"><code>1. k-point convergence (a = 5.43 A, basis gth-dzvp)
+               k mesh   k points   E per cell (Ha)   E - E(k=5)  (meV/atom)   time (s)
+               2 x 2 x 2      8          -7.767366
+               3 x 3 x 3     27          -7.840135
+               4 x 4 x 4     64          -7.856340
+               5 x 5 x 5    125          -7.861014
+
+               (differences from the densest mesh)
+               2 x 2 x 2      8     1274.1 meV/atom      23 s
+               3 x 3 x 3     27      284.1 meV/atom      68 s
+               4 x 4 x 4     64       63.6 meV/atom     146 s
+               5 x 5 x 5    125        0.0 meV/atom     216 s
+
+            2. equation of state (k = 4)
+               a = 5.33 A   V =  37.855 A^3   E = -213.67724 eV
+               a = 5.38 A   V =  38.930 A^3   E = -213.74002 eV
+               a = 5.43 A   V =  40.026 A^3   E = -213.78191 eV
+               a = 5.48 A   V =  41.142 A^3   E = -213.80458 eV
+               a = 5.53 A   V =  42.278 A^3   E = -213.80961 eV
+               a = 5.58 A   V =  43.435 A^3   E = -213.79851 eV
+               Birch-Murnaghan fit: a0 = 5.520 A   B = 84.8 GPa     (experiment: 5.431 A, 99 GPa)
+
+            3. band gap at the fitted lattice constant
+               a0 = 5.520 A:  valence-band maximum at Gamma, conduction-band minimum at 0.82 of the way from Gamma to X
+               indirect gap = 0.69 eV ; direct gap at Gamma = 2.57 eV   (experiment: 1.12 eV and 3.4 eV)
+
+            real	19m50.185s
+            user	59m4.369s
+            sys	12m38.277s</code></pre>
+            <p>The three tests show three different convergence stories.</p>
+            <p><strong>k points.</strong> Relative to the $5\times5\times5$ mesh the energy per atom differs by $1274.1$, $284.1$ and $63.6$ meV for the $2^3$, $3^3$ and $4^3$ meshes. The error falls by a factor of $4.5$ for each extra point per direction, which is not yet fast enough: even the $4^3$ mesh used for the equation of state is wrong in the absolute energy by $64$ meV per atom, and because the $5^3$ mesh is the densest we tried, we do not know how far it is itself from convergence. The saving grace is that the error is nearly the same at neighbouring lattice constants, so it largely cancels in the <em>shape</em> of $E(V)$, but this is an assumption that you should test (Exercise 5). The cost grows with the number of k points: $23$ s for $8$ points and $216$ s for $125$ (the whole script took $19$ min $50$ s).</p>
+            <p><strong>Equation of state.</strong> The six energies have their minimum between $a=5.48$ and $5.58$ &Aring;; the Birch&ndash;Murnaghan fit gives $a_0=5.520$ &Aring; and $B=84.8$ GPa. Against experiment ($5.431$ &Aring; and $99$ GPa) the lattice constant is $1.6\%$ too large and the bulk modulus $14\%$ too small, the usual signature of a semilocal functional that binds slightly too weakly. We did not separate the contributions of the functional, the small Gaussian basis and the $4^3$ mesh, so do not attribute the whole deviation to PBE; plane-wave PBE calculations in the literature give a lattice constant of about $5.47$ &Aring;, closer to experiment than ours. Note that $a_0$ is robust to the fitting details, but $B$ is not: a parabola through the points $a=5.43$, $5.48$, $5.53$ &Aring; gives $5.519$ &Aring; and $95.0$ GPa, through the last three ($5.48$&ndash;$5.58$ &Aring;) $5.521$ &Aring; and $82.4$ GPa, through all six $5.520$ &Aring; and $102.1$ GPa, whereas the Birch&ndash;Murnaghan form gives $84.8$ GPa. The bulk modulus is a second derivative of a curve sampled at six points, so quote it only with a fitting form and a window.</p>
+            <p><strong>Band gap.</strong> At $a_0$ the valence-band maximum is at $\Gamma$ and the conduction-band minimum is $0.82$ of the way from $\Gamma$ to X (experiment: about $0.85$), so the qualitative picture of silicon as an <em>indirect</em> semiconductor is reproduced. The numbers are not: the indirect gap is $0.69$ eV ($38\%$ below the experimental $1.12$ eV) and the direct gap at $\Gamma$ is $2.57$ eV ($24\%$ below $3.4$ eV). This underestimate is the well-known <em>band-gap problem</em> of semilocal DFT: the Kohn&ndash;Sham eigenvalues are not quasiparticle energies, and the exchange&ndash;correlation functional lacks the derivative discontinuity (<a href="density-functional-theory.html">CMS 501</a>). Use DFT gaps to compare trends and to see the band character, not as predictions; hybrid functionals or $GW$ are needed for numbers. The lattice constant used is also $1.6\%$ too large, which by itself changes the gap, and we did not quantify that effect.</p>
+
+            <h2 id="qe">Step 5. The same calculation with a plane-wave code (template; not run)<a class="anchor" href="#qe" aria-label="Link to this section">#</a></h2>
+            <p>Production calculations on solids usually use plane waves (Quantum ESPRESSO, VASP, ABINIT, CASTEP). The input below is the structure of a Quantum ESPRESSO <code>pw.x</code> calculation of the silicon primitive cell, as ASE can write it (<code>ase.io.write("si.pw.in", atoms, format="espresso-in", ...)</code>, see LAB 201). <strong>It was not executed for this page</strong>, because Quantum ESPRESSO was not available in the environment that produced it; the parameters are typical starting values that you must converge yourself:</p>
+            <pre data-file="si.scf.in (template, not run)"><code>&amp;CONTROL
+              calculation = &#x27;scf&#x27;
+              pseudo_dir  = &#x27;./pseudo&#x27;
+            /
+            &amp;SYSTEM
+              ibrav = 2, celldm(1) = 10.263     ! fcc, a = 10.263 bohr = 5.431 A
+              nat = 2, ntyp = 1
+              ecutwfc = 40.0                    ! plane-wave cutoff (Ry): converge it
+            /
+            &amp;ELECTRONS
+              conv_thr = 1.0d-9
+            /
+            ATOMIC_SPECIES
+             Si 28.086 Si.pbe-n-rrkjus_psl.1.0.0.UPF
+            ATOMIC_POSITIONS crystal
+             Si 0.00 0.00 0.00
+             Si 0.25 0.25 0.25
+            K_POINTS automatic
+             6 6 6 0 0 0</code></pre>
+            <p>Run with <code>pw.x -in si.scf.in &gt; si.scf.out</code>. The total energy appears in the line starting with <code>!</code> (in Ry; $1$ Ry $=13.606$ eV). The convergence parameters correspond to those of the PySCF calculation: the plane-wave cutoff <code>ecutwfc</code> plays the role of the basis size (in PySCF the number of Gaussians), and <code>K_POINTS</code> the k mesh. The equation of state is obtained by repeating the calculation for several <code>celldm(1)</code> and fitting with ASE, exactly as in Step 4. Results from the two codes should agree to a few tenths of a per cent in the lattice constant if the pseudopotentials and the functional are the same, and differences larger than that point to a convergence problem.</p>
+            <h2 id="errors">Step 6. Typical problems<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 6. Typical problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr><td>SCF does not converge</td><td>poor initial guess, near-degenerate orbitals (metals, stretched bonds), a too-large mixing</td><td>damping or level shift (<code>mf.level_shift = 0.2</code>), a better guess (<code>init_guess = "atom"</code>), smearing for metals</td></tr>
+            <tr><td>Restricted result at long distance is wrong</td><td>RHF cannot dissociate a bond into open-shell fragments</td><td>unrestricted calculation with a symmetry-broken guess (Step 2)</td></tr>
+            <tr><td>Total energy changes by eV on increasing the k mesh</td><td>too coarse mesh (Gamma-centred meshes of a semiconductor converge exponentially but from far)</td><td>converge the <em>quantity of interest</em>, and use at least the mesh at which differences settle (Step 4)</td></tr>
+            <tr><td>Equation of state gives $a_0$ of $10$ &Aring; and a negative bulk modulus</td><td>wrong volume units: PySCF reports volumes in bohr$^3$</td><td>convert with <code>ase.units.Bohr**3</code> (a real error made while preparing this page)</td></tr>
+            <tr><td>Absurd energy differences or gaps</td><td>density fitting (<code>.density_fit()</code>) with an auxiliary basis unsuitable for the periodic system gave energies off by eV</td><td>use the default plane-wave density (FFTDF) for GTH pseudopotentials, or test the fit against FFTDF (also a real problem found while preparing this page)</td></tr>
+            <tr><td>Band gap far below experiment</td><td>semilocal functionals underestimate gaps</td><td>this is the physics (Step 4); use a hybrid functional or GW for quantitative gaps</td></tr>
+            <tr><td>Geometry optimisation oscillates or stops after many steps</td><td>poor starting geometry or noisy gradients</td><td>start from a chemically sensible structure; tighten the SCF convergence</td></tr>
+            </tbody></table></div>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>PySCF runs Hartree-Fock and DFT from a few lines of Python; energies are in Hartree (1 Ha = 27.2114 eV) and input lengths in Angstrom, so never compare a Hartree number with an eV number or energies from different methods or basis sets.</li>
+<li>For H2 the exact (FCI) dissociation energy is 4.70 eV against 4.75 eV in experiment; PBE gives 4.54, LDA 4.90 and restricted Hartree-Fock 3.63 eV, and at 5 Angstrom restricted HF is 6.3 eV too high (-0.7677 Ha instead of -0.9996) while the unrestricted solution is correct.</li>
+<li>For water with PBE the energy falls from -75.226 Ha (STO-3G) to -76.383 Ha (cc-pVQZ) and the error of cc-pVTZ is still 10 mHa (6.4 kcal/mol); optimised O-H lengths are 0.9406 (HF), 0.9706 (LDA), 0.9697 (PBE) and 0.9613 Angstrom (B3LYP) against 0.9572 in experiment.</li>
+<li>For crystalline silicon (GTH pseudopotential, PBE, gth-dzvp) the energy per atom still changes by 63.6 meV between 4x4x4 and 5x5x5 k-points; a Birch-Murnaghan fit gives a0 = 5.520 Angstrom (+1.6%) and B = 84.8 GPa (-14%), and the band gap is indirect at 0.69 eV against 1.12 eV in experiment (direct gap 2.57 against 3.4 eV).</li>
+<li>Semilocal DFT underestimates gaps by 30 to 40 percent, a bulk modulus depends on the fit window, and two real mistakes are documented in this lab (volumes in bohr^3 and a density-fitting error), so always check units and compare with a second method or experiment.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Exercises 1 to 4 use only the numbers on this page; Exercise 5 asks you to run the scripts.</p>
+            <div class="problem" id="pl501-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>The exact energy of two separated hydrogen atoms is $-1$ Ha. (a) Express the full CI energy of H$_2$ at $5$ &Aring;, $-0.999625$ Ha, in eV. (b) By how many mHa and meV does it differ from $-1$ Ha? (c) Why is the difference so small?</p>
+            <details class="hint"><summary>Hint</summary><p>$1$ Ha $=27.2114$ eV.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $0.999625\times27.2114=27.2012$ eV, so $E=-27.2012$ eV. (b) $1.000000-0.999625=0.375$ mHa $=0.0102$ eV. (c) At $5$ &Aring; the two atoms are almost non-interacting (the molecule is not bound at that distance), so the energy is just the sum of two H atoms. The residual is the small remaining interaction plus the finite basis (the FCI hydrogen atom in this basis is $-0.499810$ Ha, not $-0.5$, so $2\times(-0.499810)=-0.99962$ Ha, already $0.38$ mHa above exact).</p>
+            <p class="answer">(a) $-27.2012$ eV  (b) $0.375$ mHa $=0.0102$ eV  (c) atoms nearly free, basis error</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pl501-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Core</span></div>
+            <p>(a) Compute the dissociation energy $D_e=2E(\mathrm{H})-E_\mathrm{min}(\mathrm{H}_2)$ of PBE from the data on the page, in eV, and its error against experiment ($4.75$ eV). (b) The same for LDA, whose H atom energy is $-0.478348$ Ha. (c) LDA appears to be as good as PBE here; why is that misleading? </p>
+            <details class="hint"><summary>Hint</summary><p>Use the minimum energies $-1.166072$ (PBE) and $-1.136827$ Ha (LDA) and the atom energies in the table.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) PBE: $2(-0.499619)+1.166072=0.166834$ Ha $=4.540$ eV, error $-0.21$ eV ($-4.4\%$). (b) LDA: $2(-0.478348)+1.136827=0.180131$ Ha $=4.902$ eV, error $+0.15$ eV ($+3.2\%$). (c) LDA is a poor description of both pieces: its energy of the H atom is $22$ mHa ($0.59$ eV) above the exact $-0.5$ Ha and its H$_2$ energy is $35$ mHa above FCI. The two errors nearly cancel in the difference, and a good dissociation energy for one molecule says little about other systems or about the absolute energies. PBE is better in the absolute energies ($H_2$: $6.3$ mHa above FCI) even though its $D_e$ is slightly lower.</p>
+            <p class="answer">(a) $4.54$ eV  (b) $4.90$ eV  (c) errors cancel</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pl501-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>(a) At $5$ &Aring; the restricted HF energy of H$_2$ is $-0.767744$ Ha and the H-atom energy $-0.499810$ Ha. How many eV above two separated atoms is it? (b) Why does the unrestricted calculation not have this error, and what do you pay? (c) At $r=1.0$ &Aring; RHF and UHF agree to six digits; at $1.5$ &Aring; they differ by $18.4$ mHa. What does this say about the correct description of a stretched bond?</p>
+            <details class="hint"><summary>Hint</summary><p>In RHF both electrons are forced into the same spatial orbital.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $2(-0.499810)=-0.999620$; $-0.767744-(-0.999620)=0.231876$ Ha $=6.31$ eV above. (b) The restricted wave function puts both electrons in one bonding orbital, which at large $r$ has a $50\%$ ionic component (H$^+$ H$^-$), a very high-energy state; allowing the spin-up and spin-down orbitals to differ lets each localise on one atom. The price is spin contamination: the UHF wave function is not an eigenstate of $S^2$ (it is a mixture of singlet and triplet), so it gives the right energy but not a pure singlet. (c) Up to about $1$ &Aring; the closed-shell picture is stable, and beyond a critical distance (the Coulson&ndash;Fischer point, between $1.0$ and $1.5$ &Aring; here) the symmetry-broken solution is lower in energy: bond breaking is a strong-correlation problem in which a single determinant fails and which density functionals partly handle by the same trick of breaking spin symmetry.</p>
+            <p class="answer">(a) $6.31$ eV  (b) unrestricted lets electrons localise; spin contamination  (c) Coulson&ndash;Fischer instability</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pl501-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Water with PBE: the error relative to cc-pVQZ is $49.63$ mHa for cc-pVDZ and $10.23$ mHa for cc-pVTZ. (a) Express $10.23$ mHa in eV and kcal/mol ($1$ Ha $=627.51$ kcal/mol). (b) By what factor does the error fall from DZ to TZ, and what does that suggest for QZ? (c) Why can the TZ result still be used to compare two geometries?</p>
+            <details class="hint"><summary>Hint</summary><p>Chemical accuracy is about $1$ kcal/mol.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $10.23\times10^{-3}\times27.2114=0.278$ eV; $10.23\times10^{-3}\times627.51=6.42$ kcal/mol. (b) $49.63/10.23=4.9$. Each step in the zeta level therefore removes about $80\%$ of the remaining error, so the QZ result has an error of the order of a few mHa itself (not zero: the reference is the QZ energy, so the true basis-set limit is lower still). (c) The error is a nearly constant offset, because the same basis describes the same atoms in nearby geometries; energy <em>differences</em> between geometries (or reaction energies) converge much faster than absolute energies, which is the reason a TZ basis is the common choice. Always test the quantity you care about.</p>
+            <p class="answer">(a) $0.278$ eV, $6.42$ kcal/mol  (b) $4.9$  (c) errors cancel in differences</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pl501-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
+            <p>Using the six energies of the equation of state in <code>out_si.txt</code> (two atoms per cell, volumes $V=a^3/4$): (a) fit a parabola $E(V)$ through the three points $a=5.43$, $5.48$, $5.53$ &Aring; and compute $V_0$, $a_0$ and $B=V_0\,\mathrm{d}^2E/\mathrm{d}V^2$ (convert eV/&Aring;$^3$ to GPa with $160.22$); (b) repeat with all six points and compare with the Birch&ndash;Murnaghan result; (c) describe an experiment to decide whether the $4^3$ k mesh affects $a_0$.</p>
+            <details class="hint"><summary>Hint</summary><p><code>numpy.polyfit(V, E, 2)</code>; $V_0=-b/2a$, $B=V_0\,2a\times160.22$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The three points around the minimum give $V_0=42.02$ &Aring;$^3$, $a_0=(4V_0)^{1/3}=5.519$ &Aring; and $B=95.0$ GPa. (b) All six points: $V_0=42.05$ &Aring;$^3$, $a_0=5.520$ &Aring; and $B=102.1$ GPa; the last three points ($5.48$&ndash;$5.58$ &Aring;) give $5.521$ &Aring; and $82.4$ GPa; the Birch&ndash;Murnaghan fit gives $a_0=5.520$ &Aring; and $84.8$ GPa. The lattice constant agrees to $0.002$ &Aring; for all three, whereas $B$ ranges over $82$ to $102$ GPa: the energy is not a parabola in $V$ over this window, the second derivative at the minimum depends on the fitted form and on which points are included. Do not quote more digits of $B$ than the spread allows (about $\pm10$ GPa here). (c) Repeat the whole equation of state with <code>k=5</code> and <code>k=3</code> (about $15$&ndash;$60$ minutes in total on this laptop) and compare $a_0$. If $a_0$ moves by $0.01$ &Aring; or less between the meshes, the error in the mesh cancels in $E(V)$ and the mesh is adequate for $a_0$ even though the absolute energy is not converged; if it moves by more, the mesh is the problem. This test was not run for this page, so the answer is for you to determine.</p>
+            <p class="answer">(a) $5.519$ &Aring;, $95.0$ GPa  (b) $5.520$ &Aring;, $102.1$ GPa (last three: $82.4$); BM $84.8$ GPa  (c) repeat with $3^3$ and $5^3$</p>
+            </details>
+            </div>
+
+            <h2 id="refs">Going further and references<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Sun, Q. et al., &ldquo;Recent developments in the PySCF program package&rdquo;, <em>Journal of Chemical Physics</em> <strong>153</strong>, 024109 (2020); the PySCF documentation (pyscf.org) describes the molecular and periodic (<code>pbc</code>) modules and the available functionals.</li>
+                <li>Szabo, A. and Ostlund, N. S., <em>Modern Quantum Chemistry</em>, Dover: Hartree&ndash;Fock, basis sets and the H$_2$ dissociation problem (Chapter 3).</li>
+                <li>Martin, R. M., <em>Electronic Structure: Basic Theory and Practical Methods</em>, Cambridge University Press: DFT, pseudopotentials, k points and the band-gap problem.</li>
+                <li>Goedecker, S., Teter, M. and Hutter, J., <em>Physical Review B</em> <strong>54</strong>, 1703 (1996): the GTH pseudopotentials used in the silicon calculation.</li>
+                <li>Giannozzi, P. et al., <em>Journal of Physics: Condensed Matter</em> <strong>21</strong>, 395502 (2009): Quantum ESPRESSO (the program of the template in Step 5, which was not run here).</li>
+                <li>Go further: converge the silicon equation of state with respect to k points and basis, compare with a plane-wave code, compute a hybrid-functional gap with <code>KRKS</code> and <code>xc="b3lyp"</code>, or compute a molecule&rsquo;s vibrational frequencies from the Hessian: see <a href="density-functional-theory.html">CMS 501</a> and <a href="lab-phonons-phonopy.html">LAB 301</a>.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="lab-phonons-phonopy.html"><span class="dir">Previous course</span>Lab: Phonons with phonopy</a>
+<a class="next" href="lab-md-lammps-argon.html"><span class="dir">Next course</span>Lab: Molecular dynamics of liquid argon with LAMMPS</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=a68fe7e8"></script>
+    <script src="../assets/pathdata.js?v=49a96c62"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>

@@ -1048,6 +1048,34 @@ window.MIBEM_TOPICS = [
     "level": 5
   },
   {
+    "id": 52,
+    "label": "LAB 501",
+    "code": "LAB 501",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-dft-pyscf",
+    "short": "Hartree-Fock and DFT of H2, water and silicon with PySCF",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 27,
+    "title": "Lab: Electronic structure with PySCF",
+    "blurb": "Run Hartree-Fock and DFT calculations yourself: H2 dissociation, basis sets and geometries of water, and silicon with k-point convergence, an equation of state and a band gap.",
+    "builds": [
+      5,
+      40,
+      2
+    ],
+    "related": [],
+    "takeaways": [
+      "PySCF runs Hartree-Fock and DFT from a few lines of Python; energies are in Hartree (1 Ha = 27.2114 eV) and input lengths in Angstrom, so never compare a Hartree number with an eV number or energies from different methods or basis sets.",
+      "For H2 the exact (FCI) dissociation energy is 4.70 eV against 4.75 eV in experiment; PBE gives 4.54, LDA 4.90 and restricted Hartree-Fock 3.63 eV, and at 5 Angstrom restricted HF is 6.3 eV too high (-0.7677 Ha instead of -0.9996) while the unrestricted solution is correct.",
+      "For water with PBE the energy falls from -75.226 Ha (STO-3G) to -76.383 Ha (cc-pVQZ) and the error of cc-pVTZ is still 10 mHa (6.4 kcal/mol); optimised O-H lengths are 0.9406 (HF), 0.9706 (LDA), 0.9697 (PBE) and 0.9613 Angstrom (B3LYP) against 0.9572 in experiment.",
+      "For crystalline silicon (GTH pseudopotential, PBE, gth-dzvp) the energy per atom still changes by 63.6 meV between 4x4x4 and 5x5x5 k-points; a Birch-Murnaghan fit gives a0 = 5.520 Angstrom (+1.6%) and B = 84.8 GPa (-14%), and the band gap is indirect at 0.69 eV against 1.12 eV in experiment (direct gap 2.57 against 3.4 eV).",
+      "Semilocal DFT underestimates gaps by 30 to 40 percent, a bulk modulus depends on the fit window, and two real mistakes are documented in this lab (volumes in bohr^3 and a density-fitting error), so always check units and compare with a second method or experiment."
+    ],
+    "katex": true
+  },
+  {
     "id": 43,
     "label": "LAB 502",
     "code": "LAB 502",
@@ -1281,6 +1309,7 @@ window.MIBEM_PATHPLAN = [
     "sub": "Electrons, atoms, sampling, kinetics, microstructure, components and data.",
     "courses": [
       "CMS 501",
+      "LAB 501",
       "CMS 502",
       "LAB 502",
       "LAB 503",
