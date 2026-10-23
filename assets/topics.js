@@ -416,7 +416,7 @@ window.MIBEM_TOPICS = [
     "short": "Probability",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 22,
+    "minutes": 23,
     "title": "Probability and distributions",
     "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
     "builds": [
@@ -443,7 +443,7 @@ window.MIBEM_TOPICS = [
     "short": "Statistics",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 5,
+    "minutes": 26,
     "title": "Statistics, error analysis and fitting",
     "blurb": "Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.",
     "builds": [
@@ -455,7 +455,12 @@ window.MIBEM_TOPICS = [
       11
     ],
     "takeaways": [
-      "(to be written)"
+      "An estimate without an uncertainty is not a result: the standard error of a mean is $s/\\sqrt{N}$ for independent samples, with the Student $t$ factor for small $N$, and independent errors propagate in quadrature with the partial derivatives as weights, $\\sigma_f^2=\\sum(\\partial f/\\partial x_i)^2\\sigma_i^2$.",
+      "Consecutive frames from a simulation are correlated; the effective number of independent samples is $N/(2\\tau_\\mathrm{int})$, so the true error bar can be several times larger than the naive one, and blocking analysis finds it.",
+      "Least squares minimises $\\|\\mathbf{y}-X\\boldsymbol\\beta\\|^2$ and is solved by the normal equations $X^TX\\boldsymbol\\beta=X^T\\mathbf{y}$ (better by QR or the SVD); the parameter covariance is $s^2(X^TX)^{-1}$, and correlated parameters, such as an Arrhenius slope and intercept, must be reported together.",
+      "A good fit has reduced $\\chi^2\\approx1$ when the weights are $1/\\sigma_i^2$; fitting more parameters always lowers the training error, so model choice needs held-out data (cross-validation) or a penalty (ridge regression, information criteria).",
+      "Ridge regression damps the poorly determined directions of the SVD and cures ill-conditioning; it is the maximum a posteriori estimate with a Gaussian prior, which links regularisation to the Bayesian view in which prior knowledge and data combine by adding precisions.",
+      "The bootstrap estimates uncertainties by resampling the data, and works for any statistic, provided the resampling respects correlations (block bootstrap)."
     ]
   },
   {
@@ -466,7 +471,7 @@ window.MIBEM_TOPICS = [
     "short": "Variational methods",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 5,
+    "minutes": 29,
     "title": "Calculus of variations and optimisation",
     "blurb": "Functionals, the Euler-Lagrange equation, functional derivatives, weak forms, and gradient-based and Newton-type optimisation.",
     "builds": [
@@ -479,7 +484,12 @@ window.MIBEM_TOPICS = [
       5
     ],
     "takeaways": [
-      "(to be written)"
+      "A functional maps a function to a number (an energy, an action, a free energy); its minimiser satisfies the Euler-Lagrange equation $\\frac{\\mathrm{d}}{\\mathrm{d}x}\\frac{\\partial L}{\\partial y'}=\\frac{\\partial L}{\\partial y}$, obtained by integrating by parts, and the same logic with the functional derivative $\\delta F/\\delta c=f'(c)-\\kappa\\nabla^2c$ gives the chemical potential of phase-field theory.",
+      "Minimising the Ginzburg-Landau energy gives a diffuse interface $c=\\tanh(x/w)$ of width $w=\\sqrt{2\\kappa/A}$ and interfacial energy $\\tfrac23Aw$: the width and energy of the interface come from the competition between the double well and the gradient term.",
+      "Allen-Cahn and Cahn-Hilliard dynamics are gradient flows of the free energy, $\\partial_tc=-M\\,\\delta F/\\delta c$ (non-conserved) or $\\nabla\\cdot(M\\nabla\\,\\delta F/\\delta c)$ (conserved), so the energy never increases.",
+      "The Rayleigh-Ritz principle says any trial wavefunction has energy at or above the ground-state energy, so minimising over a family of trial functions gives an upper bound and, with Lagrange multipliers for normalisation, the Schrödinger eigenproblem; this is the basis of variational electronic-structure methods.",
+      "Multiplying a differential equation by a test function and integrating by parts gives the weak form, which is the finite element method's starting point; expanding in local basis functions turns it into a sparse symmetric positive-definite linear system $K\\mathbf{u}=\\mathbf{f}$.",
+      "Gradient descent converges at a rate set by the condition number $\\kappa$ of the Hessian, conjugate gradients at a rate set by $\\sqrt{\\kappa}$, and Newton's method quadratically near a minimum at the price of the Hessian; for non-convex landscapes annealing and basin hopping search for the global minimum."
     ]
   },
   {

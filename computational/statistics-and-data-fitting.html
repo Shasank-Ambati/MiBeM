@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics, error analysis and fitting - MiBeM</title>
-    <meta name="description" content="Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.">
+    <meta name="description" content="University-level statistics for materials simulation and experiment: estimators and confidence intervals, error propagation, correlated samples and blocking, linear and nonlinear least squares with parameter uncertainties, chi-squared, regularisation and cross-validation, the bootstrap and the Bayesian view; twelve problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/statistics-and-data-fitting.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Statistics, error analysis and fitting - MiBeM">
-    <meta property="og:description" content="Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.">
+    <meta property="og:description" content="University-level statistics for materials simulation and experiment: estimators and confidence intervals, error propagation, correlated samples and blocking, linear and nonlinear least squares with parameter uncertainties, chi-squared, regularisation and cross-validation, the bootstrap and the Bayesian view; twelve problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/statistics-and-data-fitting.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,15 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#check">1. Problems</a></li>
+                <li><a href="#estimates">1. Estimating a mean and its uncertainty</a></li>
+                <li><a href="#propagation">2. Propagation of errors</a></li>
+                <li><a href="#correlated">3. Correlated data from simulations</a></li>
+                <li><a href="#lsq">4. Least squares</a></li>
+                <li><a href="#overfit">5. Overfitting, regularisation and model selection</a></li>
+                <li><a href="#bayes-boot">6. Bayesian view and the bootstrap</a></li>
+                <li><a href="#summary-m11">7. How the pieces fit together</a></li>
+                <li><a href="#check">8. Problems</a></li>
+                <li><a href="#refs">9. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -45,25 +53,279 @@
             <!-- coursenav:start -->
 <nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" class="here" aria-current="page" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
 <!-- coursenav:end -->
-            <p class="lead">Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.</p>
+            <h1>Statistics, error analysis and fitting</h1>
+            <p class="lead">Measurements and simulations both produce noisy numbers, and what you can claim depends on how well you understand that noise. This module teaches the working statistics of computational materials science: how to put honest error bars on averages (including the correlated data of molecular dynamics), how uncertainties propagate through formulas, how to fit models to data and quote parameter uncertainties, and how to avoid fitting noise. It is also the mathematical bridge to machine learning for materials, which is regularised regression at scale.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 5 min</dd></div>
+<div><dt>Reading time</dt><dd>about 26 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="probability-for-simulation.html">M10. Probability</a><br><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
 </dl>
 <!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Compute sample means, standard errors and confidence intervals, and propagate uncertainties through formulas.</li>
+                    <li>Account for correlated data using the autocorrelation time and blocking.</li>
+                    <li>Fit straight lines and general linear models by least squares, with parameter uncertainties and goodness-of-fit.</li>
+                    <li>Recognise overfitting; use cross-validation and ridge regularisation, and explain them with the SVD and Bayes&rsquo; rule.</li>
+                    <li>Apply the bootstrap, and combine information from prior knowledge and data.</li>
+                </ul>
+                <strong>You need:</strong> <a href="probability-for-simulation.html">M10. Probability</a> and <a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a> (for the SVD).
+            </div>
+
+            <h2 id="estimates">1. Estimating a mean and its uncertainty<a class="anchor" href="#estimates" aria-label="Link to this section">#</a></h2>
+            <h3 id="mean-sd">Sample mean, sample variance and standard error<a class="anchor" href="#mean-sd" aria-label="Link to this section">#</a></h3>
+            <p>Given $N$ independent measurements $x_1,\ldots,x_N$ of a quantity with true mean $\mu$ and variance $\sigma^2$, the natural estimates are the <strong>sample mean</strong> $\bar x=\frac1N\sum x_i$ and the <strong>sample variance</strong>
+            $$s^2=\frac1{N-1}\sum_{i=1}^N(x_i-\bar x)^2 .$$
+            The divisor $N-1$ (Bessel&rsquo;s correction) makes $s^2$ an <em>unbiased</em> estimator: $\langle s^2\rangle=\sigma^2$. (The deviations are measured from $\bar x$, which was itself fitted to the data and so fits slightly too well; one degree of freedom is used up.) The uncertainty of the mean is the <strong>standard error</strong>
+            $$\mathrm{SE}=\frac{s}{\sqrt N},$$
+            which falls with more data, whereas $s$ itself does not: $s$ describes the scatter of individual measurements, $\mathrm{SE}$ the precision of their average. Always say which one you are quoting.</p>
+            <h3 id="ci">Confidence intervals and the $t$ distribution<a class="anchor" href="#ci" aria-label="Link to this section">#</a></h3>
+            <p>By the central limit theorem (<a href="probability-for-simulation.html">M10</a>), for large $N$ the interval $\bar x\pm1.96\,\mathrm{SE}$ contains the true mean in $95\%$ of repeated experiments. For small $N$, using the estimated $s$ instead of the unknown $\sigma$ widens the interval: replace $1.96$ by the Student $t$ quantile with $N-1$ degrees of freedom:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Confidence intervals and the $t$ distribution (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Degrees of freedom $\nu=N-1$</th><th>2</th><th>4</th><th>9</th><th>19</th><th>$\infty$</th></tr></thead>
+                <tbody><tr><td>$t_{0.975,\nu}$ (95% interval)</td><td>4.30</td><td>2.78</td><td>2.26</td><td>2.09</td><td>1.96</td></tr></tbody>
+            </table></div>
+            </div>
+            <p>The distinction matters for the typical case in simulation or experiment of $3$ to $10$ independent repeats. A &ldquo;confidence interval&rdquo; is a statement about the procedure (95% of such intervals cover the truth), not a probability that the true value lies in this particular interval; a Bayesian credible interval (section 6) is the latter. To judge whether two means differ significantly, compare the difference with its combined standard error, $z=\dfrac{\bar x_1-\bar x_2}{\sqrt{\mathrm{SE}_1^2+\mathrm{SE}_2^2}}$; $|z|\lesssim2$ is consistent with no difference.</p>
+
+            <h2 id="propagation">2. Propagation of errors<a class="anchor" href="#propagation" aria-label="Link to this section">#</a></h2>
+            <p>Most results are computed from measured inputs. If $f=f(x_1,\ldots,x_n)$ and the inputs have independent uncertainties $\sigma_i$, linearising (the first-order Taylor expansion of <a href="multivariable-calculus.html">M2</a>) gives
+            $$\sigma_f^2=\sum_i\Bigl(\frac{\partial f}{\partial x_i}\Bigr)^2\sigma_i^2 .$$
+            For correlated inputs, add $2\sum_{i&lt;j}\frac{\partial f}{\partial x_i}\frac{\partial f}{\partial x_j}\mathrm{Cov}(x_i,x_j)$ or, in matrix form, $\sigma_f^2=\mathbf g^TC\mathbf g$ with gradient $\mathbf g$ and covariance matrix $C$. The commonly needed special cases:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="2. Propagation of errors (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Formula</th><th>Uncertainty</th></tr></thead>
+                <tbody>
+                    <tr><td>$f=x\pm y$</td><td>$\sigma_f=\sqrt{\sigma_x^2+\sigma_y^2}$ (absolute errors add in quadrature)</td></tr>
+                    <tr><td>$f=x\,y$ or $x/y$</td><td>$\dfrac{\sigma_f}{|f|}=\sqrt{\bigl(\tfrac{\sigma_x}{x}\bigr)^2+\bigl(\tfrac{\sigma_y}{y}\bigr)^2}$ (relative errors add in quadrature)</td></tr>
+                    <tr><td>$f=x^n$</td><td>$\dfrac{\sigma_f}{|f|}=|n|\dfrac{\sigma_x}{|x|}$</td></tr>
+                    <tr><td>$f=\ln x$</td><td>$\sigma_f=\sigma_x/|x|$</td></tr>
+                    <tr><td>$f=e^{x}$</td><td>$\sigma_f/|f|=\sigma_x$</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>Compared with the worst-case sum of absolute errors in <a href="multivariable-calculus.html">M2</a>, Problem 2.2, independent errors rarely all conspire, so adding in quadrature gives a smaller (and more realistic) result. Two warnings: the formula is linear, so it fails when errors are large or the function strongly nonlinear (use sampling or the bootstrap), and it assumes independence: for two quantities extracted from the same fit (slope and intercept) the covariance term is essential (Problem 6). Differences of nearly equal numbers amplify relative error: $x=10.0\pm0.1$ and $y=9.8\pm0.1$ give $x-y=0.2\pm0.14$, a $70\%$ error from two $1\%$ measurements. This is why quantities such as formation energies, defined as small differences between large total energies, need cancellation of errors between the terms.</p>
+
+            <h2 id="correlated">3. Correlated data from simulations<a class="anchor" href="#correlated" aria-label="Link to this section">#</a></h2>
+            <p>Consecutive configurations of a molecular dynamics or Metropolis Monte Carlo run are not independent: the system remembers where it was. The formula $s/\sqrt N$ then <em>underestimates</em> the error, often by a factor of $5$ or $10$. Quantify the memory with the <strong>autocorrelation function</strong> $\rho_k=\dfrac{\langle(A_i-\bar A)(A_{i+k}-\bar A)\rangle}{\sigma^2}$ of the quantity $A$ at lag $k$, with $\rho_0=1$. For a long run the variance of the mean is
+            $$\mathrm{Var}(\bar A)=\frac{\sigma^2}{N}\Bigl(1+2\sum_{k\ge1}\rho_k\Bigr)=\frac{\sigma^2}{N_\mathrm{eff}},\qquad N_\mathrm{eff}=\frac N{2\tau_\mathrm{int}},\quad\tau_\mathrm{int}=\tfrac12+\sum_{k\ge1}\rho_k .$$
+            The <strong>integrated autocorrelation time</strong> $\tau_\mathrm{int}$ counts how many successive samples carry the information of one independent sample (in units of the sampling interval). A common model is exponential decay $\rho_k=e^{-k/\tau}$, which for $\rho=\rho_1$ gives $\tau_\mathrm{int}=\dfrac{1+\rho}{2(1-\rho)}$; with $\rho=0.9$ it is $9.5$, so $N_\mathrm{eff}=N/19$ and the true error is $\sqrt{19}=4.4$ times the naive one (Problem 4). Correlation times grow near phase transitions (critical slowing down) and for slow processes such as diffusion across a cell, so longer runs, not more frequent sampling, are needed.</p>
+            <h3 id="blocking">Blocking<a class="anchor" href="#blocking" aria-label="Link to this section">#</a></h3>
+            <p>A robust practical method needing no explicit autocorrelation estimate: divide the series into blocks of length $b$, average within each block, and compute the standard error of the $N/b$ block means treated as independent. For small $b$ the estimate is too low (blocks are still correlated); as $b$ exceeds a few $\tau_\mathrm{int}$ the block means decorrelate and the estimated error rises to a <strong>plateau</strong>, which is the correct standard error. If it never plateaus the run is too short, a warning that the simulation has not sampled the relevant dynamics. Discard an initial transient (equilibration) before analysis.</p>
+
+            <h2 id="lsq">4. Least squares<a class="anchor" href="#lsq" aria-label="Link to this section">#</a></h2>
+            <h3 id="linear">Linear models<a class="anchor" href="#linear" aria-label="Link to this section">#</a></h3>
+            <p>Suppose $y_i=\sum_{j=1}^p\beta_jf_j(x_i)+\varepsilon_i$ with unknown parameters $\beta_j$ and noise $\varepsilon_i$ of zero mean and variance $\sigma^2$. In matrix form $\mathbf y=X\boldsymbol\beta+\boldsymbol\varepsilon$, where $X_{ij}=f_j(x_i)$ is the $n\times p$ <strong>design matrix</strong>. A straight line has $X=[\mathbf1\ \ \mathbf x]$; a quadratic adds a column $\mathbf x^2$. The <strong>least-squares estimate</strong> minimises the sum of squared residuals $S(\boldsymbol\beta)=\|\mathbf y-X\boldsymbol\beta\|^2$. Setting $\nabla_{\boldsymbol\beta}S=0$ gives the <strong>normal equations</strong>
+            $$X^TX\,\hat{\boldsymbol\beta}=X^T\mathbf y\quad\Longrightarrow\quad\hat{\boldsymbol\beta}=(X^TX)^{-1}X^T\mathbf y .$$
+            Geometrically (<a href="linear-algebra-foundations.html">M4</a>), $X\hat{\boldsymbol\beta}$ is the orthogonal projection of $\mathbf y$ onto the column space of $X$, and the residual vector is perpendicular to every column: $X^T\mathbf r=0$. Numerically one does not form $X^TX$ (squaring the condition number); one uses the QR decomposition or the SVD, $\hat{\boldsymbol\beta}=X^+\mathbf y=V\Sigma^{-1}U^T\mathbf y$ (<a href="eigenvalues-and-decompositions.html">M5</a>). The <strong>uncertainty</strong> of the fitted parameters follows from linear propagation of the noise:
+            $$\mathrm{Cov}(\hat{\boldsymbol\beta})=\sigma^2(X^TX)^{-1},\qquad s^2=\frac{S(\hat{\boldsymbol\beta})}{n-p}\ \text{(estimate of }\sigma^2),$$
+            and the standard error of $\hat\beta_j$ is the square root of the $j$-th diagonal entry. The off-diagonal entries give correlations between parameters, which are often strong: for a line fitted far from the origin the intercept and slope are almost perfectly anti-correlated (Problem 6). For a straight line, with $S_{xx}=\sum(x_i-\bar x)^2$:
+            $$\hat b=\frac{\sum(x_i-\bar x)(y_i-\bar y)}{S_{xx}},\quad\hat a=\bar y-\hat b\bar x,\quad\mathrm{SE}(\hat b)=\frac{s}{\sqrt{S_{xx}}},\quad\mathrm{SE}(\hat a)=s\sqrt{\frac1n+\frac{\bar x^2}{S_{xx}}}.$$
+            The slope is better determined the wider the range of $x$ (larger $S_{xx}$), which is why calibration data should span the range of interest. The coefficient of determination $R^2=1-S/\sum(y_i-\bar y)^2$ is the fraction of variance explained, but a high $R^2$ does not make a model right (Problem 5).</p>
+            <h3 id="weighted">Weights and $\chi^2$<a class="anchor" href="#weighted" aria-label="Link to this section">#</a></h3>
+            <p>When the data have known, unequal uncertainties $\sigma_i$, minimise
+            $$\chi^2=\sum_i\Bigl(\frac{y_i-f(x_i;\boldsymbol\beta)}{\sigma_i}\Bigr)^2,$$
+            i.e. weight each point by $1/\sigma_i^2$. If the model is right and the $\sigma_i$ are correct, $\chi^2$ is distributed with mean $\nu=n-p$ (the degrees of freedom), so the <strong>reduced $\chi^2=\chi^2/\nu\approx1$</strong>: much larger values mean the model is inadequate or the errors underestimated; much smaller ones mean overestimated errors (or suspiciously good data). The weighted mean of independent measurements $x_i\pm\sigma_i$ is $\bar x=\sum w_ix_i/\sum w_i$ with $w_i=1/\sigma_i^2$ and uncertainty $\bigl(\sum w_i\bigr)^{-1/2}$: precisions add.</p>
+            <h3 id="nonlinear">Nonlinear least squares<a class="anchor" href="#nonlinear" aria-label="Link to this section">#</a></h3>
+            <p>For models nonlinear in the parameters (an exponential decay, a Birch&ndash;Murnaghan equation of state, a Gaussian peak) there is no closed form. <strong>Gauss&ndash;Newton</strong> linearises the model about the current guess, $f(\boldsymbol\beta+\boldsymbol\delta)\approx f+J\boldsymbol\delta$ with the Jacobian $J_{ij}=\partial f(x_i)/\partial\beta_j$, and solves the linear problem $J^TJ\,\boldsymbol\delta=J^T\mathbf r$ for the step; <strong>Levenberg&ndash;Marquardt</strong> adds a damping term $\mu I$ to make it robust far from the minimum. The parameter covariance is again $s^2(J^TJ)^{-1}$ at the solution. Unlike the linear case, the result depends on the starting guess and can land in a local minimum, so good initial values (from a linearised or graphical estimate) and a check of the fit by eye are essential. Many nonlinear laws can be linearised by taking logarithms: $\ln D=\ln D_0-Q/k_\mathrm{B}T$ is a straight line in $1/T$ (an Arrhenius plot), but note that the transformation also changes the weights: errors in $D$ become errors in $\ln D$ of size $\sigma_D/D$.</p>
+            <div class="note mat"><strong>In materials science: equation-of-state fits</strong>
+            <p>The total energy $E(V)$ of a crystal computed by DFT at several volumes is fitted to extract the equilibrium volume $V_0$, bulk modulus $B_0=V_0\,E''(V_0)$ and its pressure derivative $B_0'$. A quadratic fit is linear least squares but only accurate near the minimum, since it ignores the anharmonic skew of the well; the Birch&ndash;Murnaghan or Vinet form is nonlinear in $V_0$ and $B_0'$. The answers depend on the volume range and number of points (Problem 7), and the fitted $B_0$ and $B_0'$ are strongly anti-correlated, so quote them with their covariance.</p>
+            </div>
+
+            <h2 id="overfit">5. Overfitting, regularisation and model selection<a class="anchor" href="#overfit" aria-label="Link to this section">#</a></h2>
+            <p>Any model with enough adjustable parameters can fit the noise. A polynomial of degree $n-1$ passes exactly through $n$ points, with zero training error and wild oscillations between them, useless for prediction. The tension is the <strong>bias&ndash;variance trade-off</strong>: a model that is too simple has high bias (systematic error), one that is too flexible has high variance (its fit changes drastically with the particular noise in the data). The <em>training error</em> always decreases as parameters are added, so it cannot choose the model. What matters is the <strong>generalisation error</strong> on data not used for fitting.</p>
+            <h3 id="cv">Cross-validation<a class="anchor" href="#cv" aria-label="Link to this section">#</a></h3>
+            <p>Hold out part of the data, fit on the rest, and measure the error on the held-out part. In $k$-fold cross-validation the data are split into $k$ groups, each used once as the test set; leave-one-out (LOO) is the extreme $k=n$. The model with the lowest cross-validated error is preferred (Problem 10). For structured data, such as many atoms from a few structures, the split must be by structure rather than by atom, or the test data leak information from the training data and the error is badly underestimated, one of the commonest mistakes in machine-learning potentials. Information criteria, $\mathrm{AIC}=2p-2\ln L$ and $\mathrm{BIC}=p\ln n-2\ln L$, penalise parameters analytically (for Gaussian errors $-2\ln L=\chi^2+\mathrm{const}$).</p>
+            <h3 id="ridge">Ridge regression<a class="anchor" href="#ridge" aria-label="Link to this section">#</a></h3>
+            <p>If columns of $X$ are nearly dependent, $X^TX$ is nearly singular, the coefficients are huge and unstable, and a tiny change in the data swings the answer (the ill-conditioning example of <a href="linear-algebra-foundations.html">M4</a>, Problem 4.12). <strong>Ridge (Tikhonov) regression</strong> minimises a penalised sum
+            $$S_\lambda(\boldsymbol\beta)=\|\mathbf y-X\boldsymbol\beta\|^2+\lambda\|\boldsymbol\beta\|^2\ \Longrightarrow\ \hat{\boldsymbol\beta}_\lambda=(X^TX+\lambda I)^{-1}X^T\mathbf y .$$
+            In terms of the SVD $X=U\Sigma V^T$, $\hat{\boldsymbol\beta}_\lambda=\sum_i\dfrac{\sigma_i}{\sigma_i^2+\lambda}(\mathbf u_i\cdot\mathbf y)\mathbf v_i$: each component is multiplied by the filter $\sigma_i^2/(\sigma_i^2+\lambda)$, which is near $1$ for well-determined directions ($\sigma_i^2\gg\lambda$) and near $0$ for the poorly determined ones ($\sigma_i^2\ll\lambda$). Noise-dominated directions are damped instead of amplified by $1/\sigma_i$. The parameter $\lambda$ is chosen by cross-validation. The <em>lasso</em> penalty $\lambda\sum|\beta_j|$ instead drives many coefficients exactly to zero (feature selection). Kernel ridge regression and Gaussian-process regression, the workhorses of machine-learned interatomic potentials (<a href="machine-learning-for-materials.html">Machine learning for materials</a>), are ridge regression in a high-dimensional feature space.</p>
+
+            <h2 id="bayes-boot">6. Bayesian view and the bootstrap<a class="anchor" href="#bayes-boot" aria-label="Link to this section">#</a></h2>
+            <p>Bayes&rsquo; theorem (<a href="probability-for-simulation.html">M10</a>) for a parameter $\theta$ and data $D$ reads $p(\theta|D)\propto p(D|\theta)\,p(\theta)$: <em>posterior</em> $\propto$ <em>likelihood</em> $\times$ <em>prior</em>. For independent Gaussian errors the likelihood is $\propto e^{-\chi^2/2}$, so maximising it is least squares. With a flat prior the posterior mode is the least-squares fit; with a Gaussian prior on the parameters, $p(\boldsymbol\beta)\propto e^{-\|\boldsymbol\beta\|^2/2\tau^2}$, the <strong>maximum a posteriori</strong> estimate is exactly ridge regression, with $\lambda=\sigma^2/\tau^2$: regularisation is prior belief that the parameters are not huge. For one Gaussian measurement of a Gaussian-distributed quantity, <em>precisions add</em>:
+            $$\frac1{\sigma_\mathrm{post}^2}=\frac1{\sigma_0^2}+\frac1{\sigma^2},\qquad\mu_\mathrm{post}=\sigma_\mathrm{post}^2\Bigl(\frac{\mu_0}{\sigma_0^2}+\frac{x}{\sigma^2}\Bigr),$$
+            a precision-weighted average of the prior mean and the measurement (Problem 12). This is how a computed prediction with a known method error and an experimental value are combined, and how Bayesian optimisation and active learning decide where to sample next.</p>
+            <p>The <strong>bootstrap</strong> estimates the uncertainty of <em>any</em> statistic without formulas: resample the data set with replacement, $B\approx10^3$ times, compute the statistic for each resample, and use the spread of the results as its standard error (or the $2.5$ and $97.5$ percentiles as a $95\%$ interval). It treats the observed data as a stand-in for the unknown distribution. It works for medians, peak positions, ratios, fitted parameters, and for correlated data if you resample whole blocks of consecutive samples (<em>block bootstrap</em>) rather than single points. For the mean it reproduces the standard error up to a factor $\sqrt{(N-1)/N}$ (Problem 11); its value is for statistics that have no simple formula.</p>
+
+            <h2 id="summary-m11">7. How the pieces fit together<a class="anchor" href="#summary-m11" aria-label="Link to this section">#</a></h2>
+            <p>Reporting a number honestly means reporting its uncertainty: the standard error for independent samples, enlarged by the autocorrelation time for simulation data, propagated through formulas and fits with the covariance of the parameters. Least squares is the geometry of projection, solved stably with QR or the SVD, whose small singular values warn of ill-conditioning. Training error is not prediction error; cross-validation, regularisation and prior knowledge guard against fitting noise. The last module reaches the mathematical core of the finite element and phase-field methods, where an unknown <em>function</em> is chosen to minimise an energy.</p>
+
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>(to be written)</li>
+<li>An estimate without an uncertainty is not a result: the standard error of a mean is $s/\sqrt{N}$ for independent samples, with the Student $t$ factor for small $N$, and independent errors propagate in quadrature with the partial derivatives as weights, $\sigma_f^2=\sum(\partial f/\partial x_i)^2\sigma_i^2$.</li>
+<li>Consecutive frames from a simulation are correlated; the effective number of independent samples is $N/(2\tau_\mathrm{int})$, so the true error bar can be several times larger than the naive one, and blocking analysis finds it.</li>
+<li>Least squares minimises $\|\mathbf{y}-X\boldsymbol\beta\|^2$ and is solved by the normal equations $X^TX\boldsymbol\beta=X^T\mathbf{y}$ (better by QR or the SVD); the parameter covariance is $s^2(X^TX)^{-1}$, and correlated parameters, such as an Arrhenius slope and intercept, must be reported together.</li>
+<li>A good fit has reduced $\chi^2\approx1$ when the weights are $1/\sigma_i^2$; fitting more parameters always lowers the training error, so model choice needs held-out data (cross-validation) or a penalty (ridge regression, information criteria).</li>
+<li>Ridge regression damps the poorly determined directions of the SVD and cures ill-conditioning; it is the maximum a posteriori estimate with a Gaussian prior, which links regularisation to the Bayesian view in which prior knowledge and data combine by adding precisions.</li>
+<li>The bootstrap estimates uncertainties by resampling the data, and works for any statistic, provided the resampling respects correlations (block bootstrap).</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">1. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <p>Coming soon.</p>
+            <h2 id="check">8. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p11-1">
+            <div class="p-head"><span class="p-num">Problem 11.1</span><span class="p-level">Basic</span></div>
+            <p>Five independent X-ray measurements of a lattice parameter give $4.0493$, $4.0501$, $4.0497$, $4.0505$ and $4.0499$ &Aring;. Find the mean, the sample standard deviation, the standard error, and the 95% confidence interval ($t_{0.975,4}=2.776$). Would the Gaussian factor $1.96$ be appropriate?</p>
+            <details class="hint"><summary>Hint</summary><p>$s^2=\frac1{N-1}\sum(x_i-\bar x)^2$; $\mathrm{SE}=s/\sqrt N$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\bar x=(4.0493+4.0501+4.0497+4.0505+4.0499)/5=4.0499$ &Aring;. Deviations (in $10^{-4}$ &Aring;): $-6,+2,-2,+6,0$; squares $36+4+4+36+0=80$; $s^2=80/4=20$ (in $10^{-8}$ &Aring;$^2$), so $s=4.47\times10^{-4}$ &Aring;. $\mathrm{SE}=4.47\times10^{-4}/\sqrt5=2.0\times10^{-4}$ &Aring;. The 95% interval: $\bar x\pm2.776\times2.0\times10^{-4}=4.0499\pm0.00056$, i.e. $[4.0493,\ 4.0505]$ &Aring;.</p>
+            <p>With only $N=5$ the Gaussian factor $1.96$ would give $\pm0.00039$, an interval that is $29\%$ too narrow: overconfident. The $t$ factor is the correct choice for small samples. Quote the result as $a=4.0499\pm0.0006$ &Aring; (95%), or $4.0499(2)$ &Aring; with the standard error in parentheses, and state which.</p>
+            <p class="answer">$4.0499$ Å; $s=0.00045$; SE $=0.00020$; 95%: $\pm0.00056$ Å</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-2">
+            <div class="p-head"><span class="p-num">Problem 11.2</span><span class="p-level">Basic</span></div>
+            <p>(a) A resistance is computed as $R=V/I$ with $V=5.00\pm0.05$ V and $I=0.250\pm0.004$ A. Find $R$ and its uncertainty by propagation in quadrature, and compare with adding the relative errors linearly. (b) A formation energy is $E_f=E_\mathrm{defect}-E_\mathrm{perfect}+\mu$ with $E_\mathrm{defect}=-1000.56\pm0.02$, $E_\mathrm{perfect}=-1005.00\pm0.02$ and $\mu=-3.74\pm0.01$ eV. Find $E_f$ and its uncertainty. (c) Why can the true uncertainty on $E_f$ be smaller than the quadrature estimate if the errors in the two total energies are correlated?</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Relative errors: $0.05/5.00=1.0\%$ and $0.004/0.250=1.6\%$. (b) For a sum, absolute errors add in quadrature.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $R=5.00/0.250=20.0\ \Omega$. In quadrature: $\sigma_R/R=\sqrt{0.010^2+0.016^2}=0.0189$, so $\sigma_R=0.38\ \Omega$: $R=20.0\pm0.4\ \Omega$. A worst-case linear sum would give $2.6\%$, i.e. $0.52\ \Omega$ (overestimate, since independent errors seldom all push the same way).</p>
+            <p>(b) $E_\mathrm{defect}-E_\mathrm{perfect}=-1000.56+1005.00=4.44$ eV, and $E_f=4.44+(-3.74)=0.70$ eV. Uncertainty: $\sqrt{0.02^2+0.02^2+0.01^2}=0.03$ eV, so $E_f=0.70\pm0.03$ eV ($4\%$). The result is a small difference of large numbers: a $0.7$ eV quantity from energies of order $1000$ eV, so each total energy must be accurate to about $3\times10^{-5}$ relative.</p>
+            <p>(c) The systematic parts of the errors (the exchange&ndash;correlation functional, pseudopotentials, basis set) are nearly the same in the defective and perfect cells computed the same way, so they cancel in the difference. The covariance term $-2\,\mathrm{Cov}(E_\mathrm{defect},E_\mathrm{perfect})$ reduces the variance of the difference. That is why DFT energy <em>differences</em> are far more reliable than total energies, provided both are computed with identical settings (cutoff, $k$-mesh, cell size).</p>
+            <p class="answer">$R=20.0\pm0.4\ \Omega$; $E_f=0.70\pm0.03$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-3">
+            <div class="p-head"><span class="p-num">Problem 11.3</span><span class="p-level">Core</span></div>
+            <p>A rate constant is measured as $k_1=2.0\pm0.1$ s$^{-1}$ at $T_1=700$ K and $k_2=8.0\pm0.4$ s$^{-1}$ at $T_2=750$ K. (a) Find the activation energy $E_a=k_\mathrm{B}\ln(k_2/k_1)\big/(1/T_1-1/T_2)$. (b) Propagate the uncertainty in $k$ (temperatures taken as exact). (c) How much does $E_a$ change if $T_1$ is actually $5$ K higher, and what does that imply about the thermometry requirement?</p>
+            <details class="hint"><summary>Hint</summary><p>$\sigma_{\ln k}=\sigma_k/k$ for each, and $\sigma_{\ln(k_2/k_1)}=\sqrt{\sigma_{\ln k_1}^2+\sigma_{\ln k_2}^2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\ln(k_2/k_1)=\ln4=1.386$; $1/700-1/750=9.524\times10^{-5}$ K$^{-1}$. $E_a=8.617\times10^{-5}\times1.386/9.524\times10^{-5}=1.254$ eV.</p>
+            <p>(b) Relative errors $5\%$ each, so $\sigma_{\ln(k_2/k_1)}=\sqrt{0.05^2+0.05^2}=0.0707$. Since $E_a\propto\ln(k_2/k_1)$: $\sigma_{E_a}=E_a\times0.0707/1.386=1.254\times0.051=0.064$ eV. So $E_a=1.25\pm0.06$ eV.</p>
+            <p>(c) With $T_1=705$ K: $1/705-1/750=8.511\times10^{-5}$, $E_a=1.1946\times10^{-4}/8.511\times10^{-5}=1.404$ eV: an increase of $0.15$ eV (12%), larger than the statistical error ($0.06$ eV). The two temperatures are only $50$ K apart, so the denominator $1/T_1-1/T_2$ is small and an error of $5$ K in one temperature ($0.7\%$) is magnified ($\sim\!\!12\%$). Lesson: for an Arrhenius analysis use a wide temperature range and well-calibrated thermometry; the spread in $1/T$ plays the role of $S_{xx}$ in the slope error. A fit over many temperatures also checks that the data are really linear.</p>
+            <p class="answer">$E_a=1.25\pm0.06$ eV; a 5 K error shifts it by 0.15 eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-4">
+            <div class="p-head"><span class="p-num">Problem 11.4</span><span class="p-level">Core</span></div>
+            <p>A time series from a molecular dynamics run has standard deviation $\sigma=1$ (in some units) and exponentially decaying autocorrelation with $\rho_1=0.9$ between consecutive samples. (a) Show that $\tau_\mathrm{int}=\dfrac{1+\rho}{2(1-\rho)}$ for $\rho_k=\rho^k$. (b) For $N=10^5$ samples compare the naive and true standard errors of the mean, and find $N_\mathrm{eff}$. (c) The energy is stored every $10$ fs and its correlation time is $\tau_\mathrm{int}=95$ fs$\,$($=\!9.5$ samples). How long must a run be to reach a standard error of $0.001$ (same units, $\sigma=1$)? (d) Describe how blocking would reveal the true error.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $\sum_{k\ge1}\rho^k=\rho/(1-\rho)$. (b) $\mathrm{SE}_\mathrm{true}=\sigma\sqrt{2\tau_\mathrm{int}/N}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau_\mathrm{int}=\tfrac12+\sum_{k\ge1}\rho^k=\tfrac12+\dfrac{\rho}{1-\rho}=\dfrac{(1-\rho)+2\rho}{2(1-\rho)}=\dfrac{1+\rho}{2(1-\rho)}$. For $\rho=0.9$: $\tau_\mathrm{int}=\dfrac{1.9}{0.2}=9.5$.</p>
+            <p>(b) Naive: $1/\sqrt{10^5}=0.00316$. True: $\sigma\sqrt{2\tau_\mathrm{int}/N}=\sqrt{19/10^5}=0.01378$: $4.4$ times larger. $N_\mathrm{eff}=N/(2\tau_\mathrm{int})=10^5/19=5263$: only $5\%$ of the samples are &ldquo;independent&rdquo;.</p>
+            <p>(c) Need $\sigma\sqrt{2\tau_\mathrm{int}/N}=0.001\Rightarrow N=19/10^{-6}=1.9\times10^7$ samples, i.e. $1.9\times10^8$ fs $=190$ ns of trajectory. With the naive formula one would stop after $10^6$ samples ($10$ ns) and claim the error was reached while it was really $4.4$ times larger. Sampling more often does not help: $N$ grows but so does $\tau_\mathrm{int}$ in sample units, leaving $N_\mathrm{eff}$ unchanged.</p>
+            <p>(d) Compute the error of the block means for $b=1,2,4,8,\ldots$. At $b=1$ it equals the naive $0.0032$; it increases with $b$ and levels off at about $0.0138$ once $b\gtrsim5\tau_\mathrm{int}\approx50$. The plateau value is the true standard error; the block size at which it is reached estimates the correlation time. No plateau means the run is shorter than the slowest dynamics.</p>
+            <p class="answer">$\tau_\mathrm{int}=9.5$; true SE $=0.0138$ (4.4× naive); $N_\mathrm{eff}=5263$; 190 ns</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-5">
+            <div class="p-head"><span class="p-num">Problem 11.5</span><span class="p-level">Core</span></div>
+            <p>Fit a straight line $y=a+bx$ to the data $(x,y)=(1,2.1),(2,3.9),(3,6.2),(4,7.8),(5,10.1)$. (a) Find $a$ and $b$ with the normal equations or the straight-line formulas. (b) Find the residuals, $s$, and the standard errors of $a$ and $b$. (c) Give $R^2$. (d) Predict $y$ at $x=6$ with its uncertainty and explain why the uncertainty grows when extrapolating.</p>
+            <details class="hint"><summary>Hint</summary><p>$\bar x=3$, $\bar y=6.02$, $S_{xx}=10$, $\sum(x_i-\bar x)(y_i-\bar y)=19.9$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\bar x=3$, $\bar y=(2.1+3.9+6.2+7.8+10.1)/5=6.02$. $S_{xx}=4+1+0+1+4=10$. $S_{xy}=(-2)(-3.92)+(-1)(-2.12)+0+(1)(1.78)+(2)(4.08)=7.84+2.12+1.78+8.16=19.9$. So $\hat b=19.9/10=1.99$ and $\hat a=6.02-1.99\times3=0.05$.</p>
+            <p>(b) Fitted values $0.05+1.99x$: $2.04,4.03,6.02,8.01,10.00$. Residuals $y-\hat y$: $+0.06,-0.13,+0.18,-0.21,+0.10$ (sum $=0$). $\sum r^2=0.0036+0.0169+0.0324+0.0441+0.0100=0.1070$; $s^2=0.1070/(5-2)=0.0357$, $s=0.189$. $\mathrm{SE}(b)=s/\sqrt{S_{xx}}=0.189/3.162=0.060$. $\mathrm{SE}(a)=s\sqrt{\tfrac15+\tfrac9{10}}=0.189\times1.049=0.198$. So $b=1.99\pm0.06$, $a=0.05\pm0.20$ (consistent with a line through the origin).</p>
+            <p>(c) $\sum(y-\bar y)^2=S_{yy}=39.7+\ldots$: $(-3.92)^2+(-2.12)^2+0.18^2+1.78^2+4.08^2=15.37+4.49+0.03+3.17+16.65=39.71$; $R^2=1-0.107/39.71=0.9973$.</p>
+            <p>(d) $\hat y(6)=0.05+1.99(6)=11.99$. The standard error of a predicted mean at $x_0$ is $s\sqrt{\tfrac1n+\tfrac{(x_0-\bar x)^2}{S_{xx}}}=0.189\sqrt{0.2+0.9}=0.198$ for $x_0=6$ (the same as for the intercept, as $x_0=6$ is 3 from the mean, like $x=0$). It is smallest at $\bar x$ ($0.085$) and grows quadratically away from the data, because the slope uncertainty is lever-armed: <em>extrapolation is less reliable than interpolation</em>, and the formula also assumes that the model stays linear outside the data.</p>
+            <p class="answer">$y=0.05+1.99x$; SE of slope $0.060$; $R^2=0.997$; $y(6)=12.0\pm0.2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-6">
+            <div class="p-head"><span class="p-num">Problem 11.6</span><span class="p-level">Challenge</span></div>
+            <p>Diffusion coefficients measured at four temperatures are: $600$ K: $3.2\times10^{-14}$; $700$ K: $5.2\times10^{-13}$; $800$ K: $5.1\times10^{-12}$; $900$ K: $2.6\times10^{-11}$ m$^2$/s. (a) Fit $\ln D=\ln D_0-(Q/k_\mathrm{B})\,(1/T)$ by least squares. (b) Find $Q$ with its standard error. (c) Find $D_0$ and its uncertainty, and the correlation between the intercept and slope. (d) Explain why $D_0$ is so uncertain and what this means for reporting.</p>
+            <details class="hint"><summary>Hint</summary><p>Regress $y=\ln D$ on $x=1/T$. The standard errors come from $s^2(X^TX)^{-1}$ with $n-p=2$. Numerical results: slope $=-12121$ K, intercept $=-10.898$, $s^2=0.00404$, SEs $152.96$ K and $0.211$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $x=1/T$ ($1.667,1.429,1.250,1.111\times10^{-3}$ K$^{-1}$) and $y=\ln D$ ($-31.07,\,-28.29,\,-26.00,\,-24.37$): least squares gives slope $\hat b=-12\,121$ K and intercept $\hat a=-10.898$, with residuals $+0.028,-0.070,+0.048,-0.006$ and $s^2=0.0040$ ($s=0.064$, i.e. scatter of $6\%$ in $D$).</p>
+            <p>(b) $Q=-\hat bk_\mathrm{B}=12\,121\times8.617\times10^{-5}=1.045$ eV. $\mathrm{SE}(\hat b)=153$ K, so $\mathrm{SE}(Q)=153\times8.617\times10^{-5}=0.013$ eV. $Q=1.045\pm0.013$ eV (1.3%).</p>
+            <p>(c) $D_0=e^{\hat a}=e^{-10.898}=1.85\times10^{-5}$ m$^2$/s. $\mathrm{SE}(\hat a)=0.211$, so $D_0$ is uncertain by a factor $e^{\pm0.21}$, i.e. $\pm24\%$: $D_0=(1.85\pm0.4)\times10^{-5}$ m$^2$/s. The correlation between intercept and slope is $-0.989$.</p>
+            <p>(d) The data are all at $1/T\approx1.1$&ndash;$1.7\times10^{-3}$ K$^{-1}$, far from $1/T=0$ where the intercept lives: $D_0$ is an <em>extrapolation</em> to $1/T=0$ from data that span only $1.1$&ndash;$1.7\times10^{-3}$ K$^{-1}$ (the gap to zero is larger than the whole span of the data), and any slight change of slope moves it enormously (hence the $-0.99$ correlation: steeper slope $\leftrightarrow$ larger $D_0$). A change of $Q$ by one standard error ($0.013$ eV) shifts $D_0$ by a factor $e^{0.013/(8.617\times10^{-5}\times750)}\approx1.2$. Consequently $D_0$ and $Q$ must be reported together with their covariance, or one fits $\ln D=\ln D(T_\mathrm{ref})-(Q/k_\mathrm{B})(1/T-1/T_\mathrm{ref})$ with $T_\mathrm{ref}$ in the middle of the data, which decorrelates the parameters. The prediction of $D$ at any $T$ <em>within</em> the range remains accurate even though $D_0$ looks uncertain.</p>
+            <p class="answer">$Q=1.045\pm0.013$ eV; $D_0=(1.85\pm0.4)\times10^{-5}$ m²/s; correlation $-0.99$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-7">
+            <div class="p-head"><span class="p-num">Problem 11.7</span><span class="p-level">Core</span></div>
+            <p>A DFT calculation of an fcc metal gives energies per atom (eV) $E=-3.7288,\,-3.7412,\,-3.7450,\,-3.7416,\,-3.7321$ at volumes $V=15.5,\,16.0,\,16.5,\,17.0,\,17.5$ &Aring;$^3$. (a) Fit a quadratic $E=c_0+c_1V+c_2V^2$ and find $V_0$, $E_0$ and $B_0=V_0E''(V_0)$ in GPa ($1$ eV/&Aring;$^3=160.2$ GPa). (b) A cubic fit gives $V_0=16.50$ &Aring;$^3$ and $B_0=77.1$ GPa. Why do the two differ, and which would you trust? (c) How many parameters does the Birch&ndash;Murnaghan equation of state have, and why is it fitted nonlinearly?</p>
+            <details class="hint"><summary>Hint</summary><p>Quadratic fit: $c_2=0.014571$, $c_1=-0.48226$. Minimum at $V_0=-c_1/2c_2$ and $E''=2c_2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The fit (via the normal equations or <code>polyfit</code>) gives $c_2=0.014571$ eV/&Aring;$^6$, $c_1=-0.48226$ eV/&Aring;$^3$, $c_0=0.24515$ eV. $V_0=-c_1/(2c_2)=0.48226/0.029143=16.548$ &Aring;$^3$; $E_0=c_0+c_1V_0+c_2V_0^2=-3.7451$ eV. $E''=2c_2=0.029143$ eV/&Aring;$^6$, so $B_0=V_0E''=0.4823$ eV/&Aring;$^3=77.3$ GPa.</p>
+            <p>(b) The energy curve is asymmetric (steeper for compression: the anharmonicity of <a href="calculus-single-variable.html">M1</a>), so a parabola over a $\pm6\%$ volume range is biased: the minimum shifts by $0.05$ &Aring;$^3$ and $B_0$ differs by $0.2$ GPa. The cubic fit has the cubic term that captures the skew and recovers $V_0=16.50$ and $B_0=77.1$ GPa (true values used to generate the data: $16.50$ &Aring;$^3$, $76$ GPa, so the remaining difference comes from truncating the true Birch&ndash;Murnaghan series). Prefer the physically motivated equation of state, or fit a narrow range around the minimum and check that the result does not depend on the range.</p>
+            <p>(c) Four: $E_0$, $V_0$, $B_0$ and $B_0'$. It is nonlinear in $V_0$ (it appears inside powers of $(V_0/V)^{2/3}$) and $B_0'$ multiplies terms that depend on $V_0$ nonlinearly, so Gauss&ndash;Newton or Levenberg&ndash;Marquardt with starting values from the quadratic fit is used. With five data points and four parameters only one degree of freedom remains: the fit is nearly interpolating and $B_0'$ is poorly determined and strongly correlated with $B_0$; more volumes, ideally spanning $\pm10\%$, are needed.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-8">
+            <div class="p-head"><span class="p-num">Problem 11.8</span><span class="p-level">Core</span></div>
+            <p>Three laboratories measure the same hardness (in GPa): $10.2\pm0.5$, $9.6\pm0.2$ and $10.5\pm0.4$. (a) Compute the weighted mean and its standard error. (b) Compute $\chi^2$ about the weighted mean and the reduced $\chi^2$. (c) For $\nu=2$, $P(\chi^2&gt;4.68)=e^{-4.68/2}=0.096$. Is the discrepancy significant? (d) If the data are really discrepant, how should the uncertainty be adjusted?</p>
+            <details class="hint"><summary>Hint</summary><p>Weights $w_i=1/\sigma_i^2=4,\,25,\,6.25$. The reduced $\chi^2$ has $\nu=n-1=2$ degrees of freedom.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sum w=35.25$, $\sum wx=4(10.2)+25(9.6)+6.25(10.5)=40.8+240+65.63=346.43$; $\bar x=9.828$ GPa. Standard error $=1/\sqrt{35.25}=0.168$ GPa. Result: $9.83\pm0.17$ GPa. The most precise measurement dominates (weight $71\%$).</p>
+            <p>(b) $\chi^2=\bigl(\tfrac{10.2-9.828}{0.5}\bigr)^2+\bigl(\tfrac{9.6-9.828}{0.2}\bigr)^2+\bigl(\tfrac{10.5-9.828}{0.4}\bigr)^2=0.553+1.300+2.822=4.68$. Reduced $\chi^2=4.68/2=2.34$.</p>
+            <p>(c) $P=0.096$: about a $10\%$ chance of such a spread if the three were consistent: suggestive but not conclusive (conventionally one needs $P&lt;0.05$). The pull of $+1.68\sigma$ for the third value drives it.</p>
+            <p>(d) If one suspects unrecognised systematic errors, scale the error by $\sqrt{\chi^2_\mathrm{red}}=1.53$: $9.83\pm0.26$ GPa (the approach of the Particle Data Group). Better, investigate the cause (sample preparation, indenter load). Do <em>not</em> simply drop the inconvenient point.</p>
+            <p class="answer">$9.83\pm0.17$ GPa; $\chi^2=4.68$ (reduced 2.34); scale error to $\pm0.26$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-9">
+            <div class="p-head"><span class="p-num">Problem 11.9</span><span class="p-level">Challenge</span></div>
+            <p>Return to the ill-conditioned system $A=\begin{pmatrix}1&amp;1\\1&amp;1.0001\end{pmatrix}$ of <a href="linear-algebra-foundations.html">M4</a> (Problem 4.12). (a) Show that ridge regression with $\lambda=0.01$ gives stable answers for $\mathbf b=(2,2.0001)$ and $\mathbf b'=(2,2.0002)$. (b) Express the ridge solution in terms of the SVD filter factors; the singular values of $A$ are $\sigma_1\approx2.0$ and $\sigma_2\approx5\times10^{-5}$. (c) What price is paid in accuracy?</p>
+            <details class="hint"><summary>Hint</summary><p>Ridge: $(A^TA+\lambda I)\mathbf x=A^T\mathbf b$. Filter factor: $f_i=\sigma_i^2/(\sigma_i^2+\lambda)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Without regularisation, $\mathbf b\to\mathbf x=(1,1)$ but $\mathbf b'\to\mathbf x'=(0,2)$. With $\lambda=0.01$, solving $(A^TA+0.01I)\mathbf x=A^T\mathbf b$ gives $\mathbf x_\lambda=(0.9975,\,0.9975)$ for $\mathbf b$ and $(0.9975,\,0.9976)$ for $\mathbf b'$: the two answers now differ in the fifth digit instead of by $100\%$. Damping has removed the amplification.</p>
+            <p>(b) $f_1=\dfrac{4}{4+0.01}=0.9975$ for the large singular direction, i.e. the well-determined combination $x_1+x_2$ (with eigenvector $(1,1)/\sqrt2$) is kept, being reduced only by $0.25\%$; and $f_2=\dfrac{(5\times10^{-5})^2}{(5\times10^{-5})^2+0.01}=2.5\times10^{-7}\approx0$: the ill-determined combination $x_1-x_2$ (direction $(1,-1)/\sqrt2$, determined only by the $10^{-4}$ difference between the columns) is suppressed entirely, so the solution is forced to $x_1\approx x_2$. The unregularised solution would amplify noise in that direction by $1/\sigma_2=2\times10^4$.</p>
+            <p>(c) The price is a small bias: the solution $0.9975$ instead of $1$ (a $0.25\%$ error from the shrinkage of the good direction), and the loss of the ability to distinguish the two columns. That is the bias&ndash;variance trade-off: a little bias for a huge reduction in variance. A smaller $\lambda$ reduces the bias but keeps more noise; $\lambda$ is chosen by cross-validation or from the known noise level (discrepancy principle).</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-10">
+            <div class="p-head"><span class="p-num">Problem 11.10</span><span class="p-level">Core</span></div>
+            <p>Six measurements at $x=0,1,2,3,4,5$ give $y=1.1,\ 2.9,\ 5.2,\ 6.9,\ 9.1,\ 11.0$ (noise of order $0.1$ around the line $2x+1$). Polynomials of degree $1$ to $4$ are fitted. The training RMS errors are $0.110,\ 0.110,\ 0.108,\ 0.105$ and the leave-one-out cross-validation RMS errors are $0.148,\ 0.205,\ 0.354,\ 2.43$ respectively. (a) Which model would you choose and why? (b) Explain the pattern of the two error columns. (c) What would the degree-5 polynomial give for the training error and why is it useless?</p>
+            <details class="hint"><summary>Hint</summary><p>Compare training with held-out error. A degree-5 polynomial has $6$ parameters for $6$ points.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <strong>Degree 1</strong> (a straight line): it has the lowest LOO error ($0.148$), and adding terms makes the held-out error worse even though training error falls. The data were generated from a line plus noise, so the simplest adequate model wins.</p>
+            <p>(b) The training RMS decreases monotonically (from $0.110$ to $0.105$) because every extra polynomial term can chase a bit of the noise; for degree $1$ vs $2$ it is nearly unchanged ($0.110$ vs $0.110$), which says the extra term explains nothing. The LOO error, in contrast, rises ($0.148\to0.205\to0.354\to2.43$): the higher-degree polynomials, fitted to $5$ remaining points, oscillate wildly when predicting the left-out point, particularly at the ends (extrapolation-like). The gap between training and held-out error measures overfitting (variance).</p>
+            <p>(c) Degree 5 through six points has $6$ parameters and interpolates exactly: training RMS $=0$, but no information about noise remains and the curve oscillates between the points; its LOO error would be enormous (the left-out point must be extrapolated from a quartic through the other five). A training error of zero is a symptom of overfitting, not of a good model. This is the situation of a neural network potential with more parameters than training energies; protection comes from a held-out test set drawn from different structures, regularisation and early stopping.</p>
+            <p class="answer">Degree 1; LOO error is lowest while training error barely changes</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-11">
+            <div class="p-head"><span class="p-num">Problem 11.11</span><span class="p-level">Core</span></div>
+            <p>(a) For a sample $x_1,\ldots,x_n$, a bootstrap resample draws $n$ values with replacement. Show that the variance of the bootstrap resample mean (over the resampling distribution) is $\dfrac{1}{n}\cdot\dfrac1n\sum(x_i-\bar x)^2=\dfrac{n-1}{n}\cdot\dfrac{s^2}{n}$. (b) Evaluate for the lattice-parameter data of Problem 11.1 and compare with the standard error. (c) Why is the bootstrap useful for the median, and what must be changed for time-series data?</p>
+            <details class="hint"><summary>Hint</summary><p>Each resampled value is a random draw from the $n$ observed values, with mean $\bar x$ and variance $\frac1n\sum(x_i-\bar x)^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) A single resampled value $x^*$ takes each $x_i$ with probability $1/n$, so $\langle x^*\rangle=\bar x$ and $\mathrm{Var}\,x^*=\frac1n\sum(x_i-\bar x)^2=\frac{n-1}{n}s^2$. The resample mean $\bar x^*=\frac1n\sum x^*_j$ of $n$ independent draws has $\mathrm{Var}\,\bar x^*=\frac1n\mathrm{Var}\,x^*=\frac{n-1}{n}\cdot\frac{s^2}{n}$.</p>
+            <p>(b) $s=4.47\times10^{-4}$, $n=5$: bootstrap SE $=\sqrt{4/5}\times4.47\times10^{-4}/\sqrt5=1.79\times10^{-4}$ &Aring; versus the usual $2.00\times10^{-4}$ &Aring;. The bootstrap is $11\%$ low for $n=5$ (a small-sample bias of the $(n-1)/n$ factor), negligible for $n\gtrsim30$. For a $95\%$ interval with $n=5$ the $t$ quantile is still the better choice: the bootstrap shines when $n$ is moderate to large.</p>
+            <p>(c) The median has no simple closed-form standard error (it depends on the density at the median); the bootstrap just computes the median of each resample and takes the spread, with no derivation. Likewise for peak positions, ratios of fitted parameters, and the output of a complicated analysis pipeline. For time series, resampling single points destroys the correlations and gives the naive (too small) error; instead resample <em>blocks</em> of consecutive samples longer than the correlation time (block bootstrap), or fit-then-resample residuals.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p11-12">
+            <div class="p-head"><span class="p-num">Problem 11.12</span><span class="p-level">Challenge</span></div>
+            <p>(a) Derive the posterior for a Gaussian prior $N(\mu_0,\sigma_0^2)$ and one Gaussian measurement $x\sim N(\theta,\sigma^2)$ and show that precisions add. (b) A DFT calculation predicts a lattice parameter of $4.050\pm0.030$ &Aring; (the functional error as prior) and an X-ray measurement gives $4.0497\pm0.0008$ &Aring;. Combine them. (c) A different property has prior $4.00\pm0.01$ and measurement $4.05\pm0.02$: find the posterior and say which dominates. (d) Show that ridge regression is the MAP estimate for a Gaussian prior and identify $\lambda$.</p>
+            <details class="hint"><summary>Hint</summary><p>Multiply Gaussians and complete the square in $\theta$: $-\tfrac12\bigl[(\theta-\mu_0)^2/\sigma_0^2+(x-\theta)^2/\sigma^2\bigr]$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\ln p(\theta|x)=-\tfrac12\Bigl[\dfrac{(\theta-\mu_0)^2}{\sigma_0^2}+\dfrac{(x-\theta)^2}{\sigma^2}\Bigr]+\mathrm{const}$. Collect terms in $\theta$: coefficient of $\theta^2$ is $-\tfrac12\bigl(\tfrac1{\sigma_0^2}+\tfrac1{\sigma^2}\bigr)$, so the posterior variance obeys $\dfrac1{\sigma_\mathrm{post}^2}=\dfrac1{\sigma_0^2}+\dfrac1{\sigma^2}$ (precisions add); the linear term gives the mean $\mu_\mathrm{post}=\sigma_\mathrm{post}^2\bigl(\dfrac{\mu_0}{\sigma_0^2}+\dfrac x{\sigma^2}\bigr)$, a precision-weighted average.</p>
+            <p>(b) Precisions: $1/0.030^2=1111$ and $1/0.0008^2=1.5625\times10^6$, total $1.5636\times10^6$, so $\sigma_\mathrm{post}=0.000800$ &Aring;. The weights are $0.0007$ and $0.9993$: $\mu_\mathrm{post}=4.0497$ &Aring;. The measurement is $1400$ times more precise than the prior, so the prior has no influence: $4.0497\pm0.0008$ &Aring;. (This is the usual reason for trusting experiment over a DFT prediction when the experiment is available, and it is the right answer if the experimental uncertainty includes all systematics.)</p>
+            <p>(c) Precisions: $1/0.01^2=10\,000$ and $1/0.02^2=2500$, sum $12\,500$; $\sigma_\mathrm{post}=0.0089$. $\mu_\mathrm{post}=(4.00\times10^4+4.05\times2500)/12\,500=(40\,000+10\,125)/12\,500=4.010$. The prior carries $80\%$ of the weight, so the posterior $4.010\pm0.009$ is pulled only a fifth of the way to the measurement. If the two disagree by many sigma ($4.00\pm0.01$ against $4.05\pm0.02$ is a $2.2\sigma$ discrepancy), that is itself a warning that the prior or the data are wrong, not just a number to average.</p>
+            <p>(d) With likelihood $e^{-\|\mathbf y-X\boldsymbol\beta\|^2/2\sigma^2}$ and prior $e^{-\|\boldsymbol\beta\|^2/2\tau^2}$, the negative log posterior is $\dfrac1{2\sigma^2}\|\mathbf y-X\boldsymbol\beta\|^2+\dfrac1{2\tau^2}\|\boldsymbol\beta\|^2$, proportional to $\|\mathbf y-X\boldsymbol\beta\|^2+\dfrac{\sigma^2}{\tau^2}\|\boldsymbol\beta\|^2$. This is the ridge objective with $\lambda=\sigma^2/\tau^2$: strong prior belief in small coefficients (small $\tau$) means strong regularisation, and noisy data (large $\sigma$) also calls for it.</p>
+            </details>
+            </div>
+
+            <h2 id="refs">9. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Hughes, I. G. and Hase, T. P. A., <em>Measurements and their Uncertainties</em>, Oxford University Press: a short, practical guide to error analysis.</li>
+                <li>Bevington, P. R. and Robinson, D. K., <em>Data Reduction and Error Analysis for the Physical Sciences</em>, McGraw-Hill.</li>
+                <li>Hastie, T., Tibshirani, R. and Friedman, J., <em>The Elements of Statistical Learning</em>, Springer (free online): regression, ridge, lasso, cross-validation.</li>
+                <li>Sivia, D. S. and Skilling, J., <em>Data Analysis: A Bayesian Tutorial</em>, Oxford University Press.</li>
+                <li>Efron, B. and Tibshirani, R., <em>An Introduction to the Bootstrap</em>, Chapman &amp; Hall.</li>
+                <li>Flyvbjerg, H. and Petersen, H. G., &ldquo;Error estimates on averages of correlated data&rdquo;, <em>Journal of Chemical Physics</em> 91 (1989): the blocking method.</li>
+                <li>Allen, M. P. and Tildesley, D. J., <em>Computer Simulation of Liquids</em>, Oxford University Press: statistical errors in simulation.</li>
+            </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
@@ -83,7 +345,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=58d29823"></script>
+    <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
 </body>
