@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linear algebra II: eigenvalues and decompositions - MiBeM</title>
-    <meta name="description" content="Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.">
+    <meta name="description" content="University-level eigenvalue theory for materials modelling: eigenvalues and eigenvectors, diagonalisation, symmetric matrices, quadratic forms and definiteness, matrix functions, the singular value decomposition and PCA, with vibrations, stability and electronic structure as applications; twelve problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/eigenvalues-and-decompositions.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Linear algebra II: eigenvalues and decompositions - MiBeM">
-    <meta property="og:description" content="Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.">
+    <meta property="og:description" content="University-level eigenvalue theory for materials modelling: eigenvalues and eigenvectors, diagonalisation, symmetric matrices, quadratic forms and definiteness, matrix functions, the singular value decomposition and PCA, with vibrations, stability and electronic structure as applications; twelve problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/eigenvalues-and-decompositions.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#check">1. Problems</a></li>
+                <li><a href="#eigen">1. Eigenvalues and eigenvectors</a></li>
+                <li><a href="#diag">2. Diagonalisation</a></li>
+                <li><a href="#sym">3. Symmetric matrices and the spectral theorem</a></li>
+                <li><a href="#quad">4. Quadratic forms and definiteness</a></li>
+                <li><a href="#modes">5. Coupled oscillators and normal modes</a></li>
+                <li><a href="#svd">6. The singular value decomposition</a></li>
+                <li><a href="#elec">7. Electronic structure as an eigenproblem</a></li>
+                <li><a href="#summary-m5">8. How the pieces fit together</a></li>
+                <li><a href="#check">9. Problems</a></li>
+                <li><a href="#refs">10. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -45,25 +54,293 @@
             <!-- coursenav:start -->
 <nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" class="here" aria-current="page" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
 <!-- coursenav:end -->
-            <p class="lead">Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.</p>
+            <h1>Linear algebra II: eigenvalues and decompositions</h1>
+            <p class="lead">If one idea from linear algebra reaches into every corner of computational materials science, it is the eigenvalue problem. Atomic vibrations are eigenvectors of a force-constant matrix; electron energies are eigenvalues of a Hamiltonian; principal stresses are eigenvalues of the stress tensor; stability of a structure is the sign of Hessian eigenvalues; the dominant directions in a dataset are eigenvectors of a covariance matrix. This module develops the theory and then shows how each of these follows from the same few facts.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 5 min</dd></div>
+<div><dt>Reading time</dt><dd>about 21 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="linear-algebra-foundations.html">M4. Linear algebra I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="tensors-stress-and-strain.html">M6. Tensors</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a><br><a href="statistics-and-data-fitting.html">M11. Statistics</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
 </dl>
 <!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Compute eigenvalues and eigenvectors of small matrices, and use trace and determinant as checks.</li>
+                    <li>Diagonalise a symmetric matrix, and use the spectral decomposition to compute matrix powers and exponentials.</li>
+                    <li>Classify quadratic forms and Hessians as positive definite, negative definite or indefinite, and relate this to stability.</li>
+                    <li>Solve coupled linear differential equations, such as a pair of oscillators, by decoupling into normal modes.</li>
+                    <li>Compute and interpret the singular value decomposition, and apply it to low-rank approximation and PCA.</li>
+                </ul>
+                <strong>You need:</strong> <a href="linear-algebra-foundations.html">M4. Linear algebra I</a> (matrices, determinants, orthogonality).
+            </div>
+
+            <h2 id="eigen">1. Eigenvalues and eigenvectors<a class="anchor" href="#eigen" aria-label="Link to this section">#</a></h2>
+            <div class="note def"><strong>Definition (eigenpair)</strong>
+            <p>For a square matrix $A$, a nonzero vector $\mathbf v$ is an <strong>eigenvector</strong> with <strong>eigenvalue</strong> $\lambda$ if
+            $$A\mathbf v=\lambda\mathbf v .$$
+            Applying $A$ to $\mathbf v$ leaves its direction unchanged and only scales it by $\lambda$ (flipping it if $\lambda&lt;0$).</p>
+            </div>
+            <h3 id="char">The characteristic polynomial<a class="anchor" href="#char" aria-label="Link to this section">#</a></h3>
+            <p>Rearrange to $(A-\lambda I)\mathbf v=\mathbf0$. A nonzero solution exists only if $A-\lambda I$ is singular, so
+            $$\det(A-\lambda I)=0,$$
+            the <strong>characteristic equation</strong>, a polynomial of degree $n$ in $\lambda$ with $n$ roots (counted with multiplicity, possibly complex). For each root, solve $(A-\lambda I)\mathbf v=\mathbf0$ for the eigenvector, which is determined only up to a scalar multiple; usually one normalises it to length $1$. Two checks are always worth making:
+            $$\sum_i\lambda_i=\operatorname{tr}A=\sum_iA_{ii},\qquad\prod_i\lambda_i=\det A .$$
+            For a $2\times2$ matrix, $\lambda^2-(\operatorname{tr}A)\,\lambda+\det A=0$, so $\lambda=\tfrac12\bigl(\operatorname{tr}A\pm\sqrt{(\operatorname{tr}A)^2-4\det A}\bigr)$.</p>
+            <div class="example">
+                <strong>Worked example 1.1: a $2\times2$ eigenproblem</strong>
+                <p class="given">Find the eigenvalues and eigenvectors of $A=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$.</p>
+                <p>$\operatorname{tr}A=4$, $\det A=3$, so $\lambda^2-4\lambda+3=0$ gives $\lambda=1,3$. For $\lambda=3$: $(A-3I)\mathbf v=\begin{pmatrix}-1&amp;1\\1&amp;-1\end{pmatrix}\mathbf v=\mathbf0$ gives $v_1=v_2$, so $\mathbf v=\tfrac1{\sqrt2}(1,1)$. For $\lambda=1$: $\begin{pmatrix}1&amp;1\\1&amp;1\end{pmatrix}\mathbf v=\mathbf0$ gives $v_2=-v_1$, so $\mathbf v=\tfrac1{\sqrt2}(1,-1)$. The two eigenvectors are orthogonal. Geometrically $A$ stretches by $3$ along the diagonal $(1,1)$ and by $1$ along $(1,-1)$: the unit circle becomes an ellipse with those axes.</p>
+            </div>
+            <p>Matrices need not have real eigenvalues: a rotation by $\theta$ has $\lambda=e^{\pm i\theta}$ (no real direction is preserved). Some matrices have fewer independent eigenvectors than $n$ ("defective" matrices, such as $\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}$), but the symmetric matrices of physics never do.</p>
+
+            <h2 id="diag">2. Diagonalisation<a class="anchor" href="#diag" aria-label="Link to this section">#</a></h2>
+            <p>If $A$ has $n$ independent eigenvectors $\mathbf v_1,\ldots,\mathbf v_n$, put them as columns of $P$ and the eigenvalues on the diagonal of $\Lambda$. Then $AP=P\Lambda$, so
+            $$A=P\Lambda P^{-1}.$$
+            In the basis of eigenvectors, $A$ is just the diagonal matrix $\Lambda$: a set of independent stretches. This makes functions of $A$ trivial: $A^k=P\Lambda^kP^{-1}$ and, more generally, $f(A)=P\,f(\Lambda)\,P^{-1}$, with $f(\Lambda)=\operatorname{diag}\bigl(f(\lambda_i)\bigr)$. For instance $A^{-1}$ has eigenvalues $1/\lambda_i$ (so $A$ is invertible iff no $\lambda_i=0$), $A^k$ has eigenvalues $\lambda_i^k$, and the matrix exponential is $e^{A}=Pe^{\Lambda}P^{-1}$.</p>
+            <p>Applications: repeated application of a matrix (Markov chains and kinetic Monte Carlo transition matrices; $A^k$ for large $k$ is dominated by the largest eigenvalue, which is how the power iteration finds a ground state) and the solution of linear differential equations (section 5).</p>
+
+            <h2 id="sym">3. Symmetric matrices and the spectral theorem<a class="anchor" href="#sym" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Spectral theorem</strong>
+            <p>If $A$ is real and symmetric ($A^T=A$), then (i) all its eigenvalues are real; (ii) eigenvectors belonging to different eigenvalues are orthogonal, and a full orthonormal set of eigenvectors can always be chosen; hence
+            $$A=Q\Lambda Q^{T}=\sum_i\lambda_i\,\mathbf q_i\mathbf q_i^{T},$$
+            with $Q$ orthogonal ($Q^TQ=I$). The second form writes $A$ as a sum of eigenvalues times projectors onto the eigenvectors.</p>
+            </div>
+            <p><em>Why orthogonal?</em> If $A\mathbf u=\lambda\mathbf u$ and $A\mathbf w=\mu\mathbf w$ with $\lambda\ne\mu$, then $\lambda\,\mathbf w\cdot\mathbf u=\mathbf w\cdot A\mathbf u=A\mathbf w\cdot\mathbf u=\mu\,\mathbf w\cdot\mathbf u$ (using symmetry), so $(\lambda-\mu)\,\mathbf w\cdot\mathbf u=0$ and $\mathbf w\cdot\mathbf u=0$. The same argument with complex conjugates shows the eigenvalues are real. Repeated eigenvalues (degeneracy) leave a free choice of orthonormal basis within the degenerate subspace, which is exactly the freedom of orienting degenerate vibrational modes or $d$-orbitals.</p>
+            <p>Symmetric (or, for complex matrices, Hermitian) matrices are not a special case but the typical case in physics, because they come from second derivatives of energies and from observables:</p>
+            <ul>
+                <li><strong>Hamiltonian</strong> $H$: real energies; orthogonal states (section 7).</li>
+                <li><strong>Hessian</strong> of the energy and the dynamical matrix: real vibrational frequencies$^2$ and orthogonal normal modes.</li>
+                <li><strong>Stress and strain tensors</strong>: orthogonal principal axes (<a href="tensors-stress-and-strain.html">M6</a>).</li>
+                <li><strong>Covariance matrix</strong> of a dataset: orthogonal principal components (section 8).</li>
+            </ul>
+            <p>In practice, library routines (<code>eigh</code> in NumPy and LAPACK) exploit symmetry and are faster, more accurate and guarantee real eigenvalues. Use the symmetric solver whenever the matrix is symmetric.</p>
+
+            <h2 id="quad">4. Quadratic forms and definiteness<a class="anchor" href="#quad" aria-label="Link to this section">#</a></h2>
+            <p>For a symmetric matrix $A$ the <strong>quadratic form</strong> is the scalar $q(\mathbf x)=\mathbf x^TA\mathbf x=\sum_{ij}A_{ij}x_ix_j$. In the eigenbasis, with $\mathbf y=Q^T\mathbf x$,
+            $$q=\sum_i\lambda_i\,y_i^2 .$$
+            So the sign of $q$ is controlled entirely by the eigenvalues:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="4. Quadratic forms and definiteness (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Type</th><th>Condition</th><th>Meaning for an energy $E=E_0+\tfrac12\mathbf x^TH\mathbf x$</th></tr></thead>
+                <tbody>
+                    <tr><td>Positive definite</td><td>all $\lambda_i&gt;0$</td><td>minimum: stable equilibrium</td></tr>
+                    <tr><td>Positive semi-definite</td><td>all $\lambda_i\ge0$, some $=0$</td><td>flat directions: zero modes (translations, rotations, soft modes)</td></tr>
+                    <tr><td>Negative definite</td><td>all $\lambda_i&lt;0$</td><td>maximum</td></tr>
+                    <tr><td>Indefinite</td><td>mixed signs</td><td>saddle point; one negative $\lambda$ = transition state</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>A practical test for positive definiteness without finding the eigenvalues: <strong>Sylvester&rsquo;s criterion</strong>, that all leading principal minors are positive (for $2\times2$: $A_{11}&gt;0$ and $\det A&gt;0$). For a function $f$, the quadratic form of its Hessian at a stationary point is exactly the second-order Taylor term (<a href="multivariable-calculus.html">M2</a>), so the eigenvalues of the Hessian are the curvatures along the principal axes of the potential energy surface. The level sets $q(\mathbf x)=1$ are ellipsoids (all $\lambda&gt;0$) with semi-axes $1/\sqrt{\lambda_i}$ along $\mathbf q_i$: stiff directions have short axes.</p>
+            <div class="note mat"><strong>In materials science</strong>
+            <p>A crystal is mechanically stable only if its elastic-constant matrix (in Voigt form) is positive definite: for a cubic crystal this means $C_{11}&gt;|C_{12}|$, $C_{11}+2C_{12}&gt;0$ and $C_{44}&gt;0$ (the Born stability criteria). An atomic structure at a stationary point is a true minimum only if its Hessian has no negative eigenvalues apart from the $6$ zero modes of rigid translation and rotation (of a free cluster); a negative eigenvalue marks a saddle, i.e. an <em>imaginary phonon frequency</em>, signalling a structural instability that the structure can lower its energy by distorting along that eigenvector.</p>
+            </div>
+
+            <h2 id="modes">5. Coupled oscillators and normal modes<a class="anchor" href="#modes" aria-label="Link to this section">#</a></h2>
+            <p>Consider $n$ masses with positions $x_i$ (measured from equilibrium) connected by springs, with potential energy $U=\tfrac12\mathbf x^TK\mathbf x$ and kinetic energy $T=\tfrac12\sum m_i\dot x_i^2$. With equal masses $m$, Newton&rsquo;s equations are $m\ddot{\mathbf x}=-K\mathbf x$, where $K$ (the Hessian of $U$, or <em>force-constant matrix</em>) is symmetric. Try $\mathbf x(t)=\mathbf v\,\cos(\omega t)$: then $-m\omega^2\mathbf v=-K\mathbf v$, i.e.
+            $$K\mathbf v=m\omega^2\mathbf v .$$
+            This is an eigenproblem: <strong>each eigenvector of $K$ is a normal mode</strong> in which all atoms oscillate in phase at a single frequency, with $\omega_i=\sqrt{\lambda_i/m}$ where $\lambda_i$ are the eigenvalues. Because $K$ is symmetric, the modes are orthogonal and independent: any motion is a superposition of them. (For unequal masses, rescale to $D_{ij}=K_{ij}/\sqrt{m_im_j}$, the <em>dynamical matrix</em>.) A positive-definite $K$ gives real frequencies; a negative eigenvalue gives $\omega^2&lt;0$, i.e. exponential growth, an instability.</p>
+            <div class="example">
+                <strong>Worked example 5.1: two coupled masses</strong>
+                <p class="given">Two equal masses $m$ are joined to walls and to each other by three identical springs of stiffness $k$. Find the normal modes and frequencies.</p>
+                <p>With displacements $x_1,x_2$: $m\ddot x_1=-kx_1+k(x_2-x_1)=-2kx_1+kx_2$ and $m\ddot x_2=kx_1-2kx_2$. So $K=k\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix}$. The eigenvalues of $\begin{pmatrix}2&amp;-1\\-1&amp;2\end{pmatrix}$ are $1$ and $3$ with eigenvectors $\tfrac1{\sqrt2}(1,1)$ and $\tfrac1{\sqrt2}(1,-1)$ (as in Example 1.1 with the sign of the off-diagonal flipped). Hence
+                $$\omega_1=\sqrt{k/m}\ \ (\text{in-phase: both move together, the middle spring is not stretched}),\qquad\omega_2=\sqrt{3k/m}\ \ (\text{out-of-phase}).$$
+                This is the two-atom model of a lattice with a low-frequency &ldquo;acoustic&rdquo; mode and a higher-frequency &ldquo;optical&rdquo; mode; an $N$-atom chain gives $N$ modes forming the phonon dispersion (Problem 9).</p>
+            </div>
+            <h3 id="odes">Linear dynamical systems<a class="anchor" href="#odes" aria-label="Link to this section">#</a></h3>
+            <p>The same technique solves any linear system $\dot{\mathbf y}=A\mathbf y$. Expand $\mathbf y$ in the eigenvectors, $\mathbf y=\sum_ic_i(t)\mathbf v_i$, and the equations decouple: $\dot c_i=\lambda_ic_i$, so
+            $$\mathbf y(t)=\sum_ic_i(0)\,e^{\lambda_it}\mathbf v_i=e^{At}\mathbf y(0),\qquad e^{At}=Pe^{\Lambda t}P^{-1}.$$
+            Solutions grow if some eigenvalue has $\operatorname{Re}\lambda&gt;0$, decay if all have $\operatorname{Re}\lambda&lt;0$ (stable), and oscillate when $\lambda$ is complex. Linearising a nonlinear system about a fixed point gives exactly this problem with $A$ the Jacobian (see <a href="ordinary-differential-equations.html">M7</a>), so the eigenvalues of the Jacobian decide the stability of kinetic models and the stiffness of reaction networks (the ratio of the largest to the smallest $|\lambda|$).</p>
+
+            <h2 id="svd">6. The singular value decomposition<a class="anchor" href="#svd" aria-label="Link to this section">#</a></h2>
+            <p>Non-symmetric and rectangular matrices (a data table of $m$ samples by $n$ features, say) have no eigen-decomposition in general, but <em>every</em> real matrix has a singular value decomposition.</p>
+            <div class="note thm"><strong>Singular value decomposition (SVD)</strong>
+            <p>Every $m\times n$ real matrix can be written
+            $$A=U\Sigma V^{T}=\sum_{i=1}^{r}\sigma_i\,\mathbf u_i\mathbf v_i^{T},$$
+            where $U$ ($m\times m$) and $V$ ($n\times n$) are orthogonal, $\Sigma$ is diagonal with the <strong>singular values</strong> $\sigma_1\ge\sigma_2\ge\cdots\ge\sigma_r&gt;0$ ($r=\operatorname{rank}A$), the columns of $V$ are the <em>right singular vectors</em> (eigenvectors of $A^TA$) and the columns of $U$ the <em>left singular vectors</em> (eigenvectors of $AA^T$); the $\sigma_i^2$ are the nonzero eigenvalues of both.</p>
+            </div>
+            <p>Geometrically: $A$ first rotates by $V^T$, then stretches along the axes by $\sigma_i$, then rotates by $U$; the image of the unit sphere is an ellipsoid with semi-axes $\sigma_i\mathbf u_i$. Consequences:</p>
+            <ul>
+                <li><strong>Condition number</strong> $\kappa(A)=\sigma_1/\sigma_r$, the quantity in <a href="linear-algebra-foundations.html">M4</a>, measures how far the ellipsoid is from a sphere.</li>
+                <li><strong>Best low-rank approximation</strong> (Eckart&ndash;Young theorem): the matrix of rank $k$ closest to $A$ (in the Frobenius or 2-norm) is $A_k=\sum_{i=1}^k\sigma_i\mathbf u_i\mathbf v_i^T$; the error is $\sigma_{k+1}$ (2-norm). Small singular values are noise or redundancy. This is image compression, descriptor reduction and regularisation.</li>
+                <li><strong>Pseudoinverse</strong> $A^+=V\Sigma^{-1}U^T$ (inverting only the nonzero $\sigma_i$) gives the least-squares solution of $A\mathbf x=\mathbf b$ (<a href="statistics-and-data-fitting.html">M11</a>).</li>
+            </ul>
+            <h3 id="pca">Principal component analysis<a class="anchor" href="#pca" aria-label="Link to this section">#</a></h3>
+            <p>Take $m$ samples of $n$ features, with each column of the data matrix $X$ ($m\times n$) shifted to zero mean. The covariance matrix is $C=\tfrac1{m-1}X^TX$ (symmetric, positive semi-definite). Its eigenvectors are the <strong>principal components</strong>, the orthogonal directions of decreasing variance, and the eigenvalue $\lambda_i$ is the variance along the $i$-th: the fraction of variance retained by the first $k$ components is $\sum_{i\le k}\lambda_i/\sum_i\lambda_i$. With $X=U\Sigma V^T$, the principal components are the columns of $V$ and $\lambda_i=\sigma_i^2/(m-1)$, so PCA is computed directly from the SVD. In materials work, PCA reduces high-dimensional descriptors, finds collective variables in molecular dynamics (the dominant, large-amplitude motions of a protein or a defect) and visualises structure&ndash;property maps (<a href="machine-learning-for-materials.html">Machine learning for materials</a>).</p>
+
+            <h2 id="elec">7. Electronic structure as an eigenproblem<a class="anchor" href="#elec" aria-label="Link to this section">#</a></h2>
+            <p>The time-independent Schr&ouml;dinger equation $\hat H\psi=E\psi$ is an eigenvalue equation for the Hamiltonian operator. Expanding the unknown wavefunction in a finite basis of known functions $\phi_\mu$ (plane waves, Gaussians or atomic orbitals), $\psi=\sum_\mu c_\mu\phi_\mu$, turns it into a matrix problem
+            $$H\mathbf c=E\,S\,\mathbf c,\qquad H_{\mu\nu}=\langle\phi_\mu|\hat H|\phi_\nu\rangle,\quad S_{\mu\nu}=\langle\phi_\mu|\phi_\nu\rangle,$$
+            a <strong>generalised eigenproblem</strong> with overlap matrix $S$ (the identity for an orthonormal basis, e.g. plane waves). The eigenvalues $E_i$ are the energy levels, the eigenvectors the orbitals, and the spectral theorem guarantees real energies and orthogonal states. A generalised problem is reduced to an ordinary one using $S=Q_s\Lambda_sQ_s^T$ to form $S^{-1/2}=Q_s\Lambda_s^{-1/2}Q_s^T$, giving $\tilde H=S^{-1/2}HS^{-1/2}$ (this fails if $S$ is ill-conditioned because the basis is nearly dependent: the conditioning problem of <a href="linear-algebra-foundations.html">M4</a>). Diagonalising $H$ at every iteration of the self-consistent loop dominates the cost of DFT, scaling as the cube of the matrix size, which is why large calculations use iterative methods that find only the lowest few eigenpairs.</p>
+            <div class="note mat"><strong>In materials science: tight-binding chain</strong>
+            <p>A chain of atoms with one orbital each, on-site energy $\varepsilon$ and hopping $-t$ between neighbours, has $H$ with $\varepsilon$ on the diagonal and $-t$ on the first off-diagonals. Its eigenvectors are plane waves $c_j=e^{ikja}$ with energies $E(k)=\varepsilon-2t\cos ka$: the energy band, with bandwidth $4t$. For a ring of $N$ atoms (periodic) the allowed $k=2\pi n/(Na)$ give the $N$ eigenvalues, a discrete preview of Bloch&rsquo;s theorem and of the Fourier methods of <a href="fourier-analysis.html">M8</a> (Problem 10).</p>
+            </div>
+
+            <h2 id="summary-m5">8. How the pieces fit together<a class="anchor" href="#summary-m5" aria-label="Link to this section">#</a></h2>
+            <p>An eigenvector is an axis along which a matrix acts as a simple stretch; for the symmetric matrices of physics these axes are orthogonal and complete, so that in the right coordinates every coupled problem becomes independent one-dimensional ones. Eigenvalues are the stretch factors: frequencies$^2$ for vibrations, energies for electrons, curvature for stability, variance for data. The SVD extends the same picture to arbitrary matrices. Next we put the matrices to work on the physical quantities that are naturally tensors: stress, strain and the elastic stiffness of crystals.</p>
+
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>(to be written)</li>
+<li>An eigenvector is a direction a matrix only stretches, by the eigenvalue; eigenvalues are the roots of $\det(A-\lambda I)=0$, and the trace and determinant equal their sum and product.</li>
+<li>A real symmetric matrix has real eigenvalues and orthogonal eigenvectors, so $A=Q\Lambda Q^{T}$: in the right axes it is a set of independent stretches. Hamiltonians, Hessians, stress tensors and covariance matrices are all symmetric.</li>
+<li>A matrix power or function is easy in the eigenbasis: $A^{n}=Q\Lambda^{n}Q^{T}$ and $e^{At}=Qe^{\Lambda t}Q^{T}$, so a linear system of ODEs decouples into independent modes, and the signs of the eigenvalues decide stability.</li>
+<li>A quadratic form $\mathbf{x}^{T}A\mathbf{x}$ is positive for all $\mathbf{x}$ (positive definite) exactly when all eigenvalues are positive; this classifies minima, saddles and stable crystals, and a negative Hessian eigenvalue is an imaginary vibrational frequency.</li>
+<li>The singular value decomposition $A=U\Sigma V^{T}$ exists for every matrix; truncating it gives the best low-rank approximation and underlies principal component analysis, the condition number and the pseudoinverse.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">1. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <p>Coming soon.</p>
+            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p5-1">
+            <div class="p-head"><span class="p-num">Problem 5.1</span><span class="p-level">Basic</span></div>
+            <p>Find the eigenvalues and normalised eigenvectors of $A=\begin{pmatrix}4&amp;1\\2&amp;3\end{pmatrix}$. Verify that the sum of eigenvalues equals the trace and their product the determinant. Is $A$ symmetric? Are the eigenvectors orthogonal?</p>
+            <details class="hint"><summary>Hint</summary><p>Characteristic equation: $\lambda^2-7\lambda+10=0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\operatorname{tr}A=7$, $\det A=12-2=10$, so $\lambda^2-7\lambda+10=0\Rightarrow\lambda=2,5$. Sum $=7$ &check;, product $=10$ &check;.</p>
+            <p>$\lambda=5$: $(A-5I)\mathbf v=\begin{pmatrix}-1&amp;1\\2&amp;-2\end{pmatrix}\mathbf v=\mathbf0\Rightarrow v_2=v_1$, $\mathbf v=\tfrac1{\sqrt2}(1,1)$. $\lambda=2$: $\begin{pmatrix}2&amp;1\\2&amp;1\end{pmatrix}\mathbf v=\mathbf0\Rightarrow v_2=-2v_1$, $\mathbf v=\tfrac1{\sqrt5}(1,-2)$.</p>
+            <p>$A$ is not symmetric, and the eigenvectors are not orthogonal: $(1,1)\cdot(1,-2)=-1\ne0$. Both eigenvalues are real and distinct, so $A$ is diagonalisable, but the eigenbasis is skewed. (Orthogonality of eigenvectors is a property of symmetric matrices.)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-2">
+            <div class="p-head"><span class="p-num">Problem 5.2</span><span class="p-level">Basic</span></div>
+            <p>The stress tensor at a point in a steel part, in MPa, is $\sigma=\begin{pmatrix}120&amp;40&amp;0\\40&amp;60&amp;0\\0&amp;0&amp;30\end{pmatrix}$. Find the principal stresses and the principal directions in the $xy$-plane, and the maximum shear stress $\tau_\mathrm{max}=\tfrac12(\sigma_1-\sigma_3)$ where $\sigma_1\ge\sigma_2\ge\sigma_3$.</p>
+            <details class="hint"><summary>Hint</summary><p>The $z$-direction decouples: $\sigma_{zz}=30$ is already an eigenvalue. Solve the $2\times2$ block.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>The block $\begin{pmatrix}120&amp;40\\40&amp;60\end{pmatrix}$ has trace $180$ and determinant $7200-1600=5600$, so $\lambda^2-180\lambda+5600=0$, $\lambda=90\pm\sqrt{8100-5600}=90\pm50$: $\lambda=140$ and $40$. With the decoupled $30$: the principal stresses are $\sigma_1=140$, $\sigma_2=40$, $\sigma_3=30$ MPa.</p>
+            <p>Direction for $140$: $(120-140)v_1+40v_2=0\Rightarrow v_2=\tfrac12v_1$, i.e. $\tfrac1{\sqrt5}(2,1)$, at $\arctan(1/2)=26.6^\circ$ to the $x$-axis. For $40$: $\tfrac1{\sqrt5}(-1,2)$, perpendicular, as the spectral theorem requires. The third direction is $z$.</p>
+            <p>$\tau_\mathrm{max}=\tfrac12(140-30)=55$ MPa. Yielding criteria (Tresca: $\tau_\mathrm{max}=\sigma_Y/2$) use exactly this quantity, which is why materials engineers diagonalise the stress tensor.</p>
+            <p class="answer">$\sigma=140,\,40,\,30$ MPa; $\tau_\mathrm{max}=55$ MPa</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-3">
+            <div class="p-head"><span class="p-num">Problem 5.3</span><span class="p-level">Core</span></div>
+            <p>Diagonalise $A=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$ as $Q\Lambda Q^T$. Use it to compute (a) $A^{10}$, (b) $A^{-1}$, (c) $\sqrt A$ (the symmetric positive square root), and (d) $e^{A}$ exactly.</p>
+            <details class="hint"><summary>Hint</summary><p>From Example 1.1: $\lambda=1,3$, $Q=\tfrac1{\sqrt2}\begin{pmatrix}1&amp;1\\-1&amp;1\end{pmatrix}$ with columns $\tfrac1{\sqrt2}(1,-1)$ and $\tfrac1{\sqrt2}(1,1)$. Use $f(A)=\tfrac12\begin{pmatrix}f(3)+f(1)&amp;f(3)-f(1)\\f(3)-f(1)&amp;f(3)+f(1)\end{pmatrix}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>With projectors $P_3=\tfrac12\begin{pmatrix}1&amp;1\\1&amp;1\end{pmatrix}$ and $P_1=\tfrac12\begin{pmatrix}1&amp;-1\\-1&amp;1\end{pmatrix}$, $f(A)=f(3)P_3+f(1)P_1=\tfrac12\begin{pmatrix}f(3)+f(1)&amp;f(3)-f(1)\\f(3)-f(1)&amp;f(3)+f(1)\end{pmatrix}$.</p>
+            <p>(a) $f=\lambda^{10}$: $3^{10}=59049$: $A^{10}=\tfrac12\begin{pmatrix}59050&amp;59048\\59048&amp;59050\end{pmatrix}=\begin{pmatrix}29525&amp;29524\\29524&amp;29525\end{pmatrix}$. (Direct multiplication nine times would be tedious; the largest eigenvalue dominates, $A^{10}\approx3^{10}P_3$.)</p>
+            <p>(b) $f=1/\lambda$: $\tfrac12\begin{pmatrix}\tfrac13+1&amp;\tfrac13-1\\\tfrac13-1&amp;\tfrac13+1\end{pmatrix}=\begin{pmatrix}2/3&amp;-1/3\\-1/3&amp;2/3\end{pmatrix}$. Check: $A A^{-1}=\begin{pmatrix}4/3-1/3&amp;-2/3+2/3\\\ldots\end{pmatrix}=I$. &check;</p>
+            <p>(c) $f=\sqrt\lambda$: $\tfrac12\begin{pmatrix}\sqrt3+1&amp;\sqrt3-1\\\sqrt3-1&amp;\sqrt3+1\end{pmatrix}=\begin{pmatrix}1.366&amp;0.366\\0.366&amp;1.366\end{pmatrix}$. Squaring gives $\begin{pmatrix}1.866+0.134&amp;2(1.366)(0.366)\\\ldots\end{pmatrix}=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$. &check;</p>
+            <p>(d) $f=e^\lambda$: $e^A=\tfrac12\begin{pmatrix}e^3+e&amp;e^3-e\\e^3-e&amp;e^3+e\end{pmatrix}=\begin{pmatrix}11.40&amp;8.68\\8.68&amp;11.40\end{pmatrix}$. Note $e^A\neq$ the matrix of entrywise exponentials: functions of matrices act on eigenvalues, not entries.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-4">
+            <div class="p-head"><span class="p-num">Problem 5.4</span><span class="p-level">Core</span></div>
+            <p>Classify the Hessian of $f(x,y,z)=x^2+2y^2+z^2+2xy+2yz$ at the origin, using (a) Sylvester&rsquo;s criterion and (b) eigenvalues. What kind of stationary point is the origin? If instead the cross-term were $4xy$, what would change?</p>
+            <details class="hint"><summary>Hint</summary><p>$f=\tfrac12\mathbf x^TH\mathbf x$ with $H_{ij}=\partial_i\partial_jf$: here $H=\begin{pmatrix}2&amp;2&amp;0\\2&amp;4&amp;2\\0&amp;2&amp;2\end{pmatrix}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$H=\begin{pmatrix}2&amp;2&amp;0\\2&amp;4&amp;2\\0&amp;2&amp;2\end{pmatrix}$. Leading minors: $2&gt;0$; $\begin{vmatrix}2&amp;2\\2&amp;4\end{vmatrix}=4&gt;0$; $\det H=2(8-4)-2(4-0)+0=8-8=0$. The third minor is zero, so $H$ is only positive semi-definite, not positive definite.</p>
+            <p>Eigenvalues: the characteristic polynomial is $\lambda^3-(\operatorname{tr}H)\lambda^2+(\text{sum of principal }2\times2\text{ minors})\lambda-\det H$. Here $\operatorname{tr}H=8$, the minors are $(2\cdot4-4)+(2\cdot2-0)+(4\cdot2-4)=4+4+4=12$, and $\det H=0$, so $\lambda(\lambda^2-8\lambda+12)=0$, giving $\lambda=0,\,2,\,6$.</p>
+            <p>The zero eigenvalue's eigenvector satisfies $2v_1+2v_2=0$, $2v_2+2v_3=0$: $\mathbf v\propto(1,-1,1)$. Along that line, $f=x^2+2x^2+x^2+2x(-x)+2(-x)(x)=4x^2-4x^2=0$: $f$ is flat along it, so the origin is a <strong>non-isolated minimum</strong> (a valley floor, $f\ge0$ and $f=0$ along a line). In an atomistic setting this is a zero mode: a sliding or rotation direction along which the energy does not change.</p>
+            <p>With a cross-term $4xy$, $H_{12}=4$ and the minor $\begin{vmatrix}2&amp;4\\4&amp;4\end{vmatrix}=-8&lt;0$: indefinite, so the origin becomes a saddle point.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-5">
+            <div class="p-head"><span class="p-num">Problem 5.5</span><span class="p-level">Core</span></div>
+            <p>A cubic crystal has $C_{11}=108$, $C_{12}=62$ and $C_{44}=28$ GPa (aluminium). (a) Verify the Born stability conditions. (b) The $3\times3$ block of the Voigt matrix for normal strains is $\begin{pmatrix}C_{11}&amp;C_{12}&amp;C_{12}\\C_{12}&amp;C_{11}&amp;C_{12}\\C_{12}&amp;C_{12}&amp;C_{11}\end{pmatrix}$. Find its eigenvalues and eigenvectors; interpret them as bulk and shear (tetragonal) moduli. (c) What happens to stability if $C_{12}$ increased to $120$ GPa?</p>
+            <details class="hint"><summary>Hint</summary><p>The matrix is $(C_{11}-C_{12})I+C_{12}\mathbf 1\mathbf 1^T$ with $\mathbf 1=(1,1,1)$. Try $\mathbf v=(1,1,1)$ and any vector orthogonal to it.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $C_{11}&gt;|C_{12}|$: $108&gt;62$ &check;; $C_{11}+2C_{12}=232&gt;0$ &check;; $C_{44}=28&gt;0$ &check;. Stable.</p>
+            <p>(b) For $\mathbf v=(1,1,1)$: each row sums to $C_{11}+2C_{12}$, so the eigenvalue is $C_{11}+2C_{12}=232$ GPa: the hydrostatic (uniform dilation) direction, equal to $3B$ where $B=(C_{11}+2C_{12})/3=77.3$ GPa is the bulk modulus. For any $\mathbf v\perp(1,1,1)$ (a two-dimensional space, since $\mathbf1\mathbf1^T\mathbf v=0$), the eigenvalue is $C_{11}-C_{12}=46$ GPa, doubly degenerate: tetragonal shear strains that change shape at constant volume, with shear modulus $C'=(C_{11}-C_{12})/2=23$ GPa. So the eigenvalues $232,46,46$ are all positive and the matrix is positive definite. The degeneracy of $46$ is the consequence of cubic symmetry.</p>
+            <p>(c) With $C_{12}=120&gt;C_{11}=108$: $C_{11}-C_{12}=-12&lt;0$, a negative eigenvalue (twice): the crystal is unstable against tetragonal shear and would spontaneously distort. Indeed this is how martensitic transformations arise in alloys where $C'=(C_{11}-C_{12})/2$ softens towards zero on cooling (for example in Fe&ndash;Pd and Ni&ndash;Al alloys): the zero of an eigenvalue marks the transformation.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-6">
+            <div class="p-head"><span class="p-num">Problem 5.6</span><span class="p-level">Core</span></div>
+            <p>Two identical masses ($m=1.0\times10^{-25}$ kg) connect to fixed walls and to each other by three springs of stiffness $k=10$ N/m (Example 5.1). (a) Find the two normal-mode frequencies in THz ($\nu=\omega/2\pi$). (b) The system starts at rest with $x_1(0)=1$ pm, $x_2(0)=0$. Find $x_1(t)$ and $x_2(t)$ and describe the energy exchange (beats).</p>
+            <details class="hint"><summary>Hint</summary><p>Write the initial state as a combination of the two mode vectors: $(1,0)=\tfrac12(1,1)+\tfrac12(1,-1)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\omega_1=\sqrt{k/m}=\sqrt{10/10^{-25}}=\sqrt{10^{26}}=10^{13}$ rad/s, i.e. $\nu_1=\omega_1/2\pi=1.59$ THz. $\omega_2=\sqrt3\,\omega_1=1.732\times10^{13}$ rad/s, $\nu_2=2.76$ THz.</p>
+            <p>(b) Initial conditions: $(x_1,x_2)=\tfrac12(1,1)+\tfrac12(1,-1)$ in units of $1$ pm, zero velocity, so each mode is excited with amplitude $\tfrac12$ pm and no phase: $x_1(t)=\tfrac12\bigl[\cos\omega_1t+\cos\omega_2t\bigr]$, $x_2(t)=\tfrac12\bigl[\cos\omega_1t-\cos\omega_2t\bigr]$ pm. Using sum-to-product, $x_1=\cos\bigl(\tfrac{\omega_1+\omega_2}2t\bigr)\cos\bigl(\tfrac{\omega_2-\omega_1}2t\bigr)$ and $x_2=\sin\bigl(\tfrac{\omega_1+\omega_2}2t\bigr)\sin\bigl(\tfrac{\omega_2-\omega_1}2t\bigr)$: fast oscillation at the mean frequency, modulated by a slow envelope at $\tfrac12(\omega_2-\omega_1)=3.66\times10^{12}$ rad/s. Energy sloshes back and forth between the two masses with period $2\pi/(\omega_2-\omega_1)=0.86$ ps: the first signs of heat conduction by phonons in a larger chain.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-7">
+            <div class="p-head"><span class="p-num">Problem 5.7</span><span class="p-level">Core</span></div>
+            <p>Solve $\dot x=-2x+y$, $\dot y=x-2y$ with $x(0)=1$, $y(0)=0$ by diagonalising. Then do the same for the reversible reaction network A $\rightleftharpoons$ B with rates $k_f=2$, $k_b=1$ (units s$^{-1}$): $\dot a=-k_fa+k_bb$, $\dot b=k_fa-k_bb$ with $a(0)=1$, $b(0)=0$. What is the long-time state and the relaxation time?</p>
+            <details class="hint"><summary>Hint</summary><p>First system: $A=-2I+\begin{pmatrix}0&amp;1\\1&amp;0\end{pmatrix}$; use the eigenvectors $(1,\pm1)$. Second: $A=\begin{pmatrix}-2&amp;1\\2&amp;-1\end{pmatrix}$ has eigenvalues $0$ and $-3$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>First system: $A=\begin{pmatrix}-2&amp;1\\1&amp;-2\end{pmatrix}$ has eigenvectors $(1,1)$ with $\lambda=-1$ and $(1,-1)$ with $\lambda=-3$. Initial state $(1,0)=\tfrac12(1,1)+\tfrac12(1,-1)$. So $x(t)=\tfrac12\bigl(e^{-t}+e^{-3t}\bigr)$, $y(t)=\tfrac12\bigl(e^{-t}-e^{-3t}\bigr)$. Both eigenvalues are negative: stable, everything decays to $0$.</p>
+            <p>Reaction network: $A=\begin{pmatrix}-2&amp;1\\2&amp;-1\end{pmatrix}$, $\operatorname{tr}A=-3$, $\det A=0$, so $\lambda=0,-3$. For $\lambda=0$: $-2a+b=0\Rightarrow(1,2)$. For $\lambda=-3$: $(-2+3)a+b=0\Rightarrow(1,-1)$. Initial $(1,0)=\tfrac13(1,2)+\tfrac23(1,-1)$. So $a(t)=\tfrac13+\tfrac23e^{-3t}$, $b(t)=\tfrac23-\tfrac23e^{-3t}$. At long times $a\to\tfrac13$, $b\to\tfrac23$, the equilibrium with $b/a=k_f/k_b=2$ (detailed balance), and the relaxation rate is $3=k_f+k_b$, so $\tau=1/3$ s. The zero eigenvalue is the conservation of total amount ($a+b=1$) and its eigenvector is the equilibrium state; the nonzero eigenvalue is the relaxation rate. This structure, a zero eigenvalue for equilibrium plus negative ones for relaxation, holds for any master equation.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-8">
+            <div class="p-head"><span class="p-num">Problem 5.8</span><span class="p-level">Core</span></div>
+            <p>(a) Find the SVD of $A=\begin{pmatrix}3&amp;0\\4&amp;5\end{pmatrix}$ by computing the eigenvalues of $A^TA$. (b) What are the condition number and the semi-axes of the ellipse $A$ maps the unit circle to? (c) Give the best rank-1 approximation of $A$ and its error.</p>
+            <details class="hint"><summary>Hint</summary><p>$A^TA=\begin{pmatrix}25&amp;20\\20&amp;25\end{pmatrix}$ with eigenvalues $45$ and $5$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $A^TA=\begin{pmatrix}3&amp;4\\0&amp;5\end{pmatrix}\begin{pmatrix}3&amp;0\\4&amp;5\end{pmatrix}=\begin{pmatrix}25&amp;20\\20&amp;25\end{pmatrix}$, eigenvalues $25\pm20=45,5$ with eigenvectors $\tfrac1{\sqrt2}(1,1)$ and $\tfrac1{\sqrt2}(1,-1)$. Singular values $\sigma_1=\sqrt{45}=3\sqrt5=6.708$, $\sigma_2=\sqrt5=2.236$. Right singular vectors $\mathbf v_1=\tfrac1{\sqrt2}(1,1)$, $\mathbf v_2=\tfrac1{\sqrt2}(1,-1)$. Left ones: $\mathbf u_i=A\mathbf v_i/\sigma_i$: $A\mathbf v_1=\tfrac1{\sqrt2}(3,9)$, so $\mathbf u_1=\tfrac1{\sqrt2}(3,9)/(3\sqrt5)=\tfrac1{\sqrt{10}}(1,3)$; $A\mathbf v_2=\tfrac1{\sqrt2}(3,-1)$, so $\mathbf u_2=\tfrac1{\sqrt2}(3,-1)/\sqrt5=\tfrac1{\sqrt{10}}(3,-1)$. Check: $\mathbf u_1\cdot\mathbf u_2=\tfrac1{10}(3-3)=0$. &check; Also $\sigma_1\sigma_2=\sqrt{225}=15=|\det A|$. &check;</p>
+            <p>(b) $\kappa=\sigma_1/\sigma_2=3$. The image of the unit circle is an ellipse with semi-axes $6.708$ and $2.236$ along $\mathbf u_1$ and $\mathbf u_2$ (area $\pi\sigma_1\sigma_2=15\pi$, i.e. $|\det A|$ times the circle&rsquo;s area).</p>
+            <p>(c) $A_1=\sigma_1\mathbf u_1\mathbf v_1^T=3\sqrt5\cdot\tfrac1{\sqrt{10}\sqrt2}\begin{pmatrix}1\\3\end{pmatrix}(1\ \ 1)=\tfrac{3\sqrt5}{\sqrt{20}}\begin{pmatrix}1&amp;1\\3&amp;3\end{pmatrix}=\tfrac32\begin{pmatrix}1&amp;1\\3&amp;3\end{pmatrix}=\begin{pmatrix}1.5&amp;1.5\\4.5&amp;4.5\end{pmatrix}$. The 2-norm error is $\sigma_2=2.236$ (Eckart&ndash;Young): no rank-1 matrix is closer to $A$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-9">
+            <div class="p-head"><span class="p-num">Problem 5.9</span><span class="p-level">Challenge</span></div>
+            <p>A ring of $N$ identical atoms (mass $m$) joined by springs of stiffness $k$ has the force-constant matrix $K$ with $2k$ on the diagonal and $-k$ on the cyclic neighbours. (a) Show that $\mathbf v^{(q)}_j=e^{iqja}$ with $q=2\pi n/(Na)$ is an eigenvector, and find the eigenvalues. (b) Derive the phonon dispersion $\omega(q)=2\sqrt{k/m}\,\bigl|\sin(qa/2)\bigr|$ and its long-wavelength limit (sound velocity). (c) For $k=10$ N/m, $m=10^{-25}$ kg, $a=2.5$ &Aring; find $\omega_\mathrm{max}$ and the sound velocity.</p>
+            <details class="hint"><summary>Hint</summary><p>$(K\mathbf v)_j=2kv_j-kv_{j+1}-kv_{j-1}$. Substitute $v_j=e^{iqja}$ and factor out $e^{iqja}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $(K\mathbf v)_j=k\bigl[2-e^{iqa}-e^{-iqa}\bigr]e^{iqja}=k\bigl[2-2\cos qa\bigr]v_j=4k\sin^2(qa/2)\,v_j$. So every plane wave is an eigenvector with eigenvalue $\lambda(q)=4k\sin^2(qa/2)$. Periodicity $v_{j+N}=v_j$ requires $qNa=2\pi n$, giving $N$ distinct $q$ (values differing by $2\pi/a$ are equivalent): $N$ eigenvectors, the full set. (This is a circulant matrix, diagonalised by the discrete Fourier transform: <a href="fourier-analysis.html">M8</a>.)</p>
+            <p>(b) $\omega^2=\lambda/m=\dfrac{4k}m\sin^2(qa/2)$, so $\omega(q)=2\sqrt{k/m}\,|\sin(qa/2)|$. For small $q$, $\sin(qa/2)\approx qa/2$ and $\omega\approx a\sqrt{k/m}\,q=c\,q$: linear dispersion, with sound velocity $c=a\sqrt{k/m}$. The $n=0$ eigenvalue is $0$: the rigid translation mode.</p>
+            <p>(c) $\omega_\mathrm{max}=2\sqrt{k/m}=2\times10^{13}$ rad/s ($3.2$ THz) at $qa=\pi$ (the zone boundary, neighbours moving in opposite directions). $c=a\sqrt{k/m}=2.5\times10^{-10}\times10^{13}=2.5\times10^3$ m/s, typical of a solid. The bandwidth and slope of the dispersion are set by one number, the stiffness of the bond, tying the Hessian eigenvalues to the experimentally measured vibration spectrum.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-10">
+            <div class="p-head"><span class="p-num">Problem 5.10</span><span class="p-level">Challenge</span></div>
+            <p>Take a ring of $N=6$ atoms, each with one orbital, on-site energy $\varepsilon=0$ and hopping $-t$ between neighbours (the benzene $\pi$-system in H&uuml;ckel theory). (a) Using the plane-wave eigenvectors, find the six energy levels and their degeneracies. (b) Fill the levels with $6$ electrons (two per orbital) and compute the total electronic energy in units of $t$. (c) Compare with three isolated double bonds (three ethene-like dimers, each with levels $\pm t$, filled with the two electrons at $-t$) to find the delocalisation (resonance) energy.</p>
+            <details class="hint"><summary>Hint</summary><p>From the tight-binding formula $E(k)=\varepsilon-2t\cos(ka)$ with $ka=2\pi n/6$, $n=0,\ldots,5$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E_n=-2t\cos(2\pi n/6)$. $n=0$: $-2t$. $n=1,5$: $-2t\cos60^\circ=-t$. $n=2,4$: $-2t\cos120^\circ=+t$. $n=3$: $-2t\cos180^\circ=+2t$. Levels: $-2t$ (non-degenerate), $-t$ (twofold), $+t$ (twofold), $+2t$ (non-degenerate): sum $=0=\operatorname{tr}H$. &check;</p>
+            <p>(b) Six electrons fill the three lowest orbitals ($-2t,-t,-t$) with two each: $E=2(-2t)+2(-t)+2(-t)=-8t$.</p>
+            <p>(c) Three isolated double bonds: each dimer has $H=\begin{pmatrix}0&amp;-t\\-t&amp;0\end{pmatrix}$ with eigenvalues $\mp t$ ($-t$ filled, two electrons), so $E=3\times2(-t)=-6t$. The ring is lower by $-8t-(-6t)=-2t$ in these units, a delocalisation (resonance) energy of $2|t|$; fitting $|t|$ to the measured thermochemical stabilisation of benzene gives a value of order $1$ eV, so the model has the right sign and structure but its single parameter must be fitted. The qualitative message, that spreading electrons over more atoms lowers the energy via a wider band, is the origin of metallic bonding and of aromatic stability.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-11">
+            <div class="p-head"><span class="p-num">Problem 5.11</span><span class="p-level">Core</span></div>
+            <p>Four samples of two correlated properties (after subtracting the means) are the rows of $X=\begin{pmatrix}2&amp;2\\1&amp;1.5\\-1&amp;-1.5\\-2&amp;-2\end{pmatrix}$ (for example a lattice parameter and a bond length measured on four related structures). (a) Compute the covariance matrix $C=X^TX/(m-1)$. (b) Find its eigenvalues and the first principal component. (c) What fraction of the variance is explained by the first component, and what is the first-component coordinate (score) of each sample?</p>
+            <details class="hint"><summary>Hint</summary><p>$X^TX=\begin{pmatrix}10&amp;11\\11&amp;12.5\end{pmatrix}$; here $m-1=3$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $X^TX$: $(1,1)$ entry $4+1+1+4=10$; $(1,2)$: $4+1.5+1.5+4=11$; $(2,2)$: $4+2.25+2.25+4=12.5$. So $X^TX=\begin{pmatrix}10&amp;11\\11&amp;12.5\end{pmatrix}$ and $C=\tfrac13\begin{pmatrix}10&amp;11\\11&amp;12.5\end{pmatrix}=\begin{pmatrix}3.333&amp;3.667\\3.667&amp;4.167\end{pmatrix}$.</p>
+            <p>(b) $\operatorname{tr}C=7.5$, $\det C=3.333\times4.167-3.667^2=13.889-13.444=0.4444$. $\lambda=\tfrac12\bigl(7.5\pm\sqrt{56.25-1.778}\bigr)=\tfrac12(7.5\pm7.380)$: $\lambda_1=7.440$, $\lambda_2=0.0597$. First eigenvector: $(C-\lambda_1I)\mathbf v=0$: $(3.333-7.440)v_1+3.667v_2=0\Rightarrow v_2=1.120v_1$, normalised $\mathbf v_1=(0.6667,\ 0.7455)$... compute: $\sqrt{1+1.2544}=1.5015$, so $\mathbf v_1=(0.666,\ 0.746)$.</p>
+            <p>(c) Variance fraction: $7.440/7.5=0.992$: $99.2\%$. The two properties are almost perfectly correlated, so one variable (the first PC) describes the data. Scores $=X\mathbf v_1$: $(2)(0.666)+(2)(0.746)=2.82$; $0.666+1.5(0.746)=1.79$; $-1.79$; $-2.82$. The four samples lie nearly on a line; the second component carries only $0.8\%$, probably noise.</p>
+            <p class="answer">$\lambda=7.44,\ 0.060$; PC1 $\approx(0.67,0.75)$; $99.2\%$ of variance</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p5-12">
+            <div class="p-head"><span class="p-num">Problem 5.12</span><span class="p-level">Challenge</span></div>
+            <p>A system obeys the kinetic Monte Carlo master equation $\dot{\mathbf p}=W\mathbf p$ for the occupation probabilities of three states $1\rightleftharpoons2\rightleftharpoons3$ (a particle hopping on a three-site chain), with rate $w$ between neighbouring sites: $W=w\begin{pmatrix}-1&amp;1&amp;0\\1&amp;-2&amp;1\\0&amp;1&amp;-1\end{pmatrix}$. (a) Find the eigenvalues and eigenvectors of $W/w$. (b) Starting from $\mathbf p(0)=(1,0,0)$, find $\mathbf p(t)$. (c) What is the equilibrium, and the slowest relaxation time?</p>
+            <details class="hint"><summary>Hint</summary><p>Try $(1,1,1)$ and $(1,0,-1)$; the third eigenvector is orthogonal to both.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $M=W/w$ is symmetric. $M(1,1,1)^T=0$, so $\lambda_0=0$. $M(1,0,-1)^T=(-1,\ 1-1,\ 1)=(-1,0,1)=-(1,0,-1)$, so $\lambda_1=-1$. Third: orthogonal to both, $(1,-2,1)$: $M(1,-2,1)^T=(-1-2,\ 1+4+1,\ -2-1)=(-3,6,-3)=-3(1,-2,1)$, so $\lambda_2=-3$. Eigenvalues $0,-1,-3$ (trace $-4$ &check;).</p>
+            <p>(b) Normalised: $\mathbf e_0=\tfrac1{\sqrt3}(1,1,1)$, $\mathbf e_1=\tfrac1{\sqrt2}(1,0,-1)$, $\mathbf e_2=\tfrac1{\sqrt6}(1,-2,1)$. $\mathbf p(0)=(1,0,0)$ has coefficients $\mathbf e_i\cdot\mathbf p(0)=\tfrac1{\sqrt3},\tfrac1{\sqrt2},\tfrac1{\sqrt6}$. So $\mathbf p(t)=\tfrac13(1,1,1)+\tfrac12(1,0,-1)e^{-wt}+\tfrac16(1,-2,1)e^{-3wt}$. Check at $t=0$: first component $\tfrac13+\tfrac12+\tfrac16=1$ &check;, second $\tfrac13-\tfrac13=0$ &check;, third $\tfrac13-\tfrac12+\tfrac16=0$ &check;.</p>
+            <p>(c) Equilibrium: $\mathbf p_\infty=\tfrac13(1,1,1)$ (uniform, because all rates are equal: detailed balance). The slowest decaying mode has $\lambda=-1$, so $\tau=1/w$: the time to spread across the chain is of order one hop time times the number of sites squared (compare the diffusive $L^2/D$). The total probability $\sum p_i=1$ is conserved by the zero eigenvalue.</p>
+            </details>
+            </div>
+
+            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Strang, G., <em>Introduction to Linear Algebra</em>, Wellesley&ndash;Cambridge Press: chapters on eigenvalues, symmetric matrices and the SVD.</li>
+                <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM: eigenvalue algorithms and the SVD.</li>
+                <li>Goldstein, H., Poole, C. and Safko, J., <em>Classical Mechanics</em>, Addison&ndash;Wesley: small oscillations and normal modes.</li>
+                <li>Dove, M. T., <em>Introduction to Lattice Dynamics</em>, Cambridge University Press: the dynamical matrix and phonon dispersion.</li>
+                <li>Szabo, A. and Ostlund, N. S., <em>Modern Quantum Chemistry</em>, Dover: matrix eigenproblems for electronic structure; H&uuml;ckel theory.</li>
+                <li>Jolliffe, I. T., <em>Principal Component Analysis</em>, Springer.</li>
+            </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
@@ -83,7 +360,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=b8b6cd84"></script>
+    <script src="../assets/topics.js?v=6b3f9db5"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
 </body>

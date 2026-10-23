@@ -277,7 +277,7 @@ window.MIBEM_TOPICS = [
     "short": "Linear algebra II",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 5,
+    "minutes": 21,
     "title": "Linear algebra II: eigenvalues and decompositions",
     "blurb": "Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.",
     "builds": [
@@ -288,7 +288,11 @@ window.MIBEM_TOPICS = [
       11
     ],
     "takeaways": [
-      "(to be written)"
+      "An eigenvector is a direction a matrix only stretches, by the eigenvalue; eigenvalues are the roots of $\\det(A-\\lambda I)=0$, and the trace and determinant equal their sum and product.",
+      "A real symmetric matrix has real eigenvalues and orthogonal eigenvectors, so $A=Q\\Lambda Q^{T}$: in the right axes it is a set of independent stretches. Hamiltonians, Hessians, stress tensors and covariance matrices are all symmetric.",
+      "A matrix power or function is easy in the eigenbasis: $A^{n}=Q\\Lambda^{n}Q^{T}$ and $e^{At}=Qe^{\\Lambda t}Q^{T}$, so a linear system of ODEs decouples into independent modes, and the signs of the eigenvalues decide stability.",
+      "A quadratic form $\\mathbf{x}^{T}A\\mathbf{x}$ is positive for all $\\mathbf{x}$ (positive definite) exactly when all eigenvalues are positive; this classifies minima, saddles and stable crystals, and a negative Hessian eigenvalue is an imaginary vibrational frequency.",
+      "The singular value decomposition $A=U\\Sigma V^{T}$ exists for every matrix; truncating it gives the best low-rank approximation and underlies principal component analysis, the condition number and the pseudoinverse."
     ]
   },
   {
@@ -299,7 +303,7 @@ window.MIBEM_TOPICS = [
     "short": "Tensors",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 5,
+    "minutes": 21,
     "title": "Tensors: stress, strain and anisotropy",
     "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
     "builds": [
@@ -311,7 +315,12 @@ window.MIBEM_TOPICS = [
       10
     ],
     "takeaways": [
-      "(to be written)"
+      "A tensor is defined by how its components transform when the axes rotate, $T'_{ij}=Q_{ik}Q_{jl}T_{kl}$, not merely by being an array of numbers; scalars, vectors, stress and the stiffness tensor are tensors of rank 0, 1, 2 and 4.",
+      "In index notation a repeated index is summed (Einstein convention); with the Kronecker delta $\\delta_{ij}$ and the permutation symbol $\\varepsilon_{ijk}$ it expresses dot and cross products, traces and determinants compactly.",
+      "Stress $\\sigma_{ij}$ gives the traction on any plane, $t_i=\\sigma_{ij}n_j$; it is symmetric, its eigenvalues are the principal stresses, and failure criteria depend only on invariants such as the von Mises stress $\\sqrt{\\tfrac32 s_{ij}s_{ij}}$ of the deviatoric part.",
+      "Small strain is the symmetric part of the displacement gradient, $\\varepsilon_{ij}=\\tfrac12(\\partial_ju_i+\\partial_iu_j)$; the trace is the volume change and the antisymmetric part is a rigid rotation that stores no energy.",
+      "Hooke's law $\\sigma_{ij}=C_{ijkl}\\varepsilon_{kl}$ has 81 components but only 21 independent constants in general, 3 for cubic crystals and 2 for isotropic solids; Voigt notation turns it into a $6\\times6$ matrix, which must be positive definite for stability.",
+      "Neumann's principle: a crystal property tensor must be invariant under the crystal's point-group operations, which reduces the number of independent components and forces odd-rank tensors such as piezoelectricity to vanish in centrosymmetric crystals."
     ]
   },
   {
@@ -322,7 +331,7 @@ window.MIBEM_TOPICS = [
     "short": "ODEs",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 5,
+    "minutes": 22,
     "title": "Ordinary differential equations",
     "blurb": "First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.",
     "builds": [
@@ -334,7 +343,11 @@ window.MIBEM_TOPICS = [
       15
     ],
     "takeaways": [
-      "(to be written)"
+      "An ordinary differential equation relates a function to its derivatives; with an initial condition it usually has a unique solution, and first-order separable and linear equations cover first-order kinetics, relaxation and nucleation-and-growth laws such as the Avrami equation.",
+      "For $\\ddot{x}+\\gamma\\dot{x}+\\omega_0^2x=0$ the roots of the characteristic equation decide the behaviour (overdamped, critically damped, oscillating decay), and a driven oscillator resonates near $\\omega_0$ with amplitude amplified by the quality factor $Q=\\omega_0/\\gamma$.",
+      "A system $\\dot{\\mathbf{y}}=A\\mathbf{y}$ is solved by eigenvalues, $\\mathbf{y}=\\sum c_ie^{\\lambda_it}\\mathbf{v}_i$; the fixed point is stable if all real parts are negative, and a nonlinear system near a fixed point behaves like its linearisation with $A$ the Jacobian.",
+      "Explicit Euler is first order and is unstable for $h>2/|\\lambda|$; implicit methods remove this limit, which matters for stiff problems with widely separated time scales, such as reaction networks with fast radicals.",
+      "Velocity Verlet is second order, time-reversible and symplectic, so it conserves energy over millions of molecular-dynamics steps while explicit Euler gains energy at every step; the time step must resolve the fastest vibration, about a tenth of its period."
     ]
   },
   {

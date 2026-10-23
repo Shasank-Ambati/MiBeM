@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ordinary differential equations - MiBeM</title>
-    <meta name="description" content="First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.">
+    <meta name="description" content="University-level ordinary differential equations for materials modelling: first-order kinetics and Avrami transformation, linear second-order oscillators and resonance, systems and phase planes, stability and linearisation, and numerical integration (Euler, Runge-Kutta, Verlet, stiffness); twelve problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/ordinary-differential-equations.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Ordinary differential equations - MiBeM">
-    <meta property="og:description" content="First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.">
+    <meta property="og:description" content="University-level ordinary differential equations for materials modelling: first-order kinetics and Avrami transformation, linear second-order oscillators and resonance, systems and phase planes, stability and linearisation, and numerical integration (Euler, Runge-Kutta, Verlet, stiffness); twelve problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/ordinary-differential-equations.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,14 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#check">1. Problems</a></li>
+                <li><a href="#basics">1. Basics: what an ODE is</a></li>
+                <li><a href="#first">2. First-order equations</a></li>
+                <li><a href="#second">3. Linear second-order equations: oscillators</a></li>
+                <li><a href="#systems">4. Systems of ODEs and the phase plane</a></li>
+                <li><a href="#numerics">5. Numerical solution</a></li>
+                <li><a href="#summary-m7">6. How the pieces fit together</a></li>
+                <li><a href="#check">7. Problems</a></li>
+                <li><a href="#refs">8. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -45,25 +52,300 @@
             <!-- coursenav:start -->
 <nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" class="here" aria-current="page" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
 <!-- coursenav:end -->
-            <p class="lead">First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.</p>
+            <h1>Ordinary differential equations</h1>
+            <p class="lead">Whenever something changes with time, a differential equation is at work: atoms moving under forces, a concentration relaxing to equilibrium, a phase growing, a temperature settling. Ordinary differential equations (ODEs), those with a single independent variable, are the simplest of these and the foundation for everything that follows: molecular dynamics integrates $3N$ coupled ODEs, kinetic models are systems of ODEs, and every PDE solver eventually reduces to ODEs in time. This module covers the analytic theory and the numerical methods, with emphasis on the questions that matter in simulation: how fast does it decay, is it stable, and what time step may I use?</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 5 min</dd></div>
+<div><dt>Reading time</dt><dd>about 22 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a><br><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="partial-differential-equations.html">M9. PDEs</a><br><a href="calculus-of-variations-and-optimisation.html">M12. Variational methods</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
 </dl>
 <!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Solve first-order separable and linear ODEs, and identify fixed points and their stability in one variable.</li>
+                    <li>Solve linear second-order equations, describe damped and driven oscillators, and compute resonance quantities.</li>
+                    <li>Solve linear systems by eigenvalues, classify phase-plane fixed points, and linearise nonlinear systems.</li>
+                    <li>Apply and analyse Euler, Runge&ndash;Kutta and Verlet methods, derive their errors and stability limits, and recognise stiffness.</li>
+                    <li>Choose a sensible time step from the fastest time scale of a problem.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> and <a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a>.
+            </div>
+
+            <h2 id="basics">1. Basics: what an ODE is<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
+            <p>An <strong>ordinary differential equation</strong> of order $n$ relates an unknown function $y(t)$ to its derivatives up to order $n$. It is <strong>linear</strong> if $y$ and its derivatives appear only to the first power and are not multiplied together, and <strong>autonomous</strong> if $t$ does not appear explicitly. An <strong>initial value problem</strong> (IVP) supplies $y,y',\ldots,y^{(n-1)}$ at $t=0$. Any $n$-th order equation is equivalent to a system of $n$ first-order equations (set $y_1=y$, $y_2=y'$, and so on), so the general form to keep in mind is
+            $$\dot{\mathbf y}=\mathbf f(\mathbf y,t),\qquad\mathbf y(0)=\mathbf y_0 .$$
+            For example Newton&rsquo;s law $m\ddot x=F(x)$ becomes $\dot x=v$, $\dot v=F(x)/m$.</p>
+            <div class="note thm"><strong>Existence and uniqueness</strong>
+            <p>If $\mathbf f$ and its partial derivatives with respect to $\mathbf y$ are continuous near $(\mathbf y_0,0)$, the IVP has a unique solution for a short time. Without this smoothness, uniqueness can fail: $\dot y=\sqrt{|y|}$, $y(0)=0$ has the solutions $y=0$ and $y=t^2/4$. And solutions need not exist for all time: $\dot y=y^2$, $y(0)=1$ gives $y=1/(1-t)$, which blows up at $t=1$.</p>
+            </div>
+
+            <h2 id="first">2. First-order equations<a class="anchor" href="#first" aria-label="Link to this section">#</a></h2>
+            <h3 id="separable">Separable equations<a class="anchor" href="#separable" aria-label="Link to this section">#</a></h3>
+            <p>If $\dot y=g(y)h(t)$, separate and integrate: $\int\dfrac{\mathrm{d}y}{g(y)}=\int h(t)\,\mathrm{d}t$. The most important case in kinetics is the <strong>rate law</strong> $\dot c=-kc^m$ (reaction order $m$). For $m=1$: $c=c_0e^{-kt}$, with half-life $t_{1/2}=\ln2/k$ independent of $c_0$. For $m=2$: $\dfrac{\mathrm{d}c}{c^2}=-k\,\mathrm{d}t\Rightarrow\dfrac1c=\dfrac1{c_0}+kt$, so $c=\dfrac{c_0}{1+kc_0t}$ and the half-life $t_{1/2}=1/(kc_0)$ <em>depends on</em> $c_0$: that dependence is how reaction orders are determined experimentally.</p>
+            <div class="example">
+                <strong>Worked example 2.1: the Avrami (JMAK) equation</strong>
+                <p class="given">A solid-state transformation nucleates and grows in many places. If the particles did not impinge on each other, the transformed fraction would be the &ldquo;extended&rdquo; fraction $X_\mathrm{ex}(t)=(kt)^n$. Account for impingement and find the real fraction $X(t)$.</p>
+                <p>New growth only converts untransformed material, so the rate of change of the real fraction is the rate of change of the extended fraction multiplied by the untransformed fraction: $\dot X=(1-X)\,\dot X_\mathrm{ex}$. This is separable: $\dfrac{\mathrm{d}X}{1-X}=\mathrm{d}X_\mathrm{ex}$, so $-\ln(1-X)=X_\mathrm{ex}$ (with $X=0$ at $t=0$), i.e.
+                $$X(t)=1-\exp\bigl[-(kt)^n\bigr].$$
+                The &ldquo;Avrami plot&rdquo; of $\ln[-\ln(1-X)]$ against $\ln t$ is a straight line of slope $n$ (between $1$ and $4$, indicating the nucleation and growth mechanism). The resulting S-shaped curve is the standard description of recrystallisation, precipitation and crystallisation kinetics. Problem 3 fits it to data.</p>
+            </div>
+            <h3 id="linear1">Linear first-order equations<a class="anchor" href="#linear1" aria-label="Link to this section">#</a></h3>
+            <p>The equation $\dot y+p(t)y=q(t)$ is solved by an <strong>integrating factor</strong> $\mu(t)=e^{\int p\,\mathrm{d}t}$: multiplying through gives $\dfrac{\mathrm{d}}{\mathrm{d}t}(\mu y)=\mu q$, so $y=\dfrac1\mu\Bigl(\int\mu q\,\mathrm{d}t+C\Bigr)$. For constant coefficients $\dot y+ay=q$ with $a&gt;0$, the solution is a decaying transient plus a steady state: $y=\dfrac qa+\bigl(y_0-\dfrac qa\bigr)e^{-at}$, relaxing to $q/a$ with time constant $\tau=1/a$. This describes Newton cooling ($\dot T=-(T-T_\infty)/\tau$), a rate balance of production and decay, and the relaxation of a concentration toward equilibrium. After $3\tau$ the transient has decayed to $5\%$, after $5\tau$ to $0.7\%$.</p>
+            <h3 id="fixed1">Fixed points and stability in one variable<a class="anchor" href="#fixed1" aria-label="Link to this section">#</a></h3>
+            <p>For an autonomous $\dot y=f(y)$, the <strong>fixed points</strong> (equilibria) satisfy $f(y^*)=0$. Linearise: with $y=y^*+\delta$, $\dot\delta\approx f'(y^*)\,\delta$, so $\delta\propto e^{f'(y^*)t}$. The fixed point is <strong>stable</strong> if $f'(y^*)&lt;0$ and <strong>unstable</strong> if $f'(y^*)&gt;0$, with relaxation time $1/|f'(y^*)|$. The same sign test that identifies a minimum of an energy $U$ (with $f=-U'$ and $f'=-U''$) shows up here: a minimum is a stable fixed point of the gradient flow $\dot y=-U'(y)$. When $f'(y^*)\to0$ the relaxation time diverges: <strong>critical slowing down</strong>, a hallmark of phase transitions.</p>
+            <div class="note mat"><strong>In materials science: relaxation of an order parameter</strong>
+            <p>Landau theory writes the free energy of an order parameter $\eta$ as $F=\tfrac12A\eta^2+\tfrac14b\eta^4$ with $A=a(T-T_c)$ and $b&gt;0$. The simplest relaxational dynamics is $\dot\eta=-\Gamma\,\partial F/\partial\eta=-\Gamma(A\eta+b\eta^3)$, the zero-dimensional form of the Allen&ndash;Cahn equation of the phase-field method. Above $T_c$ ($A&gt;0$) the only fixed point is $\eta=0$, stable with rate $\Gamma A$. Below $T_c$ ($A&lt;0$), $\eta=0$ becomes unstable and two stable fixed points $\eta=\pm\sqrt{|A|/b}$ appear (a pitchfork bifurcation). The relaxation rate vanishes as $T\to T_c$ from either side, so near the transition ordering becomes slower (Problem 4).</p>
+            </div>
+
+            <h2 id="second">3. Linear second-order equations: oscillators<a class="anchor" href="#second" aria-label="Link to this section">#</a></h2>
+            <p>The equation $a\ddot x+b\dot x+cx=0$ with constant coefficients is solved by trying $x=e^{rt}$, which gives the <strong>characteristic equation</strong> $ar^2+br+c=0$. With $r_{1,2}$ its roots:</p>
+            <ul>
+                <li>distinct real roots: $x=C_1e^{r_1t}+C_2e^{r_2t}$;</li>
+                <li>a repeated root: $x=(C_1+C_2t)e^{rt}$;</li>
+                <li>complex roots $r=\alpha\pm i\beta$: $x=e^{\alpha t}\bigl(C_1\cos\beta t+C_2\sin\beta t\bigr)$.</li>
+            </ul>
+            <p>The general solution has two free constants, fixed by $x(0)$ and $\dot x(0)$. The equation $\ddot x+\gamma\dot x+\omega_0^2x=0$ is the <strong>damped harmonic oscillator</strong> ($\omega_0=\sqrt{k/m}$ the natural frequency, $\gamma=\eta/m$ the damping rate). Define the <strong>damping ratio</strong> $\zeta=\gamma/(2\omega_0)$. Then
+            $$r=-\frac\gamma2\pm\sqrt{\frac{\gamma^2}4-\omega_0^2}.$$</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="3. Linear second-order equations: oscillators (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Case</th><th>Condition</th><th>Behaviour</th></tr></thead>
+                <tbody>
+                    <tr><td>Underdamped</td><td>$\zeta&lt;1$ ($\gamma&lt;2\omega_0$)</td><td>$x=e^{-\gamma t/2}\bigl(A\cos\omega_dt+B\sin\omega_dt\bigr)$ with $\omega_d=\sqrt{\omega_0^2-\gamma^2/4}$: decaying oscillation</td></tr>
+                    <tr><td>Critically damped</td><td>$\zeta=1$</td><td>$x=(C_1+C_2t)e^{-\omega_0t}$: fastest return without oscillation</td></tr>
+                    <tr><td>Overdamped</td><td>$\zeta&gt;1$</td><td>sum of two decaying exponentials, the slow one dominating</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>The energy of a lightly damped oscillator decays as $e^{-\gamma t}$; the <strong>quality factor</strong> $Q=\omega_0/\gamma$ is approximately the number of radians of oscillation before the energy falls by $1/e$ (so $Q/\pi$ cycles). High-$Q$ resonators (quartz crystals, nanomechanical cantilevers, phonon modes of a perfect crystal) ring for a long time; internal friction measurements of $Q^{-1}$ detect dislocation motion and point-defect relaxation in metals.</p>
+            <h3 id="driven">The driven oscillator and resonance<a class="anchor" href="#driven" aria-label="Link to this section">#</a></h3>
+            <p>Add a sinusoidal drive, $\ddot x+\gamma\dot x+\omega_0^2x=F\cos\omega t$. The solution is the sum of the decaying transient above and a <strong>steady-state</strong> response at the drive frequency, $x_p=X(\omega)\cos(\omega t-\delta)$, with
+            $$X(\omega)=\frac{F}{\sqrt{(\omega_0^2-\omega^2)^2+\gamma^2\omega^2}},\qquad\tan\delta=\frac{\gamma\omega}{\omega_0^2-\omega^2}.$$
+            The amplitude peaks near $\omega=\omega_0$ (exactly at $\omega_r=\sqrt{\omega_0^2-\gamma^2/2}$), where $X\approx F/(\gamma\omega_0)=Q\times F/\omega_0^2$: the static displacement magnified by $Q$. The width of the peak (full width at half maximum) is about $\gamma$. The phase lags by $\delta=\pi/2$ at resonance. Using complex exponentials, $F\cos\omega t=\operatorname{Re}\,Fe^{i\omega t}$ and $x_p=\operatorname{Re}\,\dfrac{Fe^{i\omega t}}{\omega_0^2-\omega^2+i\gamma\omega}$, which is the standard trick. This Lorentzian line shape is the shape of every spectral line broadened by damping: infrared and Raman absorption by lattice vibrations, ferromagnetic resonance, NMR.</p>
+
+            <h2 id="systems">4. Systems of ODEs and the phase plane<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
+            <p>A linear system $\dot{\mathbf y}=A\mathbf y$ with constant matrix $A$ is solved by the eigenvalue method of <a href="eigenvalues-and-decompositions.html">M5</a>: if $A\mathbf v_i=\lambda_i\mathbf v_i$ then $\mathbf y(t)=\sum_ic_ie^{\lambda_it}\mathbf v_i$, the $c_i$ fixed by $\mathbf y(0)$. For a two-variable system the behaviour near the origin is classified by the trace $\tau=\operatorname{tr}A$ and determinant $\Delta=\det A$, because $\lambda=\tfrac12\bigl(\tau\pm\sqrt{\tau^2-4\Delta}\bigr)$:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="4. Systems of ODEs and the phase plane (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Eigenvalues</th><th>Condition</th><th>Fixed point</th><th>Trajectories</th></tr></thead>
+                <tbody>
+                    <tr><td>real, both negative</td><td>$\Delta&gt;0,\ \tau&lt;0,\ \tau^2&gt;4\Delta$</td><td>stable node</td><td>approach the origin along eigendirections</td></tr>
+                    <tr><td>real, both positive</td><td>$\Delta&gt;0,\ \tau&gt;0,\ \tau^2&gt;4\Delta$</td><td>unstable node</td><td>leave the origin</td></tr>
+                    <tr><td>real, opposite signs</td><td>$\Delta&lt;0$</td><td>saddle</td><td>approach along one direction, leave along the other</td></tr>
+                    <tr><td>complex, $\operatorname{Re}\lambda&lt;0$</td><td>$\tau&lt;0,\ \tau^2&lt;4\Delta$</td><td>stable spiral</td><td>spiral in</td></tr>
+                    <tr><td>complex, $\operatorname{Re}\lambda&gt;0$</td><td>$\tau&gt;0,\ \tau^2&lt;4\Delta$</td><td>unstable spiral</td><td>spiral out</td></tr>
+                    <tr><td>imaginary</td><td>$\tau=0,\ \Delta&gt;0$</td><td>centre</td><td>closed orbits (undamped oscillation)</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <h3 id="nonlin">Nonlinear systems: linearisation<a class="anchor" href="#nonlin" aria-label="Link to this section">#</a></h3>
+            <p>For a nonlinear $\dot{\mathbf y}=\mathbf f(\mathbf y)$ find the fixed points $\mathbf f(\mathbf y^*)=\mathbf0$ and linearise: $\dot{\boldsymbol\delta}=J\boldsymbol\delta$ with the <strong>Jacobian</strong> $J_{ij}=\partial f_i/\partial y_j$ evaluated at $\mathbf y^*$. If all eigenvalues of $J$ have non-zero real part, the fixed point has the same type and stability as the linear system. Eigenvalues with zero real part (centres) need a closer look, for example a conserved quantity. This is the same procedure as for the Hessian at a minimum of an energy surface, with a gradient flow $\dot{\mathbf y}=-\nabla U$ having $J=-H$.</p>
+            <div class="example">
+                <strong>Worked example 4.1: consecutive reactions</strong>
+                <p class="given">For $\mathrm A\xrightarrow{k_1}\mathrm B\xrightarrow{k_2}\mathrm C$ with $a(0)=a_0$, $b(0)=c(0)=0$, find $b(t)$ and the time of maximum $b$.</p>
+                <p>$\dot a=-k_1a$ gives $a=a_0e^{-k_1t}$. Then $\dot b+k_2b=k_1a_0e^{-k_1t}$, a first-order linear equation with the integrating factor $e^{k_2t}$: $\dfrac{\mathrm d}{\mathrm dt}(be^{k_2t})=k_1a_0e^{(k_2-k_1)t}$, so
+                $$b(t)=\frac{k_1a_0}{k_2-k_1}\bigl(e^{-k_1t}-e^{-k_2t}\bigr)\quad(k_1\ne k_2).$$
+                $\dot b=0$ gives $k_1e^{-k_1t}=k_2e^{-k_2t}$, so $t^*=\dfrac{\ln(k_2/k_1)}{k_2-k_1}$, with $b_\mathrm{max}=a_0(k_1/k_2)^{k_2/(k_2-k_1)}$. The intermediate rises, peaks and falls, and $c=a_0-a-b$ is S-shaped. If $k_2\gg k_1$, the intermediate is in a <em>quasi-steady state</em>: $b\approx(k_1/k_2)a$, found by setting $\dot b\approx0$. This steady-state approximation underlies reduced reaction mechanisms (Problem 8).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.2: a boundary value problem</strong>
+                <p class="given">Atoms diffuse into a slab from the surface $x=0$ and are consumed by a first-order reaction: $D\,c''=k\,c$ with $c(0)=c_0$ and $c\to0$ as $x\to\infty$. Find the profile and the penetration depth.</p>
+                <p>The characteristic equation is $Dr^2=k$, so $r=\pm\sqrt{k/D}$. Decay at infinity excludes the growing exponential: $c(x)=c_0\exp\bigl(-x/\ell\bigr)$ with $\ell=\sqrt{D/k}$. The penetration depth $\ell=\sqrt{D/k}$ is the geometric mean of the diffusion and reaction scales: fast reaction or slow diffusion gives a thin layer. The same structure governs oxide scale growth, hydrogen trapping, and screening of charge in an electrolyte (the Debye length). Note this is a <em>boundary</em> value problem: conditions are given at two places, not at one time.</p>
+            </div>
+
+            <h2 id="numerics">5. Numerical solution<a class="anchor" href="#numerics" aria-label="Link to this section">#</a></h2>
+            <p>Most nonlinear ODEs cannot be solved in closed form, and simulations integrate $\dot{\mathbf y}=\mathbf f(\mathbf y,t)$ in steps $h$. Everything here is the Taylor series of <a href="calculus-single-variable.html">M1</a>.</p>
+            <h3 id="euler">Euler&rsquo;s method and its errors<a class="anchor" href="#euler" aria-label="Link to this section">#</a></h3>
+            <p>Truncate $y(t+h)=y+hy'+\tfrac12h^2y''+\cdots$ after the first-derivative term: the <strong>explicit Euler method</strong> is
+            $$y_{n+1}=y_n+h\,f(y_n,t_n).$$
+            The error made in one step, the <em>local truncation error</em>, is $\tfrac12h^2y''=O(h^2)$. Over $T/h$ steps these accumulate to a <em>global error</em> $O(h)$: first order. To halve the error you must halve the step and double the work. Higher-order methods do better: the <strong>midpoint (RK2)</strong> rule evaluates $f$ at the half step; the classical <strong>fourth-order Runge&ndash;Kutta (RK4)</strong>
+            $$k_1=f(y_n),\ k_2=f(y_n+\tfrac h2k_1),\ k_3=f(y_n+\tfrac h2k_2),\ k_4=f(y_n+hk_3),\quad y_{n+1}=y_n+\tfrac h6(k_1+2k_2+2k_3+k_4)$$
+            has global error $O(h^4)$, so halving $h$ cuts the error by $16$, at the cost of four force evaluations per step.</p>
+            <h3 id="stab">Stability and stiffness<a class="anchor" href="#stab" aria-label="Link to this section">#</a></h3>
+            <p>Accuracy is not the only constraint. Apply Euler to the test equation $\dot y=-\lambda y$ ($\lambda&gt;0$, exact solution decays): $y_{n+1}=(1-h\lambda)y_n$. The numerical solution decays only if $|1-h\lambda|&lt;1$, i.e. <strong>$h&lt;2/\lambda$</strong>; beyond that it oscillates with growing amplitude, nonsense produced by the algorithm. The <strong>implicit (backward) Euler method</strong> $y_{n+1}=y_n+hf(y_{n+1},t_{n+1})$ gives $y_{n+1}=y_n/(1+h\lambda)$, which decays for every $h&gt;0$: it is <em>unconditionally stable</em>, at the price of solving an (often nonlinear) equation each step.</p>
+            <p>A system is <strong>stiff</strong> if it contains widely separated time scales, e.g. eigenvalues $\lambda_\mathrm{fast}\gg\lambda_\mathrm{slow}$. The explicit step is limited by the <em>fast</em> mode, $h&lt;2/\lambda_\mathrm{fast}$, even after that mode has decayed and the interesting evolution is slow. Examples: reaction networks with short-lived radicals, phase-field and diffusion problems on fine meshes (the largest eigenvalue of the discrete Laplacian grows like $1/\Delta x^2$, <a href="partial-differential-equations.html">M9</a>), and electronic-structure relaxation. Stiff problems call for implicit or semi-implicit integrators.</p>
+            <h3 id="verlet">Molecular dynamics: Verlet and symplectic integration<a class="anchor" href="#verlet" aria-label="Link to this section">#</a></h3>
+            <p>Newton&rsquo;s equations of an isolated system conserve energy and are time-reversible. An integrator that respects this structure behaves much better over $10^6$ to $10^9$ steps than a generic high-order one. Adding the Taylor expansions of $x(t\pm h)$ cancels the odd terms and gives the <strong>Verlet</strong> scheme $x(t+h)=2x(t)-x(t-h)+h^2a(t)+O(h^4)$ with $a=F/m$. In its common <strong>velocity Verlet</strong> form,
+            $$x_{n+1}=x_n+hv_n+\tfrac12h^2a_n,\qquad v_{n+1}=v_n+\tfrac12h\,(a_n+a_{n+1}),$$
+            where $a_{n+1}$ is computed from the new positions. It is second order, needs one force evaluation per step, is exactly time-reversible and <em>symplectic</em>: it conserves a slightly perturbed &ldquo;shadow&rdquo; energy, so the true energy oscillates within $O(h^2)$ and does not drift. By contrast explicit Euler applied to an oscillator multiplies the energy by $1+h^2\omega^2$ at every step (Problem 10): heating, without bound. Verlet is stable for $h\omega&lt;2$ but accuracy needs far smaller steps: the usual rule is to take about $10$ to $20$ steps per period of the <em>fastest</em> vibration.</p>
+            <div class="note mat"><strong>In materials science: choosing the time step</strong>
+            <p>The fastest motion in most organic and hydrated materials is the O&ndash;H or C&ndash;H stretch (about $3000$&ndash;$3600$ cm$^{-1}$, period $\approx10$ fs), which forces $h\approx0.5$&ndash;$1$ fs; constraining those bonds or replacing H by D (or redistributing mass) allows $2$&ndash;$4$ fs. In metals and ionic solids the highest phonon periods are $\gtrsim50$ fs and $h=2$&ndash;$5$ fs suffices. A $1$ ns trajectory at $1$ fs needs $10^6$ steps, which is why MD accessible time scales (nanoseconds to microseconds) fall so far short of laboratory seconds, and why accelerated sampling methods exist (<a href="molecular-dynamics.html">Molecular dynamics</a>).</p>
+            </div>
+
+            <h2 id="summary-m7">6. How the pieces fit together<a class="anchor" href="#summary-m7" aria-label="Link to this section">#</a></h2>
+            <p>First-order equations capture relaxation and kinetics; second-order linear ones capture oscillation, damping and resonance; systems unify both through eigenvalues and the phase plane; and linearisation extends the story to nonlinear problems, with the Jacobian playing the role the Hessian plays for energy minima. Numerically, the step size is set by accuracy (the order of the method) and by stability (the largest eigenvalue magnitude), and structure-preserving integrators win for long Hamiltonian runs. Time is only one variable; next we study functions as sums of waves, which will let us solve equations in space as well.</p>
+
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>(to be written)</li>
+<li>An ordinary differential equation relates a function to its derivatives; with an initial condition it usually has a unique solution, and first-order separable and linear equations cover first-order kinetics, relaxation and nucleation-and-growth laws such as the Avrami equation.</li>
+<li>For $\ddot{x}+\gamma\dot{x}+\omega_0^2x=0$ the roots of the characteristic equation decide the behaviour (overdamped, critically damped, oscillating decay), and a driven oscillator resonates near $\omega_0$ with amplitude amplified by the quality factor $Q=\omega_0/\gamma$.</li>
+<li>A system $\dot{\mathbf{y}}=A\mathbf{y}$ is solved by eigenvalues, $\mathbf{y}=\sum c_ie^{\lambda_it}\mathbf{v}_i$; the fixed point is stable if all real parts are negative, and a nonlinear system near a fixed point behaves like its linearisation with $A$ the Jacobian.</li>
+<li>Explicit Euler is first order and is unstable for $h&gt;2/|\lambda|$; implicit methods remove this limit, which matters for stiff problems with widely separated time scales, such as reaction networks with fast radicals.</li>
+<li>Velocity Verlet is second order, time-reversible and symplectic, so it conserves energy over millions of molecular-dynamics steps while explicit Euler gains energy at every step; the time step must resolve the fastest vibration, about a tenth of its period.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">1. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <p>Coming soon.</p>
+            <h2 id="check">7. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p7-1">
+            <div class="p-head"><span class="p-num">Problem 7.1</span><span class="p-level">Basic</span></div>
+            <p>A second-order reaction $2\mathrm A\to\mathrm P$ obeys $\dot c=-kc^2$ with $k=0.50$ L mol$^{-1}$s$^{-1}$ and $c_0=1.0$ mol/L. (a) Solve for $c(t)$. (b) Find the half-life and the time to reach $c=0.10$ mol/L. (c) If $c_0$ were doubled, how would the half-life change? How would that differ for a first-order reaction?</p>
+            <details class="hint"><summary>Hint</summary><p>Separate: $\mathrm dc/c^2=-k\,\mathrm dt$ and integrate from $c_0$ to $c$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac1c-\dfrac1{c_0}=kt\Rightarrow c(t)=\dfrac{c_0}{1+kc_0t}=\dfrac{1.0}{1+0.5t}$ mol/L.</p>
+            <p>(b) Half-life: $1+kc_0t=2\Rightarrow t_{1/2}=\dfrac1{kc_0}=2.0$ s. For $c=0.10$: $1+0.5t=10\Rightarrow t=18$ s. (Note the slow $1/t$ tail: after $18$ s still $10\%$ left, whereas a first-order process with $t_{1/2}=2$ s would be down to $0.2\%$.)</p>
+            <p>(c) With $c_0=2.0$: $t_{1/2}=1/(0.5\times2)=1.0$ s: <strong>halved</strong>. For first-order kinetics $t_{1/2}=\ln2/k$ is independent of $c_0$. Measuring how the half-life depends on the starting concentration thus reveals the reaction order.</p>
+            <p class="answer">$c=1/(1+0.5t)$; $t_{1/2}=2.0$ s; 18 s to 0.10 mol/L</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-2">
+            <div class="p-head"><span class="p-num">Problem 7.2</span><span class="p-level">Basic</span></div>
+            <p>(a) Solve $\dot y+2y=e^{-t}$ with $y(0)=0$. (b) A steel part at $900$ K is quenched in an environment at $300$ K and cools by $\dot T=-(T-300)/\tau$ with $\tau=120$ s. Find $T(t)$ and the time to reach $400$ K.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Integrating factor $e^{2t}$. (b) Let $\theta=T-300$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac{\mathrm d}{\mathrm dt}(e^{2t}y)=e^{2t}e^{-t}=e^{t}$, so $e^{2t}y=e^t+C$; $y(0)=0$ gives $C=-1$. Hence $y=e^{-t}-e^{-2t}$. Check: $\dot y+2y=-e^{-t}+2e^{-2t}+2e^{-t}-2e^{-2t}=e^{-t}$. &check; (It rises and decays, like the intermediate in Example 4.1.)</p>
+            <p>(b) $\theta=T-300$ obeys $\dot\theta=-\theta/\tau$, so $\theta=600e^{-t/\tau}$ and $T=300+600e^{-t/120}$ K. $T=400$: $e^{-t/120}=\tfrac16$, $t=120\ln6=215$ s.</p>
+            <p class="answer">$y=e^{-t}-e^{-2t}$; $T=300+600e^{-t/120}$; 215 s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-3">
+            <div class="p-head"><span class="p-num">Problem 7.3</span><span class="p-level">Core</span></div>
+            <p>A recrystallisation experiment finds that $50\%$ of the material has transformed after $100$ s and $90\%$ after $200$ s. (a) Fit the Avrami law $X=1-\exp[-(kt)^n]$ for $n$ and $k$. (b) Predict the time for $10\%$ and for $99\%$ transformation. (c) What does the shape of the curve say about the transformation rate?</p>
+            <details class="hint"><summary>Hint</summary><p>Linearise: $\ln[-\ln(1-X)]=n\ln t+n\ln k$. Use two points.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) At $X=0.5$: $\ln[-\ln0.5]=\ln0.6931=-0.3665$. At $X=0.9$: $\ln[-\ln0.1]=\ln2.3026=0.8340$. The slope with respect to $\ln t$ is $n=\dfrac{0.8340-(-0.3665)}{\ln200-\ln100}=\dfrac{1.2005}{0.6931}=1.73$. Then $(kt)^n=0.6931$ at $t=100$: $kt=0.6931^{1/1.732}=e^{-0.2116}=0.8093$, so $k=8.09\times10^{-3}$ s$^{-1}$.</p>
+            <p>(b) $X=0.10$: $(kt)^n=-\ln0.9=0.1054$, $kt=0.1054^{1/1.732}=0.2727$, $t=33.7$ s. $X=0.99$: $(kt)^n=\ln100=4.605$, $kt=4.605^{0.5774}=2.415$, $t=298$ s.</p>
+            <p>(c) The transformation takes $34$ s to reach $10\%$, a further $66$ s to reach $50\%$, and about $200$ s to go from $50\%$ to $99\%$: the classic sigmoidal curve with a slow start (nucleation), fast middle (growth) and slow finish (impingement). An exponent $n\approx1.7$ between $1$ and $2$ suggests growth in one or two dimensions with a decreasing nucleation rate, or diffusion-controlled growth; $n=4$ would mean three-dimensional growth with constant nucleation rate.</p>
+            <p class="answer">$n=1.73$, $k=8.1\times10^{-3}$ s⁻¹; $t_{10\%}=34$ s, $t_{99\%}=298$ s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-4">
+            <div class="p-head"><span class="p-num">Problem 7.4</span><span class="p-level">Core</span></div>
+            <p>For $\dot\eta=-\Gamma(A\eta+b\eta^3)$ with $b&gt;0$: (a) find all fixed points and their stability for $A&gt;0$ and for $A&lt;0$; (b) find the linear relaxation rate near each stable fixed point; (c) show that the ratio of relaxation times just below and above the transition, at equal $|A|$, is $\tau_-/\tau_+=\tfrac12$; (d) describe the dynamics starting from a small $\eta=0.01$ for $A&lt;0$, $\Gamma=b=1$, $A=-1$.</p>
+            <details class="hint"><summary>Hint</summary><p>$f(\eta)=-\Gamma(A\eta+b\eta^3)$, $f'=-\Gamma(A+3b\eta^2)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $f=0$ gives $\eta(A+b\eta^2)=0$: $\eta=0$, and $\eta=\pm\sqrt{-A/b}$ if $A&lt;0$. $f'(0)=-\Gamma A$. For $A&gt;0$: $f'(0)&lt;0$, so $\eta=0$ is stable (the only fixed point). For $A&lt;0$: $f'(0)=\Gamma|A|&gt;0$, unstable; and at $\eta_0^2=|A|/b$: $f'=-\Gamma(A+3|A|)=-2\Gamma|A|&lt;0$, so $\eta=\pm\eta_0$ are stable.</p>
+            <p>(b) Above $T_c$: rate $\Gamma A$, $\tau_+=1/(\Gamma A)$. Below $T_c$: rate $2\Gamma|A|$, $\tau_-=1/(2\Gamma|A|)$.</p>
+            <p>(c) At equal $|A|$: $\tau_-/\tau_+=\dfrac{1/(2\Gamma|A|)}{1/(\Gamma|A|)}=\tfrac12$: ordering is twice as fast just below $T_c$ as the relaxation just above. Both diverge as $|A|\to0$, i.e. $\tau\propto|T-T_c|^{-1}$: critical slowing down.</p>
+            <p>(d) With $A=-1$, $\Gamma=b=1$: $\dot\eta=\eta-\eta^3$. Near $0$ the growth is exponential, $\eta\approx0.01e^{t}$, until $\eta$ is of order $1$ (at $t\approx\ln100=4.6$), then it saturates and approaches $\eta_0=1$ with rate $2$: a logistic-like S-curve. The seed grows because the disordered state is unstable; a similar growth of fluctuations is spinodal decomposition (<a href="phase-field-modelling.html">Phase-field modelling</a>).</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-5">
+            <div class="p-head"><span class="p-num">Problem 7.5</span><span class="p-level">Core</span></div>
+            <p>Solve $\ddot x+2\dot x+5x=0$ with $x(0)=1$, $\dot x(0)=0$. (a) Find $\omega_0$, $\zeta$ and the damped frequency. (b) Write $x(t)$. (c) How many oscillation periods pass before the envelope drops below $1\%$? (d) For which values of the damping coefficient $\gamma$ (keeping $\omega_0^2=5$) is the motion overdamped?</p>
+            <details class="hint"><summary>Hint</summary><p>Characteristic equation $r^2+2r+5=0$ gives $r=-1\pm2i$. Fit $A,B$ to the initial conditions.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\omega_0=\sqrt5=2.236$, $\gamma=2$, $\zeta=\gamma/(2\omega_0)=0.447&lt;1$ (underdamped), $\omega_d=\sqrt{5-1}=2$.</p>
+            <p>(b) $x=e^{-t}(A\cos2t+B\sin2t)$. $x(0)=A=1$. $\dot x=-e^{-t}(A\cos2t+B\sin2t)+e^{-t}(-2A\sin2t+2B\cos2t)$, so $\dot x(0)=-A+2B=0\Rightarrow B=\tfrac12$. Therefore $x(t)=e^{-t}\bigl(\cos2t+\tfrac12\sin2t\bigr)$.</p>
+            <p>(c) The envelope is $\sqrt{1+\tfrac14}\,e^{-t}=1.12\,e^{-t}$, which falls below $0.01$ when $t&gt;\ln112=4.7$ s. The period is $2\pi/\omega_d=\pi=3.14$ s, so about $1.5$ periods: heavily damped ($Q=\omega_0/\gamma=1.1$).</p>
+            <p>(d) Overdamped when $\gamma&gt;2\omega_0=2\sqrt5=4.47$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-6">
+            <div class="p-head"><span class="p-num">Problem 7.6</span><span class="p-level">Core</span></div>
+            <p>A lattice vibration mode is modelled as a driven damped oscillator with $\omega_0=1.0\times10^{13}$ rad/s ($1.59$ THz) and damping $\gamma=2.0\times10^{11}$ rad/s. (a) Find $Q$. (b) Find the ratio of the steady-state amplitude at resonance to the amplitude at zero frequency (the static response). (c) Find the resonance frequency shift $\omega_r-\omega_0$ and the width of the resonance (FWHM) in rad/s and in cm$^{-1}$. (d) What is the phase lag at $\omega_0$?</p>
+            <details class="hint"><summary>Hint</summary><p>$X(\omega)=F/\sqrt{(\omega_0^2-\omega^2)^2+\gamma^2\omega^2}$, so $X(0)=F/\omega_0^2$ and $X(\omega_0)=F/(\gamma\omega_0)$. Wavenumber: $\tilde\nu=\omega/(2\pi c)$ with $c=3.0\times10^{10}$ cm/s.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Q=\omega_0/\gamma=50$.</p>
+            <p>(b) $X(\omega_0)/X(0)=\dfrac{F/(\gamma\omega_0)}{F/\omega_0^2}=\dfrac{\omega_0}\gamma=Q=50$.</p>
+            <p>(c) $\omega_r=\sqrt{\omega_0^2-\gamma^2/2}=\omega_0\sqrt{1-\tfrac12(0.02)^2}=\omega_0(1-10^{-4})$: a shift of $-10^{9}$ rad/s ($10^{-4}$ of $\omega_0$), negligible for high $Q$. The FWHM is $\approx\gamma=2.0\times10^{11}$ rad/s; in wavenumbers $\gamma/(2\pi c)=2.0\times10^{11}/(1.885\times10^{11})=1.06$ cm$^{-1}$. A peak at $\tilde\nu_0=\omega_0/(2\pi c)=53$ cm$^{-1}$ of width $1$ cm$^{-1}$: a sharp far-infrared/Raman line from a well-ordered crystal. Disorder and anharmonic decay (phonon-phonon scattering) increase $\gamma$ and broaden the line, which is how spectral line widths measure phonon lifetimes, $\tau=1/\gamma=5$ ps.</p>
+            <p>(d) At $\omega=\omega_0$: $\tan\delta=\gamma\omega_0/0=\infty$, so $\delta=\pi/2$: the displacement lags the drive by a quarter of a cycle, which is where the absorbed power is greatest.</p>
+            <p class="answer">$Q=50$; amplification $50$; FWHM $\approx2\times10^{11}$ rad/s $=1.06$ cm⁻¹; lag $\pi/2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-7">
+            <div class="p-head"><span class="p-num">Problem 7.7</span><span class="p-level">Core</span></div>
+            <p>Classify the fixed point at the origin of $\dot{\mathbf y}=A\mathbf y$ for (a) $A=\begin{pmatrix}-1&amp;2\\-2&amp;-1\end{pmatrix}$, (b) $A=\begin{pmatrix}1&amp;2\\2&amp;1\end{pmatrix}$, (c) $A=\begin{pmatrix}-3&amp;0\\0&amp;-1\end{pmatrix}$. (d) For the nonlinear system $\dot x=x(1-y)$, $\dot y=y(x-1)$ find the fixed points, linearise, and show that $H=x-\ln x+y-\ln y$ is conserved.</p>
+            <details class="hint"><summary>Hint</summary><p>Compute $\tau$ and $\Delta$ for (a)&ndash;(c). For (d) the Jacobian is $\begin{pmatrix}1-y&amp;-x\\y&amp;x-1\end{pmatrix}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau=-2$, $\Delta=1+4=5$, $\tau^2-4\Delta=-16&lt;0$: $\lambda=-1\pm2i$, a <strong>stable spiral</strong>.</p>
+            <p>(b) $\tau=2$, $\Delta=1-4=-3&lt;0$: a <strong>saddle</strong>, $\lambda=3,-1$ (eigenvectors $(1,1)$ unstable and $(1,-1)$ stable).</p>
+            <p>(c) Diagonal, $\lambda=-3,-1$: a <strong>stable node</strong>, trajectories approach tangent to the slow direction $(0,1)$.</p>
+            <p>(d) Fixed points: $x(1-y)=0$ and $y(x-1)=0$ give $(0,0)$ and $(1,1)$. At $(0,0)$: $J=\begin{pmatrix}1&amp;0\\0&amp;-1\end{pmatrix}$, a saddle. At $(1,1)$: $J=\begin{pmatrix}0&amp;-1\\1&amp;0\end{pmatrix}$, eigenvalues $\pm i$: a linear centre. Linearisation cannot decide whether a centre persists, but $H$ settles it: $\dot H=(1-\tfrac1x)\dot x+(1-\tfrac1y)\dot y=(x-1)(1-y)+(y-1)(x-1)=0$. So trajectories stay on level curves of $H$, which are closed around $(1,1)$ (the minimum of $H$): neutral oscillations. This is the Lotka&ndash;Volterra predator&ndash;prey model, a template for oscillating reaction networks.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-8">
+            <div class="p-head"><span class="p-num">Problem 7.8</span><span class="p-level">Core</span></div>
+            <p>For $\mathrm A\to\mathrm B\to\mathrm C$ with $k_1=1.0$ s$^{-1}$, $k_2=3.0$ s$^{-1}$ and $a_0=1$: (a) find the time of maximum $b$ and its value; (b) compare the exact $b(t)$ with the steady-state approximation $b\approx(k_1/k_2)a$ at $t=0.55$ s and $t=3$ s; (c) what does the steady-state approximation require, and how good is it for this ratio?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $b(t)=\dfrac{k_1a_0}{k_2-k_1}(e^{-k_1t}-e^{-k_2t})$ and $t^*=\dfrac{\ln(k_2/k_1)}{k_2-k_1}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $t^*=\ln3/2=0.549$ s. $b_\mathrm{max}=(1/3)^{3/2}=0.192$. (Check: $\tfrac12(e^{-0.549}-e^{-1.648})=\tfrac12(0.5774-0.1925)=0.1925$. &check;)</p>
+            <p>(b) At $t=0.55$: exact $b=0.192$; approximation $\tfrac13e^{-0.55}=0.5769/3=0.192$. They agree at this point because the maximum of $b$ is where $\dot b=0$, which is exactly the condition of the approximation. At $t=3$: exact $b=\tfrac12(e^{-3}-e^{-9})=\tfrac12(0.04979-0.00012)=0.02483$; approximation $\tfrac13e^{-3}=0.01660$: exact is $50\%$ larger. At early times $t\to0$ the approximation gives $b=\tfrac13$ while the true $b=0$.</p>
+            <p>(c) The approximation requires $b$ to change slowly compared with how fast it relaxes, i.e. $k_2\gg k_1$ (and $t\gg1/k_2$). Here $k_2/k_1=3$ is too small for accuracy: the error at long times tends to the factor $k_2/(k_2-k_1)=1.5$. For $k_2/k_1=100$ the long-time error is only $1\%$. Reduced mechanisms in combustion and corrosion chemistry rely on this approximation for many fast intermediates.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-9">
+            <div class="p-head"><span class="p-num">Problem 7.9</span><span class="p-level">Core</span></div>
+            <p>Consider the stiff decay $\dot y=-100y$, $y(0)=1$. (a) Write the amplification factor per step for explicit Euler and for implicit Euler. (b) Starting from $y_0=1$, take explicit Euler steps with $h=0.01$, $h=0.015$ and $h=0.025$ and describe the results over a few steps. (c) What step size does implicit Euler allow with $h=0.1$, and how accurate is it? (d) What is the maximum stable $h$ for explicit Euler?</p>
+            <details class="hint"><summary>Hint</summary><p>Explicit: $y_{n+1}=(1-h\lambda)y_n$. Implicit: $y_{n+1}=y_n/(1+h\lambda)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $\lambda=100$: explicit $G=1-100h$; implicit $G=1/(1+100h)$. The exact factor is $e^{-100h}$.</p>
+            <p>(b) $h=0.01$: $G=0$, so $y_1=0$ (the decay is captured in one step, crudely but stably). $h=0.015$: $G=-0.5$: $y=1,-0.5,0.25,-0.125,\ldots$: oscillating but decaying (stable, wrong sign alternation: the exact solution is positive). $h=0.025$: $G=-1.5$: $y=1,-1.5,2.25,-3.375,\ldots$: <strong>unstable</strong>, growing by $50\%$ every step.</p>
+            <p>(c) $h=0.1$: $G=1/11=0.0909$, so $y_1=0.0909$ versus the exact $e^{-10}=4.5\times10^{-5}$: stable, positive and monotonic, but not accurate in the fast transient (first order). If only the slow solution matters, as for a stiff mode forced by a slow input, this is exactly what you want: the step is chosen for accuracy, not for the fast mode.</p>
+            <p>(d) $|1-100h|&lt;1\Rightarrow h&lt;0.02$. At the very boundary $h=0.02$ the factor is $-1$ and the solution flips sign forever.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-10">
+            <div class="p-head"><span class="p-num">Problem 7.10</span><span class="p-level">Challenge</span></div>
+            <p>For the harmonic oscillator $\ddot x=-\omega^2x$ with energy $E=\tfrac12(v^2+\omega^2x^2)$ (per unit mass): (a) Show that explicit Euler ($x_{n+1}=x_n+hv_n$, $v_{n+1}=v_n-h\omega^2x_n$) gives $E_{n+1}=(1+h^2\omega^2)E_n$. (b) For $\omega=1$, $h=0.1$, $x_0=1$, $v_0=0$, find the energy after $63$ steps ($t\approx2\pi$, one period). (c) Run velocity Verlet for the same problem and compare. (d) What is the stability limit of velocity Verlet?</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Square the update equations. (c) Velocity Verlet: $x_{n+1}=x_n+hv_n-\tfrac12h^2\omega^2x_n$, $v_{n+1}=v_n-\tfrac12h\omega^2(x_n+x_{n+1})$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $v_{n+1}^2+\omega^2x_{n+1}^2=(v_n-h\omega^2x_n)^2+\omega^2(x_n+hv_n)^2=v_n^2+\omega^2x_n^2+h^2\omega^4x_n^2+h^2\omega^2v_n^2=(1+h^2\omega^2)(v_n^2+\omega^2x_n^2)$, because the cross terms $\mp2h\omega^2x_nv_n$ cancel. So $E_{n+1}=(1+h^2\omega^2)E_n$, a systematic energy gain at every step.</p>
+            <p>(b) $E_{63}/E_0=(1.01)^{63}=1.872$: after one period the energy has almost doubled (amplitude up $37\%$), and it keeps growing exponentially. A simulation of a vibrating solid with explicit Euler would heat itself up and eventually blow up.</p>
+            <p>(c) Running $63$ velocity Verlet steps gives $E$ between $0.49875$ and $0.50000$ (initial $E=0.5$): the energy fluctuates by about $0.25\%$ and does not drift. The final position is $x=0.99981$ against the exact $\cos6.3=0.99986$: the phase error is tiny.</p>
+            <p>(d) Verlet is stable for $h\omega&lt;2$ (then the numerical solution remains bounded and oscillates at a slightly wrong frequency). For accuracy, though, far smaller steps are used: here $h\omega=0.1$ gives $63$ steps per period; the frequency error scales as $h^2\omega^2/24\approx0.04\%$ (for $h\omega=0.1$).</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-11">
+            <div class="p-head"><span class="p-num">Problem 7.11</span><span class="p-level">Core</span></div>
+            <p>(a) The C&ndash;H stretching vibration is at $\tilde\nu=3000$ cm$^{-1}$. Find its period, and the time step that gives $10$ steps per period. (b) What is the velocity-Verlet stability limit for this mode? (c) If the hydrogen is replaced by deuterium (frequency lower by $\approx\sqrt2$, i.e. $2100$ cm$^{-1}$), what are the new period and step? (d) How many steps are needed to simulate $5$ ns at $1$ fs, and what wall-clock time at $10^{6}$ steps per hour does that take?</p>
+            <details class="hint"><summary>Hint</summary><p>Period $T=1/(c\tilde\nu)$ with $c=3.0\times10^{10}$ cm/s. Stability: $h&lt;2/\omega=T/\pi$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $T=\dfrac{1}{(3.0\times10^{10})(3000)}=1.11\times10^{-14}$ s $=11.1$ fs. Ten steps per period: $h\approx1.1$ fs: the usual choice of about $1$ fs.</p>
+            <p>(b) $\omega=2\pi/T=5.65\times10^{14}$ rad/s; the Verlet limit is $h&lt;2/\omega=3.5$ fs, which is $T/\pi$. So $1$ fs is well within the stable range, and chosen for accuracy.</p>
+            <p>(c) $T_D=1/[(3.0\times10^{10})(2100)]=15.9$ fs, so $h\approx1.6$ fs for $10$ steps per period (and a stability limit of $5.1$ fs). Heavier isotopes, or constraint algorithms that freeze the fast bonds (SHAKE, RATTLE), allow longer steps ($2$&ndash;$4$ fs).</p>
+            <p>(d) $5$ ns $=5\times10^{-9}$ s at $10^{-15}$ s per step is $5\times10^6$ steps; at $10^6$ steps per hour: $5$ hours. Reaching a microsecond would take $1000$ times longer ($5000$ hours), which is why rare events are studied with enhanced sampling or kinetic Monte Carlo rather than brute-force MD.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p7-12">
+            <div class="p-head"><span class="p-num">Problem 7.12</span><span class="p-level">Challenge</span></div>
+            <p>A reaction network linearised about a steady state has $\dot{\mathbf y}=A\mathbf y$ with $A=\begin{pmatrix}-1000&amp;0\\1&amp;-1\end{pmatrix}$. (a) Find the eigenvalues, the stiffness ratio and the solution for $\mathbf y(0)=(1,1)$. (b) What is the largest stable step for explicit Euler, and how many steps are needed for $t\in[0,5]$? (c) What step would be adequate for accuracy of the slow component, and how many steps would that need? (d) Why is an implicit method the natural choice?</p>
+            <details class="hint"><summary>Hint</summary><p>$A$ is lower-triangular, so $y_1=e^{-1000t}$ and $y_2$ solves $\dot y_2=-y_2+y_1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Triangular: eigenvalues $-1000$ and $-1$; the stiffness ratio is $1000$. $y_1=e^{-1000t}$. Then $\dot y_2+y_2=e^{-1000t}$, a first-order linear equation: $y_2=Ce^{-1000t}+Be^{-t}$; substituting the first term gives $-1000C+C=1$, so $C=-\tfrac1{999}$, and $y_2(0)=1$ gives $B=\tfrac{1000}{999}$. Hence $y_2=-\tfrac1{999}e^{-1000t}+\bigl(1+\tfrac1{999}\bigr)e^{-t}=\tfrac{1000}{999}e^{-t}-\tfrac1{999}e^{-1000t}$. After a few milliseconds only the slow mode $y_2\approx1.001e^{-t}$ remains.</p>
+            <p>(b) Explicit Euler is stable only for $h&lt;2/1000=0.002$. Over $[0,5]$ that needs at least $2500$ steps.</p>
+            <p>(c) The slow mode has time scale $1$ s, and a first-order method with $h=0.05$ gives an error of order $h\,\lambda_\mathrm{slow}=5\%$ (RK4 would manage with $h=0.5$). With $h=0.05$ that is only $100$ steps: the fast mode dictates $25$ times as many steps as the physics of interest.</p>
+            <p>(d) Implicit Euler is stable for any $h$, so one can choose the step for the slow dynamics, solving a linear system (here $2\times2$; in a large reaction network or a discretised PDE, a sparse matrix) at each step. The fast mode is damped to its quasi-steady value automatically, just as the steady-state approximation of Problem 7.8 does by hand. Stiff solvers (BDF methods, Rosenbrock, implicit Runge&ndash;Kutta) are therefore standard in combustion kinetics, corrosion models and phase-field codes with long time steps.</p>
+            </details>
+            </div>
+
+            <h2 id="refs">8. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Boyce, W. E. and DiPrima, R. C., <em>Elementary Differential Equations and Boundary Value Problems</em>, Wiley.</li>
+                <li>Strogatz, S. H., <em>Nonlinear Dynamics and Chaos</em>, Westview Press: phase planes, stability and bifurcations (with an excellent intuitive style).</li>
+                <li>Hairer, E., N&oslash;rsett, S. P. and Wanner, G., <em>Solving Ordinary Differential Equations I and II</em>, Springer: stiff problems and geometric integration.</li>
+                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press: Verlet integrators and time-step selection.</li>
+                <li>Porter, D. A. and Easterling, K. E., <em>Phase Transformations in Metals and Alloys</em>, CRC Press: the Avrami equation and nucleation-and-growth kinetics.</li>
+                <li>Atkins, P. and de Paula, J., <em>Physical Chemistry</em>, Oxford University Press: rate laws and the steady-state approximation.</li>
+            </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
@@ -83,7 +365,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=b8b6cd84"></script>
+    <script src="../assets/topics.js?v=6b3f9db5"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
 </body>
