@@ -56,7 +56,7 @@ def label_text(t):
     if t["series"] == "start":
         return "Start here " + t["label"].lstrip("S")
     if t["series"] == "maths":
-        return "Maths module " + t["label"].lstrip("M")
+        return "Maths course" if t["label"] == "M0" else "Maths module " + t["label"].lstrip("M")
     return "Topic " + t["label"]
 
 

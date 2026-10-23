@@ -12,6 +12,9 @@ body = text[head_end + len("window.MIBEM_TOPICS = "):]
 topics = json.loads(body[: body.rindex("];") + 1])
 
 M = [
+    (36, "M0", "maths-course-overview", "Course overview", "Maths course: overview and study plan",
+     "How the twelve-module maths course is organised, three learning paths, how to study with the problems, a placement check, a notation guide and a one-page revision sheet.",
+     [18], [12]),
     (24, "M1", "calculus-single-variable", "Calculus I", "Calculus I: functions of one variable",
      "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
      [19], [2, 15]),

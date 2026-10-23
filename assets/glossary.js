@@ -1233,5 +1233,237 @@ window.MIBEM_GLOSSARY = [
   "d": "A measure of how much a problem amplifies small errors in its input.",
   "a": [],
   "p": "numerical-methods-essentials.html#errors"
+ },
+ {
+  "t": "divergence",
+  "d": "The net outflow of a vector field per unit volume at a point; positive at sources, negative at sinks.",
+  "a": [
+   "divergences"
+  ],
+  "p": "vector-calculus.html#div"
+ },
+ {
+  "t": "curl",
+  "d": "A vector measuring the local rotation of a vector field; zero for any field that is the gradient of a potential.",
+  "p": "vector-calculus.html#curl"
+ },
+ {
+  "t": "Laplacian",
+  "d": "The sum of the second derivatives of a field; it measures how much a value differs from the average of its neighbours and appears in diffusion and heat equations.",
+  "a": [
+   "Laplace operator"
+  ],
+  "p": "vector-calculus.html#lap"
+ },
+ {
+  "t": "Hessian",
+  "d": "The matrix of second derivatives of a function; for an energy, its eigenvalues give the stiffness and tell minima from saddle points.",
+  "a": [
+   "Hessian matrix"
+  ],
+  "p": "multivariable-calculus.html#hessian"
+ },
+ {
+  "t": "Jacobian",
+  "d": "The matrix of first derivatives of a vector function; its determinant is the volume factor when changing variables in an integral.",
+  "p": "multivariable-calculus.html#jacobian"
+ },
+ {
+  "t": "Lagrange multiplier",
+  "d": "A number that enforces a constraint in an optimisation problem; at the optimum it measures how the best value changes if the constraint is relaxed.",
+  "a": [
+   "Lagrange multipliers"
+  ],
+  "p": "multivariable-calculus.html#lagrange"
+ },
+ {
+  "t": "Taylor series",
+  "d": "An expansion of a function about a point in powers of the distance from it, built from its derivatives there.",
+  "a": [
+   "Taylor expansion"
+  ],
+  "p": "calculus-single-variable.html#taylor"
+ },
+ {
+  "t": "dot product",
+  "d": "A number from two vectors, equal to the product of their lengths and the cosine of the angle between them; it is zero for perpendicular vectors.",
+  "a": [
+   "dot products"
+  ],
+  "p": "linear-algebra-foundations.html#vec-basics"
+ },
+ {
+  "t": "determinant",
+  "d": "A number from a square matrix that gives the factor by which it scales volumes; it is zero when the matrix cannot be inverted.",
+  "a": [
+   "determinants"
+  ],
+  "p": "linear-algebra-foundations.html#det"
+ },
+ {
+  "t": "singular value decomposition",
+  "d": "A factorisation of any matrix into a rotation, a stretch along perpendicular axes and another rotation; the basis of principal component analysis and low-rank approximation.",
+  "a": [
+   "SVD"
+  ],
+  "p": "eigenvalues-and-decompositions.html#svd"
+ },
+ {
+  "t": "principal component analysis",
+  "d": "A method that finds the directions along which a dataset varies most, from the eigenvectors of its covariance matrix.",
+  "a": [
+   "PCA",
+   "principal components"
+  ],
+  "p": "eigenvalues-and-decompositions.html#pca"
+ },
+ {
+  "t": "Fourier series",
+  "d": "A sum of sines and cosines (or complex exponentials) that reproduces a periodic function.",
+  "p": "fourier-analysis.html#series"
+ },
+ {
+  "t": "convolution",
+  "d": "A smearing of one function by another; in Fourier space it becomes a simple product.",
+  "a": [
+   "convolutions"
+  ],
+  "p": "fourier-analysis.html#transform"
+ },
+ {
+  "t": "aliasing",
+  "d": "The misreading of a fast oscillation as a slower one when it is sampled too rarely.",
+  "a": [
+   "Nyquist frequency"
+  ],
+  "p": "fourier-analysis.html#sampling"
+ },
+ {
+  "t": "fast Fourier transform",
+  "d": "An algorithm that computes the discrete Fourier transform of N values in about N log N operations.",
+  "a": [
+   "FFT"
+  ],
+  "p": "fourier-analysis.html#dft"
+ },
+ {
+  "t": "boundary condition",
+  "d": "A specification of the solution of a differential equation at the edge of the region, such as a fixed value, a fixed flux or periodic repetition.",
+  "a": [
+   "boundary conditions"
+  ],
+  "p": "partial-differential-equations.html#bcs"
+ },
+ {
+  "t": "harmonic oscillator",
+  "d": "A system with a restoring force proportional to the displacement; it oscillates at a fixed natural frequency.",
+  "p": "ordinary-differential-equations.html#second"
+ },
+ {
+  "t": "fixed point",
+  "d": "A state at which a dynamical system does not change; it is stable if small disturbances die away.",
+  "a": [
+   "fixed points"
+  ],
+  "p": "ordinary-differential-equations.html#fixed1"
+ },
+ {
+  "t": "Poisson distribution",
+  "d": "The distribution of the number of rare, independent events in a fixed interval; its mean and variance are equal.",
+  "p": "probability-for-simulation.html#binpois"
+ },
+ {
+  "t": "random variable",
+  "d": "A quantity whose value is set by chance, described by a probability distribution with a mean and a variance.",
+  "a": [
+   "random variables"
+  ],
+  "p": "probability-for-simulation.html#rv"
+ },
+ {
+  "t": "variance",
+  "d": "The average squared deviation of a quantity from its mean; its square root is the standard deviation.",
+  "p": "probability-for-simulation.html#rv"
+ },
+ {
+  "t": "autocorrelation",
+  "d": "How strongly a quantity at one time is related to its value a later time; it sets how many successive samples are really independent.",
+  "a": [
+   "autocorrelation time"
+  ],
+  "p": "statistics-and-data-fitting.html#correlated"
+ },
+ {
+  "t": "bootstrap",
+  "d": "A way to estimate an uncertainty by recalculating the result on many random resamples of the data.",
+  "p": "statistics-and-data-fitting.html#bayes-boot"
+ },
+ {
+  "t": "regularisation",
+  "d": "Adding a penalty on large parameters to a fit so that noisy or nearly dependent data do not produce wild results.",
+  "a": [
+   "regularization",
+   "ridge regression"
+  ],
+  "p": "statistics-and-data-fitting.html#ridge"
+ },
+ {
+  "t": "Euler-Lagrange equation",
+  "d": "The differential equation satisfied by the function that makes an integral (a functional) stationary.",
+  "p": "calculus-of-variations-and-optimisation.html#el"
+ },
+ {
+  "t": "functional derivative",
+  "d": "The rate of change of an integral quantity such as a free energy when a field is changed at one point; for a free energy it gives the chemical potential.",
+  "p": "calculus-of-variations-and-optimisation.html#funcderiv"
+ },
+ {
+  "t": "weak form",
+  "d": "A form of a differential equation obtained by multiplying by a test function and integrating by parts; the starting point of the finite element method.",
+  "p": "calculus-of-variations-and-optimisation.html#weak"
+ },
+ {
+  "t": "gradient descent",
+  "d": "An optimisation method that repeatedly steps downhill along the negative gradient.",
+  "p": "calculus-of-variations-and-optimisation.html#gd"
+ },
+ {
+  "t": "conjugate gradient",
+  "d": "An optimisation and linear-solver method that picks successive directions so that progress along one is not undone by the next.",
+  "a": [
+   "conjugate gradients"
+  ],
+  "p": "calculus-of-variations-and-optimisation.html#cg"
+ },
+ {
+  "t": "Newton's method",
+  "d": "An iteration that replaces a function by its tangent line (or a parabola) and jumps to its root (or minimum); it converges very fast near the answer.",
+  "p": "calculus-single-variable.html#newton"
+ },
+ {
+  "t": "Einstein summation convention",
+  "d": "The rule that an index repeated in a product is summed over, which makes tensor equations compact.",
+  "p": "tensors-stress-and-strain.html#index"
+ },
+ {
+  "t": "principal stress",
+  "d": "One of the three normal stresses acting on the planes at a point where the shear stress vanishes; the eigenvalues of the stress tensor.",
+  "a": [
+   "principal stresses"
+  ],
+  "p": "tensors-stress-and-strain.html#principal"
+ },
+ {
+  "t": "von Mises stress",
+  "d": "A single equivalent stress computed from the shape-changing part of the stress tensor, used to predict yielding of metals.",
+  "p": "tensors-stress-and-strain.html#devia"
+ },
+ {
+  "t": "error function",
+  "d": "The integral of a Gaussian, which rises from 0 to 1; it gives the concentration profile for diffusion into a semi-infinite solid.",
+  "a": [
+   "erf"
+  ],
+  "p": "partial-differential-equations.html#similarity"
  }
 ];

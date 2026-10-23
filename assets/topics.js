@@ -167,6 +167,30 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 36,
+    "label": "M0",
+    "series": "maths",
+    "slug": "maths-course-overview",
+    "short": "Course overview",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 8,
+    "title": "Maths course: overview and study plan",
+    "blurb": "How the twelve-module maths course is organised, three learning paths, how to study with the problems, a placement check, a notation guide and a one-page revision sheet.",
+    "builds": [
+      18
+    ],
+    "related": [
+      12
+    ],
+    "takeaways": [
+      "The course has twelve modules, each with explained concepts, derivations, worked examples, interactive figures and twelve graded problems with hints and full solutions.",
+      "Read in order if you can; otherwise follow a goal-based path (electronic structure, atomistic simulation, continuum and phase-field, or data and machine learning).",
+      "Learning happens in the problems: attempt each on paper first, then use the hint, and only then read the solution.",
+      "Your ticks are stored only in your browser; the table below counts them per module."
+    ]
+  },
+  {
     "id": 24,
     "label": "M1",
     "series": "maths",
@@ -174,11 +198,12 @@ window.MIBEM_TOPICS = [
     "short": "Calculus I",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 23,
+    "minutes": 24,
     "title": "Calculus I: functions of one variable",
     "blurb": "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
     "builds": [
-      19
+      19,
+      36
     ],
     "related": [
       2,
@@ -303,7 +328,7 @@ window.MIBEM_TOPICS = [
     "short": "Tensors",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 21,
+    "minutes": 22,
     "title": "Tensors: stress, strain and anisotropy",
     "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
     "builds": [
@@ -331,7 +356,7 @@ window.MIBEM_TOPICS = [
     "short": "ODEs",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 22,
+    "minutes": 23,
     "title": "Ordinary differential equations",
     "blurb": "First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.",
     "builds": [
@@ -358,7 +383,7 @@ window.MIBEM_TOPICS = [
     "short": "Fourier analysis",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 24,
+    "minutes": 25,
     "title": "Fourier series and transforms",
     "blurb": "Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.",
     "builds": [

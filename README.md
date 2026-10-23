@@ -11,8 +11,10 @@ Open `index.html` in a browser, or publish the repository with GitHub Pages. The
 - `assets/style.css`: shared stylesheet (light and dark themes).
 - `assets/site.js`: search, theme toggle, contents tracking, copy buttons, topic map.
 - `assets/demos.js`: interactive demos (Boltzmann, Gibbs energy, Ising model, diffusion solver, Lennard-Jones).
+- `assets/katex/` and `assets/math.js`: the bundled KaTeX and the script that typesets `$...$` and `$$...$$` on the Maths course pages (no CDN).
+- `assets/mathdemos.js`: the interactive figures of the Maths course (built on the helpers in `demos.js`).
 - `assets/animations/`: animated GIF and SVG figures.
-- `assets/topics.js`: the topic list, prerequisites and key takeaways (single source of truth). Pages come in three series: Start here (S0-S6, school-level, from zero), Background (B1-B5) and Core (1-11).
+- `assets/topics.js`: the topic list, prerequisites and key takeaways (single source of truth). Pages come in four series: Start here (S0-S6, school-level, from zero), Maths course (M0-M12, university-level maths with problems), Background (B1-B5) and Core (1-11).
 - `assets/glossary.js`: plain-language definitions. Terms are underlined on topic pages with a hover/tap definition, and the build writes `glossary.html` from this file.
 - `assets/search-index.js`, `sitemap.xml`, `site.webmanifest`: generated.
 
@@ -27,3 +29,7 @@ Commit the generated files together with the page.
 ## Animations
 
 Figures in `assets/animations/` are GIFs or animated SVGs. Each has a still `*.poster.png` used by the "Pause animation" button and by visitors who ask their system to reduce motion. After adding or changing an animation, run `python tools/make_posters.py` (needs Pillow and Edge or Chrome), then `python tools/build.py`.
+
+## The Maths course
+
+`computational/` pages M0-M12 are written as source files with a small header, converted with `python tools/new_page.py source.html` (which also builds the contents list, escapes `&`, `<`, `>` inside formulas so you can write plain TeX, and stores the key takeaways in `assets/topics.js`), then finished with `python tools/build.py`. `tools/add_maths_topics.py` registers the module entries. Conventions inside a module: formulas as `$...$` / `$$...$$` (no maths in headings), boxes `div.note.def|thm|warn|mat`, worked examples `div.example`, problems `div.problem#pN-K` with `details.hint` and `details.solution`, and demos `div.demo[data-demo]` registered in `assets/mathdemos.js`. Ticks on problems are kept in the visitor's browser only.

@@ -18,7 +18,7 @@
   function tLabel(t) {
     if (t.series === "background") return "Background " + String(t.label).replace(/^B/, "");
     if (t.series === "start") return "Start here " + String(t.label).replace(/^S/, "");
-    if (t.series === "maths") return "Maths module " + String(t.label).replace(/^M/, "");
+    if (t.series === "maths") return t.label === "M0" ? "Maths course" : "Maths module " + String(t.label).replace(/^M/, "");
     return "Topic " + (t.label || t.id);
   }
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
@@ -305,6 +305,21 @@
       head.appendChild(label);
     });
     refresh();
+  }
+
+  /* ---------------- maths course overview: progress per module, from the ticks on the problems ---------------- */
+  function initCourseProgress() {
+    var cells = doc.querySelectorAll("[data-course-module]");
+    if (!cells.length) return;
+    var done = solvedList(), all = 0, solved = 0;
+    cells.forEach(function (c) {
+      var m = c.getAttribute("data-course-module"), tot = parseInt(c.getAttribute("data-total"), 10) || 12, n = 0;
+      done.forEach(function (id) { if (id.indexOf("p" + m + "-") === 0) n++; });
+      c.textContent = n + " / " + tot; all += tot; solved += n;
+    });
+    var o = doc.getElementById("course-total"), bar = doc.getElementById("course-bar");
+    if (o) o.textContent = solved + " of " + all + " problems solved on this device";
+    if (bar) bar.style.width = (100 * solved / all) + "%";
   }
 
   /* ---------------- topic map (tree graph) ---------------- */
@@ -681,6 +696,7 @@
     initBackTop();
     initProgress();
     initProblems();
+    initCourseProgress();
     initMap();
   }
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", boot); else boot();
