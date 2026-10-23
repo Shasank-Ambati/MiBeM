@@ -1,0 +1,15 @@
+PBE/cc-pVTZ energy of water against the grid level (the reference is level 9):
+  level   grid points   E (Ha)           E - E(9) (microHa)   time (s)
+   0          2328       -76.38090045       -8084.00         0.3
+   1         10128       -76.37282793         -11.48         1.5
+   2         21952       -76.37281706          -0.61         1.6
+   3         33704       -76.37281619           0.26         1.7
+   4         59680       -76.37281652          -0.06         2.3
+   5         90064       -76.37281648          -0.03         3.1
+   7        187064       -76.37281645           0.00         5.1
+   9        489832       -76.37281645           0.00        12.2
+
+bad energy differences from a coarse grid: a rotated molecule has a different energy on a coarse grid (the grid is not rotationally invariant)
+   grid level 1: E(original) - E(rotated by 37 degrees) =    -27.78 microHa = -17.4306 cal/mol
+   grid level 3: E(original) - E(rotated by 37 degrees) =     -0.33 microHa = -0.2086 cal/mol
+   grid level 5: E(original) - E(rotated by 37 degrees) =     -0.03 microHa = -0.0181 cal/mol

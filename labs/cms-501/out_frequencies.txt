@@ -1,0 +1,6 @@
+harmonic frequencies (cm^-1) of H2O: bend, symmetric stretch, asymmetric stretch; experimental harmonic values 1649, 3832, 3943 (anharmonic fundamentals 1595, 3657, 3756)
+method    r(OH) (A)  angle     bend    sym.str.  asym.str.
+HF         0.9406   106.00    1752.9   4126.7   4226.6
+LDA        0.9706   104.34    1560.5   3717.2   3825.4
+PBE        0.9697   103.53    1606.4   3700.5   3802.8
+B3LYP      0.9613   104.54    1639.3   3800.4   3900.7

@@ -3,3 +3,9 @@ counterpoise-corrected interaction energy E(Ar2) - 2 E(Ar in the dimer basis), m
    3.00     177.90     12.18    115.02    137.87     94.09    103.69
    3.40      42.61    -30.91     14.17     31.51      2.06      6.11
    3.76      11.42    -23.22     -3.75     10.30    -10.42     -8.37
+   4.20       2.23    -11.00     -5.09      4.52     -8.54     -7.51
+   4.60       0.51     -4.71     -3.20      2.70     -5.46     -4.86
+   5.00       0.12     -1.83     -1.63      1.51     -3.36     -2.99
+   6.00       0.00     -0.15     -0.20      0.23     -1.09     -0.96
+
+minimum on this grid:  HF 0.0 meV at None A   LDA -30.9 meV at 3.4 A   PBE -5.1 meV at 4.2 A   B3LYP 0.0 meV at None A   MP2 -10.4 meV at 3.76 A   CCSD(T) -8.4 meV at 3.76 A

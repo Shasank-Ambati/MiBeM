@@ -877,12 +877,12 @@ window.MIBEM_TOPICS = [
   {
     "id": 5,
     "slug": "density-functional-theory",
-    "short": "Density functional theory",
+    "short": "DFT I: theory",
     "part": "Computational methods",
     "tone": "b",
-    "minutes": 13,
-    "title": "Density functional theory in practice",
-    "blurb": "The Kohn-Sham scheme, functionals, the SCF cycle, convergence and what to compute.",
+    "minutes": 62,
+    "title": "Density functional theory I: from the Schrödinger equation to Kohn–Sham",
+    "blurb": "The electronic-structure problem, a Hartree–Fock program from scratch, the Hohenberg–Kohn theorems and Kohn–Sham method, the ladder of functionals, and tests on atoms, atomisation energies, stretched bonds, ionisation energies, dispersion and vibrations with real PySCF output.",
     "builds": [
       1,
       2,
@@ -893,16 +893,19 @@ window.MIBEM_TOPICS = [
       4
     ],
     "takeaways": [
-      "DFT solves for the electron density through the Kohn-Sham equations; only the exchange-correlation energy is approximated.",
-      "The functional (LDA, GGA, meta-GGA, hybrid, plus U, van der Waals) sets the typical errors. Relative energies are more reliable than absolute ones.",
-      "Converge the cutoff, k-points, smearing and cell size before trusting any number.",
-      "Standard outputs are lattice constants, elastic constants, formation and defect energies, barriers by nudged elastic band, and phonons.",
-      "Cost grows roughly as N cubed, which limits cells to hundreds or a few thousand atoms, and results are for 0 K unless extended."
+      "The electronic Schroedinger equation for N electrons is a 3N-dimensional problem that cannot be solved exactly; all practical methods are approximations of increasing cost: Hartree-Fock (an independent-particle wave function, formal cost N^4), density functional theory (N^3 to N^4) and coupled cluster (N^7 for CCSD(T)).",
+      "Hartree-Fock misses the correlation energy: for He, Be and Ne it is 0.0422, 0.0944 and 0.3942 Ha (1.15, 2.57 and 10.7 eV), 25 to 250 times larger than the chemical accuracy of 1.6 mHa; a self-consistent-field loop written from scratch in 30 lines reproduces the PySCF energy of water in 6-31G (-75.983995777 Ha) to 2e-13 Ha, in 32 plain iterations, 40 damped and 11 with DIIS acceleration.",
+      "Kohn-Sham DFT replaces the many-electron problem by non-interacting electrons in an effective potential that reproduces the exact density; everything not known exactly is collected in the exchange-correlation functional, which is approximated on a ladder: LDA, GGA (PBE), hybrids (B3LYP) that mix exact exchange; the total energies of atoms are off by 0.03 to 0.7 Ha (LDA) but energy differences are much better.",
+      "Atomisation energies of H2, N2, CO, O2, H2O and CH4 against CCSD(T)/cc-pVTZ have mean absolute errors of 3.30 eV for Hartree-Fock (underbinding), 1.71 eV for LDA (overbinding by up to 2.6 eV), 0.56 eV for PBE and 0.18 eV for B3LYP: the functional ladder works, and no functional is exact.",
+      "Approximate functionals have a self-interaction (delocalisation) error: the one-electron ion H2+ stretched to 12 Angstrom is 2 eV too low with B3LYP and about 2 eV with LDA and PBE near 3-6 Angstrom, where Hartree-Fock is exact; the highest Kohn-Sham orbital energy of water is 7.4 eV (LDA) and 8.8 eV (B3LYP) against an ionisation energy of 12.6 eV, whereas the total-energy difference E(cation) - E(neutral) gives 13.2 and 12.8 eV.",
+      "Semilocal functionals contain no long-range dispersion: the argon dimer, bound by 12.3 meV at 3.76 Angstrom, is unbound or nearly so with Hartree-Fock and PBE and correctly bound by MP2 and CCSD(T) (see the table); dispersion corrections or non-local functionals are required for molecular crystals, layered materials and adsorption.",
+      "Time to solution depends on the basis size N as N^p: on chains of H2 molecules (cc-pVDZ, density fitting) the measured exponent is given in the table of Lecture 5; forces are obtained by the Hellmann-Feynman theorem plus basis-set corrections, and harmonic frequencies from the Hessian, with errors that depend on the functional (see the table of Lecture 6)."
     ],
     "label": "CMS 501",
     "code": "CMS 501",
     "dept": "CMS",
-    "level": 5
+    "level": 5,
+    "katex": true
   },
   {
     "id": 6,
@@ -1082,6 +1085,31 @@ window.MIBEM_TOPICS = [
     "code": "CMS 507",
     "dept": "CMS",
     "level": 5
+  },
+  {
+    "id": 54,
+    "label": "CMS 511",
+    "code": "CMS 511",
+    "dept": "CMS",
+    "level": 5,
+    "slug": "density-functional-theory-solids",
+    "short": "DFT II: solids",
+    "part": "Computational methods",
+    "tone": "a",
+    "minutes": 5,
+    "title": "Density functional theory II: solids, plane waves and workflows",
+    "blurb": "Bloch states and k points, plane waves and pseudopotentials, metals and smearing, forces, stress and equations of state, elastic constants, defects, surfaces, DFT+U and GW, and the workflows of materials research, with real calculations.",
+    "builds": [
+      5,
+      2,
+      41
+    ],
+    "related": [],
+    "takeaways": [
+      "This page is being written; the calculations behind it are in labs/cms-511.",
+      "Part I (CMS 501) covers the theory of Hartree-Fock and Kohn-Sham DFT."
+    ],
+    "katex": true
   },
   {
     "id": 52,
@@ -1347,6 +1375,7 @@ window.MIBEM_PATHPLAN = [
     "courses": [
       "CMS 501",
       "LAB 501",
+      "CMS 511",
       "CMS 502",
       "LAB 502",
       "LAB 503",

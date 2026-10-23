@@ -1,6 +1,7 @@
 """Harmonic vibrational frequencies of water by Hartree-Fock and DFT at the optimised geometry (cc-pVTZ)."""
 import numpy as np
 from pyscf import gto, scf, dft
+import sys, os, io, contextlib
 from pyscf.geomopt.geometric_solver import optimize
 from pyscf.hessian import thermo
 CM = 219474.63
@@ -9,7 +10,8 @@ def run(method):
     if method == "HF": mf = scf.RHF(mol)
     else:
         mf = dft.RKS(mol); mf.xc = {"LDA": "lda,vwn", "PBE": "pbe", "B3LYP": "b3lyp"}[method]; mf.grids.level = 5
-    mol_eq = optimize(mf, maxsteps=100)
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):     # geomeTRIC writes a long banner and log
+        mol_eq = optimize(mf, maxsteps=100)
     mf2 = (scf.RHF(mol_eq) if method == "HF" else dft.RKS(mol_eq))
     if method != "HF": mf2.xc = mf.xc; mf2.grids.level = 5
     mf2.conv_tol = 1e-11; mf2.kernel()

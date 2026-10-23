@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Density Functional Theory in Practice - MiBeM</title>
-    <meta name="description" content="The Kohn-Sham scheme, exchange-correlation functionals, the SCF cycle, convergence parameters and typical DFT calculations for materials.">
+    <title>Density functional theory I: from the Schrödinger equation to Kohn–Sham - MiBeM</title>
+    <meta name="description" content="Density functional theory, part I: the electronic structure problem, Hartree-Fock theory with a self-consistent-field program written from scratch, the Hohenberg-Kohn theorems and the Kohn-Sham method, the ladder of exchange-correlation functionals, tested on atoms, atomisation energies, stretched bonds, ionisation energies, dispersion and vibrational frequencies with real PySCF calculations, and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/density-functional-theory.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Density Functional Theory in Practice - MiBeM">
-    <meta property="og:description" content="The Kohn-Sham scheme, exchange-correlation functionals, the SCF cycle, convergence parameters and typical DFT calculations for materials.">
+    <meta property="og:title" content="Density functional theory I: from the Schrödinger equation to Kohn–Sham - MiBeM">
+    <meta property="og:description" content="Density functional theory, part I: the electronic structure problem, Hartree-Fock theory with a self-consistent-field program written from scratch, the Hohenberg-Kohn theorems and the Kohn-Sham method, the ladder of exchange-correlation functionals, tested on atoms, atomisation energies, stretched bonds, ionisation energies, dispersion and vibrational frequencies with real PySCF calculations, and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/density-functional-theory.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="5">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,189 +36,680 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#problem">1. The electronic structure problem</a></li>
-                <li><a href="#ks">2. The Kohn&ndash;Sham scheme</a></li>
-                <li><a href="#xc">3. Exchange&ndash;correlation functionals</a></li>
-                <li><a href="#basis">4. Basis sets and pseudopotentials</a></li>
-                <li><a href="#kpoints">5. Sampling reciprocal space</a></li>
-                <li><a href="#scf">6. The self-consistency cycle</a></li>
-                <li><a href="#convergence">7. Convergence</a></li>
-                <li><a href="#calc">8. What to compute</a></li>
-                <li><a href="#cost">9. Cost and accuracy</a></li>
-                <li><a href="#inputs">10. Inputs in common codes</a></li>
-                <li><a href="#check">11. Check your understanding</a></li>
-                <li><a href="#refs">12. References</a></li>
+                <li><a href="#problem">Lecture 1. The electronic-structure problem</a></li>
+                <li><a href="#hf">Lecture 2. Hartree&ndash;Fock theory and the self-consistent field</a></li>
+                <li><a href="#dft">Lecture 3. Density functional theory: the Hohenberg&ndash;Kohn theorems and the Kohn&ndash;Sham method</a></li>
+                <li><a href="#accuracy">Lecture 4. How good is DFT? Testing the approximations</a></li>
+                <li><a href="#basis">Lecture 5. Basis sets, integration grids and cost</a></li>
+                <li><a href="#forces">Lecture 6. Forces, geometries and vibrations</a></li>
+                <li><a href="#practice">Lecture 7. Choosing, testing and reporting a calculation</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
         <article id="main">
             <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip blue">Computational methods</span><span>CMS 501</span></p>
             <!-- coursenav:start -->
-<nav class="course-nav" aria-label="Computational methods courses"><span class="cn-dept">CMS</span><a href="introduction.html" title="CMS 401: Introduction to computational materials science">401</a><a href="density-functional-theory.html" class="here" aria-current="page" title="CMS 501: Density functional theory in practice">501</a><a href="molecular-dynamics.html" title="CMS 502: Molecular dynamics">502</a><a href="monte-carlo-methods.html" title="CMS 503: Monte Carlo and kinetic Monte Carlo">503</a><a href="diffusion-and-kinetics.html" title="CMS 504: Diffusion and kinetics">504</a><a href="phase-field-modelling.html" title="CMS 505: Phase-field modelling">505</a><a href="finite-element-method.html" title="CMS 506: The finite element method">506</a><a href="machine-learning-for-materials.html" title="CMS 507: Machine learning for materials">507</a></nav>
+<nav class="course-nav" aria-label="Computational methods courses"><span class="cn-dept">CMS</span><a href="introduction.html" title="CMS 401: Introduction to computational materials science">401</a><a href="density-functional-theory.html" class="here" aria-current="page" title="CMS 501: Density functional theory I: from the Schrödinger equation to Kohn–Sham">501</a><a href="molecular-dynamics.html" title="CMS 502: Molecular dynamics">502</a><a href="monte-carlo-methods.html" title="CMS 503: Monte Carlo and kinetic Monte Carlo">503</a><a href="diffusion-and-kinetics.html" title="CMS 504: Diffusion and kinetics">504</a><a href="phase-field-modelling.html" title="CMS 505: Phase-field modelling">505</a><a href="finite-element-method.html" title="CMS 506: The finite element method">506</a><a href="machine-learning-for-materials.html" title="CMS 507: Machine learning for materials">507</a><a href="density-functional-theory-solids.html" title="CMS 511: Density functional theory II: solids, plane waves and workflows">511</a></nav>
 <!-- coursenav:end -->
-            <h1>Density functional theory in practice</h1>
-            <p class="lead">Density functional theory (DFT) computes the energy and electronic structure of a solid from its atomic positions alone. It is the workhorse behind most first-principles materials data: formation energies, elastic constants, defect energies, band structures and the training sets for machine-learned potentials.</p>
+            <h1>Density functional theory I: from the Schrödinger equation to Kohn–Sham</h1>
+            <p class="lead">Almost every property of a material that is not a thermodynamic or mechanical bulk number can in principle be traced to the behaviour of its electrons: the cohesive energy and lattice constant, elastic constants and phonons, the band gap, defect energies, surface energies, magnetism, the barrier of a chemical reaction. The theory of electrons in matter is quantum mechanics, but the exact equation is far too hard to solve for more than a few electrons. <strong>Density functional theory</strong> (DFT) is the method that made quantitative first-principles calculations of solids and large molecules routine: it is used in more research papers in materials science than any other single method. This course (Part I of two) develops the theory from the Schr&ouml;dinger equation, writes a Hartree&ndash;Fock program from scratch to see how a self-consistent-field calculation works, derives the Kohn&ndash;Sham scheme, and then <em>tests</em> the approximations in the way a practitioner must: against atoms, atomisation energies, stretched bonds, ionisation energies, weak interactions and vibrations. Part II (<a href="density-functional-theory-solids.html">CMS 511</a>) applies the method to crystals: plane waves, pseudopotentials, k points, metals, and the workflows of materials research. All numbers come from calculations with the open-source package PySCF (<a href="lab-dft-pyscf.html">LAB 501</a> shows how to install and use it); the programs are in <code>labs/cms-501</code>.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Reading time</dt><dd>about 62 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="introduction.html">CMS 401: Introduction</a><br><a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystals and cells</a><br><a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a><br><a href="eigenvalues-and-decompositions.html">MATH 202: Linear algebra II</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">CMS 507: Machine learning</a><br><a href="lab-dft-pyscf.html">LAB 501: Hartree-Fock and DFT of H2, water and silicon with PySCF</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="machine-learning-for-materials.html">CMS 507: Machine learning</a><br><a href="density-functional-theory-solids.html">CMS 511: DFT II: solids</a><br><a href="lab-dft-pyscf.html">LAB 501: Hartree-Fock and DFT of H2, water and silicon with PySCF</a></dd></div>
 <div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
 </dl>
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Explain the Kohn&ndash;Sham idea and the role of the exchange&ndash;correlation functional.</li>
-                    <li>Choose among common functionals and know the typical errors of each.</li>
-                    <li>List the numerical parameters that must be converged and how to test them.</li>
-                    <li>Describe how to obtain lattice parameters, elastic constants, defect energies, barriers and phonons from DFT.</li>
+                    <li>State the electronic-structure problem, the Born&ndash;Oppenheimer approximation and the variational principle, and explain why the many-electron wave function cannot be stored.</li>
+                    <li>Derive the Hartree&ndash;Fock equations at the level of the Fock operator, and write and debug a self-consistent-field loop.</li>
+                    <li>State the Hohenberg&ndash;Kohn theorems and the Kohn&ndash;Sham equations, and explain what the exchange&ndash;correlation functional contains.</li>
+                    <li>Describe the rungs of the functional ladder and what each adds, and choose a functional for a given task.</li>
+                    <li>Recognise the characteristic failures of approximate functionals: overbinding, self-interaction and delocalisation error, missing dispersion, the band-gap problem.</li>
+                    <li>Estimate the cost of a calculation, compute forces and vibrational frequencies, and judge a result against a reference.</li>
                 </ul>
+                <strong>You need:</strong> <a href="quantum-mechanics.html">PHYS 201</a> (the Schr&ouml;dinger equation, hydrogen atom, spin), <a href="statistical-mechanics.html">PHYS 301</a> (variational ideas), <a href="eigenvalues-and-decompositions.html">MATH 202</a> (eigenvalue problems), <a href="calculus-of-variations-and-optimisation.html">MATH 304</a> (functionals and constrained minimisation), <a href="numerical-methods-differential-equations.html">COMP 202</a> (eigenvalue solvers, optimisation, cost scaling) and <a href="lab-dft-pyscf.html">LAB 501</a> (running PySCF). Next: <a href="density-functional-theory-solids.html">CMS 511</a>.
             </div>
 
-            <h2 id="problem">1. The electronic structure problem<a class="anchor" href="#problem" aria-label="Link to this section">#</a></h2>
-            <p>The nuclei of a solid are about 2000 times heavier than electrons, so electrons respond almost instantly to nuclear motion. In the <strong>Born&ndash;Oppenheimer approximation</strong> the nuclei are fixed and the electrons are solved for each arrangement, giving an energy surface <em>E</em>(<strong>R</strong><sub>1</sub>, &hellip;, <strong>R</strong><sub><em>N</em></sub>) on which the nuclei move; its negative gradients are the forces. This surface is what every classical interatomic potential tries to approximate.</p>
-            <p>The electrons obey the many-body Schr&ouml;dinger equation, whose wavefunction depends on 3 coordinates per electron. Exact solutions are impossible beyond a few electrons. DFT replaces the wavefunction with the <strong>electron density</strong> <em>n</em>(<strong>r</strong>), a function of only three coordinates no matter how many electrons there are.</p>
+            <div class="note"><strong>How this course is organised</strong>
+            <p>Seven <strong>lectures</strong>; a <strong>problem set</strong> of twelve problems with hints and full solutions; a <strong>unit quiz</strong>. Energies are in Hartree (1 Ha $=27.2114$ eV) unless stated; the Hartree is the atomic unit of energy and the Bohr radius ($0.529177$ &Aring;) the unit of length. Reference values labelled &ldquo;exact&rdquo; are non-relativistic literature values; CCSD(T) values were computed here, in the finite basis stated, and are <em>not</em> the exact answer.</p>
+            </div>
 
-            <h2 id="ks">2. The Kohn&ndash;Sham scheme<a class="anchor" href="#ks" aria-label="Link to this section">#</a></h2>
-            <p>The Hohenberg&ndash;Kohn theorems (1964) prove that the ground-state energy is a functional of the density and is minimised by the true density. They do not say what the functional is. Kohn and Sham (1965) made it usable by mapping the interacting system onto fictitious non-interacting electrons that have the same density, and splitting the energy as</p>
-            <span class="eq">E[n] = T<sub>s</sub>[n] + &int; v<sub>ext</sub>(r) n(r) dr + E<sub>H</sub>[n] + E<sub>xc</sub>[n]</span>
-            <p>The terms are, in order: the kinetic energy of the non-interacting electrons, the energy in the potential of the nuclei, the classical electrostatic (Hartree) energy of the density with itself, and the <strong>exchange&ndash;correlation energy</strong> <em>E</em><sub>xc</sub>, which contains the quantum exchange of identical electrons, their correlated motion, and the correction to the kinetic energy. Minimising <em>E</em>[<em>n</em>] gives one-electron equations:</p>
-            <span class="eq">[ &minus;&frac12;&nabla;&sup2; + v<sub>eff</sub>(r) ] &psi;<sub>i</sub>(r) = &epsilon;<sub>i</sub> &psi;<sub>i</sub>(r), &nbsp;&nbsp; v<sub>eff</sub> = v<sub>ext</sub> + v<sub>H</sub>[n] + v<sub>xc</sub>[n], &nbsp;&nbsp; n(r) = &Sigma;<sub>occ</sub> |&psi;<sub>i</sub>(r)|&sup2;</span>
-            <p>(in atomic units). The orbitals &psi;<sub><em>i</em></sub> and eigenvalues &epsilon;<sub><em>i</em></sub> are mathematical devices to build the density; only the total energy and the density have exact meaning. Reading band structures from the Kohn&ndash;Sham eigenvalues is a useful but approximate practice.</p>
+            <h2 id="problem">Lecture 1. The electronic-structure problem<a class="anchor" href="#problem" aria-label="Link to this section">#</a></h2>
+            <p>A material is a collection of nuclei and electrons interacting by the Coulomb force. Nuclei are $10^3$ to $10^5$ times heavier than electrons, so on the time scale of electronic motion they are almost stationary: the <strong>Born&ndash;Oppenheimer approximation</strong> solves for the electrons in the field of fixed nuclei at positions $\{\mathbf R_I\}$, and the resulting ground-state energy $E(\{\mathbf R_I\})$ is the potential-energy surface on which the nuclei move (classical molecular dynamics, <a href="molecular-dynamics.html">CMS 502</a>, and phonons, <a href="lab-phonons-phonopy.html">LAB 301</a>, both use it). In atomic units ($\hbar=m_e=e=4\pi\epsilon_0=1$) the electronic Hamiltonian for $N$ electrons is
+            $$\hat H=-\frac12\sum_{i=1}^N\nabla_i^2+\sum_{i=1}^Nv(\mathbf r_i)+\sum_{i&lt;j}\frac1{|\mathbf r_i-\mathbf r_j|},\qquad v(\mathbf r)=-\sum_I\frac{Z_I}{|\mathbf r-\mathbf R_I|},$$
+            the kinetic energy, the attraction to the nuclei and the electron&ndash;electron repulsion, and the ground-state wave function $\Psi(\mathbf x_1,\dots,\mathbf x_N)$ ($\mathbf x=(\mathbf r,\sigma)$ with spin $\sigma$) solves $\hat H\Psi=E\Psi$. It must be <strong>antisymmetric</strong> under the exchange of any two electrons (the Pauli principle for fermions).</p>
+            <div class="note warn"><strong>Why this is hard</strong>
+            <p>$\Psi$ is a function of $3N$ coordinates. A grid of $10$ points per coordinate for the helium atom ($N=2$) has $10^6$ values; for neon ($N=10$) $10^{30}$, far more than all the computer memory ever built; for a nanoparticle of $1000$ atoms ($10^4$ electrons) the number is $10^{30\,000}$. Exact solution is impossible and every method is an approximation. The art is to choose the approximation whose cost and accuracy fit the question. The correlation of motion between electrons, which $\Psi$ must describe, is the hard part.</p></div>
+            <h3>The variational principle</h3>
+            <p>For any normalised antisymmetric trial function $\Psi_\mathrm{t}$ the energy expectation value is never lower than the true ground-state energy, $E[\Psi_\mathrm t]=\langle\Psi_\mathrm t|\hat H|\Psi_\mathrm t\rangle\ge E_0$, with equality only for the exact $\Psi_0$. (Proof: expand $\Psi_\mathrm t$ in the eigenfunctions of $\hat H$, $\Psi_\mathrm t=\sum_nc_n\Psi_n$; then $E[\Psi_\mathrm t]=\sum|c_n|^2E_n\ge E_0\sum|c_n|^2=E_0$.) This turns the Schr&ouml;dinger equation into an optimisation problem, and it is the foundation of Hartree&ndash;Fock theory, of DFT, of the basis-set expansions of all codes ($E$ can only decrease as the basis grows, as in the water calculation of <a href="lab-dft-pyscf.html">LAB 501</a>) and of quantum Monte Carlo. A consequence for practice: <em>a lower energy computed with the same Hamiltonian means a better wave function</em>; but this holds only for wave-function methods, not for DFT with an approximate functional (Lecture 3).</p>
+            <h3>Slater determinants and the exchange hole</h3>
+            <p>The simplest antisymmetric wave function for $N$ electrons is a <strong>Slater determinant</strong> of $N$ orthonormal spin-orbitals $\chi_a(\mathbf x)$,
+            $$\Psi_\mathrm{SD}=\frac1{\sqrt{N!}}\det[\chi_a(\mathbf x_b)],$$
+            which describes independent electrons that respect the Pauli principle. Two same-spin electrons cannot be at the same place ($\Psi_\mathrm{SD}=0$ when $\mathbf x_a=\mathbf x_b$ for same spin): each electron is surrounded by a region where the probability of finding another electron of the same spin is reduced, the <strong>exchange hole</strong>. The energy of the determinant, minimised over the orbitals, is the <strong>Hartree&ndash;Fock energy</strong>. What a single determinant misses is the correlation between electrons of <em>opposite</em> spin and the additional correlation of same-spin electrons: they avoid each other more than a mean field suggests (dynamical correlation), and in some situations (stretched bonds, transition metals) the wave function needs several determinants of comparable weight (static correlation). The <strong>correlation energy</strong> is defined as $E_\mathrm{c}=E_\mathrm{exact}-E_\mathrm{HF}$ (negative). It is a small fraction of the total energy but large against what matters in chemistry and materials:</p>
+            <pre data-file="atoms.py"><code>&quot;&quot;&quot;Total energies of He, Be and Ne atoms: Hartree-Fock, three density functionals and coupled cluster, in a large basis.&quot;&quot;&quot;
+            import time
+            from pyscf import gto, scf, dft, cc, fci
 
-            <h2 id="xc">3. Exchange&ndash;correlation functionals<a class="anchor" href="#xc" aria-label="Link to this section">#</a></h2>
-            <p>Everything not computed exactly is in <em>E</em><sub>xc</sub>, which must be approximated. The choice of approximation is the main modelling decision in a DFT calculation, climbing a ladder of increasing ingredients and cost.</p>
-            <div class="table-scroll" role="region" aria-label="3. Exchange–correlation functionals (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Level</th><th>Depends on</th><th>Examples</th><th>Typical behaviour</th></tr></thead>
-                <tbody>
-                    <tr><td>Local density (LDA)</td><td>Density at a point</td><td>Ceperley&ndash;Alder / PZ</td><td>Lattice parameters too small by 1&ndash;3%; bonds too strong; wrong ground state for iron</td></tr>
-                    <tr><td>Generalised gradient (GGA)</td><td>Density and its gradient</td><td>PBE, PBEsol, PW91</td><td>PBE lattice parameters 1&ndash;2% too large; PBEsol closer to experiment for solids; correct bcc ferromagnetic Fe; band gaps too small</td></tr>
-                    <tr><td>Meta-GGA</td><td>Adds kinetic-energy density</td><td>SCAN, r<sup>2</sup>SCAN, TPSS</td><td>Better energetics and some correlated systems at modest extra cost</td></tr>
-                    <tr><td>Hybrid</td><td>Mixes in a fraction of exact exchange</td><td>PBE0, HSE06</td><td>Much better band gaps and localised-state description; 10 to 100 times the cost of GGA in plane-wave codes</td></tr>
-                    <tr><td>Beyond</td><td>Many-body perturbation</td><td>GW, random-phase approximation</td><td>Quasiparticle band gaps, van der Waals; very expensive</td></tr>
-                </tbody>
-            </table></div>
-            <h3>Common corrections</h3>
-            <ul>
-                <li><strong>Spin polarisation.</strong> Magnetic materials such as Fe, Co, Ni and many oxides need separate spin-up and spin-down densities. The starting magnetic moments and the magnetic configuration (ferromagnetic, antiferromagnetic) must be chosen deliberately, and different starting guesses can converge to different local solutions.</li>
-                <li><strong>DFT+U.</strong> An on-site Hubbard term corrects over-delocalisation of localised <em>d</em> and <em>f</em> electrons (transition-metal oxides, rare earths). <em>U</em> is a parameter and results can depend on it.</li>
-                <li><strong>Dispersion.</strong> Standard functionals miss van der Waals attraction. Empirical corrections (the &ldquo;D3&rdquo; scheme) or non-local functionals (vdW-DF) are used for layered materials, molecular crystals and adsorption.</li>
-            </ul>
-            <p>Practical rules: PBE is the default for metals and alloys. For energy differences between similar structures the errors often cancel, so DFT is far more reliable for <em>relative</em> energies than for absolute ones. Formation energies from GGA typically carry errors of order 0.1 eV per atom, which is large compared with the energy differences that separate competing phases, so conclusions about borderline stability need care. Band gaps from semi-local functionals are consistently underestimated.</p>
+            HA = 27.211386
+            exact = {&quot;He&quot;: -2.903724, &quot;Be&quot;: -14.667356, &quot;Ne&quot;: -128.937620}      # non-relativistic exact energies (Chakravorty et al. 1993, Davidson et al.)
+            print(&quot;total energies in Hartree, basis aug-cc-pVQZ (He, Be) and cc-pVQZ (Ne); the &#x27;exact&#x27; column is the non-relativistic limit from the literature&quot;)
+            print(&quot;atom   HF           LDA          PBE          B3LYP        CCSD(T)      exact        E_corr(exact-HF)   time (s)&quot;)
+            for sym, spin, basis in ((&quot;He&quot;, 0, &quot;aug-cc-pvqz&quot;), (&quot;Be&quot;, 0, &quot;aug-cc-pvqz&quot;), (&quot;Ne&quot;, 0, &quot;cc-pvqz&quot;)):
+                t0 = time.time()
+                mol = gto.M(atom=f&quot;{sym} 0 0 0&quot;, basis=basis, spin=spin, verbose=0)
+                mf = scf.RHF(mol).run(); e_hf = mf.e_tot
+                out = {}
+                for name, xc in ((&quot;LDA&quot;, &quot;lda,vwn&quot;), (&quot;PBE&quot;, &quot;pbe&quot;), (&quot;B3LYP&quot;, &quot;b3lyp&quot;)):
+                    ks = dft.RKS(mol); ks.xc = xc; ks.grids.level = 5; out[name] = ks.kernel()
+                if sym == &quot;He&quot;:
+                    e_cc = fci.FCI(mf).kernel()[0]
+                else:
+                    mcc = cc.CCSD(mf).run(); e_cc = mcc.e_tot + mcc.ccsd_t()
+                print(f&quot;{sym:3s}  {e_hf:11.6f}  {out[&#x27;LDA&#x27;]:11.6f}  {out[&#x27;PBE&#x27;]:11.6f}  {out[&#x27;B3LYP&#x27;]:11.6f}  {e_cc:11.6f}  {exact[sym]:11.6f}   {exact[sym] - e_hf:10.6f}      {time.time() - t0:6.1f}&quot;)</code></pre>
+            <pre class="out"><code>total energies in Hartree, basis aug-cc-pVQZ (He, Be) and cc-pVQZ (Ne); the &#x27;exact&#x27; column is the non-relativistic limit from the literature
+            atom   HF           LDA          PBE          B3LYP        CCSD(T)      exact        E_corr(exact-HF)   time (s)
+            He     -2.861522    -2.834689    -2.892780    -2.915060    -2.902534    -2.903724    -0.042202         4.5
+            Be    -14.572969   -14.446531   -14.629010   -14.672649   -14.640130   -14.667356    -0.094387         8.5
+            Ne   -128.543470  -128.227568  -128.860303  -128.975665  -128.876762  -128.937620    -0.394150         5.9</code></pre>
+            <p>The correlation energy of the helium atom is $-0.0422$ Ha ($-1.15$ eV): the HF energy $-2.8615$ against the exact $-2.9037$; for beryllium $-0.0944$ Ha ($2.57$ eV) and for neon $-0.394$ Ha ($10.7$ eV). It grows with the number of electrons (per electron pair: $0.042$ Ha for He, $0.016$ for Be, $0.009$ for Ne) and is between $0.3\%$ and $1.5\%$ of the total energy. Energies of chemical processes (bond energies, reaction energies, differences between phases) are of the order of $0.01$&ndash;$0.1$ Ha, and the target of <strong>chemical accuracy</strong> ($1$ kcal/mol $=1.6$ mHa $=0.043$ eV) is $25$ to $250$ times smaller than the correlation energy of these atoms. A theory that neglects correlation must therefore rely on a cancellation of errors between the two sides of a comparison, which sometimes works and sometimes does not. The CCSD(T) column is the best of our approximate wave-function methods, and it is close to the exact energy for He (full CI in this basis: $-2.9025$, the remaining $1.2$ mHa being the basis-set error), but for Be and Ne it is $27$ and $61$ mHa above the exact value mainly because the <code>cc-pVQZ</code> bases are designed for valence correlation and contain few functions for the correlation of the core electrons: the lesson is that a good method with an inadequate basis is not a good calculation.</p>
+            <h2 id="hf">Lecture 2. Hartree&ndash;Fock theory and the self-consistent field<a class="anchor" href="#hf" aria-label="Link to this section">#</a></h2>
+            <p>Minimising the energy of a Slater determinant with respect to the orbitals, under the orthonormality constraint, gives the <strong>Hartree&ndash;Fock equations</strong>: each electron moves in the average field of the others,
+            $$\hat F\,\chi_a=\varepsilon_a\chi_a,\qquad\hat F=\hat h+\sum_b\left(\hat J_b-\hat K_b\right),$$
+            where $\hat h=-\tfrac12\nabla^2+v$ is the one-electron operator, the <strong>Coulomb operator</strong> $\hat J_b$ is the classical repulsion from the charge density of orbital $b$, and the <strong>exchange operator</strong> $\hat K_b$ has no classical analogue: it acts on $\chi_a$ as $\hat K_b\chi_a(\mathbf x)=\chi_b(\mathbf x)\int\chi_b^\ast(\mathbf x^{\prime})\chi_a(\mathbf x^{\prime})/|\mathbf r-\mathbf r^{\prime}|\,\mathrm d\mathbf x^{\prime}$. For the sum over all occupied $b$ the term $b=a$ appears in both $\hat J$ and $\hat K$ and cancels: <strong>Hartree&ndash;Fock is free of self-interaction</strong>, an electron does not repel itself (a property that Kohn&ndash;Sham DFT with an approximate functional loses, Lecture 4). Because $\hat F$ depends on its own eigenfunctions, the equations are nonlinear and are solved by iteration, the <strong>self-consistent-field (SCF) method</strong>: (1) guess the occupied orbitals; (2) build $\hat F$ from them; (3) diagonalise $\hat F$; (4) take the lowest $N/2$ orbitals as the new occupied ones; (5) repeat until the density no longer changes. In a basis of $n$ functions $\phi_\mu$ (<a href="lab-dft-pyscf.html">LAB 501</a>) the orbitals are $\chi_a=\sum_\mu C_{\mu a}\phi_\mu$ and the equations become the matrix problem (Roothaan)
+            $$F\,C=S\,C\,\varepsilon,\qquad F_{\mu\nu}=h_{\mu\nu}+\sum_{\lambda\sigma}D_{\lambda\sigma}\left[2(\mu\nu|\lambda\sigma)-(\mu\lambda|\nu\sigma)\right],$$
+            with the overlap matrix $S$ (the basis is not orthogonal), the density matrix $D=C_\mathrm{occ}C_\mathrm{occ}^T$ and the two-electron integrals $(\mu\nu|\lambda\sigma)$; the factor $2$ is for closed-shell spin pairing. The total energy is $E=\sum_{\mu\nu}D_{\mu\nu}(h_{\mu\nu}+F_{\mu\nu})+E_\mathrm{nuc}$. This is a generalised eigenvalue problem (COMP 202 Lecture 6) inside a nonlinear iteration (COMP 201 Lecture 2); we implement it. The program takes the integrals from PySCF (these are the expensive part and a topic in itself, with $n^4/8$ distinct integrals) and writes the loop:</p>
+            <pre data-file="scf_scratch.py"><code>&quot;&quot;&quot;A restricted Hartree-Fock self-consistent-field loop written from scratch (integrals from PySCF), compared with pyscf.scf.RHF.&quot;&quot;&quot;
+            import numpy as np
+            from pyscf import gto, scf
 
-            <h2 id="basis">4. Basis sets and pseudopotentials<a class="anchor" href="#basis" aria-label="Link to this section">#</a></h2>
-            <p>The Kohn&ndash;Sham orbitals must be expanded in a finite basis. In a crystal the potential is periodic, and <strong>Bloch&rsquo;s theorem</strong> says each orbital has the form &psi;<sub><em>n</em><strong>k</strong></sub>(<strong>r</strong>) = <em>e</em><sup><em>i</em><strong>k</strong>&middot;<strong>r</strong></sup> <em>u</em><sub><em>n</em><strong>k</strong></sub>(<strong>r</strong>), with <em>u</em> periodic and <strong>k</strong> a point in the Brillouin zone. Two families of basis dominate:</p>
-            <ul>
-                <li><strong>Plane waves</strong> (VASP, Quantum ESPRESSO, ABINIT, CASTEP) expand <em>u</em> in Fourier components exp(<em>i</em><strong>G</strong>&middot;<strong>r</strong>) of the reciprocal lattice. The basis is controlled by one number, the <strong>cutoff energy</strong>: all plane waves with &frac12;|<strong>k</strong> + <strong>G</strong>|&sup2; &le; <em>E</em><sub>cut</sub> are included. It is systematic: raising <em>E</em><sub>cut</sub> always improves the basis.</li>
-                <li><strong>Localised orbitals</strong> (Gaussians in CP2K and Gaussian; numerical atomic orbitals in SIESTA and FHI-aims) are efficient for large and molecular systems and offer linear-scaling options, but need care over basis-set completeness.</li>
-            </ul>
-            <p>Core electrons are chemically inert but have rapidly oscillating wavefunctions that would need an enormous plane-wave basis. <strong>Pseudopotentials</strong> (and the closely related projector-augmented-wave, <strong>PAW</strong>, method) replace the nucleus and core electrons by an effective potential for the valence electrons, smooth inside a core radius. Choices include norm-conserving, ultrasoft and PAW datasets. Semi-core states (for example 3<em>p</em> in transition metals) should be included in the valence set when they influence the property. All-electron methods (such as FLAPW) avoid pseudopotentials at higher cost and are used as a reference.</p>
+            mol = gto.M(atom=&quot;O 0 0 0; H 0.7569 0.5859 0; H -0.7569 0.5859 0&quot;, basis=&quot;6-31g&quot;, verbose=0)
+            S = mol.intor(&quot;int1e_ovlp&quot;); T = mol.intor(&quot;int1e_kin&quot;); V = mol.intor(&quot;int1e_nuc&quot;); eri = mol.intor(&quot;int2e&quot;)   # eri[p,q,r,s] = (pq|rs)
+            h = T + V; n = mol.nao; nocc = mol.nelectron // 2; Enuc = mol.energy_nuc()
+            print(f&quot;water, 6-31G: {n} basis functions, {nocc} occupied orbitals, nuclear repulsion {Enuc:.6f} Ha&quot;)
 
-            <h2 id="kpoints">5. Sampling reciprocal space<a class="anchor" href="#kpoints" aria-label="Link to this section">#</a></h2>
-            <p>Many quantities (the density, the total energy) are integrals over the Brillouin zone, evaluated as a sum over a finite set of <em>k</em>-points. The standard choice is a uniform <strong>Monkhorst&ndash;Pack</strong> grid, reduced by symmetry. Insulators converge with a few points because their occupation is smooth. Metals have a sharp Fermi surface, so they need dense grids and a <strong>smearing</strong> function that smooths the occupation numbers: Gaussian, Methfessel&ndash;Paxton, Marzari&ndash;Vanderbilt (cold smearing) or Fermi&ndash;Dirac. Smearing introduces a small error that depends on the width; the tetrahedron method with Bl&ouml;chl corrections is used for accurate densities of states.</p>
-            <p>A useful rule: <em>k</em>-point density should scale inversely with cell size. A 4-atom cell may need a 12&times;12&times;12 grid where a 256-atom supercell of the same crystal converges with 2&times;2&times;2 or 3&times;3&times;3.</p>
+            # symmetric orthogonalisation
+            s, U = np.linalg.eigh(S); X = U @ np.diag(s**-0.5) @ U.T
 
-            <h2 id="scf">6. The self-consistency cycle<a class="anchor" href="#scf" aria-label="Link to this section">#</a></h2>
-            <p>The Kohn&ndash;Sham equations are non-linear: the potential depends on the density, which depends on the orbitals, which depend on the potential. They are solved by iteration. Guess a density, build the potential, solve for orbitals, form a new density, and repeat until input and output densities agree.</p>
-            <figure>
-                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/scf-loop.poster.png"><img src="../assets/animations/scf-loop.svg" alt="Animated diagram of the self-consistent field cycle" width="720" height="320" loading="lazy" decoding="async"></picture>
-                <figcaption>The self-consistent field cycle. The dot follows one pass around the loop; each pass costs a diagonalisation of the Hamiltonian.</figcaption>
-            </figure>
-            <p>Simply replacing the old density with the new one oscillates or diverges, so a <strong>mixing</strong> scheme (Pulay/DIIS or Broyden) combines the history of densities. Convergence is declared when the change in energy or density drops below a tolerance (for example 10<sup>&minus;6</sup> eV in VASP for routine work, tighter for phonons). Slow or failed convergence usually has a physical cause: a metallic system with too little smearing, an incorrect magnetic starting guess, a nearly degenerate state, or a bad structure. Once the electronic problem is converged, forces and stress follow from the Hellmann&ndash;Feynman theorem, and the structure can be relaxed by moving atoms (and the cell) downhill in energy.</p>
+            def fock(D):
+                J = np.einsum(&quot;pqrs,rs-&gt;pq&quot;, eri, D); K = np.einsum(&quot;prqs,rs-&gt;pq&quot;, eri, D)
+                return h + 2 * J - K                                   # D = C_occ C_occ^T, closed shell
+            def energy(D, F): return np.sum(D * (h + F)) + Enuc
+            def density(F):
+                e, Cp = np.linalg.eigh(X.T @ F @ X); C = X @ Cp
+                return C[:, :nocc] @ C[:, :nocc].T, e
 
-            <h2 id="convergence">7. Convergence<a class="anchor" href="#convergence" aria-label="Link to this section">#</a></h2>
-            <p>Every numerical parameter must be tested, because a result that has not converged is a result of the parameters, not of the material. The method is the same each time: vary one parameter while holding the others fixed and watch the <em>quantity of interest</em> (not just the total energy).</p>
-            <div class="table-scroll" role="region" aria-label="7. Convergence (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Parameter</th><th>What it controls</th><th>Typical test</th><th>Comment</th></tr></thead>
-                <tbody>
-                    <tr><td>Plane-wave cutoff</td><td>Basis completeness</td><td>Raise until energy differences change by under about 1 meV per atom</td><td>Stress converges more slowly than energy; relaxing a cell needs a higher cutoff or a fixed-basis re-run</td></tr>
-                    <tr><td><em>k</em>-point grid</td><td>Brillouin-zone integration</td><td>Increase grid density until the property changes by under tolerance</td><td>Metals need more than insulators</td></tr>
-                    <tr><td>Smearing width</td><td>Fermi-surface treatment</td><td>Reduce width while increasing <em>k</em> density</td><td>Report the scheme and width used</td></tr>
-                    <tr><td>Supercell size</td><td>Defect&ndash;image interaction</td><td>Repeat in larger cells; extrapolate</td><td>See <a href="crystal-structure-and-periodic-cells.html">supercells and periodic boundaries</a></td></tr>
-                    <tr><td>Vacuum thickness, slab thickness</td><td>Surface and interface models</td><td>Increase until the surface energy stops changing</td><td>Both matter</td></tr>
-                    <tr><td>Force and SCF tolerances</td><td>Relaxation accuracy</td><td>Tighten until structure and energy stop changing</td><td>Typical force tolerance 0.01 eV/&Aring;; phonons need much smaller</td></tr>
-                </tbody>
-            </table></div>
-            <p>When comparing energies of different structures, use the <em>same</em> cutoff, pseudopotentials and equivalent <em>k</em>-point density in all of them, so that errors cancel. Test with differences, not absolute energies.</p>
+            def scf_loop(mode, damp=0.5, maxit=100, tol=1e-9):
+                D, _ = density(h)                                       # initial guess: core Hamiltonian
+                E_old = 0.0; hist = []; errs = []; Fs = []
+                for it in range(1, maxit + 1):
+                    F = fock(D); E = energy(D, F)
+                    err = X.T @ (F @ D @ S - S @ D @ F) @ X             # commutator FDS - SDF: zero at convergence
+                    if mode == &quot;diis&quot;:
+                        Fs.append(F.copy()); errs.append(err.copy()); Fs, errs = Fs[-8:], errs[-8:]
+                        if len(Fs) &gt; 1:
+                            m = len(Fs); B = -np.ones((m + 1, m + 1)); B[m, m] = 0
+                            for i in range(m):
+                                for j in range(m): B[i, j] = np.sum(errs[i] * errs[j])
+                            rhs = np.zeros(m + 1); rhs[m] = -1; c = np.linalg.solve(B, rhs)[:m]
+                            F = sum(ci * Fi for ci, Fi in zip(c, Fs))
+                    Dn, eps = density(F)
+                    if mode == &quot;damped&quot;: Dn = damp * D + (1 - damp) * Dn
+                    hist.append((it, E, np.linalg.norm(err)))
+                    if abs(E - E_old) &lt; tol and np.linalg.norm(err) &lt; 1e-6: return E, it, hist, eps
+                    E_old = E; D = Dn
+                return E, maxit, hist, eps
 
-            <h2 id="calc">8. What to compute<a class="anchor" href="#calc" aria-label="Link to this section">#</a></h2>
-            <h3>Structure and equation of state</h3>
-            <p>Compute the total energy at several volumes (relaxing atoms at each), fit an equation of state, and read off the equilibrium volume <em>V</em><sub>0</sub>, the bulk modulus <em>B</em><sub>0</sub> = &minus;<em>V</em>(&part;<em>p</em>/&part;<em>V</em>) and its pressure derivative. The Birch&ndash;Murnaghan form is the standard fit:</p>
-            <span class="eq">E(V) = E<sub>0</sub> + (9V<sub>0</sub>B<sub>0</sub>/16) { [(V<sub>0</sub>/V)<sup>2/3</sup> &minus; 1]<sup>3</sup> B&prime;<sub>0</sub> + [(V<sub>0</sub>/V)<sup>2/3</sup> &minus; 1]<sup>2</sup> [6 &minus; 4(V<sub>0</sub>/V)<sup>2/3</sup>] }</span>
-            <h3>Formation energies and phase stability</h3>
-            <p>The formation energy per atom of a compound A<sub><em>x</em></sub>B<sub><em>y</em></sub> relative to the elements in their ground-state structures is</p>
-            <span class="eq">E<sub>f</sub> = [ E(A<sub>x</sub>B<sub>y</sub>) &minus; x E(A) &minus; y E(B) ] / (x + y)</span>
-            <p>A negative value means the compound is stable against decomposition into the elements; stability against <em>all</em> competing phases requires comparing with the lowest-energy combination, the <em>convex hull</em>. DFT formation energies are the input for many CALPHAD assessments.</p>
-            <h3>Elastic constants</h3>
-            <p>Apply small strains &epsilon;, relax atoms, and fit the stress &sigma; = <strong>C</strong>&epsilon;. For a cubic crystal there are three independent constants <em>C</em><sub>11</sub>, <em>C</em><sub>12</sub>, <em>C</em><sub>44</sub>, the bulk modulus is <em>B</em> = (<em>C</em><sub>11</sub> + 2<em>C</em><sub>12</sub>)/3, mechanical stability requires <em>C</em><sub>11</sub> &minus; <em>C</em><sub>12</sub> &gt; 0, <em>C</em><sub>11</sub> + 2<em>C</em><sub>12</sub> &gt; 0 and <em>C</em><sub>44</sub> &gt; 0, and the Zener anisotropy ratio is <em>A</em> = 2<em>C</em><sub>44</sub>/(<em>C</em><sub>11</sub> &minus; <em>C</em><sub>12</sub>). Polycrystalline moduli follow by averaging (Voigt, Reuss, Hill).</p>
-            <h3>Defects, interfaces and barriers</h3>
-            <p>The vacancy formation energy in a supercell of <em>N</em> atoms is <em>E</em><sub>f</sub><sup>vac</sup> = <em>E</em>(<em>N</em>&minus;1) &minus; [(<em>N</em>&minus;1)/<em>N</em>] <em>E</em>(<em>N</em>), and solute, interstitial and surface energies follow the same logic of subtracting reference energies. Energy barriers for atomic hops come from the <strong>nudged elastic band</strong> method, which relaxes a chain of images between the initial and final states while keeping them evenly spaced; the climbing-image variant (Henkelman et al.) converges the highest image onto the saddle point. For vacancy diffusion the activation energy is <em>Q</em> = <em>E</em><sub>f</sub> + <em>E</em><sub>m</sub> (formation plus migration), which compares directly with experiment.</p>
-            <h3>Vibrations and temperature</h3>
-            <p>Phonon frequencies are obtained by displacing atoms in a supercell and recording forces (finite displacements, programs such as Phonopy) or by perturbation theory. The phonon spectrum gives the vibrational free energy in the harmonic or quasi-harmonic approximation (see <a href="statistical-mechanics.html">statistical mechanics</a>), thermal expansion, heat capacity and the stability of a structure: an imaginary frequency means the structure is dynamically unstable. <strong>Ab initio molecular dynamics</strong> propagates the atoms using DFT forces directly, capturing anharmonicity but limited to a few hundred atoms and tens of picoseconds.</p>
+            ref = scf.RHF(mol).run()
+            print(f&quot;pyscf.scf.RHF: E = {ref.e_tot:.9f} Ha in {ref.cycles} cycles\n&quot;)
+            print(&quot;our loop, plain iteration (core-Hamiltonian guess):  iteration   energy (Ha)         |FDS - SDF|&quot;)
+            E, it, hist, eps = scf_loop(&quot;plain&quot;)
+            for k, e, r in hist[:8] + hist[-3:]: print(f&quot;                                                        {k:3d}     {e:16.9f}      {r:10.2e}&quot;)
+            print(f&quot;   converged in {it} iterations, E = {E:.9f}, difference from pyscf {E - ref.e_tot:.1e} Ha&quot;)
+            for mode in (&quot;damped&quot;, &quot;diis&quot;):
+                E2, it2, _, _ = scf_loop(mode); print(f&quot;   {mode:7s}: {it2:3d} iterations, E = {E2:.9f}, difference from pyscf {E2 - ref.e_tot:.1e} Ha&quot;)
+            print(&quot;\norbital energies (Ha) of our final iteration: &quot; + &quot; &quot;.join(f&quot;{e:8.4f}&quot; for e in eps[: nocc + 3]) + &quot;   (first 5 occupied, then virtual)&quot;)
+            print(&quot;pyscf orbital energies:                       &quot; + &quot; &quot;.join(f&quot;{e:8.4f}&quot; for e in ref.mo_energy[: nocc + 3]))
+            print(f&quot;HOMO energy = {eps[nocc - 1] * 27.2114:.2f} eV (Koopmans&#x27; estimate of the ionisation energy in this small basis)&quot;)</code></pre>
+            <pre class="out"><code>water, 6-31G: 13 basis functions, 5 occupied orbitals, nuclear repulsion 9.195256 Ha
+            pyscf.scf.RHF: E = -75.983995777 Ha in 8 cycles
 
-            <h2 id="cost">9. Cost and accuracy<a class="anchor" href="#cost" aria-label="Link to this section">#</a></h2>
-            <p>With conventional diagonalisation, DFT cost grows roughly as the cube of the number of atoms. Practical limits are hundreds of atoms for routine work and a few thousand with large computing resources; hybrid functionals and large <em>k</em>-grids make the calculation heavier by an order of magnitude or more. Linear-scaling and GPU-accelerated implementations extend the range.</p>
-            <p>An important finding for reproducibility: a large community comparison of about 40 code and pseudopotential combinations on 71 elemental crystals found that modern implementations agree closely when the same functional is used, so the largest source of disagreement in a published DFT result is usually the functional and the setup, not the code (Lejaeghere et al., 2016).</p>
-            <p>Known weaknesses to keep in mind: semi-local functionals under-bind and over-delocalise in strongly correlated systems; energy barriers can be underestimated; and DFT at 0 K ignores finite-temperature entropy unless added separately.</p>
+            our loop, plain iteration (core-Hamiltonian guess):  iteration   energy (Ha)         |FDS - SDF|
+                                                                      1        -69.624746341        2.58e+00
+                                                                      2        -70.828299700        2.37e+00
+                                                                      3        -73.655360894        2.18e+00
+                                                                      4        -74.771591194        1.64e+00
+                                                                      5        -75.494943514        1.15e+00
+                                                                      6        -75.798806926        7.02e-01
+                                                                      7        -75.918071987        4.34e-01
+                                                                      8        -75.960644816        2.54e-01
+                                                                     30        -75.983995777        2.38e-06
+                                                                     31        -75.983995777        1.41e-06
+                                                                     32        -75.983995777        8.31e-07
+               converged in 32 iterations, E = -75.983995777, difference from pyscf -1.7e-13 Ha
+               damped :  40 iterations, E = -75.983995777, difference from pyscf 2.0e-11 Ha
+               diis   :  11 iterations, E = -75.983995777, difference from pyscf -3.8e-13 Ha
 
-            <h2 id="inputs">10. Inputs in common codes<a class="anchor" href="#inputs" aria-label="Link to this section">#</a></h2>
-            <p>The parameters above appear under different names in each program. The table maps a few widely used ones.</p>
-            <div class="table-scroll" role="region" aria-label="10. Inputs in common codes (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Concept</th><th>VASP</th><th>Quantum ESPRESSO</th></tr></thead>
-                <tbody>
-                    <tr><td>Cutoff energy</td><td><code>ENCUT</code> (eV)</td><td><code>ecutwfc</code> (Ry), <code>ecutrho</code></td></tr>
-                    <tr><td><em>k</em>-point grid</td><td><code>KPOINTS</code> file</td><td><code>K_POINTS automatic</code></td></tr>
-                    <tr><td>Smearing</td><td><code>ISMEAR</code>, <code>SIGMA</code></td><td><code>occupations</code>, <code>smearing</code>, <code>degauss</code></td></tr>
-                    <tr><td>SCF tolerance</td><td><code>EDIFF</code> (eV)</td><td><code>conv_thr</code> (Ry)</td></tr>
-                    <tr><td>Spin polarisation</td><td><code>ISPIN = 2</code>, <code>MAGMOM</code></td><td><code>nspin = 2</code>, <code>starting_magnetization</code></td></tr>
-                    <tr><td>Relaxation</td><td><code>IBRION</code>, <code>ISIF</code>, <code>NSW</code>, <code>EDIFFG</code></td><td><code>calculation = 'relax'</code> or <code>'vc-relax'</code></td></tr>
-                </tbody>
-            </table></div>
-            <p>Units differ (eV against Rydberg), as do conventions for the functional and pseudopotential: record these exactly, since they are part of the result.</p>
+            orbital energies (Ha) of our final iteration: -20.5604  -1.3564  -0.7102  -0.5606  -0.5014   0.2038   0.2999   1.0577   (first 5 occupied, then virtual)
+            pyscf orbital energies:                       -20.5604  -1.3564  -0.7102  -0.5606  -0.5014   0.2038   0.2999   1.0577
+            HOMO energy = -13.64 eV (Koopmans&#x27; estimate of the ionisation energy in this small basis)</code></pre>
+            <p>The first energy ($-69.62$ Ha, from the core-Hamiltonian guess in which electrons do not see each other) is $6.4$ Ha too high; the energy then falls monotonically ($-75.4949$, $-75.7988$, $-75.9181$, $\dots$) and converges to $-75.983995777$ Ha after $32$ iterations, equal to PySCF&rsquo;s value to $1.7\times10^{-13}$ Ha, with identical orbital energies. The residual $\|FDS-SDF\|$, which vanishes when $F$ and $D$ commute in the metric of the basis (the condition that $D$ is built from eigenvectors of $F$), falls from $2.6$ to $8\times10^{-7}$: it is the quantity to monitor, because the energy converges <em>quadratically</em> in the density error and looks converged long before the orbitals are. Simple iteration can oscillate or diverge for difficult systems, and two standard remedies are shown: <strong>damping</strong> (mix $50\%$ of the old density with the new one) needs $40$ iterations here, more than the plain loop, because the problem is easy; <strong>DIIS</strong> (direct inversion in the iterative subspace: extrapolate the Fock matrix from the last eight iterations by minimising the norm of the commutator error) converges in only $11$ iterations, and is the default of PySCF and of nearly every code. When an SCF will not converge the usual suspects are a bad starting guess, a small HOMO&ndash;LUMO gap (metals, stretched bonds: use smearing or level shifting), the wrong spin state, or a geometry that is far from reasonable.</p>
+            <h3>What the orbital energies mean: Koopmans&rsquo; theorem</h3>
+            <p>The eigenvalue $\varepsilon_a$ is the energy of an electron in orbital $a$ in the field of the other $N-1$. If the orbitals did not relax when an electron is removed, the ionisation energy would be $-\varepsilon_\mathrm{HOMO}$ (<strong>Koopmans&rsquo; theorem</strong>). In our six-function-per-atom calculation $-\varepsilon_\mathrm{HOMO}=13.64$ eV for water; in a larger basis it is $13.89$ eV (the table of Lecture 4), $1.3$ eV above the experimental vertical ionisation energy of $12.62$ eV, because the frozen orbitals ignore the relaxation of the other electrons towards the hole, which lowers the energy of the ion. The Hartree&ndash;Fock energy difference $E(\mathrm{cation})-E(\mathrm{neutral})$, which includes the relaxation but not the correlation, gives $10.99$ eV, $1.6$ eV too low (correlation is larger in the neutral molecule); the experiment lies between. The orbital energies of Hartree&ndash;Fock are therefore useful, if approximate, estimates of ionisation energies; those of Kohn&ndash;Sham DFT with an approximate functional are not (Lecture 4).</p>
+            <h3>Beyond Hartree&ndash;Fock</h3>
+            <p>The systematic improvements are the <em>post-Hartree&ndash;Fock</em> methods that recover the correlation energy: second-order M&oslash;ller&ndash;Plesset perturbation theory (MP2, formal cost $O(n^5)$), coupled cluster with single and double excitations (CCSD, $O(n^6)$) and with perturbative triples, CCSD(T) ($O(n^7)$), the &ldquo;gold standard&rdquo; of quantum chemistry that reaches chemical accuracy for small molecules with large basis sets, and configuration interaction. Their cost makes them unusable for solids with hundreds of atoms but they provide the <em>reference</em> against which cheaper methods are tested, as we do in Lecture 4.</p>
+            <h2 id="dft">Lecture 3. Density functional theory: the Hohenberg&ndash;Kohn theorems and the Kohn&ndash;Sham method<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h2>
+            <p>The wave function depends on $3N$ coordinates, but all the information a Hamiltonian with only pair interactions needs is much smaller. The <strong>electron density</strong>
+            $$n(\mathbf r)=N\sum_{\sigma_1\dots\sigma_N}\int|\Psi(\mathbf r\sigma_1,\mathbf x_2,\dots,\mathbf x_N)|^2\,\mathrm d\mathbf x_2\cdots\mathrm d\mathbf x_N$$
+            is a function of three variables, whatever $N$ is, it can be measured (X-ray diffraction measures its Fourier transform, <a href="crystal-structure-and-periodic-cells.html">MSE 201</a>), and it is intuitive (charge clouds, bonds). Is it enough?</p>
+            <div class="note thm"><strong>The Hohenberg&ndash;Kohn theorems (1964)</strong>
+            <p><strong>(1)</strong> For electrons in an external potential $v(\mathbf r)$, the ground-state density $n_0(\mathbf r)$ determines $v(\mathbf r)$ up to an additive constant, and hence the Hamiltonian, the wave function and every property of the ground state: all ground-state properties are functionals of $n_0$. (Proof by contradiction with the variational principle: if two potentials differing by more than a constant gave the same density, then $E_0+E_0^{\prime}&lt;E_0+E_0^{\prime}$.) <strong>(2)</strong> There exists a universal functional $F[n]=T[n]+V_\mathrm{ee}[n]$ (the same for every system, independent of $v$) such that the energy functional $E_v[n]=F[n]+\int v(\mathbf r)n(\mathbf r)\,\mathrm d\mathbf r$ has its minimum, over all densities with $\int n=N$, at the true ground-state density $n_0$, where it equals the ground-state energy $E_0$.</p></div>
+            <p>These theorems are existence results: they say that a universal functional exists but not what it is. If we knew $F[n]$ we could find the ground state by minimising a function of three variables rather than $3N$. The kinetic energy $T[n]$ is the troublemaker: no useful explicit expression exists (Thomas&ndash;Fermi theory, which approximates $T$ by the kinetic energy of a uniform gas, is too inaccurate to describe chemical bonding).</p>
+            <h3>The Kohn&ndash;Sham construction (1965)</h3>
+            <p>Kohn and Sham replaced the interacting system by a fictitious system of <em>non-interacting</em> electrons that has the <em>same density</em>. For non-interacting electrons the kinetic energy is known exactly in terms of orbitals, $T_s[n]=-\tfrac12\sum_i\langle\varphi_i|\nabla^2|\varphi_i\rangle$, and the density is $n(\mathbf r)=\sum_{i}^{N}|\varphi_i(\mathbf r)|^2$. The energy is then written as
+            $$E[n]=T_s[n]+\int v\,n\,\mathrm d\mathbf r+E_\mathrm H[n]+E_\mathrm{xc}[n],\qquad E_\mathrm H=\frac12\iint\frac{n(\mathbf r)n(\mathbf r^{\prime})}{|\mathbf r-\mathbf r^{\prime}|}\,\mathrm d\mathbf r\,\mathrm d\mathbf r^{\prime},$$
+            which defines the <strong>exchange&ndash;correlation energy</strong> $E_\mathrm{xc}[n]=(T-T_s)+(V_\mathrm{ee}-E_\mathrm H)$: everything that is not the independent-electron kinetic energy, the classical Coulomb (Hartree) energy and the external potential. It contains the exchange energy (the Pauli effect), the correlation energy and the small difference between the true and non-interacting kinetic energies. Minimising $E[n]$ with respect to the orbitals gives the <strong>Kohn&ndash;Sham equations</strong>
+            $$\left[-\tfrac12\nabla^2+v_\mathrm{KS}(\mathbf r)\right]\varphi_i=\varepsilon_i\varphi_i,\qquad v_\mathrm{KS}=v(\mathbf r)+\int\frac{n(\mathbf r^{\prime})}{|\mathbf r-\mathbf r^{\prime}|}\,\mathrm d\mathbf r^{\prime}+v_\mathrm{xc}(\mathbf r),\qquad v_\mathrm{xc}=\frac{\delta E_\mathrm{xc}}{\delta n(\mathbf r)}.$$
+            They have the same structure as the Hartree&ndash;Fock equations with the nonlocal exchange operator $\hat K$ replaced by a local multiplicative potential $v_\mathrm{xc}(\mathbf r)$, and are solved by the same self-consistent iteration (the program of Lecture 2 with a different Fock matrix; in a basis, $F=h+J[D]+V_\mathrm{xc}[D]$, with the $V_\mathrm{xc}$ matrix elements computed by numerical integration on a grid of points around the atoms; this is the <code>grids.level</code> parameter you saw in the PySCF scripts). <strong>If the exact $E_\mathrm{xc}$ were known, Kohn&ndash;Sham theory would give the exact ground-state density and energy</strong>; the entire approximation is in $E_\mathrm{xc}$. The cost is that of mean-field theory ($O(n^3)$, with plane waves or with density fitting; $O(n^4)$ with the exact exchange of a hybrid), with the possibility to treat the correlation that Hartree&ndash;Fock lacks.</p>
+            <div class="note warn"><strong>What the Kohn&ndash;Sham orbitals are, and are not</strong>
+            <p>The orbitals $\varphi_i$ and eigenvalues $\varepsilon_i$ are mathematical devices to build the density: they have no strict physical meaning, except for one exact result, that for the exact functional the highest occupied eigenvalue is minus the first ionisation energy ($\varepsilon_\mathrm{HOMO}=-I$). The sum $\sum\varepsilon_i$ is not the total energy (the Hartree and exchange&ndash;correlation energies are counted twice and must be corrected). Using Kohn&ndash;Sham eigenvalues as excitation energies is common practice and works qualitatively (band structures, the shape of the density of states), but it underestimates gaps (Lecture 4).</p></div>
+            <h3>The ladder of approximations to $E_\mathrm{xc}$</h3>
+            <p>Perdew&rsquo;s &ldquo;Jacob&rsquo;s ladder&rdquo; classifies functionals by the ingredients they use, each rung adding information and cost:</p>
+            <ol>
+            <li><strong>LDA</strong> (local density approximation): $E_\mathrm{xc}=\int n\,\epsilon_\mathrm{xc}^\mathrm{unif}(n)\,\mathrm d\mathbf r$, where $\epsilon_\mathrm{xc}^\mathrm{unif}(n)$ is the exchange&ndash;correlation energy per electron of the uniform electron gas of density $n$. The exchange part is known exactly, $\epsilon_\mathrm x=-\tfrac34(3/\pi)^{1/3}n^{1/3}$, and the correlation part was fitted to quantum Monte Carlo calculations of the uniform gas (VWN, PW92). LDA is exact for a uniform gas and works surprisingly well for solids with slowly varying density; it overbinds molecules and solids.</li>
+            <li><strong>GGA</strong> (generalised gradient approximation): adds the gradient of the density, $E_\mathrm{xc}=\int f(n,|\nabla n|)\,\mathrm d\mathbf r$. The PBE functional (Perdew, Burke, Ernzerhof 1996) has no fitted parameters, they are fixed by exact conditions; BLYP and PW91 are other GGAs. GGAs correct the overbinding of LDA and are the standard choice for solids.</li>
+            <li><strong>meta-GGA</strong>: adds the kinetic-energy density $\tau=\tfrac12\sum|\nabla\varphi_i|^2$ (TPSS, SCAN, r$^2$SCAN): better for a wide range of properties at little more cost.</li>
+            <li><strong>Hybrid functionals</strong>: mix a fraction of the exact (Hartree&ndash;Fock) exchange into a GGA: B3LYP ($20\%$ exact exchange, three fitted parameters, the most used functional in chemistry), PBE0 ($25\%$), HSE06 (exact exchange only at short range, used for band gaps of solids). They reduce the self-interaction error but cost much more with plane waves.</li>
+            <li><strong>Double hybrids and the random-phase approximation</strong> (use unoccupied orbitals, with the cost of MP2 or more): the most accurate rung in common use.</li>
+            </ol>
+            <p>Dispersion (van der Waals) corrections, such as the empirical &ldquo;D3&rdquo; and &ldquo;D4&rdquo; additions of Grimme and non-local correlation functionals (vdW-DF, VV10), are added to any rung to describe the long-range attraction that local functionals cannot (Lecture 4). Which functional should one use? As a rule of thumb: <strong>PBE or PBEsol for solids and surfaces</strong> (PBEsol gives better lattice constants), <strong>a hybrid (B3LYP, PBE0, HSE06, with dispersion) for molecules</strong>, a meta-GGA when available, and always a test of the sensitivity of the conclusions to the functional.</p>
+            <h3>Energies of atoms: what the functionals get right and wrong</h3>
+            <p>The first test is the total energy of the atoms of Lecture 1 (table above). Relative to the exact values: LDA is too high by $0.069$ Ha for He, $0.221$ for Be and $0.710$ for Ne; PBE by $0.011$, $0.038$ and $0.077$; B3LYP is <em>below</em> the exact energy: by $0.011$ Ha for He ($-2.9151$ against $-2.9037$), $0.005$ Ha for Be ($-14.6726$ against $-14.6674$) and $0.038$ Ha for Ne ($-128.9757$ against $-128.9376$). The variational principle gives a lower bound only for the exact functional; an <em>approximate</em> functional can give an energy below the true one, and the DFT energy of an atom is therefore not evidence for or against the functional. Errors of the order of $0.1$&ndash;$1$ Ha in the total energies of atoms are, in fact, the normal situation for LDA; what saves DFT in practice is that these errors are nearly the same in the atoms and in the molecules that they form, so that <em>energy differences</em> are far more accurate than total energies: the subject of the next lecture.</p>
+            <h2 id="accuracy">Lecture 4. How good is DFT? Testing the approximations<a class="anchor" href="#accuracy" aria-label="Link to this section">#</a></h2>
+            <p>An approximate functional is useful only if one knows what it is good at. This lecture is a sequence of controlled experiments of the kind a practitioner should run, or at least read, before trusting a method: a <em>benchmark</em> (compare with a more accurate method or experiment on a set of systems), a <em>diagnostic</em> (a system chosen to expose a specific deficiency) and an <em>error statistic</em> (a summary that says how large the error typically is). We use the methods of the ladder (HF, LDA, PBE, the hybrid B3LYP) and CCSD(T) as the reference for the benchmark.</p>
+            <h3>Benchmark: atomisation energies</h3>
+            <p>The atomisation energy $D_e=\sum_\mathrm{atoms}E-E_\mathrm{molecule}$ (the energy needed to break all the bonds, without zero-point energy) is the standard test for bond strengths. For six small molecules at their experimental geometries, with the cc-pVTZ basis for all methods:</p>
+            <pre data-file="atomisation.py"><code>&quot;&quot;&quot;Atomisation energies of small molecules (experimental geometries, cc-pVTZ): Hartree-Fock, DFT and CCSD(T).&quot;&quot;&quot;
+            import time
+            from pyscf import gto, scf, dft, cc
 
+            EV = 27.211386
+            BASIS = &quot;cc-pvtz&quot;
+            atoms = {&quot;H&quot;: (&quot;H 0 0 0&quot;, 1), &quot;C&quot;: (&quot;C 0 0 0&quot;, 2), &quot;N&quot;: (&quot;N 0 0 0&quot;, 3), &quot;O&quot;: (&quot;O 0 0 0&quot;, 2)}
+            mols = {   # name: (geometry, spin = number of unpaired electrons, atoms)
+                &quot;H2&quot;:  (&quot;H 0 0 0; H 0 0 0.7414&quot;, 0, [&quot;H&quot;, &quot;H&quot;]),
+                &quot;N2&quot;:  (&quot;N 0 0 0; N 0 0 1.0977&quot;, 0, [&quot;N&quot;, &quot;N&quot;]),
+                &quot;CO&quot;:  (&quot;C 0 0 0; O 0 0 1.1283&quot;, 0, [&quot;C&quot;, &quot;O&quot;]),
+                &quot;O2&quot;:  (&quot;O 0 0 0; O 0 0 1.2075&quot;, 2, [&quot;O&quot;, &quot;O&quot;]),
+                &quot;H2O&quot;: (&quot;O 0 0 0; H 0.7569 0.5859 0; H -0.7569 0.5859 0&quot;, 0, [&quot;O&quot;, &quot;H&quot;, &quot;H&quot;]),
+                &quot;CH4&quot;: (&quot;C 0 0 0; H 0.6291 0.6291 0.6291; H -0.6291 -0.6291 0.6291; H -0.6291 0.6291 -0.6291; H 0.6291 -0.6291 -0.6291&quot;, 0, [&quot;C&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;, &quot;H&quot;]),
+            }
+            methods = [&quot;HF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;B3LYP&quot;, &quot;CCSD(T)&quot;]
+
+            def energy(geom, spin, method):
+                mol = gto.M(atom=geom, basis=BASIS, spin=spin, verbose=0)
+                if method == &quot;HF&quot; or method == &quot;CCSD(T)&quot;:
+                    mf = (scf.RHF(mol) if spin == 0 else scf.UHF(mol)); mf.conv_tol = 1e-10; mf.run()
+                    if method == &quot;HF&quot;: return mf.e_tot
+                    m = cc.CCSD(mf).run(); return m.e_tot + m.ccsd_t()
+                mf = (dft.RKS(mol) if spin == 0 else dft.UKS(mol)); mf.xc = {&quot;LDA&quot;: &quot;lda,vwn&quot;, &quot;PBE&quot;: &quot;pbe&quot;, &quot;B3LYP&quot;: &quot;b3lyp&quot;}[method]
+                mf.grids.level = 5; mf.conv_tol = 1e-10; return mf.kernel()
+
+            t0 = time.time()
+            Eat = {m: {k: energy(g, s, m) for k, (g, s) in atoms.items()} for m in methods}
+            print(f&quot;atomisation energies D_e = sum E(atoms) - E(molecule) in eV (no zero-point energy), basis {BASIS}, fixed experimental geometries&quot;)
+            print(&quot;molecule     HF      LDA     PBE    B3LYP   CCSD(T)     LDA-CC   PBE-CC  B3LYP-CC   HF-CC&quot;)
+            errs = {m: [] for m in methods}
+            for name, (geom, spin, comp) in mols.items():
+                d = {}
+                for m in methods:
+                    e_mol = energy(geom, spin, m)
+                    d[m] = (sum(Eat[m][a] for a in comp) - e_mol) * EV
+                for m in methods: errs[m].append(d[m] - d[&quot;CCSD(T)&quot;])
+                print(f&quot;{name:5s}    {d[&#x27;HF&#x27;]:7.3f} {d[&#x27;LDA&#x27;]:7.3f} {d[&#x27;PBE&#x27;]:7.3f} {d[&#x27;B3LYP&#x27;]:7.3f} {d[&#x27;CCSD(T)&#x27;]:8.3f}     {d[&#x27;LDA&#x27;]-d[&#x27;CCSD(T)&#x27;]:6.3f}  {d[&#x27;PBE&#x27;]-d[&#x27;CCSD(T)&#x27;]:6.3f}  {d[&#x27;B3LYP&#x27;]-d[&#x27;CCSD(T)&#x27;]:7.3f}  {d[&#x27;HF&#x27;]-d[&#x27;CCSD(T)&#x27;]:7.3f}&quot;)
+            import numpy as np
+            print(&quot;mean absolute error against CCSD(T) (eV):  &quot; + &quot;   &quot;.join(f&quot;{m} {np.mean(np.abs(errs[m])):.3f}&quot; for m in methods[:-1]))
+            print(f&quot;total time {time.time() - t0:.0f} s&quot;)</code></pre>
+            <pre class="out"><code>atomisation energies D_e = sum E(atoms) - E(molecule) in eV (no zero-point energy), basis cc-pvtz, fixed experimental geometries
+            molecule     HF      LDA     PBE    B3LYP   CCSD(T)     LDA-CC   PBE-CC  B3LYP-CC   HF-CC
+            H2         3.628   4.903   4.540   4.781    4.700      0.203  -0.160    0.081   -1.072
+            N2         4.955  11.557  10.544   9.925    9.528      2.029   1.017    0.398   -4.572
+            CO         7.538  12.963  11.668  11.070   11.048      1.916   0.620    0.022   -3.510
+            O2         1.406   7.592   6.249   5.366    5.000      2.592   1.250    0.367   -3.594
+            H2O        6.688  11.425  10.032   9.895    9.829      1.596   0.203    0.066   -3.141
+            CH4       14.218  20.051  18.229  18.260   18.131      1.921   0.098    0.129   -3.913
+            mean absolute error against CCSD(T) (eV):  HF 3.300   LDA 1.709   PBE 0.558   B3LYP 0.177
+            total time 107 s</code></pre>
+            <p><strong>Hartree&ndash;Fock underbinds severely</strong> (by $1.1$ eV for H$_2$, $3.1$ to $4.6$ eV for the others, $48\%$ for N$_2$): without correlation, the molecule is not stabilised relative to the atoms because correlation is larger in the molecule where electrons are shared. <strong>LDA overbinds</strong> by up to $2.6$ eV ($21\%$ for N$_2$, $52\%$ for O$_2$): the uniform-gas model overestimates the bonding in regions where the density varies, and the error is $1.7$ eV on average. <strong>PBE removes about two thirds of the error</strong> (mean absolute error $0.56$ eV, $1.25$ eV for O$_2$ and $1.0$ for N$_2$, but only $0.1$&ndash;$0.2$ eV for H$_2$O and CH$_4$), still systematically overbinding. The hybrid <strong>B3LYP</strong> is within $0.4$ eV for every molecule, with a mean absolute error of $0.18$ eV ($4$ kcal/mol), nearly an order of magnitude better than LDA. This is the first confirmation of the ladder: <em>each rung improves the average error</em>. It is also a warning in two ways. First, no functional is exact: $0.18$ eV is far from chemical accuracy ($0.043$ eV). Second, the reference itself is not the truth: CCSD(T) in cc-pVTZ gives $9.53$ eV for N$_2$ while the experimental value is $9.91$ eV, because the basis is incomplete (a larger basis would bring the reference up), so B3LYP&rsquo;s $9.93$ eV agrees with experiment in this case partly by accident. A good practice is to compare with experiment and with a better method, and to be careful with any claim of agreement better than the uncertainty of both.</p>
+            <h3>Diagnostic: ionisation energies and the meaning of the orbital energies</h3>
+            <p>The first ionisation energy $I$ can be computed in two ways: from the energy of the highest occupied orbital, $I\approx-\varepsilon_\mathrm{HOMO}$, or as the <strong>total-energy difference</strong> ($\Delta$SCF) $I=E(\text{cation})-E(\text{neutral})$ with the same method:</p>
+            <pre data-file="ionisation.py"><code>&quot;&quot;&quot;First ionisation potential: -eps(HOMO) versus the energy difference E(cation) - E(neutral), per method.&quot;&quot;&quot;
+            from pyscf import gto, scf, dft
+            EV = 27.211386
+            BASIS = &quot;aug-cc-pvtz&quot;
+            mols = {&quot;H2O&quot;: (&quot;O 0 0 0; H 0.7569 0.5859 0; H -0.7569 0.5859 0&quot;, 12.62), &quot;N2&quot;: (&quot;N 0 0 0; N 0 0 1.0977&quot;, 15.58), &quot;CO&quot;: (&quot;C 0 0 0; O 0 0 1.1283&quot;, 14.01)}
+            def calc(method, geom, charge, spin):
+                mol = gto.M(atom=geom, basis=BASIS, charge=charge, spin=spin, verbose=0)
+                if method == &quot;HF&quot;: mf = scf.RHF(mol) if spin == 0 else scf.UHF(mol)
+                else:
+                    mf = dft.RKS(mol) if spin == 0 else dft.UKS(mol)
+                    mf.xc = {&quot;LDA&quot;: &quot;lda,vwn&quot;, &quot;PBE&quot;: &quot;pbe&quot;, &quot;B3LYP&quot;: &quot;b3lyp&quot;}[method]; mf.grids.level = 5
+                mf.conv_tol = 1e-10; e = mf.kernel()
+                return e, mf
+            print(&quot;first ionisation energy in eV (experimental vertical values: H2O 12.62, N2 15.58, CO 14.01)&quot;)
+            print(&quot;molecule   method   -eps(HOMO)   Delta-SCF   experiment&quot;)
+            for name, (geom, exp) in mols.items():
+                for m in (&quot;HF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;B3LYP&quot;):
+                    e0, mf0 = calc(m, geom, 0, 0)
+                    homo = mf0.mo_energy[mf0.mo_occ &gt; 0].max() * EV
+                    e1, _ = calc(m, geom, 1, 1)
+                    print(f&quot;{name:5s}      {m:5s}   {-homo:8.2f}     {(e1 - e0) * EV:8.2f}     {exp:6.2f}&quot;)</code></pre>
+            <pre class="out"><code>first ionisation energy in eV (experimental vertical values: H2O 12.62, N2 15.58, CO 14.01)
+            molecule   method   -eps(HOMO)   Delta-SCF   experiment
+            H2O        HF         13.89        10.99      12.62
+            H2O        LDA         7.40        13.18      12.62
+            H2O        PBE         7.25        12.80      12.62
+            H2O        B3LYP       8.83        12.81      12.62
+            N2         HF         16.72        15.65      15.58
+            N2         LDA        10.42        15.63      15.58
+            N2         PBE        10.27        15.39      15.58
+            N2         B3LYP      11.97        15.84      15.58
+            CO         HF         15.10        13.07      14.01
+            CO         LDA         9.12        14.09      14.01
+            CO         PBE         9.04        13.86      14.01
+            CO         B3LYP      10.53        14.19      14.01</code></pre>
+            <p>For water the Kohn&ndash;Sham HOMO energy is $7.40$ eV with LDA, $7.25$ eV with PBE and $8.83$ eV with B3LYP, compared with the experimental ionisation energy $12.62$ eV: errors of $-5.2$, $-5.4$ and $-3.8$ eV, the same for N$_2$ ($10.4$, $10.3$, $12.0$ against $15.58$) and CO. By contrast the total-energy differences are within $0.6$ eV: $13.18$, $12.80$, $12.81$ eV for water and $15.63$, $15.39$, $15.84$ eV for N$_2$. The failure of the orbital energy is not a numerical problem but a property of approximate functionals: the exact exchange&ndash;correlation potential decays as $-1/r$ far from a molecule (an electron leaving sees the charge of the remaining ion), whereas the local and semilocal potentials of LDA and GGAs decay exponentially, so the highest orbital is not bound strongly enough. Hybrid functionals, whose exact-exchange part has the correct $-\alpha/r$ tail, are better ($\alpha=0.2$ for B3LYP) but still far; Hartree&ndash;Fock, with its exact exchange, gives a HOMO energy close to the right range ($13.89$ eV for water, $16.72$ for N$_2$) for the reasons of Koopmans&rsquo; theorem. <strong>Rule: do not read ionisation energies, electron affinities or band gaps from Kohn&ndash;Sham eigenvalues of semilocal functionals; use total-energy differences, or a method for quasiparticle energies such as $GW$.</strong> The same deficiency is the origin of the band-gap problem of solids (Lecture 4 of Part II): silicon in <a href="lab-dft-pyscf.html">LAB 501</a> has a PBE gap of $0.69$ eV against $1.12$ eV.</p>
+            <h3>Diagnostic: self-interaction and delocalisation error</h3>
+            <p>The simplest molecule with a deep problem is the hydrogen molecular ion H$_2^+$, one electron shared by two protons. For one electron the exact answer is known and Hartree&ndash;Fock is exact (the exchange term cancels the Hartree term: no self-interaction). When the protons are pulled apart, the exact energy tends to that of a hydrogen atom plus a free proton, and the electron ends up on one of the two centres. An approximate density functional has a positive <strong>self-interaction error</strong>: the Hartree energy $E_\mathrm H[n]$ of the density of a single electron is not cancelled completely by $E_\mathrm{xc}$, which favours spreading the electron over two centres (half an electron on each) to reduce the spurious self-repulsion. The result is the &ldquo;<strong>delocalisation error</strong>&rdquo;: the energy of the stretched ion relative to (H atom + proton), computed with the same method (exact value $\to0$):</p>
+            <pre data-file="delocalisation.py"><code>&quot;&quot;&quot;The one-electron molecule H2+ stretched: Hartree-Fock is exact, approximate density functionals are not (delocalisation error).&quot;&quot;&quot;
+            from pyscf import gto, scf, dft
+            EV = 27.211386
+            BASIS = &quot;aug-cc-pvqz&quot;
+            def run(method, geom, charge, spin, guess=&quot;minao&quot;):
+                mol = gto.M(atom=geom, basis=BASIS, charge=charge, spin=spin, verbose=0)
+                if method == &quot;HF&quot;: mf = scf.UHF(mol)
+                else:
+                    mf = dft.UKS(mol); mf.xc = {&quot;LDA&quot;: &quot;lda,vwn&quot;, &quot;PBE&quot;: &quot;pbe&quot;, &quot;B3LYP&quot;: &quot;b3lyp&quot;}[method]; mf.grids.level = 5
+                mf.conv_tol = 1e-10; mf.init_guess = guess; mf.max_cycle = 200; return mf.kernel()
+            def lowest(method, geom, charge, spin):
+                &quot;&quot;&quot;Several starting guesses give different self-consistent solutions for a stretched molecule: keep the lowest.&quot;&quot;&quot;
+                es = [run(method, geom, charge, spin, g) for g in (&quot;minao&quot;, &quot;1e&quot;)]
+                return min(es), abs(es[0] - es[1])
+            methods = [&quot;HF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;B3LYP&quot;]
+            EH = {m: run(m, &quot;H 0 0 0&quot;, 0, 1) for m in methods}
+            print(&quot;(each point is the lowest of two self-consistent solutions, found from the atomic-superposition and the core-Hamiltonian starting guesses; the last column shows how often the two differ)&quot;)
+            print(&quot;energy of H2+ relative to (H atom + proton) computed with the same method, in eV: exact value 0 at infinite separation&quot;)
+            print(&quot;   R (A)     HF        LDA       PBE      B3LYP&quot;)
+            for R in (0.8, 1.06, 1.5, 2.0, 3.0, 4.0, 6.0, 8.0, 12.0):
+                row = []; spread = 0.0
+                for m in methods:
+                    e, d = lowest(m, f&quot;H 0 0 0; H 0 0 {R}&quot;, 1, 1)
+                    row.append((e - EH[m]) * EV); spread = max(spread, d * EV)
+                print(f&quot;  {R:5.2f}   &quot; + &quot;  &quot;.join(f&quot;{x:8.3f}&quot; for x in row) + (f&quot;    (two different solutions, up to {spread:.2f} eV apart)&quot; if spread &gt; 0.01 else &quot;&quot;))
+            print(&quot;(H atom energies in Hartree: &quot; + &quot;, &quot;.join(f&quot;{m} {EH[m]:.5f}&quot; for m in methods) + &quot;; exact -0.5)&quot;)</code></pre>
+            <pre class="out"><code>(each point is the lowest of two self-consistent solutions, found from the atomic-superposition and the core-Hamiltonian starting guesses; the last column shows how often the two differ)
+            energy of H2+ relative to (H atom + proton) computed with the same method, in eV: exact value 0 at infinite separation
+               R (A)     HF        LDA       PBE      B3LYP
+               0.80     -2.270    -2.113    -2.303    -2.290
+               1.06     -2.792    -2.861    -2.975    -2.930
+               1.50     -2.263    -2.674    -2.734    -2.636
+               2.00     -1.422    -2.194    -2.259    -2.095
+               3.00     -0.414    -1.802    -1.941    -1.648
+               4.00     -0.098    -1.872    -2.042    -1.676
+               6.00     -0.007    -2.123    -2.298    -1.869    (two different solutions, up to 0.02 eV apart)
+               8.00     -0.001     0.026     0.006    -1.987    (two different solutions, up to 0.02 eV apart)
+              12.00     -0.000     0.012     0.008    -2.107
+            (H atom energies in Hartree: HF -0.49995, LDA -0.47862, PBE -0.49993, B3LYP -0.50239; exact -0.5)</code></pre>
+            <p>Hartree&ndash;Fock goes to $0$ as expected ($-0.414$ eV at $3$ &Aring;, $-0.098$ at $4$, $-0.007$ at $6$, where the residual binding is the true overlap of the two orbitals). The three density functionals do <strong>not</strong>: the energy stays near $-2$ eV, at $4$ &Aring; it is $-1.87$ eV (LDA), $-2.04$ (PBE) and $-1.68$ (B3LYP), against $-0.098$ for the exact result: <em>an error of about $2$ eV for a system with a single electron</em>, and growing with the distance. For B3LYP the error is $-1.99$ eV at $8$ &Aring; and $-2.11$ eV at $12$ &Aring;, i.e. the molecule is still strongly &ldquo;bound&rdquo; when the protons are $1.2$ nm apart; the reduction relative to LDA and PBE reflects the exact exchange in the hybrid ($20\%$), and a functional with $100\%$ exact exchange (Hartree&ndash;Fock) is free of the error. For LDA and PBE at $8$ and $12$ &Aring; the calculations settled on a solution with the electron on one centre (energy $\approx0$); the delocalised solution found up to $6$ &Aring; was not found from either starting guess, so we make no claim about the energy of the delocalised state at these distances (a reminder that an SCF calculation finds <em>a</em> solution of the Kohn&ndash;Sham equations, not necessarily the lowest). The consequences are large for materials: delocalisation error makes functionals favour spread-out charge, which causes the wrong dissociation of ionic molecules into fractionally charged fragments, too-small barriers for reactions in which charge moves, the underestimation of band gaps, and the incorrect description of localised $d$ and $f$ electrons (the motivation for DFT$+U$, Part II).</p>
+            <h3>Diagnostic: dispersion (van der Waals) forces</h3>
+            <p>Two argon atoms, neutral and closed-shell, attract each other weakly at distances of $3.5$&ndash;$4$ &Aring; by the dispersion force, the interaction of the instantaneous charge fluctuations of the two atoms. It is a correlation effect, long-ranged ($E\sim-C_6/R^6$), and the experimental binding is only $12.3$ meV at $3.76$ &Aring;. The interaction energy must be computed with the counterpoise correction: the monomer energies are evaluated in the basis of the dimer (<code>ghost</code> atoms), otherwise each atom borrows the other&rsquo;s basis functions and the energy is spuriously lowered (<em>basis-set superposition error</em>, BSSE; Lecture 5):</p>
+            <pre data-file="argon_dimer.py"><code>&quot;&quot;&quot;The argon dimer: dispersion is missing from semilocal DFT and Hartree-Fock; counterpoise-corrected interaction energies.&quot;&quot;&quot;
+            import numpy as np
+            from pyscf import gto, scf, dft, mp, cc
+            MEV = 27211.386
+            BASIS = &quot;aug-cc-pvtz&quot;
+            def e_method(method, mol):
+                if method in (&quot;HF&quot;, &quot;MP2&quot;, &quot;CCSD(T)&quot;):
+                    mf = scf.RHF(mol).run()
+                    if method == &quot;HF&quot;: return mf.e_tot
+                    if method == &quot;MP2&quot;: return mp.MP2(mf).run().e_tot
+                    m = cc.CCSD(mf).run(); return m.e_tot + m.ccsd_t()
+                mf = dft.RKS(mol); mf.xc = {&quot;LDA&quot;: &quot;lda,vwn&quot;, &quot;PBE&quot;: &quot;pbe&quot;, &quot;B3LYP&quot;: &quot;b3lyp&quot;}[method]; mf.grids.level = 5; return mf.kernel()
+            methods = [&quot;HF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;B3LYP&quot;, &quot;MP2&quot;, &quot;CCSD(T)&quot;]
+            mon = {m: e_method(m, gto.M(atom=&quot;Ar 0 0 0&quot;, basis=BASIS, verbose=0)) for m in methods}
+            print(&quot;counterpoise-corrected interaction energy E(Ar2) - 2 E(Ar in the dimer basis), meV   (experiment: minimum -12.3 meV at 3.76 A)&quot;)
+            print(&quot;  R (A)   &quot; + &quot;  &quot;.join(f&quot;{m:&gt;8s}&quot; for m in methods))
+            best = {m: (0.0, None) for m in methods}
+            for R in (3.0, 3.4, 3.76, 4.2, 4.6, 5.0, 6.0):
+                dimer = f&quot;Ar 0 0 0; Ar 0 0 {R}&quot;
+                ghost1 = f&quot;Ar 0 0 0; ghost-Ar 0 0 {R}&quot;
+                row = []
+                for m in methods:
+                    ed = e_method(m, gto.M(atom=dimer, basis=BASIS, verbose=0))
+                    eg = e_method(m, gto.M(atom=ghost1, basis=BASIS, verbose=0))      # monomer in the full dimer basis (counterpoise)
+                    e_int = (ed - 2 * eg) * MEV; row.append(e_int)
+                    if e_int &lt; best[m][0]: best[m] = (e_int, R)
+                print(f&quot;  {R:5.2f}   &quot; + &quot;  &quot;.join(f&quot;{x:8.2f}&quot; for x in row))
+            print(&quot;\nminimum on this grid:  &quot; + &quot;   &quot;.join(f&quot;{m} {best[m][0]:.1f} meV at {best[m][1]} A&quot; for m in methods))</code></pre>
+            <pre class="out"><code>counterpoise-corrected interaction energy E(Ar2) - 2 E(Ar in the dimer basis), meV   (experiment: minimum -12.3 meV at 3.76 A)
+              R (A)         HF       LDA       PBE     B3LYP       MP2   CCSD(T)
+               3.00     177.90     12.18    115.02    137.87     94.09    103.69
+               3.40      42.61    -30.91     14.17     31.51      2.06      6.11
+               3.76      11.42    -23.22     -3.75     10.30    -10.42     -8.37
+               4.20       2.23    -11.00     -5.09      4.52     -8.54     -7.51
+               4.60       0.51     -4.71     -3.20      2.70     -5.46     -4.86
+               5.00       0.12     -1.83     -1.63      1.51     -3.36     -2.99
+               6.00       0.00     -0.15     -0.20      0.23     -1.09     -0.96
+
+            minimum on this grid:  HF 0.0 meV at None A   LDA -30.9 meV at 3.4 A   PBE -5.1 meV at 4.2 A   B3LYP 0.0 meV at None A   MP2 -10.4 meV at 3.76 A   CCSD(T) -8.4 meV at 3.76 A</code></pre>
+            <p>The wave-function methods that include correlation give a binding: MP2 $-10.4$ meV and CCSD(T) $-8.4$ meV at $3.76$ &Aring; (the CCSD(T) number is smaller than the experimental $12.3$ meV because aug-cc-pVTZ is too small for dispersion; larger bases and complete-basis extrapolation reach about $12$ meV). Hartree&ndash;Fock is purely repulsive ($+11.4$ meV at $3.76$ &Aring;; it has no correlation, hence no dispersion) and so is the hybrid B3LYP ($+10.3$ meV). PBE has a very shallow minimum ($-5.1$ meV at $4.2$ &Aring;, and it falls off too fast at large distances, $-0.20$ meV against $-0.96$ at $6$ &Aring;): this binding comes from the exchange part of PBE, not from dispersion, and is accidental. <strong>LDA</strong> binds Ar$_2$ with $-30.9$ meV at $3.4$ &Aring;, three times the correct depth and at the wrong distance, again by an artefact of the exchange of the uniform gas. The lesson: <strong>a semilocal functional contains no dispersion</strong>, and the apparent binding it gives is an accident that cannot be trusted; for van der Waals systems (layered materials like graphite and MoS$_2$, molecular crystals, physisorption, polymers, DNA) use a dispersion-corrected functional (PBE$-$D3 or D4, B3LYP$-$D3, or a non-local functional such as vdW-DF2), or a wave-function method.</p>
+            <h2 id="basis">Lecture 5. Basis sets, integration grids and cost<a class="anchor" href="#basis" aria-label="Link to this section">#</a></h2>
+            <p>A calculation is defined by three choices that must be reported: the functional, the basis set and the numerical settings (integration grid, convergence thresholds). The basis of molecular codes consists of <strong>Gaussian-type orbitals</strong> because the integrals of products of Gaussians are analytic. The hierarchy of Dunning&rsquo;s correlation-consistent bases cc-pV$n$Z ($n=$ D, T, Q, 5, ...) increases the size systematically towards the complete-basis limit; <code>aug-</code> adds diffuse functions (needed for anions, weak interactions, excited states); Pople bases (6-31G*) are smaller, and the minimal STO-3G is only for demonstrations. In <a href="lab-dft-pyscf.html">LAB 501</a> the PBE energy of water falls from $-75.2256$ Ha (STO-3G, 7 functions) to $-76.3831$ Ha (cc-pVQZ, 115 functions): the errors relative to cc-pVQZ are $1157$, $85$, $50$ and $10$ mHa for STO-3G, 6-31G, cc-pVDZ and cc-pVTZ, the cost growing steeply. <strong>Energy differences converge much faster than total energies</strong>, because the basis-set error is nearly the same for the species compared. For correlated methods, with slow basis convergence, the standard practice is to extrapolate from two successive $n$.</p>
+            <h3>Basis-set superposition error</h3>
+            <p>In a finite basis the atoms of a dimer use each other&rsquo;s functions to improve their own description, which lowers the dimer energy artificially and overestimates binding: the BSSE. The counterpoise correction of Boys and Bernardi evaluates each monomer in the full dimer basis, as done in the argon calculation (monomer with a ghost atom carrying the partner&rsquo;s functions). For weak interactions the uncorrected result can be wrong by more than the interaction itself; the cheap alternative is a larger basis.</p>
+            <h3>The integration grid</h3>
+            <p>The exchange&ndash;correlation energy of a density functional is an integral over space of a nonlinear function of the density, evaluated numerically on a grid of points around each atom (radial shells times angular points, <code>grids.level</code> in PySCF). Too coarse a grid gives errors and, worse, makes the energy depend on the orientation of the molecule:</p>
+            <pre data-file="grids.py"><code>&quot;&quot;&quot;Numerical-integration grid and SCF threshold in a DFT calculation: error of the PBE energy of water against the grid level.&quot;&quot;&quot;
+            import time
+            from pyscf import gto, dft
+            mol = gto.M(atom=&quot;O 0 0 0; H 0.7569 0.5859 0; H -0.7569 0.5859 0&quot;, basis=&quot;cc-pvtz&quot;, verbose=0)
+            def energy(level, conv=1e-10):
+                ks = dft.RKS(mol); ks.xc = &quot;pbe&quot;; ks.grids.level = level; ks.conv_tol = conv
+                t0 = time.time(); e = ks.kernel(); return e, time.time() - t0, ks.grids.size
+            ref, _, _ = energy(9)
+            print(&quot;PBE/cc-pVTZ energy of water against the grid level (the reference is level 9):&quot;)
+            print(&quot;  level   grid points   E (Ha)           E - E(9) (microHa)   time (s)&quot;)
+            for lv in (0, 1, 2, 3, 4, 5, 7, 9):
+                e, t, n = energy(lv)
+                print(f&quot;   {lv}      {n:8d}     {e:14.8f}   {(e - ref) * 1e6:12.2f}       {t:5.1f}&quot;)
+            print(&quot;\nbad energy differences from a coarse grid: a rotated molecule has a different energy on a coarse grid (the grid is not rotationally invariant)&quot;)
+            import numpy as np
+            c = np.cos(np.radians(37.0)); s = np.sin(np.radians(37.0))
+            R = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
+            xyz = np.array([[0, 0, 0], [0.7569, 0.5859, 0], [-0.7569, 0.5859, 0]]) @ R.T
+            mol_r = gto.M(atom=[(&quot;O&quot;, xyz[0]), (&quot;H&quot;, xyz[1]), (&quot;H&quot;, xyz[2])], basis=&quot;cc-pvtz&quot;, verbose=0)
+            for lv in (1, 3, 5):
+                e1 = energy(lv)[0]
+                ks = dft.RKS(mol_r); ks.xc = &quot;pbe&quot;; ks.grids.level = lv; ks.conv_tol = 1e-10; e2 = ks.kernel()
+                print(f&quot;   grid level {lv}: E(original) - E(rotated by 37 degrees) = {(e1 - e2) * 1e6:9.2f} microHa = {(e1 - e2) * 627509:7.4f} cal/mol&quot;)</code></pre>
+            <pre class="out"><code>PBE/cc-pVTZ energy of water against the grid level (the reference is level 9):
+              level   grid points   E (Ha)           E - E(9) (microHa)   time (s)
+               0          2328       -76.38090045       -8084.00         0.3
+               1         10128       -76.37282793         -11.48         1.5
+               2         21952       -76.37281706          -0.61         1.6
+               3         33704       -76.37281619           0.26         1.7
+               4         59680       -76.37281652          -0.06         2.3
+               5         90064       -76.37281648          -0.03         3.1
+               7        187064       -76.37281645           0.00         5.1
+               9        489832       -76.37281645           0.00        12.2
+
+            bad energy differences from a coarse grid: a rotated molecule has a different energy on a coarse grid (the grid is not rotationally invariant)
+               grid level 1: E(original) - E(rotated by 37 degrees) =    -27.78 microHa = -17.4306 cal/mol
+               grid level 3: E(original) - E(rotated by 37 degrees) =     -0.33 microHa = -0.2086 cal/mol
+               grid level 5: E(original) - E(rotated by 37 degrees) =     -0.03 microHa = -0.0181 cal/mol</code></pre>
+            <p>For water the default level $3$ of PySCF reproduces the converged energy to $0.26$ $\mu$Ha and the rotational dependence is only $0.33$ $\mu$Ha ($0.2$ cal/mol), but level $1$ is off by $11$ $\mu$Ha and by $28$ $\mu$Ha ($17$ cal/mol) on rotation, and level $0$ by $8$ mHa ($5$ kcal/mol). Heavier atoms, meta-GGA functionals and frequencies need finer grids than a light molecule with a GGA; our scripts used level $5$ throughout. Grid errors, which are not visible in the output of a calculation unless one looks for them, are a leading source of non-reproducibility between codes, especially for meta-GGA functionals (SCAN) that are more sensitive. <strong>Check the grid by repeating a calculation on a finer one.</strong></p>
+            <h3>Cost scaling</h3>
+            <p>The formal cost of a Hartree&ndash;Fock or hybrid-DFT calculation is $O(n^4)$ in the number of basis functions (the number of two-electron integrals), of a pure DFT calculation $O(n^3)$ after the Coulomb term is treated efficiently, of MP2 $O(n^5)$, CCSD $O(n^6)$, CCSD(T) $O(n^7)$. In practice thresholds and sparsity reduce the exponent. <strong>Density fitting</strong> (resolution of the identity) approximates the product of two basis functions by an auxiliary basis, reducing the four-index integrals to three-index and the cost of the Coulomb term. We measure the time of one self-consistent calculation for linear chains of $n$ H$_2$ molecules in the cc-pVDZ basis with density fitting:</p>
+            <pre data-file="scaling.py"><code>&quot;&quot;&quot;Cost of an SCF calculation against system size: linear chains of H2 molecules, cc-pVDZ, density fitting.&quot;&quot;&quot;
+            import time, numpy as np
+            from pyscf import gto, scf, dft
+            print(&quot;   n(H2)   atoms   basis functions   t(HF) (s)   t(PBE) (s)   E(HF)/atom (Ha)&quot;)
+            nb, th, tp = [], [], []
+            for n in (2, 4, 8, 16, 24):
+                atom = &quot;; &quot;.join(f&quot;H 0 0 {1.5 * i * 1.0 + (0.74 if j else 0.0) :.3f}&quot; for i in range(n) for j in range(2))
+                mol = gto.M(atom=atom, basis=&quot;cc-pvdz&quot;, verbose=0, max_memory=8000)
+                t0 = time.time(); mf = scf.RHF(mol).density_fit(); mf.conv_tol = 1e-7; e = mf.kernel(); t_hf = time.time() - t0
+                t0 = time.time(); ks = dft.RKS(mol).density_fit(); ks.xc = &quot;pbe&quot;; ks.grids.level = 3; ks.conv_tol = 1e-7; ks.kernel(); t_ks = time.time() - t0
+                nb.append(mol.nao); th.append(t_hf); tp.append(t_ks)
+                print(f&quot;   {n:4d}   {2 * n:4d}      {mol.nao:6d}        {t_hf:8.2f}    {t_ks:8.2f}      {e / (2 * n):10.5f}&quot;)
+            p_hf = np.polyfit(np.log(nb[1:]), np.log(th[1:]), 1)[0]; p_ks = np.polyfit(np.log(nb[1:]), np.log(tp[1:]), 1)[0]
+            print(f&quot;exponent of the time against the number of basis functions (last four sizes): HF {p_hf:.2f}, PBE {p_ks:.2f}&quot;)</code></pre>
+            <pre class="out"><code>   n(H2)   atoms   basis functions   t(HF) (s)   t(PBE) (s)   E(HF)/atom (Ha)
+                  2      4          20            0.18        1.07        -0.53782
+                  4      8          40            0.30        2.54        -0.52446
+                  8     16          80            1.10        5.59        -0.51763
+                 16     32         160            3.38       14.83        -0.51413
+                 24     48         240            7.86       26.46        -0.51294
+            exponent of the time against the number of basis functions (last four sizes): HF 1.80, PBE 1.32</code></pre>
+            <p>From $40$ to $240$ basis functions the HF time rises from $0.30$ to $7.9$ s, an effective exponent of $1.8$, and the PBE time from $2.5$ to $26$ s (exponent $1.3$); the numbers are far below the formal $n^4$ and $n^3$ because for these small systems the overheads and the screening of integrals dominate, and a chain is a sparse geometry. The exponent grows at larger sizes: the formal scaling dominates beyond a few hundred basis functions. The practical conclusion is that DFT with GGA functionals and density fitting is usable up to some thousands of basis functions on a workstation, and that the PBE time here is $3$ to $8$ times that of HF because of the numerical integration on the grid (a pure functional is not cheaper than Hartree&ndash;Fock for small molecules in a Gaussian basis; it wins for large systems and with plane waves). (Timings depend on the machine and on the number of threads; these are for a four-core machine.)</p>
+            <h2 id="forces">Lecture 6. Forces, geometries and vibrations<a class="anchor" href="#forces" aria-label="Link to this section">#</a></h2>
+            <p>The force on nucleus $I$ is $\mathbf F_I=-\partial E/\partial\mathbf R_I$. The <strong>Hellmann&ndash;Feynman theorem</strong> says that for an exact eigenfunction (or any variational wave function that is complete in its basis) the derivative of the energy with respect to a parameter is the expectation value of the derivative of the Hamiltonian, $\partial E/\partial\lambda=\langle\Psi|\partial\hat H/\partial\lambda|\Psi\rangle$. For a nuclear coordinate $\partial\hat H/\partial\mathbf R_I$ involves only the electrostatic force of the electron density and of the other nuclei on nucleus $I$: forces follow from the density without recomputing the energy at displaced geometries (if a calculation takes time $T$, the forces on <em>all</em> atoms cost about $T$ more, not $3NT$). With atom-centred basis sets there are additional Pulay terms because the basis moves with the atoms. The forces drive the <strong>geometry optimisation</strong> of Lecture 5 of <a href="numerical-methods-differential-equations.html">COMP 202</a> (the PySCF script uses the geomeTRIC optimiser, with internal coordinates, which converge faster than Cartesian ones for molecules), and the same forces drive <em>ab initio</em> molecular dynamics (<a href="molecular-dynamics.html">CMS 502</a>) and the training of machine-learning potentials (<a href="machine-learning-for-materials.html">CMS 507</a>).</p>
+            <p>At a minimum of the energy the second derivatives (the Hessian $H_{IJ}=\partial^2E/\partial\mathbf R_I\partial\mathbf R_J$) are positive, and the <strong>harmonic frequencies</strong> are $\omega=\sqrt{\lambda/m}$ for the eigenvalues $\lambda$ of the mass-weighted Hessian (COMP 202 Lecture 6), after removing the six translations and rotations; the three vibrations of water are the bend and the two O&ndash;H stretches. The calculation optimises the geometry with each method in the cc-pVTZ basis and computes the analytic Hessian:</p>
+            <pre data-file="frequencies.py"><code>&quot;&quot;&quot;Harmonic vibrational frequencies of water by Hartree-Fock and DFT at the optimised geometry (cc-pVTZ).&quot;&quot;&quot;
+            import numpy as np
+            from pyscf import gto, scf, dft
+            import sys, os, io, contextlib
+            from pyscf.geomopt.geometric_solver import optimize
+            from pyscf.hessian import thermo
+            CM = 219474.63
+            def run(method):
+                mol = gto.M(atom=&quot;O 0 0 0; H 0.7569 0.5859 0; H -0.7569 0.5859 0&quot;, basis=&quot;cc-pvtz&quot;, verbose=0)
+                if method == &quot;HF&quot;: mf = scf.RHF(mol)
+                else:
+                    mf = dft.RKS(mol); mf.xc = {&quot;LDA&quot;: &quot;lda,vwn&quot;, &quot;PBE&quot;: &quot;pbe&quot;, &quot;B3LYP&quot;: &quot;b3lyp&quot;}[method]; mf.grids.level = 5
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):     # geomeTRIC writes a long banner and log
+                    mol_eq = optimize(mf, maxsteps=100)
+                mf2 = (scf.RHF(mol_eq) if method == &quot;HF&quot; else dft.RKS(mol_eq))
+                if method != &quot;HF&quot;: mf2.xc = mf.xc; mf2.grids.level = 5
+                mf2.conv_tol = 1e-11; mf2.kernel()
+                h = mf2.Hessian().kernel()
+                res = thermo.harmonic_analysis(mol_eq, h)
+                f = np.sort(res[&quot;freq_wavenumber&quot;])
+                xyz = mol_eq.atom_coords() * 0.529177
+                r = np.linalg.norm(xyz[1] - xyz[0]); a = np.degrees(np.arccos(np.dot(xyz[1] - xyz[0], xyz[2] - xyz[0]) / (r * np.linalg.norm(xyz[2] - xyz[0]))))
+                return r, a, f
+            print(&quot;harmonic frequencies (cm^-1) of H2O: bend, symmetric stretch, asymmetric stretch; experimental harmonic values 1649, 3832, 3943 (anharmonic fundamentals 1595, 3657, 3756)&quot;)
+            print(&quot;method    r(OH) (A)  angle     bend    sym.str.  asym.str.&quot;)
+            for m in (&quot;HF&quot;, &quot;LDA&quot;, &quot;PBE&quot;, &quot;B3LYP&quot;):
+                r, a, f = run(m)
+                print(f&quot;{m:6s}    {r:7.4f}   {a:6.2f}   {f[0]:7.1f}  {f[1]:7.1f}  {f[2]:7.1f}&quot;)</code></pre>
+            <pre class="out"><code>harmonic frequencies (cm^-1) of H2O: bend, symmetric stretch, asymmetric stretch; experimental harmonic values 1649, 3832, 3943 (anharmonic fundamentals 1595, 3657, 3756)
+            method    r(OH) (A)  angle     bend    sym.str.  asym.str.
+            HF         0.9406   106.00    1752.9   4126.7   4226.6
+            LDA        0.9706   104.34    1560.5   3717.2   3825.4
+            PBE        0.9697   103.53    1606.4   3700.5   3802.8
+            B3LYP      0.9613   104.54    1639.3   3800.4   3900.7</code></pre>
+            <p>The optimised geometries repeat the results of <a href="lab-dft-pyscf.html">LAB 501</a> (r(OH) $=0.9406$, $0.9706$, $0.9697$ and $0.9613$ &Aring; for HF, LDA, PBE and B3LYP, against the experimental $0.9572$ &Aring;). The frequencies correlate with the bond length: <strong>Hartree&ndash;Fock has bonds that are too short and too stiff</strong>, with stretch frequencies $7.7\%$ and $7.2\%$ too high ($4127$ and $4227$ cm$^{-1}$ against the harmonic experimental $3832$ and $3943$); <strong>LDA and PBE have bonds that are too long and too soft</strong>, with the stretches $3.0\%$ and $3.4\%$ too low (LDA $3717$, $3825$; PBE $3701$, $3803$); and <strong>B3LYP is within $1\%$</strong> ($1639$, $3800$ and $3901$ against $1649$, $3832$ and $3943$, the errors being $-0.6\%$, $-0.8\%$ and $-1.1\%$). The usual practice is to multiply calculated harmonic frequencies by an empirical <em>scale factor</em> for the method, which here would be $0.93$&ndash;$0.94$ for HF in this basis (the conventional value for the small 6-31G* basis is near $0.89$) and $1.01$ for B3LYP; note that the experimental harmonic values, not the observed (anharmonic) fundamentals $1595$, $3657$ and $3756$ cm$^{-1}$, are the right comparison for a harmonic calculation. The same Hessian gives the zero-point energy ($\tfrac12\sum\hbar\omega\approx0.58$ eV for water) that must be added to compare an energy difference with a measured $D_0$, and the thermodynamic functions of a molecule (<a href="thermodynamics-and-calphad.html">MSE 301</a>). For crystals the equivalent calculation gives phonons (<a href="lab-phonons-phonopy.html">LAB 301</a>), by displacing atoms in a supercell and using the forces.</p>
+            <h2 id="practice">Lecture 7. Choosing, testing and reporting a calculation<a class="anchor" href="#practice" aria-label="Link to this section">#</a></h2>
+            <p>The results of the previous lectures can be condensed into a protocol for a computational study. <strong>(1) Define the question and the observable</strong> (a bond energy, a geometry, a spectrum, a reaction barrier, a band gap). <strong>(2) Choose the method from the known accuracy for that observable</strong>: for the atomisation energies of small molecules a hybrid functional (mean error $0.18$ eV); for geometries and vibrations a hybrid or a GGA with the appropriate scale factor; for weak interactions a dispersion-corrected functional or a wave-function method; for band gaps a hybrid or $GW$, not eigenvalues of a semilocal functional. <strong>(3) Test the approximations on a small, closely related benchmark</strong> with a reference you trust, as we have done here. <strong>(4) Converge the numerical parameters</strong> (basis, grid, SCF thresholds, geometry criteria) on the quantity of interest, not on the total energy. <strong>(5) Check the SCF solution</strong>: stable (try different starting guesses and spin states), correct occupations, no symmetry breaking you did not intend. <strong>(6) Report everything needed to reproduce the calculation</strong>: code and version, functional, basis, pseudopotential, grid, thresholds, geometry; and deposit input and output files.</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 7. Choosing, testing and reporting a calculation (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Likely cause</th><th>Check</th></tr></thead>
+            <tbody>
+            <tr><td>SCF does not converge</td><td>poor guess, near-degeneracy, wrong spin state</td><td>DIIS, damping or level shift; try <code>init_guess</code> options; examine the HOMO&ndash;LUMO gap</td></tr>
+            <tr><td>Converged, but the energy is higher than expected</td><td>a saddle-point or excited SCF solution (as for stretched H$_2^+$)</td><td>rerun from different guesses; perform a stability analysis (<code>mf.stability()</code>)</td></tr>
+            <tr><td>Energy differences change by several kcal/mol with the basis</td><td>basis too small, BSSE</td><td>larger basis, counterpoise, extrapolation</td></tr>
+            <tr><td>Frequencies come out imaginary (small)</td><td>geometry not converged, coarse grid</td><td>tighten the optimisation, grid level $\ge5$</td></tr>
+            <tr><td>Bond energies too large (LDA/PBE) or too small (HF)</td><td>the intrinsic bias of the functional (Lecture 4)</td><td>benchmark against a hybrid and a reference</td></tr>
+            <tr><td>Weakly bound complexes unbound</td><td>no dispersion</td><td>add D3/D4 or use a non-local functional</td></tr>
+            <tr><td>Two programs give different energies</td><td>different grids, basis-set definitions, pseudopotentials, definition of the functional (e.g. B3LYP with VWN3 or VWN5)</td><td>compare the settings; a difference of $10^{-5}$ Ha is numerical noise, $10^{-3}$ Ha is a different method</td></tr>
+            </tbody></table></div>
+            <p>A subtle trap in the last row: &ldquo;B3LYP&rdquo; is not a unique definition. The functional was defined in terms of the VWN correlation functional in two different parametrisations (VWN3 in Gaussian, VWN5 in several other codes), and programs differ by several mHa in the total energy of the same molecule with &ldquo;B3LYP&rdquo;; a comparison of absolute energies between programs is meaningful only after the exact definition of the functional has been matched. Our own calculations use PySCF&rsquo;s <code>b3lyp</code>, whose definition can be inspected in the code, and energy <em>differences</em> are far less sensitive to it.</p>
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>DFT solves for the electron density through the Kohn-Sham equations; only the exchange-correlation energy is approximated.</li>
-<li>The functional (LDA, GGA, meta-GGA, hybrid, plus U, van der Waals) sets the typical errors. Relative energies are more reliable than absolute ones.</li>
-<li>Converge the cutoff, k-points, smearing and cell size before trusting any number.</li>
-<li>Standard outputs are lattice constants, elastic constants, formation and defect energies, barriers by nudged elastic band, and phonons.</li>
-<li>Cost grows roughly as N cubed, which limits cells to hundreds or a few thousand atoms, and results are for 0 K unless extended.</li>
+<li>The electronic Schroedinger equation for N electrons is a 3N-dimensional problem that cannot be solved exactly; all practical methods are approximations of increasing cost: Hartree-Fock (an independent-particle wave function, formal cost N^4), density functional theory (N^3 to N^4) and coupled cluster (N^7 for CCSD(T)).</li>
+<li>Hartree-Fock misses the correlation energy: for He, Be and Ne it is 0.0422, 0.0944 and 0.3942 Ha (1.15, 2.57 and 10.7 eV), 25 to 250 times larger than the chemical accuracy of 1.6 mHa; a self-consistent-field loop written from scratch in 30 lines reproduces the PySCF energy of water in 6-31G (-75.983995777 Ha) to 2e-13 Ha, in 32 plain iterations, 40 damped and 11 with DIIS acceleration.</li>
+<li>Kohn-Sham DFT replaces the many-electron problem by non-interacting electrons in an effective potential that reproduces the exact density; everything not known exactly is collected in the exchange-correlation functional, which is approximated on a ladder: LDA, GGA (PBE), hybrids (B3LYP) that mix exact exchange; the total energies of atoms are off by 0.03 to 0.7 Ha (LDA) but energy differences are much better.</li>
+<li>Atomisation energies of H2, N2, CO, O2, H2O and CH4 against CCSD(T)/cc-pVTZ have mean absolute errors of 3.30 eV for Hartree-Fock (underbinding), 1.71 eV for LDA (overbinding by up to 2.6 eV), 0.56 eV for PBE and 0.18 eV for B3LYP: the functional ladder works, and no functional is exact.</li>
+<li>Approximate functionals have a self-interaction (delocalisation) error: the one-electron ion H2+ stretched to 12 Angstrom is 2 eV too low with B3LYP and about 2 eV with LDA and PBE near 3-6 Angstrom, where Hartree-Fock is exact; the highest Kohn-Sham orbital energy of water is 7.4 eV (LDA) and 8.8 eV (B3LYP) against an ionisation energy of 12.6 eV, whereas the total-energy difference E(cation) - E(neutral) gives 13.2 and 12.8 eV.</li>
+<li>Semilocal functionals contain no long-range dispersion: the argon dimer, bound by 12.3 meV at 3.76 Angstrom, is unbound or nearly so with Hartree-Fock and PBE and correctly bound by MP2 and CCSD(T) (see the table); dispersion corrections or non-local functionals are required for molecular crystals, layered materials and adsorption.</li>
+<li>Time to solution depends on the basis size N as N^p: on chains of H2 molecules (cc-pVDZ, density fitting) the measured exponent is given in the table of Lecture 5; forces are obtained by the Hellmann-Feynman theorem plus basis-set corrections, and harmonic frequencies from the Hessian, with errors that depend on the functional (see the table of Lecture 6).</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>Your computed vacancy formation energy changes from 1.1 eV to 1.5 eV when you double the supercell. What does that suggest?</summary>
-                <p>The small cell was not converged: the vacancy was interacting with its periodic images. Keep enlarging until the value stabilises, or check convergence against both cell size and <em>k</em>-points, since both are changing in practice.</p>
-            </details>
-            <details>
-                <summary>Why must two structures being compared be computed with the same cutoff and equivalent <em>k</em>-point density?</summary>
-                <p>Basis and sampling errors are systematic and partly cancel only when they are the same in both calculations. Using different settings leaves a difference in numerical error that can exceed the physical energy difference.</p>
-            </details>
-            <details>
-                <summary>A phonon calculation returns an imaginary frequency. What does it mean?</summary>
-                <p>The structure is at a saddle point rather than a minimum of the energy surface: it is dynamically unstable and would distort spontaneously. It can also indicate an unconverged calculation, so test the convergence before drawing a physical conclusion.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pc501-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>(a) Convert $1$ Hartree to eV, kcal/mol, kJ/mol, K ($E/k_B$) and cm$^{-1}$ ($E/hc$). (b) Express the correlation energy of helium, $0.0422$ Ha, in eV and kcal/mol.</p>
+            <details class="hint"><summary>Hint</summary><p>$1$ Ha $=27.2114$ eV; $1$ eV $=23.0605$ kcal/mol $=96.485$ kJ/mol $=11\,604.5$ K $=8065.5$ cm$^{-1}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $1$ Ha $=27.2114$ eV $=627.51$ kcal/mol $=2625.5$ kJ/mol $=3.1577\times10^{5}$ K $=219\,474.6$ cm$^{-1}$. (b) $0.0422\times27.2114=1.148$ eV $=26.5$ kcal/mol: more than $25$ times the chemical accuracy of $1$ kcal/mol, which is why Hartree&ndash;Fock is not accurate enough for energies even for the simplest atom with two electrons.</p>
+            <p class="answer">(a) $27.2114$ eV, $627.5$ kcal/mol, $2625.5$ kJ/mol, $315\,775$ K, $219\,475$ cm$^{-1}$  (b) $1.148$ eV, $26.5$ kcal/mol</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>Use the variational principle for the hydrogen atom with the trial function $\psi=\sqrt{\alpha^3/\pi}\,\mathrm e^{-\alpha r}$, for which $\langle T\rangle=\alpha^2/2$ and $\langle V\rangle=-\alpha$ (atomic units). (a) Find the energy as a function of $\alpha$. (b) Evaluate it for $\alpha=0.8$ and $1.2$. (c) Minimise.</p>
+            <details class="hint"><summary>Hint</summary><p>$E(\alpha)=\alpha^2/2-\alpha$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E(\alpha)=\tfrac12\alpha^2-\alpha$. (b) $E(0.8)=0.32-0.8=-0.48$ Ha; $E(1.2)=0.72-1.2=-0.48$ Ha; both are above the exact $-0.5$ Ha, as the variational principle requires. (c) $\mathrm dE/\mathrm d\alpha=\alpha-1=0$ gives $\alpha=1$ and $E=-0.5$ Ha, the exact ground state (the trial function includes the exact solution). The same procedure applied to a trial function that cannot represent the exact one (a Gaussian $\mathrm e^{-\beta r^2}$) gives $E=-4/(3\pi)=-0.424$ Ha, an upper bound, $0.076$ Ha too high: this is the finite-basis error that Gaussian basis sets of Lecture 5 reduce by combining several Gaussians.</p>
+            <p class="answer">(a) $\alpha^2/2-\alpha$  (b) $-0.48$ Ha both  (c) $\alpha=1$, $E=-0.5$ Ha</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>The number of distinct two-electron integrals $(\mu\nu|\lambda\sigma)$ in a basis of $n$ real functions is $p(p+1)/2$ with $p=n(n+1)/2$. (a) Evaluate it for $n=13$ (water in 6-31G). (b) For $n=100$ and $n=1000$. (c) How much memory do the integrals of $n=1000$ need at $8$ bytes each? What does density fitting change?</p>
+            <details class="hint"><summary>Hint</summary><p>First compute $p$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $p=91$; $91\times92/2=4186$ integrals. (b) $n=100$: $p=5050$, $5050\times5051/2=1.275\times10^7$. $n=1000$: $p=500\,500$, $1.25\times10^{11}$. (c) $1.25\times10^{11}\times8=1.0\times10^{12}$ bytes $=1$ TB: impossible in memory, so large calculations recompute the integrals at every iteration (<em>direct SCF</em>) or avoid them. Density fitting replaces the four-index integrals by three-index ones $(\mu\nu|P)$ with an auxiliary basis of $\approx3$&ndash;$5n$ functions: $n^2\times4n=4\times10^9$ numbers ($32$ GB) for $n=1000$ at most, a factor of $30$ smaller, and with screening much less.</p>
+            <p class="answer">(a) $4186$  (b) $1.3\times10^7$, $1.25\times10^{11}$  (c) $1$ TB; density fitting reduces it to $\sim30$ GB</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>In the SCF run of Lecture 2 the residual $\|FDS-SDF\|$ fell from $2.58$ to $8.3\times10^{-7}$ in $31$ iterations of plain iteration. (a) Estimate the average reduction factor per iteration. (b) How many iterations would be needed to reach $10^{-10}$ at that rate? (c) DIIS needed $11$ iterations: what does this imply about its effective rate?</p>
+            <details class="hint"><summary>Hint</summary><p>The geometric mean $\rho=(r_\mathrm{end}/r_0)^{1/31}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\rho=(8.3\times10^{-7}/2.58)^{1/31}=\mathrm e^{-14.95/31}=0.617$. (b) To go from $2.58$ to $10^{-10}$ needs $\ln(2.58\times10^{10})/\ln(1/0.617)=23.97/0.4827=50$ iterations. (c) To reach $8\times10^{-7}$ in $11$ iterations the rate is $(3.2\times10^{-7})^{1/11}=0.26$ per iteration: DIIS converges at a rate better than twice as fast as the plain iteration, because it extrapolates using the previous iterations (a quasi-Newton method for the nonlinear equations; the exponent is that of COMP 202, Lecture 5). Plain iteration is only linearly convergent, with a rate given by the response of the density to the potential.</p>
+            <p class="answer">(a) $0.617$  (b) $50$  (c) $0.26$ per iteration</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>From the table of Lecture 1: (a) the correlation energy as a percentage of the total energy and per electron for He, Be and Ne; (b) in kcal/mol; (c) why is the CCSD(T) energy of Ne in the table $61$ mHa above the exact value?</p>
+            <details class="hint"><summary>Hint</summary><p>$E_c=E_\mathrm{exact}-E_\mathrm{HF}$ with the numbers $-0.042202$, $-0.094387$, $-0.394150$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) He: $0.0422/2.9037=1.45\%$, $0.0211$ Ha per electron; Be: $0.0944/14.667=0.64\%$, $0.0236$ per electron; Ne: $0.3942/128.94=0.31\%$, $0.0394$ per electron. (b) $26.5$, $59.2$ and $247.4$ kcal/mol. (c) The cc-pVQZ basis is optimised for the valence correlation and has few functions for the correlation of the $1s$ core electrons, which in neon are tightly packed; the core&ndash;valence basis family (cc-pCVQZ) is designed to recover this correlation, and we did not test it here. The lesson: CCSD(T) is accurate <em>with a suitable basis</em>; the error of $61$ mHa is a basis-set error, not a failure of the method.</p>
+            <p class="answer">(a) $1.45\%$, $0.64\%$, $0.31\%$  (b) $26.5$, $59.2$, $247$ kcal/mol  (c) incomplete basis for the core</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>The exchange energy per electron of the uniform gas is $\epsilon_\mathrm x=-\tfrac34(3/\pi)^{1/3}n^{1/3}=-0.4582/r_s$ (Ha), where $r_s=(3/4\pi n)^{1/3}$ is the Wigner&ndash;Seitz radius. (a) Compute $n$ and $\epsilon_\mathrm x$ for $r_s=2$ (typical of the valence electrons of Al) and $r_s=4$ (Na). (b) Give the results in eV. (c) Why is LDA exact for the uniform gas but not for an atom?</p>
+            <details class="hint"><summary>Hint</summary><p>$n=3/(4\pi r_s^3)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $r_s=2$: $n=3/(4\pi\cdot8)=0.0298$ bohr$^{-3}$; $\epsilon_\mathrm x=-0.4582/2=-0.2291$ Ha. $r_s=4$: $n=0.00373$; $\epsilon_\mathrm x=-0.1145$ Ha. (b) $-6.23$ eV and $-3.12$ eV per electron: exchange is a large energy that grows with density (as $n^{1/3}$). (c) By construction LDA reproduces the exact exchange&ndash;correlation energy density of the uniform gas; in an atom or molecule the density varies strongly over a length comparable with the exchange hole, and LDA mis-describes the shape of the hole (it is spherical and centred on the electron) and the effects of the density gradient, the reason for the errors seen in Lecture 4 and the introduction of GGAs.</p>
+            <p class="answer">(a) $0.0298$, $-0.2291$ Ha; $0.00373$, $-0.1145$ Ha  (b) $-6.23$, $-3.12$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Using the atomisation-energy table of Lecture 4, (a) compute the percentage error of each method for N$_2$ and O$_2$ against CCSD(T). (b) Which direction is the error for LDA and for HF, and why? (c) You must compute the cohesive energies of metals: which functional would you not use and why?</p>
+            <details class="hint"><summary>Hint</summary><p>Error $=(D_\mathrm{method}-D_\mathrm{CC})/D_\mathrm{CC}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) N$_2$ ($9.528$ eV): HF $-48\%$, LDA $+21\%$, PBE $+11\%$, B3LYP $+4.2\%$. O$_2$ ($5.000$ eV): HF $-72\%$, LDA $+52\%$, PBE $+25\%$, B3LYP $+7.3\%$. (b) LDA overbinds because the uniform-gas exchange and correlation overestimate the energy lowering when atoms are brought together in regions of varying density (the atom is described with a larger error than the molecule); HF underbinds because it lacks the correlation energy, which is larger in the molecule where the electrons are shared among more centres. (c) For cohesive energies the atom has to be computed spin-polarised and the same trends hold: LDA overbinds metals by up to $1$ eV/atom and PBE underbinds slightly; the Hartree&ndash;Fock method, which for metals has a vanishing density of states at the Fermi level and a divergent exchange, should not be used for metals at all. For solids the usual choices are PBE or PBEsol (Part II).</p>
+            <p class="answer">(a) N$_2$: $-48$, $+21$, $+11$, $+4.2\%$; O$_2$: $-72$, $+52$, $+25$, $+7.3\%$  (b) LDA over, HF under</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>From the H$_2^+$ table: (a) the error of PBE and B3LYP at $R=4$ &Aring; relative to Hartree&ndash;Fock (exact). (b) The ratio of the two errors, and comparison with the fraction of exact exchange in B3LYP ($20\%$). (c) What is the physical origin of the error?</p>
+            <details class="hint"><summary>Hint</summary><p>Error $=E_\mathrm{DFT}-E_\mathrm{HF}$ at $4$ &Aring;: $-2.042$, $-1.676$, $-0.098$ eV.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) PBE: $-2.042-(-0.098)=-1.94$ eV; B3LYP: $-1.676+0.098=-1.58$ eV; both too low (too much binding). (b) $1.58/1.94=0.81$, close to $1-0.2=0.8$: the error of the hybrid is approximately that of the GGA reduced in proportion to the fraction of the GGA exchange that remains (exact exchange has no delocalisation error, the remainder of the functional is the same). It is only an approximate scaling (the correlation part of B3LYP is also different) but it explains why hybrids reduce the error and why range-separated hybrids with more exact exchange at long range reduce it more. (c) The approximate functionals do not cancel exactly the Hartree self-repulsion of a single electron: the energy as a function of fractional occupation of two centres is convex rather than piecewise linear, so spreading half an electron over each centre lowers the energy. This is the delocalisation (many-electron self-interaction) error.</p>
+            <p class="answer">(a) $-1.94$ and $-1.58$ eV  (b) $0.81\approx1-0.2$  (c) self-interaction, convex energy of fractional charge</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>For water (exp. $12.62$ eV) compute the error of $-\varepsilon_\mathrm{HOMO}$ and of $\Delta$SCF for LDA, PBE, B3LYP and HF from the table of Lecture 4. Why can the correct asymptotic potential matter?</p>
+            <details class="hint"><summary>Hint</summary><p>Use the numbers $7.40$, $7.25$, $8.83$, $13.89$ and $13.18$, $12.80$, $12.81$, $10.99$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$-\varepsilon_\mathrm{HOMO}$: LDA $7.40-12.62=-5.22$ eV; PBE $-5.37$; B3LYP $-3.79$; HF $+1.27$. $\Delta$SCF: LDA $+0.56$; PBE $+0.18$; B3LYP $+0.19$; HF $-1.63$. The total-energy differences with the functionals are about $10$ times more accurate than the orbital energies. The reason: the outermost electron of a neutral molecule feels, far from the molecule, the attraction $-1/r$ of the remaining ion. In exact DFT the exchange&ndash;correlation potential carries this tail, so that $\varepsilon_\mathrm{HOMO}=-I$ exactly. LDA/GGA potentials decay exponentially, the orbital energy is too high by several eV, and the highest orbitals are too diffuse (this also affects the calculation of electron affinities and Rydberg states). Total energies, being integrated over the whole density, are less sensitive.</p>
+            <p class="answer">$-\varepsilon$: $-5.2$, $-5.4$, $-3.8$, $+1.3$ eV;  $\Delta$SCF: $+0.6$, $+0.2$, $+0.2$, $-1.6$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Using the measured exponents of Lecture 5 (HF: $t\propto n^{1.8}$; PBE: $t\propto n^{1.3}$) and the times $7.86$ s and $26.5$ s at $n=240$ functions: (a) predict the times at $n=480$. (b) Compare with the formal $n^4$ law for HF. (c) How long would the HF calculation take for $n=2400$ with each exponent?</p>
+            <details class="hint"><summary>Hint</summary><p>$t(n_2)=t(n_1)(n_2/n_1)^p$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) HF: $7.86\times2^{1.8}=27.4$ s; PBE: $26.5\times2^{1.32}=66$ s. (b) The formal law gives $7.86\times2^4=126$ s, four times larger. (c) $n=2400$ ($10$ times larger): with the measured exponent $7.86\times10^{1.8}=496$ s (about $8$ minutes); with $n^4$: $7.86\times10^4$ s $=22$ hours. The real exponent drifts towards the formal one as the system grows and the screening and sparsity of the small test no longer help, so the first estimate is optimistic; one should measure the exponent on the largest systems one can run, repeating the test as the size increases.</p>
+            <p class="answer">(a) $27$ s and $66$ s  (b) $126$ s  (c) $8$ min against $22$ h</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>From the argon-dimer table: (a) compare the CCSD(T) binding at $3.76$ &Aring; with the experimental $12.3$ meV, and that of PBE at its best distance. (b) Test the long-range law: by what factor should the interaction energy fall between $5$ and $6$ &Aring; if $E\propto-R^{-6}$, and what do CCSD(T) and PBE give? (c) Why is the counterpoise correction essential?</p>
+            <details class="hint"><summary>Hint</summary><p>$(6/5)^6=2.99$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) CCSD(T): $-8.4$ meV, $68\%$ of the experimental depth (the missing $32\%$ is the basis-set error of aug-cc-pVTZ). PBE: $-5.1$ meV at $4.2$ &Aring;, $41\%$, but at the wrong distance and for the wrong reason. (b) $(6/5)^6=2.99$. CCSD(T): $-2.99/-0.96=3.11$, in agreement within $4\%$ with the $R^{-6}$ law (the asymptotic dispersion regime). PBE: $-1.63/-0.20=8.1$: a much faster decay, characteristic of the exponentially decaying exchange interaction and not of dispersion. B3LYP is repulsive at all distances up to $6$ &Aring; ($+0.23$ meV at $6$ &Aring;). (c) The binding energies are a few meV: a basis-set superposition error from the dimer borrowing the partner&rsquo;s functions can be comparable to the interaction itself, and could produce spurious binding even with Hartree&ndash;Fock; our values (all computed counterpoise-corrected) show the physical sign.</p>
+            <p class="answer">(a) $68\%$ and $41\%$  (b) $2.99$; CCSD(T) $3.11$, PBE $8.1$  (c) BSSE is as large as the interaction</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc501-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>Use the vibrational results of Lecture 6: (a) the zero-point energy $\tfrac12\sum\hbar\omega$ of water for HF, LDA, PBE, B3LYP and the experimental harmonic values ($1.2398\times10^{-4}$ eV per cm$^{-1}$). (b) The B3LYP scale factors for the three modes. (c) Estimate the error in a reaction energy due to the zero-point energy if one forgot it for the dissociation H$_2$O$\to$OH$+$H (the OH vibration is $3738$ cm$^{-1}$ experimentally, harmonic).</p>
+            <details class="hint"><summary>Hint</summary><p>ZPE $=\tfrac12\sum\omega$ in cm$^{-1}$, times $1.2398\times10^{-4}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) HF: $\tfrac12(1752.9+4126.7+4226.6)=5053$ cm$^{-1}$ $=0.627$ eV. LDA: $4552$ cm$^{-1}$ $=0.564$ eV. PBE: $4555$ cm$^{-1}$ $=0.565$ eV. B3LYP: $4670$ cm$^{-1}$ $=0.579$ eV. Experiment (harmonic): $4712$ cm$^{-1}$ $=0.584$ eV. (b) $1649/1639.3=1.006$, $3832/3800.4=1.008$, $3943/3900.7=1.011$. (c) The ZPE of H$_2$O is $0.584$ eV and that of the products is that of OH, $\tfrac12\times3738=1869$ cm$^{-1}$ $=0.232$ eV, so the zero-point correction to the dissociation energy is $0.584-0.232=0.35$ eV: neglecting it would overestimate $D_0$ by $0.35$ eV (8 kcal/mol), more than the error of a good functional. The error for HF&rsquo;s ZPE ($0.627$ against $0.584$, $+0.04$ eV) is small compared with the correction itself: zero-point energies need only moderate accuracy.</p>
+            <p class="answer">(a) $0.627$, $0.564$, $0.565$, $0.579$ eV; exp $0.584$  (b) $1.006$, $1.008$, $1.011$  (c) $0.35$ eV</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qc501-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>State the Hohenberg&ndash;Kohn theorems in words and say what they do not tell us.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) The ground-state density determines the external potential up to a constant and therefore all properties; (2) a universal energy functional $E[n]$ is minimised by the ground-state density, giving the ground-state energy. They prove that a functional exists but do not give $F[n]$ (in particular, the kinetic energy and the electron&ndash;electron interaction), so all practical DFT depends on approximations to $E_\mathrm{xc}$ with no systematic way to improve them or to bound their error.</p></details>
+            </div>
+            <div class="problem" id="qc501-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Core</span></div>
+            <p>Explain the two uses of the word &ldquo;exchange&rdquo; in Hartree&ndash;Fock and Kohn&ndash;Sham theory, and what &ldquo;correlation&rdquo; means in each.</p>
+            <details class="solution"><summary>Solution</summary><p>In Hartree&ndash;Fock, exchange is the energy lowering that comes from the antisymmetry of the determinant (the Fermi hole); it is nonlocal ($\hat K$ operator) and exact for the determinant; correlation is everything beyond the determinant. In Kohn&ndash;Sham theory the exchange energy is defined in the same way from the Kohn&ndash;Sham determinant but approximated by a functional of the density (LDA, GGA), while the correlation energy of DFT also contains the correction to the kinetic energy; the DFT and Hartree&ndash;Fock correlation energies are therefore different quantities. Hybrids reintroduce the exact (Hartree&ndash;Fock) exchange in a fraction.</p></details>
+            </div>
+            <div class="problem" id="qc501-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>A colleague computes the ionisation energy of a molecule as $-\varepsilon_\mathrm{HOMO}$ with PBE and gets $7$ eV for a molecule whose measured value is $12$ eV. Is the functional bad?</p>
+            <details class="solution"><summary>Solution</summary><p>No: the result is expected. The Kohn&ndash;Sham HOMO energy of a semilocal functional is not an ionisation energy: the potential decays too fast so the HOMO is too high by several eV (here $5$ eV, as for water). The right comparison is $\Delta$SCF, $E(\mathrm{cation})-E(\mathrm{neutral})$, which for PBE is accurate to a few tenths of an eV; or a $GW$ calculation. The same applies to electron affinities and band gaps.</p></details>
+            </div>
+            <div class="problem" id="qc501-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>Name three failures of semilocal functionals and for each one a remedy.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) Overbinding of molecules and solids (LDA) &mdash; GGAs, meta-GGAs, hybrids. (2) Missing dispersion &mdash; D3/D4 corrections or non-local functionals (vdW-DF) or wave-function methods. (3) Delocalisation (self-interaction) error: too small barriers and gaps, spurious fractional charges &mdash; hybrid or range-separated hybrid functionals, Hubbard $U$, $GW$. Also acceptable: the underestimate of band gaps (hybrids, $GW$), poor strongly correlated systems (DMFT, DFT$+U$, multireference methods).</p></details>
+            </div>
+            <div class="problem" id="qc501-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>Why does the SCF iteration converge faster with DIIS, and what could prevent it from converging at all?</p>
+            <details class="solution"><summary>Solution</summary><p>DIIS extrapolates the Fock matrix as a linear combination of previous ones that minimises the commutator error, which is a quasi-Newton step for the nonlinear equations; it reduces the iterations from $32$ to $11$ in the water example. Convergence can fail if the starting guess is far from the solution, if the HOMO&ndash;LUMO gap is small (charge sloshing between nearly degenerate orbitals: use smearing or level shift), if the system has several SCF solutions (stretched bonds, transition metals: try different guesses and spin states), or if the geometry is unphysical.</p></details>
+            </div>
+            <div class="problem" id="qc501-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>You are asked to compute the binding energy of a benzene dimer (stacked) with a hybrid functional and a triple-zeta basis. List the checks you would make and the expected pitfalls.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) The functional must include dispersion (the dimer is bound by about $0.1$ eV, almost entirely by dispersion; plain B3LYP gives little or no binding): use B3LYP&minus;D3(BJ) or a method that includes it, and compare with a wave-function reference (a benchmark such as the S66 set or DLPNO-CCSD(T)). (2) Counterpoise correction, because BSSE for a triple-zeta basis can be $20$&ndash;$50\%$ of the interaction. (3) Basis convergence (aug- functions, then quadruple-zeta or extrapolation). (4) A fine integration grid. (5) Geometry: relax each monomer, and sample several dimer configurations (parallel-displaced and T-shaped are close in energy). (6) Report the method, basis, grid and the correction schemes together with the result.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Sholl, D. S. and Steckel, J. A., <em>Density Functional Theory: A Practical Introduction</em>, Wiley (2009).</li>
-                <li>Martin, R. M., <em>Electronic Structure: Basic Theory and Practical Methods</em>, Cambridge University Press (2004).</li>
-                <li>Hohenberg, P. and Kohn, W., <em>Phys. Rev.</em> 136, B864 (1964); Kohn, W. and Sham, L. J., <em>Phys. Rev.</em> 140, A1133 (1965).</li>
-                <li>Perdew, J. P., Burke, K. and Ernzerhof, M., <em>Phys. Rev. Lett.</em> 77, 3865 (1996).</li>
-                <li>Sun, J., Ruzsinszky, A. and Perdew, J. P., Strongly constrained and appropriately normed semilocal density functional, <em>Phys. Rev. Lett.</em> 115, 036402 (2015).</li>
-                <li>Heyd, J., Scuseria, G. E. and Ernzerhof, M., Hybrid functionals based on a screened Coulomb potential, <em>J. Chem. Phys.</em> 118, 8207 (2003).</li>
-                <li>Bl&ouml;chl, P. E., Projector augmented-wave method, <em>Phys. Rev. B</em> 50, 17953 (1994).</li>
-                <li>Monkhorst, H. J. and Pack, J. D., Special points for Brillouin-zone integrations, <em>Phys. Rev. B</em> 13, 5188 (1976).</li>
-                <li>Kresse, G. and Furthm&uuml;ller, J., Efficient iterative schemes for ab initio total-energy calculations using a plane-wave basis set, <em>Phys. Rev. B</em> 54, 11169 (1996).</li>
-                <li>Giannozzi, P. et al., QUANTUM ESPRESSO, <em>J. Phys.: Condens. Matter</em> 21, 395502 (2009).</li>
-                <li>Henkelman, G., Uberuaga, B. P. and J&oacute;nsson, H., A climbing image nudged elastic band method, <em>J. Chem. Phys.</em> 113, 9901 (2000).</li>
-                <li>Togo, A. and Tanaka, I., First principles phonon calculations in materials science, <em>Scr. Mater.</em> 108, 1 (2015).</li>
-                <li>Lejaeghere, K. et al., Reproducibility in density functional theory calculations of solids, <em>Science</em> 351, aad3000 (2016).</li>
+                <li>Szabo, A. and Ostlund, N. S., <em>Modern Quantum Chemistry</em>, Dover: Hartree&ndash;Fock, basis sets, SCF and the post-HF methods (Chapters 3&ndash;5). Helgaker, T., J&oslash;rgensen, P. and Olsen, J., <em>Molecular Electronic-Structure Theory</em>, Wiley: the advanced reference, including forces and Hessians.</li>
+                <li>Parr, R. G. and Yang, W., <em>Density-Functional Theory of Atoms and Molecules</em>, Oxford University Press; Martin, R. M., <em>Electronic Structure: Basic Theory and Practical Methods</em>, Cambridge University Press (Chapters 4&ndash;8); Burke, K., &ldquo;Perspective on density functional theory&rdquo;, <em>Journal of Chemical Physics</em> <strong>136</strong>, 150901 (2012): a clear modern account of what DFT is and is not.</li>
+                <li>Hohenberg, P. and Kohn, W., <em>Physical Review</em> <strong>136</strong>, B864 (1964); Kohn, W. and Sham, L. J., <em>Physical Review</em> <strong>140</strong>, A1133 (1965); Perdew, J. P., Burke, K. and Ernzerhof, M., <em>Physical Review Letters</em> <strong>77</strong>, 3865 (1996) (PBE); Becke, A. D., <em>Journal of Chemical Physics</em> <strong>98</strong>, 5648 (1993) (hybrids); Perdew, J. P. et al., <em>Journal of Chemical Physics</em> <strong>123</strong>, 062201 (2005) (the ladder).</li>
+                <li>Cohen, A. J., Mori-S&aacute;nchez, P. and Yang, W., &ldquo;Challenges for density functional theory&rdquo;, <em>Chemical Reviews</em> <strong>112</strong>, 289 (2012): delocalisation and static-correlation errors. Grimme, S. et al., <em>Journal of Chemical Physics</em> <strong>132</strong>, 154104 (2010) (D3 dispersion); Goerigk, L. et al., <em>Physical Chemistry Chemical Physics</em> <strong>19</strong>, 32184 (2017): the GMTKN55 benchmark.</li>
+                <li>Sun, Q. et al., <em>Journal of Chemical Physics</em> <strong>153</strong>, 024109 (2020) (PySCF); Dunning, T. H., <em>Journal of Chemical Physics</em> <strong>90</strong>, 1007 (1989) (cc-pVnZ bases); Boys, S. F. and Bernardi, F., <em>Molecular Physics</em> <strong>19</strong>, 553 (1970) (counterpoise); Pulay, P., <em>Chemical Physics Letters</em> <strong>73</strong>, 393 (1980) (DIIS).</li>
+                <li>MIT OpenCourseWare 3.320 <em>Atomistic Computer Modeling of Materials</em> and 5.61 <em>Physical Chemistry</em> for lecture notes on the same material. The programs of this course are in <code>labs/cms-501</code> of the repository. Next: <a href="lab-dft-pyscf.html">LAB 501</a> (hands-on PySCF) and <a href="density-functional-theory-solids.html">CMS 511</a> (DFT for solids). Related: <a href="molecular-dynamics.html">CMS 502</a> (using DFT forces), <a href="machine-learning-for-materials.html">CMS 507</a> (learning potentials from DFT data).</li>
             </ul>
 
             <!-- pager:start -->
@@ -235,8 +727,11 @@
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=c7f7c3c7"></script>
-    <script src="../assets/pathdata.js?v=d4ceca8f"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=859b15b4"></script>
+    <script src="../assets/pathdata.js?v=4eb9fcbe"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
