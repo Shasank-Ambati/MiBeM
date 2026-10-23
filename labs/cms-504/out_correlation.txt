@@ -1,0 +1,6 @@
+correlation factor f = <R^2> / (n a^2) of the tracer in vacancy diffusion; R is the tracer displacement after n tracer jumps (jump vector length l, here in lattice units)
+   lattice    z    jump length^2 l^2    f (Monte Carlo)       f (literature)
+   sc       6        1.0              0.6561              0.65311
+   bcc      8        3.0              0.7266              0.72722
+   fcc     12        2.0              0.7822              0.78146
+a vacancy that has exchanged with the tracer has a high probability to exchange again (go back): the successive tracer jumps are anti-correlated, and the tracer diffuses more slowly than a random walker with the same number of jumps

@@ -1,0 +1,25 @@
+carbon in austenite at 927 C: D = D0 exp(-Q/RT) = 8.325e-12 m^2/s
+after 10 h: diffusion length sqrt(D t) = 0.547 mm; 2 sqrt(D t) = 1.095 mm
+depth at which the carbon content equals 0.8 wt% (the eutectoid composition): x = 0.264 mm
+time to reach 0.8 wt% at 1.0 mm depth: t = x^2 / (4 D z^2) with z = erfinv((Cs-0.8)/(Cs-C0)) = 143.7 h
+
+convergence of the finite-difference solution (Crank-Nicolson), maximum error against the exact solution:
+    nx     nt       h (um)     dt (s)     max error (wt%)
+     50     50      160.00       720.0      8.589e-04
+    100    100       80.00       360.0      2.155e-04
+    200    200       40.00       180.0      5.394e-05
+    400    400       20.00        90.0      1.349e-05
+    800    800       10.00        45.0      3.373e-06
+
+backward Euler (theta = 1) against Crank-Nicolson at nx = 400:
+   nt =   10 (dt =  3600.0 s):  backward Euler 1.033e-02,  Crank-Nicolson 3.045e-01
+   nt =   40 (dt =   900.0 s):  backward Euler 2.586e-03,  Crank-Nicolson 7.085e-03
+   nt =  160 (dt =   225.0 s):  backward Euler 6.494e-04,  Crank-Nicolson 1.298e-05
+   nt =  640 (dt =    56.2 s):  backward Euler 1.656e-04,  Crank-Nicolson 1.355e-05
+
+thin-film (instantaneous source) solution c(x,t) = M / sqrt(pi D t) exp(-x^2 / 4Dt): drive-in of a boron layer (M = 1e15 atoms/cm^2) in silicon at 1000 C
+   D(B in Si, 1000 C) = 0.76 exp(-3.46 eV/kT) = 1.53e-14 cm^2/s
+   after 0.5 h: peak concentration 1.08e+20 cm^-3, width (2 sqrt(Dt)) 0.105 um
+   after 1.0 h: peak concentration 7.60e+19 cm^-3, width (2 sqrt(Dt)) 0.148 um
+   after 2.0 h: peak concentration 5.38e+19 cm^-3, width (2 sqrt(Dt)) 0.210 um
+   after 4.0 h: peak concentration 3.80e+19 cm^-3, width (2 sqrt(Dt)) 0.297 um

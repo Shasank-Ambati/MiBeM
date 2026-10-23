@@ -1,0 +1,34 @@
+synthetic 'measurements' of D (10 % scatter) from D0 = 2.3e-5 m^2/s, Q = 148 kJ/mol
+     T (K)    1000/T       D true (m^2/s)    D measured (m^2/s)
+    1073.0    0.9320      1.436e-12         1.345e-12
+    1123.0    0.8905      3.005e-12         2.953e-12
+    1173.0    0.8525      5.906e-12         6.975e-12
+    1223.0    0.8177      1.098e-11         1.173e-11
+    1273.0    0.7855      1.945e-11         1.651e-11
+    1323.0    0.7559      3.300e-11         3.298e-11
+    1373.0    0.7283      5.386e-11         5.061e-11
+
+weighted linear fit: Q = 145.8 +- 4.6 kJ/mol (true 148);  D0 = 1.84e-05 (true 2.3e-05), ln D0 = -10.91 +- 0.46 (true -10.68);  chi^2 = 6.44 for 5 d.o.f.
+correlation between ln D0 and Q: 0.9966  (the intercept and the slope of an Arrhenius plot far from 1/T = 0 are almost perfectly correlated)
+relative uncertainty of D0: factor exp(0.46) = 1.6; of Q: 3.2 %
+
+extrapolation of the fit to other temperatures (D with a one-sigma interval; true value for comparison)
+     T (K)      D fit (m^2/s)     one-sigma factor    D true (m^2/s)   ratio fit/true
+    1273.0    1.905e-11          x/  1.04        1.945e-11      0.979
+    1073.0    1.461e-12          x/  1.07        1.436e-12      1.017
+     873.0    3.453e-14          x/  1.20        3.210e-14      1.076
+     673.0    8.812e-17          x/  1.45        7.499e-17      1.175
+     473.0    1.442e-21          x/  2.06        1.042e-21      1.384
+
+Asymmetry of the error: a 5 percent error in Q (7.4 kJ/mol) changes D at 673 K by a factor 3.8  and at 1273 K by 2.0
+
+grain-boundary diffusion (Harrison regimes) for copper, 1 h anneal, grain size d = 10 um, boundary width delta = 0.5 nm
+   (parameters: lattice D0 = 2.5e-5 m^2/s, Q = 200 kJ/mol; boundary D0_gb = 5e-6 m^2/s, Q_gb = 100 kJ/mol; both illustrative)
+    T (K)     D_lattice (m^2/s)   D_gb (m^2/s)    sqrt(D t) (um)   regime
+     500     3.20e-26         1.79e-16            0.0000      C: lattice diffusion negligible, only the boundaries
+     600     9.70e-23         9.85e-15            0.0006      B: boundary diffusion with leakage into the grains
+     700     2.98e-20         1.73e-13            0.0104      B: boundary diffusion with leakage into the grains
+     800     2.19e-18         1.48e-12            0.0887      B: boundary diffusion with leakage into the grains
+     900     6.17e-17         7.86e-12            0.4714      B: boundary diffusion with leakage into the grains
+    1000     8.94e-16         2.99e-11            1.7937      B: boundary diffusion with leakage into the grains
+    1200     4.92e-14         2.22e-10           13.3143      A: lattice diffusion fills the grains
