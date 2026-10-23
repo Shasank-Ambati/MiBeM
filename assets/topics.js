@@ -195,7 +195,7 @@ window.MIBEM_TOPICS = [
     "short": "Materials essentials",
     "part": "Materials science",
     "tone": "b",
-    "minutes": 13,
+    "minutes": 42,
     "title": "Materials science essentials",
     "blurb": "Bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments simulations are compared with.",
     "builds": [],
@@ -204,12 +204,13 @@ window.MIBEM_TOPICS = [
       8
     ],
     "takeaways": [
-      "Processing sets structure, structure sets properties, and properties set performance; simulation can enter at every link.",
-      "Bonding type (metallic, covalent, ionic, van der Waals) decides which interatomic model or electronic method is appropriate.",
-      "Defects control most useful properties: dislocations govern strength, vacancies govern diffusion, and boundaries govern grain-size effects.",
-      "Phase diagrams give the equilibrium; transformation kinetics (nucleation, growth, diffusion) decide which microstructure actually forms.",
-      "Know what each experiment measures (diffraction, microscopy, tensile tests, calorimetry), because that is what a simulation must be compared with."
-    ]
+      "Materials science links four things: processing, structure, properties and performance; structure exists at every scale from the bond (0.1 nm) through crystals and defects (nm to um) to the microstructure of grains and phases (um to mm), and each scale has its own tools.",
+      "The bond energy curve explains stiffness, melting and thermal expansion: for argon the Lennard-Jones potential gives r0 = 0.382 nm and a bond stiffness of 0.82 N/m, so the Young modulus is about k/r0 = 2.1 GPa (measured bulk modulus of solid argon: about 3 GPa); strong covalent bonds (diamond) are 500 times stiffer.",
+      "Crystal structures are described by a lattice and a basis: fcc and hcp pack spheres at 74 per cent, bcc at 68 per cent, diamond at 34 per cent, and the density follows from the cell: copper (fcc, a = 0.3615 nm) is 8.93 g/cm3, iron (bcc, a = 0.2866 nm) 7.88 g/cm3.",
+      "Defects control most properties: the equilibrium vacancy fraction exp(-E_f/kT) is 1e-5 for copper at 1300 K; dislocations (Burgers vector 0.256 nm in copper) carry plastic flow and raise the strength as sigma = alpha G b sqrt(rho), 37 MPa at 1e14 per m2; grain boundaries add strength by the Hall-Petch relation sigma_y = sigma_0 + k d^(-1/2).",
+      "Phase diagrams give equilibrium phases and amounts by the lever rule: a Pb-40 wt% Sn alloy just below 183 C is 73.4 per cent alpha and 26.6 per cent beta, of which 48.7 per cent is eutectic; a 0.4 wt% C steel below 727 C is 48.8 per cent proeutectoid ferrite and 51.2 per cent pearlite."
+    ],
+    "katex": true
   },
   {
     "id": 16,

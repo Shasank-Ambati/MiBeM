@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materials Science Essentials - MiBeM</title>
-    <meta name="description" content="Bonding, structure, defects, strengthening, phase transformations, mechanical behaviour, processing and characterisation: the materials science that simulations model and are tested against.">
+    <title>Materials science essentials - MiBeM</title>
+    <meta name="description" content="University introduction to materials science and engineering: bonding and the bond energy curve, crystal structures and density, defects (vacancies, dislocations, grain boundaries), diffusion, mechanical properties and strengthening, phase diagrams and microstructure, and the link between processing, structure and properties, with worked examples and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/materials-science-essentials.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Materials Science Essentials - MiBeM">
-    <meta property="og:description" content="Bonding, structure, defects, strengthening, phase transformations, mechanical behaviour, processing and characterisation: the materials science that simulations model and are tested against.">
+    <meta property="og:title" content="Materials science essentials - MiBeM">
+    <meta property="og:description" content="University introduction to materials science and engineering: bonding and the bond energy curve, crystal structures and density, defects (vacancies, dislocations, grain boundaries), diffusion, mechanical properties and strengthening, phase diagrams and microstructure, and the link between processing, structure and properties, with worked examples and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/materials-science-essentials.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="14">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,17 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#framework">1. The framework</a></li>
-                <li><a href="#bonding">2. Bonding</a></li>
-                <li><a href="#structure">3. Structure at many scales</a></li>
-                <li><a href="#defects">4. Defects and strengthening</a></li>
-                <li><a href="#transformations">5. Phases and transformations</a></li>
-                <li><a href="#mechanical">6. Mechanical behaviour</a></li>
-                <li><a href="#functional">7. Other properties</a></li>
-                <li><a href="#processing">8. Processing routes</a></li>
-                <li><a href="#characterisation">9. Characterisation</a></li>
-                <li><a href="#check">10. Check your understanding</a></li>
-                <li><a href="#refs">11. References</a></li>
+                <li><a href="#intro">Lecture 1. Materials, bonding and the bond energy curve</a></li>
+                <li><a href="#crystals">Lecture 2. Crystal structures and their geometry</a></li>
+                <li><a href="#defects">Lecture 3. Imperfections: vacancies, dislocations and grain boundaries</a></li>
+                <li><a href="#diffusion">Lecture 4. Diffusion and thermally activated processes</a></li>
+                <li><a href="#mechanical">Lecture 5. Mechanical properties and strengthening</a></li>
+                <li><a href="#phase">Lecture 6. Phase diagrams</a></li>
+                <li><a href="#process">Lecture 7. Microstructure, heat treatment and material selection</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -55,11 +55,11 @@
 <nav class="course-nav" aria-label="Materials science courses"><span class="cn-dept">MSE</span><a href="materials-science-essentials.html" class="here" aria-current="page" title="MSE 101: Materials science essentials">101</a><a href="crystal-structure-and-periodic-cells.html" title="MSE 201: Crystal structures, supercells and periodic boundaries">201</a><a href="thermodynamics-and-calphad.html" title="MSE 301: Thermodynamics and CALPHAD">301</a><a href="mechanical-behaviour-of-materials.html" title="MSE 302: Mechanical behaviour of materials">302</a></nav>
 <!-- coursenav:end -->
             <h1>Materials science essentials</h1>
-            <p class="lead">Simulation models materials, so it helps to be fluent in what they are and how they are described. This page is a compact refresher of the core ideas (bonding, structure, defects, phase transformations, mechanical behaviour, processing and the experiments used to test materials), always pointing to where a simulation method connects.</p>
+            <p class="lead">Why is copper ductile and glass brittle, steel strong after quenching but weak after annealing, silicon a semiconductor and diamond an insulator? The answer in every case lies in the <strong>structure</strong> of the material at one or more length scales, and the way it was <strong>processed</strong>. This unit introduces the structure&ndash;property relations that everything else in the curriculum builds on: the simulation courses compute the properties of structures, and the structures you will build in the labs are the ones described here.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 13 min</dd></div>
+<div><dt>Reading time</dt><dd>about 42 min</dd></div>
 <div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
 <div><dt>Leads to</dt><dd><a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystals and cells</a><br><a href="thermodynamics-and-calphad.html">MSE 301: Thermodynamics and CALPHAD</a><br><a href="mechanical-behaviour-of-materials.html">MSE 302: Mechanical behaviour</a><br><a href="introduction.html">CMS 401: Introduction</a></dd></div>
 <div><dt>Level</dt><dd>Year 1: foundations</dd></div>
@@ -67,195 +67,389 @@
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Relate bonding type to typical properties and to the interatomic model or electronic method that suits it.</li>
-                    <li>Describe the hierarchy of structure from atoms to grains and say which defects control strength and diffusion.</li>
-                    <li>Distinguish equilibrium from transformation kinetics and name the main strengthening mechanisms.</li>
-                    <li>Read a stress&ndash;strain curve, and name the experiment that measures each quantity a simulation predicts.</li>
+                    <li>Describe the four classes of materials and the four types of bonding, and relate the bond energy curve to stiffness, melting and thermal expansion.</li>
+                    <li>Describe the common crystal structures, compute their packing fractions, densities and atomic densities on planes and along directions, and use Miller indices.</li>
+                    <li>Describe point defects, dislocations and grain boundaries and compute equilibrium vacancy concentrations and strengthening contributions.</li>
+                    <li>Use Fick&rsquo;s laws and the Arrhenius law for diffusion and carburising.</li>
+                    <li>Read a stress&ndash;strain curve and compute modulus, yield strength, ultimate strength, ductility and toughness, and list the strengthening mechanisms.</li>
+                    <li>Use binary phase diagrams, the lever rule and the Fe&ndash;C diagram to predict the equilibrium microstructure.</li>
+                    <li>Explain how heat treatment and processing change the microstructure and thus the properties, and select materials from property charts.</li>
                 </ul>
+                <strong>You need:</strong> school-level chemistry and physics, and the basic algebra of <a href="calculus-single-variable.html">MATH 101: Calculus I</a> (derivatives and exponentials). This course is the first of the materials sequence: <a href="crystal-structure-and-periodic-cells.html">MSE 201</a> treats crystals in depth, <a href="thermodynamics-and-calphad.html">MSE 301</a> thermodynamics and phase diagrams, <a href="mechanical-behaviour-of-materials.html">MSE 302</a> mechanical behaviour.
             </div>
 
-            <p><strong>Starting point:</strong> This page is a refresher at first-year university level. </p>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>Seven <strong>lectures</strong> develop the subject with worked examples to try before reading the solutions; a <strong>problem set</strong> of twelve problems with hints and full solutions follows, then a <strong>unit quiz</strong>. The labs <a href="lab-structures-ase.html">LAB 201</a> (building crystals) and <a href="lab-md-lammps-copper.html">LAB 503</a> (computing the properties of copper) let you see Lectures 2, 3 and 5 in a simulation.</p>
+            </div>
 
-            <h2 id="framework">1. The framework<a class="anchor" href="#framework" aria-label="Link to this section">#</a></h2>
-            <p>Materials science is organised around one chain: <strong>processing</strong> (how a material is made and treated) determines its <strong>structure</strong> (arrangement of atoms, defects, grains and phases at every scale); structure determines <strong>properties</strong> (strength, conductivity, corrosion resistance and so on); and properties determine <strong>performance</strong> in service. A steel sheet is a good illustration: composition and the thermomechanical schedule (rolling temperature, cooling rate, coiling temperature) set the mix of ferrite, bainite and martensite; that microstructure sets the yield strength and formability; and those set how the part forms and how it absorbs energy in a crash.</p>
-            <div class="table-scroll" role="region" aria-label="1. The framework (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Link in the chain</th><th>Typical question</th><th>Simulation that addresses it</th></tr></thead>
-                <tbody>
-                    <tr><td>Processing &rarr; structure</td><td>Which phases and grain size result from this schedule?</td><td><a href="thermodynamics-and-calphad.html">CALPHAD</a>, <a href="diffusion-and-kinetics.html">diffusion models</a>, <a href="phase-field-modelling.html">phase-field</a>, <a href="finite-element-method.html">process finite elements</a></td></tr>
-                    <tr><td>Structure &rarr; properties</td><td>How strong is this microstructure? How does a defect move?</td><td>Crystal plasticity, <a href="molecular-dynamics.html">molecular dynamics</a>, <a href="density-functional-theory.html">DFT</a></td></tr>
-                    <tr><td>Properties &rarr; performance</td><td>Will the component survive the load, heat or environment?</td><td>Continuum finite elements</td></tr>
-                    <tr><td>All links, in reverse</td><td>Which composition and process would give this property?</td><td><a href="machine-learning-for-materials.html">Machine learning</a> and optimisation</td></tr>
-                </tbody>
-            </table></div>
+            <h2 id="intro">Lecture 1. Materials, bonding and the bond energy curve<a class="anchor" href="#intro" aria-label="Link to this section">#</a></h2>
+            <p>Engineering materials fall into four classes: <strong>metals</strong> (metallic bonding; strong, ductile, conduct heat and electricity), <strong>ceramics</strong> (ionic and covalent bonding; hard, brittle, high melting point, usually insulating), <strong>polymers</strong> (long molecules with covalent bonds along the chain and weak secondary bonds between chains; light, flexible) and <strong>composites</strong> (combinations of the above, such as carbon fibre in epoxy). Semiconductors, biomaterials and glasses cut across this classification. The central idea of the field is the <em>processing&ndash;structure&ndash;properties&ndash;performance</em> chain: how a material is made determines its structure at all scales, the structure determines its properties, and the properties determine whether it performs in service. Changing a property means changing the structure, usually by changing the processing.</p>
+            <p>The atoms of a solid are held together by <strong>bonds</strong>, which come in four principal types:</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 1. Materials, bonding and the bond energy curve (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Bond</th><th>Origin</th><th>Typical energy</th><th>Properties</th><th>Examples</th></tr></thead>
+            <tbody>
+            <tr><td>Ionic</td><td>electrostatic attraction between + and &minus; ions after electron transfer</td><td>$3$&ndash;$8$ eV</td><td>hard, brittle, high melting, insulating</td><td>NaCl, MgO</td></tr>
+            <tr><td>Covalent</td><td>shared electron pairs, directional</td><td>$3$&ndash;$7$ eV</td><td>very hard, very high melting, semiconductors or insulators</td><td>diamond, Si, SiC</td></tr>
+            <tr><td>Metallic</td><td>delocalised valence electrons shared by all ions, non-directional</td><td>$1$&ndash;$4$ eV</td><td>ductile, conducting, wide range of melting points</td><td>Cu, Fe, Al</td></tr>
+            <tr><td>van der Waals / hydrogen</td><td>fluctuating dipoles; the H bond is a stronger dipole interaction</td><td>$0.01$&ndash;$0.5$ eV</td><td>soft, low melting</td><td>solid Ar, ice, polymer chains</td></tr>
+            </tbody></table></div>
+            <p>All bonds have the same qualitative energy&ndash;distance curve. Two atoms at distance $r$ attract each other at long range and repel at short range (the electron clouds overlap, the Pauli principle), so the energy $E(r)$ has a minimum at an equilibrium separation $r_0$ with depth $E_0$ (the bond energy). A simple model that you will use in simulations is the <strong>Lennard-Jones potential</strong> $E(r)=4\varepsilon[(\sigma/r)^{12}-(\sigma/r)^6]$, with $r_0=2^{1/6}\sigma$ and $E(r_0)=-\varepsilon$.</p>
+            <div class="note thm"><strong>What the shape of the curve tells you</strong>
+            <p><em>Stiffness.</em> Near the minimum the curve is a parabola, $E\approx E_0+\tfrac12k(r-r_0)^2$, with the bond stiffness $k=\mathrm d^2E/\mathrm dr^2|_{r_0}$ (N/m). Stretching a crystal by a strain $\varepsilon$ separates every pair of planes by $\varepsilon r_0$, and the force per bond is $k\varepsilon r_0$ over an area $\approx r_0^2$ per bond, so the stress is $\sigma\approx k\varepsilon/r_0$ and the <strong>Young modulus</strong> is $E\approx k/r_0$: a deep, narrow well (strong bonds) means a high modulus. <em>Melting.</em> The melting temperature scales with the bond energy $E_0$, since melting happens when the thermal energy $k_\mathrm BT$ becomes a fixed fraction of it. <em>Thermal expansion.</em> The curve is asymmetric (steeper on the compression side), so as the atoms vibrate with a larger amplitude at higher $T$ their mean separation increases: the expansion is a consequence of the anharmonicity of the well, and stronger bonds, with deeper and more symmetric wells, expand less. A harmonic crystal would not expand at all.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 1.1: the stiffness of solid argon</strong>
+                <p class="given">Solid argon is bound by van der Waals forces, well described by a Lennard-Jones potential with $\varepsilon=0.0104$ eV and $\sigma=3.405$ &Aring;. Find the equilibrium separation, the bond stiffness and an estimate of the Young modulus. For the potential $V(r)=4\varepsilon[(\sigma/r)^{12}-(\sigma/r)^6]$ the second derivative at the minimum is $57.15\,\varepsilon/\sigma^2$.</p>
+                <p>$r_0=2^{1/6}\sigma=1.1225\times3.405=3.822$ &Aring; ($0.382$ nm; the measured nearest-neighbour distance in solid argon is $3.76$ &Aring;, which differs because the many-neighbour sums shift the minimum). The stiffness is $k=57.15\,\varepsilon/\sigma^2=57.15\times1.666\times10^{-21}\ \mathrm J/(3.405\times10^{-10}\ \mathrm m)^2=0.821$ N/m. Hence $E\approx k/r_0=0.821/3.822\times10^{-10}=2.1$ GPa. The measured isothermal bulk modulus of solid argon near $0$ K is about $3$ GPa: the simple estimate is correct in order of magnitude and in the conclusion that a van der Waals solid is very soft, a hundred times softer than a metal (copper: $130$ GPa) and $500$ times softer than diamond ($1050$ GPa). The melting point of argon, $84$ K, reflects the same weak bonds (depth $0.0104$ eV against $3.5$ eV for the cohesive energy of copper).</p>
+            </div>
 
-            <h2 id="bonding">2. Bonding<a class="anchor" href="#bonding" aria-label="Link to this section">#</a></h2>
-            <p>Everything starts with how atoms hold together. The bond type largely decides the properties and, importantly for simulation, which interatomic model or electronic method is appropriate.</p>
-            <div class="table-scroll" role="region" aria-label="2. Bonding (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Bond</th><th>Nature</th><th>Examples and cohesive energy</th><th>Typical consequences</th><th>Suitable models</th></tr></thead>
-                <tbody>
-                    <tr><td>Metallic</td><td>Valence electrons delocalised over all atoms, non-directional</td><td>Cu 3.5, Fe 4.3, W 8.9 eV/atom</td><td>Ductile, conducting, usually close-packed or body-centred cubic structures</td><td>Embedded-atom potentials; DFT</td></tr>
-                    <tr><td>Covalent</td><td>Electrons shared in directional bonds</td><td>Si 4.6, diamond 7.4 eV/atom</td><td>Hard, brittle, open structures, semiconducting</td><td>Tersoff and Stillinger&ndash;Weber potentials; DFT</td></tr>
-                    <tr><td>Ionic</td><td>Electron transfer; electrostatic attraction between ions</td><td>NaCl, MgO, Al<sub>2</sub>O<sub>3</sub> (lattice energy of NaCl about 8 eV per ion pair)</td><td>Hard, brittle, insulating, high melting points</td><td>Coulomb plus short-range potentials; DFT+U</td></tr>
-                    <tr><td>van der Waals</td><td>Weak attraction from fluctuating dipoles</td><td>Noble gases, graphite interlayers, polymer chain packing; 0.01&ndash;0.1 eV</td><td>Low melting points, soft, layered sliding</td><td>Lennard-Jones; dispersion-corrected DFT</td></tr>
-                    <tr><td>Hydrogen bond</td><td>Attraction between H and an electronegative atom</td><td>Water, proteins, polyamides; 0.1&ndash;0.4 eV</td><td>Structure of water and many polymers</td><td>Specialised force fields</td></tr>
-                </tbody>
-            </table></div>
-            <p>All bonds share one shape of energy curve: repulsion at short distance, attraction at long, and a minimum at the equilibrium spacing <em>r</em><sub>0</sub> with depth equal to the bond energy. The curvature at the minimum is the bond stiffness <em>k</em>, so macroscopic stiffness follows from it: Young&rsquo;s modulus is roughly <em>E</em> &asymp; <em>k</em>/<em>r</em><sub>0</sub>, giving about 80 GPa for <em>k</em> = 20 N/m and <em>r</em><sub>0</sub> = 0.25 nm, the right order for metals. The asymmetry of the curve (it is steeper on the repulsive side) is the origin of thermal expansion, and deeper wells mean higher melting points and stiffer solids.</p>
+            <p>The bonding type also fixes what a crystal does when deformed. Metallic bonding is non-directional: planes of atoms can slide over one another without breaking the bonding (the electron sea adapts), which makes metals ductile. Ionic crystals resist sliding that would bring ions of like charge together, and covalent crystals have directional bonds that break rather than bend: both are brittle at room temperature. Polymers show the greatest variety because their long chains can uncoil: the deformation of a rubber is mostly a change of entropy of the chains, not of bond lengths (<a href="mechanical-behaviour-of-materials.html">MSE 302</a>).</p>
+            <h2 id="crystals">Lecture 2. Crystal structures and their geometry<a class="anchor" href="#crystals" aria-label="Link to this section">#</a></h2>
+            <p>In a crystal the atoms are arranged in a pattern that repeats in three dimensions. The pattern is described by a <strong>lattice</strong> (the set of translation vectors) and a <strong>basis</strong> (the atoms associated with each lattice point). The smallest repeating volume is the <strong>primitive cell</strong>; in practice one uses the larger <strong>conventional (unit) cell</strong> that shows the full symmetry, defined by the lattice parameters $a$, $b$, $c$ and the angles $\alpha,\beta,\gamma$. For cubic crystals only $a$ is needed. Three structures account for the great majority of metals:</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 2. Crystal structures and their geometry (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Structure</th><th>Atoms per cell</th><th>Coordination</th><th>Relation of $a$ to atomic radius $R$</th><th>Packing fraction</th><th>Examples</th></tr></thead>
+            <tbody>
+            <tr><td>Simple cubic (sc)</td><td>1</td><td>6</td><td>$a=2R$</td><td>$\pi/6=0.524$</td><td>Po (rare)</td></tr>
+            <tr><td>Body-centred cubic (bcc)</td><td>2</td><td>8</td><td>$a=4R/\sqrt3$</td><td>$\pi\sqrt3/8=0.680$</td><td>Fe ($\alpha$), Cr, W, Mo</td></tr>
+            <tr><td>Face-centred cubic (fcc)</td><td>4</td><td>12</td><td>$a=4R/\sqrt2$</td><td>$\pi\sqrt2/6=0.740$</td><td>Cu, Al, Ni, Au, Fe ($\gamma$)</td></tr>
+            <tr><td>Hexagonal close-packed (hcp)</td><td>2</td><td>12</td><td>$a=2R$, ideal $c/a=1.633$</td><td>$0.740$</td><td>Mg, Ti, Zn</td></tr>
+            <tr><td>Diamond cubic</td><td>8</td><td>4</td><td>$a=8R/\sqrt3$</td><td>$\pi\sqrt3/16=0.340$</td><td>C, Si, Ge</td></tr>
+            </tbody></table></div>
+            <p>fcc and hcp are the two ways of stacking close-packed layers of spheres: the layers are stacked $ABABAB\ldots$ (hcp) or $ABCABC\ldots$ (fcc); both have the maximum packing fraction $0.74$ for equal spheres and coordination $12$. The open diamond structure of silicon has only four neighbours, set by the directional $sp^3$ covalent bonds. The atoms per cell are counted by sharing: a corner atom belongs to $8$ cells, a face atom to $2$, an edge atom to $4$, an interior atom to $1$; the fcc cell has $8\times\tfrac18+6\times\tfrac12=4$ atoms.</p>
+            <div class="note thm"><strong>Density from the structure</strong>
+            <p>$\rho=\dfrac{nA}{V_cN_\mathrm A}$, where $n$ is the number of atoms in the cell, $A$ the atomic mass (g/mol), $V_c$ the cell volume and $N_\mathrm A=6.022\times10^{23}$ mol$^{-1}$. Checking a density against the measured one is the quickest test that a structure and a lattice parameter are consistent (<a href="lab-structures-ase.html">LAB 201</a> does this for eight crystals).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: densities of copper, iron and tungsten</strong>
+                <p class="given">Compute the densities of copper (fcc, $a=0.3615$ nm, $A=63.55$), $\alpha$-iron (bcc, $a=0.2866$ nm, $A=55.85$) and tungsten (bcc, $a=0.3165$ nm, $A=183.84$) and compare with the measured $8.96$, $7.87$ and $19.25$ g/cm$^3$.</p>
+                <p>Copper: $\rho=4(63.55)/[(0.3615\times10^{-7})^3(6.022\times10^{23})]=8.93$ g/cm$^3$. Iron: $2(55.85)/[(0.2866\times10^{-7})^3N_\mathrm A]=7.88$ g/cm$^3$. Tungsten: $2(183.84)/[(0.3165\times10^{-7})^3N_\mathrm A]=19.26$ g/cm$^3$. All three are within $0.2\%$ of the measured values (the small differences come from vacancies, impurities and the temperature of the lattice parameter). Note why W is so much denser than Fe despite the same structure: the cell is a little larger but the atomic mass is $3.3$ times larger.</p>
+            </div>
 
-            <h2 id="structure">3. Structure at many scales<a class="anchor" href="#structure" aria-label="Link to this section">#</a></h2>
-            <p>Properties depend on structure at every scale from the atomic to the component, so simulations are matched to the scale that controls the property.</p>
-            <div class="table-scroll" role="region" aria-label="3. Structure at many scales (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Scale</th><th>Features</th><th>Typical size</th></tr></thead>
-                <tbody>
-                    <tr><td>Atomic</td><td>Crystal lattice or amorphous arrangement; point defects; dislocation cores</td><td>0.1&ndash;2 nm</td></tr>
-                    <tr><td>Nano</td><td>Precipitates, clusters, solute atmospheres, thin films</td><td>1&ndash;100 nm</td></tr>
-                    <tr><td>Micro</td><td>Grains, phases, inclusions, pores, dislocation networks</td><td>0.1&ndash;100 &micro;m (steel sheet grains: 5&ndash;20 &micro;m)</td></tr>
-                    <tr><td>Macro</td><td>Component, weld, casting, residual-stress field</td><td>mm&ndash;m</td></tr>
-                </tbody>
-            </table></div>
-            <p>Most engineering materials are <strong>polycrystals</strong>: aggregates of crystalline grains with different orientations separated by grain boundaries. The distribution of grain orientations is the <em>texture</em>, which makes properties direction-dependent (anisotropy): rolled sheet forms differently along and across the rolling direction. Other classes differ in structure. <strong>Glasses</strong> (and metallic glasses) lack long-range order but keep a regular short-range arrangement; <strong>polymers</strong> are long chain molecules, with crystalline and amorphous regions and a glass transition temperature; <strong>ceramics</strong> are mostly ionic or covalent compounds, usually made by sintering powders into polycrystals; <strong>composites</strong> combine phases (fibres in a matrix) to get properties neither has alone.</p>
-            <p>A central empirical result links scales: the yield strength of a polycrystal rises as the grain size <em>d</em> falls, as described by the <strong>Hall&ndash;Petch relation</strong>:</p>
-            <span class="eq">&sigma;<sub>y</sub> = &sigma;<sub>0</sub> + k d<sup>&minus;1/2</sup></span>
-            <p>where &sigma;<sub>0</sub> is the friction stress for dislocation motion and <em>k</em> measures how hard it is to pass slip across a boundary. For steels <em>k</em> is of order 0.5&ndash;0.7 MPa m<sup>1/2</sup>.</p>
+            <h3>Directions and planes: Miller indices</h3>
+            <p>To specify directions and planes in a crystal one uses the lattice axes. A <strong>direction</strong> is written $[uvw]$, the smallest integers proportional to the components of a vector along the axes: $[100]$ is the cube edge, $[110]$ the face diagonal and $[111]$ the body diagonal. A <strong>plane</strong> is described by <strong>Miller indices</strong> $(hkl)$: take the intercepts of the plane with the axes in units of the lattice parameters ($x_1,x_2,x_3$, with $\infty$ for parallel axes), take reciprocals and clear fractions to the smallest integers: a plane with intercepts $1,\infty,\infty$ is $(100)$; with $1,1,\infty$ it is $(110)$; with $1,1,1$ it is $(111)$; with $\tfrac12,1,\infty$ it is $(210)$. A bar denotes a negative index, $(\bar110)$. Families of equivalent planes by symmetry are denoted $\{hkl\}$ and directions $\langle uvw\rangle$. In cubic crystals the direction $[hkl]$ is perpendicular to the plane $(hkl)$, and the spacing of planes is $d_{hkl}=a/\sqrt{h^2+k^2+l^2}$ (valid for cubic lattices; with the structure-factor rules of the fcc and bcc lattices that remove some reflections, this is the basis for the X-ray diffraction of <a href="lab-structures-ase.html">LAB 201</a>).</p>
+            <p>The packing of atoms differs between planes and directions, and this controls how crystals deform. In fcc the <strong>close-packed planes</strong> are $\{111\}$ and the close-packed directions are $\langle110\rangle$; slip occurs on these planes and in these directions (twelve slip systems, which makes fcc metals very ductile). In bcc there is no close-packed plane (the $\{110\}$ planes are the most densely packed), so the slip systems are more numerous but harder to activate, and bcc metals have a ductile&ndash;brittle transition at low temperature (<a href="mechanical-behaviour-of-materials.html">MSE 302</a>). Hcp has one close-packed plane (the basal plane) with three directions, so it is much less ductile at room temperature unless it is deformed by twinning (Mg, Ti, Zn).</p>
+            <div class="example">
+                <strong>Worked example 2.2: planar and linear densities in copper</strong>
+                <p class="given">For fcc copper ($a=0.3615$ nm) compute the planar density (atoms per nm$^2$) of the $(100)$, $(110)$ and $(111)$ planes and the linear density along $[110]$ and $[100]$.</p>
+                <p>The $(100)$ face of the cell contains $4\times\tfrac14+1=2$ atoms in an area $a^2=0.1307$ nm$^2$: $15.3$ atoms/nm$^2$. The $(110)$ plane is a rectangle $a\times\sqrt2a$ (area $0.1848$ nm$^2$) holding $4\times\tfrac14+2\times\tfrac12=2$ atoms: $10.8$ atoms/nm$^2$. The $(111)$ plane is an equilateral triangle of side $\sqrt2a$ with area $\tfrac{\sqrt3}2a^2=0.1132$ nm$^2$ containing $3\times\tfrac16+3\times\tfrac12=2$ atoms: $17.7$ atoms/nm$^2$, the densest of the three (the close-packed plane). Along $[110]$ the atoms touch and the repeat distance is $a/\sqrt2=0.2556$ nm with one atom per repeat: $3.91$ atoms/nm; along $[100]$ the repeat is $a=0.3615$ nm: $2.77$ atoms/nm, $29\%$ lower. The $\langle110\rangle$ directions are the directions of closest packing in fcc, and they are the slip directions.</p>
+            </div>
 
-            <h2 id="defects">4. Defects and strengthening<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
-            <p>A perfect crystal is a poor model of a real material: the useful properties of metals come largely from their defects.</p>
+            <h2 id="defects">Lecture 3. Imperfections: vacancies, dislocations and grain boundaries<a class="anchor" href="#defects" aria-label="Link to this section">#</a></h2>
+            <p>A perfect crystal would be far stronger and far less useful than a real one: most properties that matter in engineering (strength, ductility, conductivity of doped semiconductors, diffusion) are controlled by defects. They are classified by dimension.</p>
             <ul>
-                <li><strong>Point defects</strong> (vacancies, interstitials, substitutional solutes) exist in equilibrium at a concentration that rises exponentially with temperature (see <a href="crystal-structure-and-periodic-cells.html">crystal structures</a>); vacancies are what lets substitutional atoms diffuse.</li>
-                <li><strong>Dislocations</strong> are line defects, characterised by the Burgers vector <strong>b</strong> (the magnitude and direction of the lattice distortion), with edge, screw and mixed character. Plastic deformation is the glide of dislocations on close-packed planes under shear stress, at stresses far below the theoretical shear strength of a perfect crystal. The dislocation density &rho; (line length per volume) is about 10<sup>10</sup>&ndash;10<sup>12</sup> m<sup>&minus;2</sup> in annealed metals and 10<sup>14</sup>&ndash;10<sup>16</sup> m<sup>&minus;2</sup> in heavily deformed ones.</li>
-                <li><strong>Planar defects</strong>: grain boundaries, stacking faults, twin boundaries, phase boundaries and free surfaces.</li>
-                <li><strong>Volume defects</strong>: pores, inclusions and second-phase particles.</li>
+            <li><strong>Point defects (0D):</strong> vacancies (a missing atom), self-interstitials (an extra atom between lattice sites), and impurities that are <em>substitutional</em> (replacing a host atom: Zn in Cu, giving brass) or <em>interstitial</em> (small atoms in the holes of the lattice: C in Fe, giving steel). Vacancies exist in thermal equilibrium: from Lecture 4 of <a href="statistical-mechanics.html">PHYS 301</a>, the fraction is $n/N=\exp(-E_f/k_\mathrm BT)$ (times a factor of order 1&ndash;10 for the formation entropy). For copper, $E_f=1.28$ eV, the fraction is $3\times10^{-22}$ at $300$ K and $1.1\times10^{-5}$ at $1300$ K, just below melting.</li>
+            <li><strong>Line defects (1D): dislocations.</strong> An <em>edge</em> dislocation is the edge of an extra half-plane of atoms inserted in the crystal; a <em>screw</em> dislocation is a line around which the planes form a helical ramp. Their strength is the <strong>Burgers vector</strong> $\mathbf b$, the lattice vector that closes a loop drawn around the dislocation (in a perfect crystal the same loop closes); $|\mathbf b|$ is the shortest lattice repeat, $a/\sqrt2=0.256$ nm for fcc copper along $\langle110\rangle$. For an edge dislocation $\mathbf b$ is perpendicular to the line, for a screw it is parallel. The dislocation density $\rho$ is the line length per volume (m/m$^3$ $=$ m$^{-2}$): $10^{10}$&ndash;$10^{12}$ m$^{-2}$ in annealed metals, $10^{14}$&ndash;$10^{16}$ m$^{-2}$ in heavily cold-worked ones, $\lesssim10^{3}$ m$^{-2}$ in silicon wafers.</li>
+            <li><strong>Planar defects (2D):</strong> grain boundaries (the interface between two crystals of different orientation), stacking faults, twin boundaries and free surfaces. A polycrystal is an aggregate of grains; the mean <strong>grain size</strong> $d$ is measured by line-intercept methods and reported also as the ASTM grain-size number $G$, defined by $n=2^{G-1}$ grains per square inch on a micrograph at $100\times$ (a larger $G$ means finer grains: $G=5$ gives $n=16$, mean grain area $0.0040$ mm$^2$ and a diameter of about $64$ &micro;m).</li>
+            <li><strong>Volume defects (3D):</strong> pores, cracks, precipitates and inclusions.</li>
             </ul>
-            <p>Strengthening a metal means hindering dislocation motion. The main mechanisms are summarised below.</p>
-            <div class="table-scroll" role="region" aria-label="4. Defects and strengthening (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Mechanism</th><th>How it works</th><th>Scaling</th></tr></thead>
-                <tbody>
-                    <tr><td>Solid-solution strengthening</td><td>Solute atoms distort the lattice and interact with dislocations</td><td>Increases with solute concentration (roughly as a power of 1/2 to 2/3)</td></tr>
-                    <tr><td>Grain-boundary strengthening</td><td>Boundaries block slip</td><td>Hall&ndash;Petch: &prop; <em>d</em><sup>&minus;1/2</sup></td></tr>
-                    <tr><td>Work (strain) hardening</td><td>Dislocations multiply and obstruct each other</td><td>Taylor: &Delta;&sigma; = &alpha;<em>MGb</em>&radic;&rho;, with &alpha; &asymp; 0.2&ndash;0.5 and Taylor factor <em>M</em> &asymp; 3</td></tr>
-                    <tr><td>Precipitation (dispersion) strengthening</td><td>Fine particles are cut by or bowed around by dislocations</td><td>Orowan bowing: &Delta;&tau; &asymp; <em>Gb</em>/<em>L</em>, with <em>L</em> the particle spacing</td></tr>
-                    <tr><td>Transformation strengthening</td><td>Hard, fine product phases such as martensite or bainite</td><td>Depends on carbon content and transformation temperature</td></tr>
-                </tbody>
-            </table></div>
-            <p>Here <em>G</em> is the shear modulus. These mechanisms combine, which is the basis of alloy design, and each ties to a modelling scale: solute&ndash;dislocation binding by DFT, dislocation mobility by <a href="molecular-dynamics.html">molecular dynamics</a>, precipitate evolution by <a href="phase-field-modelling.html">phase-field</a> and grain-level plasticity by crystal plasticity.</p>
+            <h3>Dislocations and plastic deformation</h3>
+            <p>Plastic flow is carried by dislocation glide, not by the sliding of whole planes. To slip a plane rigidly over its neighbour needs a shear stress of order $G/10$ (the theoretical strength, several GPa for metals: the $6$ GPa found for copper in the tensile test of <a href="lab-md-lammps-copper.html">LAB 503</a> is of this kind), but a dislocation moves by shifting one row of atoms at a time, which needs a stress $10^3$&ndash;$10^4$ times smaller. The glide takes place on the close-packed plane in the close-packed direction (the <strong>slip system</strong>); for fcc, $\{111\}\langle110\rangle$: $4$ planes $\times$ $3$ directions $=12$ systems. The dislocation density rises with deformation (dislocations multiply at Frank&ndash;Read sources) and the dislocations obstruct each other: this is <strong>work hardening</strong>, described by the Taylor relation
+            $$\Delta\sigma_y=\alpha Gb\sqrt\rho,\qquad\alpha\approx0.2\text{&ndash;}0.5,$$
+            with $G$ the shear modulus ($48$ GPa for copper). For copper ($b=0.256$ nm, $\alpha=0.3$): $\rho=10^{12}$ m$^{-2}$ gives $3.7$ MPa, $10^{14}$ gives $37$ MPa and $10^{15}$ gives $116$ MPa; the yield strength of annealed copper is about $30$ MPa and of heavily cold-worked copper above $300$ MPa, the remainder coming from the other mechanisms of Lecture 5.</p>
+            <h3>Grain boundaries and the Hall&ndash;Petch relation</h3>
+            <p>A grain boundary disrupts the slip planes: a dislocation cannot continue into a neighbouring grain of different orientation and piles up at the boundary. The finer the grains, the more boundaries per length and the higher the stress needed to push dislocations through: the yield stress rises as
+            $$\sigma_y=\sigma_0+k_y\,d^{-1/2}\qquad(\text{Hall&ndash;Petch}),$$
+            where $\sigma_0$ is the friction stress of the single crystal and $k_y$ a constant of the material. Grain refinement is the only strengthening mechanism that also raises toughness. The relation is limited at very small grain sizes ($d\lesssim10$ nm), where the boundaries themselves slide and the strength decreases (the &ldquo;inverse Hall&ndash;Petch&rdquo; regime of nanocrystalline metals).</p>
+            <div class="example">
+                <strong>Worked example 3.1: Hall&ndash;Petch from two measurements</strong>
+                <p class="given">A steel has a yield strength of $180$ MPa for a mean grain size of $100$ &micro;m and $250$ MPa for $25$ &micro;m. Find $\sigma_0$ and $k_y$ and predict the yield strength at $5$ &micro;m.</p>
+                <p>Express the grain size in metres: $d^{-1/2}=(10^{-4})^{-1/2}=100$ m$^{-1/2}$ and $(25\times10^{-6})^{-1/2}=200$ m$^{-1/2}$. The slope is $k_y=(250-180)/(200-100)=0.70$ MPa m$^{1/2}$, and the intercept is $\sigma_0=180-0.70\times100=110$ MPa. At $d=5$ &micro;m, $d^{-1/2}=447$ m$^{-1/2}$ and $\sigma_y=110+0.70\times447=423$ MPa: a twenty-fold reduction of the grain size from $100$ to $5$ &micro;m raises the strength by a factor $2.3$. (The values of $k_y$ in real metals range from $\approx0.1$ MPa m$^{1/2}$ for copper to $\approx0.6$&ndash;$0.8$ for steels.)</p>
+            </div>
 
-            <h2 id="transformations">5. Phases and transformations<a class="anchor" href="#transformations" aria-label="Link to this section">#</a></h2>
-            <p>A <strong>phase</strong> is a region of uniform composition and structure. The equilibrium phases for a given composition and temperature are what a phase diagram shows (the calculation is in <a href="thermodynamics-and-calphad.html">thermodynamics and CALPHAD</a>), but real processing is rarely at equilibrium, so which microstructure forms depends on <em>kinetics</em>. The main transformation types are:</p>
+            <div class="example">
+                <strong>Worked example 3.2: how much of the strength is work hardening?</strong>
+                <p class="given">Annealed copper has $\rho=10^{11}$ m$^{-2}$. After rolling, $\rho=3\times10^{14}$ m$^{-2}$. Estimate the increase of yield strength from the Taylor relation ($\alpha=0.3$, $G=48$ GPa, $b=0.256$ nm).</p>
+                <p>$\Delta\sigma=\alpha Gb\sqrt\rho$ with $\alpha Gb=0.3\times48\times10^9\times0.256\times10^{-9}=3.69$ N/m. Before: $3.69\sqrt{10^{11}}=1.2$ MPa. After: $3.69\sqrt{3\times10^{14}}=63.9$ MPa. The increase is about $63$ MPa: the strength of the copper has doubled or tripled (annealed copper has $\sigma_y\approx30$ MPa), at the price of ductility, as the dislocations that provide the strength are also the obstacles that prevent further deformation. Heating (annealing) lets the dislocations rearrange and annihilate (recovery, recrystallisation), restoring the soft state.</p>
+            </div>
+
+            <h2 id="diffusion">Lecture 4. Diffusion and thermally activated processes<a class="anchor" href="#diffusion" aria-label="Link to this section">#</a></h2>
+            <p>Atoms in a solid move: by exchanging with a neighbouring vacancy (vacancy mechanism, the route of substitutional atoms and of self-diffusion) or by hopping between interstitial sites (small atoms: C, N, H in iron). The rate of such jumps depends exponentially on temperature, because an atom must overcome an energy barrier, the <strong>activation energy</strong> $Q$: the fraction of the time an atom has enough energy is $\exp(-Q/RT)$ (with $Q$ in J/mol), the <strong>Arrhenius law</strong>. The diffusion coefficient has the same form,
+            $$D=D_0\,e^{-Q/RT}.$$
+            Taking logarithms, $\ln D=\ln D_0-(Q/R)(1/T)$: a straight line in an Arrhenius plot ($\ln D$ against $1/T$) with slope $-Q/R$, from which $Q$ is found. For substitutional diffusion $Q=E_f+E_m$, the sum of the vacancy formation and migration energies (Exercise 6 of <a href="statistical-mechanics.html">PHYS 301</a>); for interstitials only the migration energy appears, which is why carbon in iron diffuses so much faster than iron in iron: at $927{}^\circ$C the diffusivity of C in fcc Fe is $8.3\times10^{-12}$ m$^2$/s, while the self-diffusion of Fe is below $10^{-16}$ m$^2$/s.</p>
+            <div class="note thm"><strong>Fick&rsquo;s laws</strong>
+            <p><em>First law</em> (steady state): the flux of atoms (atoms per area per time) is proportional to the concentration gradient and directed down it, $J=-D\,\dfrac{\mathrm dC}{\mathrm dx}$. <em>Second law</em> (non-steady state), from conservation of matter, $\dfrac{\partial C}{\partial t}=D\dfrac{\partial^2C}{\partial x^2}$ for constant $D$. For a semi-infinite solid with a constant surface concentration $C_s$ and uniform initial concentration $C_0$ the solution is
+            $$\frac{C_s-C(x,t)}{C_s-C_0}=\mathrm{erf}\Bigl(\frac{x}{2\sqrt{Dt}}\Bigr),$$
+            where $\mathrm{erf}$ is the error function (tabulated: $\mathrm{erf}(0.5)=0.520$, $\mathrm{erf}(1)=0.843$, $\mathrm{erf}(2)=0.995$). The scale of the penetration is the <strong>diffusion distance</strong> $\sqrt{Dt}$: a given concentration is reached at a depth $x\propto\sqrt{t}$, so doubling the depth takes four times the time.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: how far do copper atoms move?</strong>
+                <p class="given">The self-diffusion of copper has $D_0=2.0\times10^{-5}$ m$^2$/s and $Q=197$ kJ/mol. Find the diffusion distance $\sqrt{Dt}$ after one hour at $600$, $1000$ and $1300$ K, and after one year at $600$ K.</p>
+                <p>$D=D_0e^{-Q/RT}$: at $600$ K, $Q/RT=39.5$ and $D=1.4\times10^{-22}$ m$^2$/s; at $1000$ K, $Q/RT=23.7$, $D=1.0\times10^{-15}$ m$^2$/s; at $1300$ K, $D=2.4\times10^{-13}$ m$^2$/s. The distances after one hour ($t=3600$ s): $0.7$ nm (about three lattice spacings) at $600$ K, $1.9$ &micro;m at $1000$ K and $30$ &micro;m at $1300$ K. After a whole year at $600$ K ($t=3.15\times10^7$ s) it is $67$ nm. A grain-boundary or a free surface offers much faster paths (the activation energy is about half of the bulk), which is why sintering and the coarsening of fine microstructures are effective at temperatures where bulk diffusion is negligible. The thousand-fold change of $D$ from $1000$ K to $1300$ K shows why heat treatments are done hot.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: carburising a gear</strong>
+                <p class="given">A low-carbon steel with $0.2$ wt% C is carburised at $927{}^\circ$C with a surface carbon content of $1.0$ wt% ($D=8.3\times10^{-12}$ m$^2$/s). How long does it take to reach $0.5$ wt% C at a depth of $0.6$ mm? What if the temperature is $1000{}^\circ$C ($D=1.95\times10^{-11}$ m$^2$/s)?</p>
+                <p>$(C_s-C_x)/(C_s-C_0)=(1.0-0.5)/(1.0-0.2)=0.625=\mathrm{erf}(z)$, which gives $z=0.627$ from the table of the error function. With $z=x/2\sqrt{Dt}$, $t=(x/2z)^2/D=(0.6\times10^{-3}/1.254)^2/8.3\times10^{-12}=2.29\times10^{-7}/8.3\times10^{-12}=2.76\times10^4$ s $=7.6$ h. At $1000{}^\circ$C: $t=2.29\times10^{-7}/1.95\times10^{-11}=1.17\times10^4$ s $=3.3$ h, about $2.3$ times faster for $73$ K more. (A finite-element solution of the same problem agrees with the error-function solution to $0.001$ wt% in <a href="lab-diffusion-fipy.html">LAB 506</a>.)</p>
+            </div>
+
+            <div class="note thm"><strong>Other thermally activated processes</strong>
+            <p>The same exponential describes the rate of creep, the growth of precipitates and grains, the oxidation of metals, the conductivity of intrinsic semiconductors ($\propto e^{-E_g/2k_\mathrm BT}$) and the rate of chemical reactions. If you see a property that changes by orders of magnitude over a modest temperature range, expect an activation energy. A useful rule: for $Q=1$ eV a temperature increase from $300$ K to $330$ K speeds a process up by $e^{(1/0.02585-1/0.02844)}=e^{3.52}=34$ times.</p>
+            </div>
+            <h2 id="mechanical">Lecture 5. Mechanical properties and strengthening<a class="anchor" href="#mechanical" aria-label="Link to this section">#</a></h2>
+            <p>In a <strong>tensile test</strong> a specimen of initial cross-section $A_0$ and gauge length $L_0$ is pulled at constant rate while the force $F$ and elongation $\Delta L$ are recorded. The <em>engineering stress</em> $\sigma=F/A_0$ and <em>engineering strain</em> $\varepsilon=\Delta L/L_0$ give a curve with characteristic regions (<a href="mechanical-behaviour-of-materials.html">MSE 302</a> treats them in depth):</p>
             <ul>
-                <li><strong>Nucleation and growth (diffusional).</strong> A new phase forms as small nuclei that need to overcome an energy barrier, then grows by atoms moving across the interface; the rate is set by diffusion and by the driving force. Examples: precipitation, pearlite, ferrite growth from austenite.</li>
-                <li><strong>Diffusionless (displacive).</strong> The lattice changes by a coordinated shear faster than atoms can diffuse, so composition is unchanged. The classic example is martensite in steel, formed on rapid cooling, which is hard because carbon remains trapped.</li>
-                <li><strong>Spinodal decomposition.</strong> A solution inside the spinodal separates continuously, with no barrier (see <a href="phase-field-modelling.html">phase-field modelling</a>).</li>
-                <li><strong>Order&ndash;disorder and magnetic transitions.</strong> Changes in the arrangement of species or spins with no change of lattice.</li>
+            <li><strong>Elastic region:</strong> $\sigma=E\varepsilon$ (Hooke&rsquo;s law) with the Young modulus $E$; the deformation is reversible, and is set by the bond stiffness of Lecture 1. Steel $207$ GPa, copper $130$, aluminium $70$, glass $70$, polymers $0.01$&ndash;$4$, diamond $1050$. The lateral contraction is described by Poisson&rsquo;s ratio $\nu=-\varepsilon_\mathrm{lateral}/\varepsilon_\mathrm{axial}\approx0.3$ for metals.</li>
+            <li><strong>Yield strength $\sigma_y$:</strong> the stress at which plastic deformation begins (conventionally the stress at $0.2\%$ permanent strain, the <em>offset yield strength</em>, found by drawing a line of slope $E$ from $\varepsilon=0.002$).</li>
+            <li><strong>Tensile strength (UTS):</strong> the maximum engineering stress. Beyond it, the deformation localises in a <em>neck</em> and the engineering stress falls although the material continues to harden (the true stress $\sigma_T=F/A_\mathrm{instantaneous}$ keeps rising).</li>
+            <li><strong>Ductility:</strong> the percentage elongation after fracture $\%EL=100(L_f-L_0)/L_0$ and the percentage reduction in area $\%RA=100(A_0-A_f)/A_0$.</li>
+            <li><strong>Toughness:</strong> the energy absorbed per unit volume up to fracture, the area under the stress&ndash;strain curve; the <strong>resilience</strong> (elastic energy per volume at yield) is $U_r=\sigma_y^2/2E$.</li>
             </ul>
-            <p>Because outcomes depend on the cooling path, engineers use <strong>time&ndash;temperature&ndash;transformation (TTT)</strong> and <strong>continuous-cooling transformation (CCT)</strong> diagrams, which show how long a transformation takes to start and finish at each temperature or cooling rate; a critical cooling rate must be exceeded to produce martensite. The overall kinetics are often described by the Johnson&ndash;Mehl&ndash;Avrami&ndash;Kolmogorov equation (see <a href="diffusion-and-kinetics.html">diffusion and kinetics</a>). Heat treatment exploits all of this: <em>annealing</em> softens by recovery, recrystallisation and grain growth; <em>normalising</em> refines grains; <em>quenching</em> traps non-equilibrium phases; <em>tempering</em> relaxes quenched structures by precipitating carbides; <em>ageing</em> forms fine precipitates, as in the Al&ndash;Cu system, where the sequence of Guinier&ndash;Preston zones and metastable precipitates gives peak strength before the equilibrium phase coarsens.</p>
+            <div class="example">
+                <strong>Worked example 5.1: a tensile test</strong>
+                <p class="given">A cylindrical steel specimen ($d_0=12.8$ mm, $L_0=50.8$ mm) yields at $35$ kN, reaches a maximum load of $62$ kN and fractures at a gauge length of $63.5$ mm and a neck diameter of $10.2$ mm. Find the yield strength, tensile strength, $\%EL$ and $\%RA$.</p>
+                <p>$A_0=\pi(12.8)^2/4=128.7$ mm$^2$. Yield strength $\sigma_y=35\,000/128.7=272$ MPa; tensile strength $62\,000/128.7=482$ MPa. $\%EL=(63.5-50.8)/50.8\times100=25\%$. $A_f=\pi(10.2)^2/4=81.7$ mm$^2$ and $\%RA=(128.7-81.7)/128.7\times100=36.5\%$. The ratio $\sigma_y/\mathrm{UTS}=0.56$ shows considerable capacity for strain hardening. For a design with a safety factor of $2$ against yield the allowable stress is $136$ MPa.</p>
+            </div>
 
-            <h2 id="mechanical">6. Mechanical behaviour<a class="anchor" href="#mechanical" aria-label="Link to this section">#</a></h2>
-            <h3 id="stress-strain">Stress and strain<a class="anchor" href="#stress-strain" aria-label="Link to this section">#</a></h3>
-            <p>Engineering stress is &sigma; = <em>F</em>/<em>A</em><sub>0</sub> (force over the original area) and engineering strain &epsilon; = &Delta;<em>L</em>/<em>L</em><sub>0</sub>. When strains are large, true quantities account for the changing size: &sigma;<sub>true</sub> = &sigma;(1 + &epsilon;) and &epsilon;<sub>true</sub> = ln(1 + &epsilon;), valid until necking. A tensile test produces the curve from which most properties are read.</p>
+            <div class="example">
+                <strong>Worked example 5.2: true stress and strain</strong>
+                <p class="given">At a point on the engineering curve the engineering stress is $400$ MPa and the engineering strain is $0.15$ (uniform deformation, before necking). Find the true stress and the true strain.</p>
+                <p>For uniform deformation at constant volume, $A=A_0L_0/L=A_0/(1+\varepsilon)$, so $\sigma_T=\sigma(1+\varepsilon)=400\times1.15=460$ MPa and $\varepsilon_T=\ln(1+\varepsilon)=\ln1.15=0.140$. True strains add (a strain of $\ln2$ followed by $\ln2$ is $\ln4$) whereas engineering strains do not, which is why true strain is used for large deformations. The relations hold only until necking.</p>
+            </div>
+
+            <h3>Strengthening mechanisms</h3>
+            <p>Because plastic flow is the motion of dislocations, a metal is strengthened by obstructing their motion. There are four classical ways, each used in practice:</p>
+            <div class="table-scroll" role="region" aria-label="Strengthening mechanisms (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Mechanism</th><th>How it obstructs dislocations</th><th>Dependence</th><th>Example</th></tr></thead>
+            <tbody>
+            <tr><td>Grain refinement</td><td>boundaries stop glide; pile-ups</td><td>$\sigma_y=\sigma_0+k_yd^{-1/2}$</td><td>thermomechanically rolled steel, ultrafine grains</td></tr>
+            <tr><td>Solid-solution strengthening</td><td>solute atoms distort the lattice and interact with the stress field of the dislocation</td><td>$\Delta\sigma\propto c^{1/2}$ to $c^{2/3}$; larger for greater size mismatch</td><td>brass (Zn in Cu), Mg in Al, C in Fe</td></tr>
+            <tr><td>Strain (work) hardening</td><td>dislocations multiply and tangle</td><td>$\Delta\sigma=\alpha Gb\sqrt\rho$</td><td>drawn copper wire, cold-rolled sheet</td></tr>
+            <tr><td>Precipitation (age) hardening</td><td>fine particles that dislocations must cut or bypass (Orowan)</td><td>strongest at an optimum particle size; $\Delta\sigma\sim Gb/\lambda$ for spacing $\lambda$</td><td>Al&ndash;Cu alloys (duralumin), Ni superalloys, maraging steels</td></tr>
+            </tbody></table></div>
+            <p>All four increase the strength at the cost of ductility, except grain refinement, which also increases the toughness. Another route is to change the structure altogether: <strong>martensitic hardening</strong> of steel (Lecture 7) produces a supersaturated, distorted lattice that is both very hard and brittle. A material is also not equally strong in all circumstances: at high temperatures (above about $0.4$&ndash;$0.5\,T_m$) the dislocations climb by vacancy diffusion and the material <em>creeps</em> under constant load (<a href="mechanical-behaviour-of-materials.html">MSE 302</a>), and fatigue lowers the strength under cyclic loading by orders of magnitude. The strengthening of a real alloy is the sum of several of these terms, which is the basis for the design of alloys and for models of yield strength as a sum of contributions.</p>
+            <h2 id="phase">Lecture 6. Phase diagrams<a class="anchor" href="#phase" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>phase</strong> is a homogeneous part of a system with a uniform structure and composition (liquid, solid solution $\alpha$, compound Fe$_3$C). A <strong>phase diagram</strong> is a map, in temperature and composition (at fixed pressure), of the phases that are stable at equilibrium. From it one reads which phases are present, their compositions and, by the lever rule, their amounts. Equilibrium means infinitely slow cooling; real alloys are often out of equilibrium (Lecture 7), but the equilibrium diagram is the starting point, and the CALPHAD method (<a href="thermodynamics-and-calphad.html">MSE 301</a>, <a href="lab-calphad-pycalphad.html">LAB 505</a>) computes it from thermodynamic data.</p>
+            <div class="note thm"><strong>Rules for reading a binary diagram</strong>
+            <p>(1) <em>Gibbs phase rule</em> at constant pressure: $F=C-P+1$, with $C$ components, $P$ phases and $F$ degrees of freedom. In a one-phase region of a binary ($C=2$, $P=1$), $F=2$: temperature and composition can both be varied. In a two-phase region $F=1$: at a given temperature the compositions of both phases are fixed. At a eutectic or eutectoid point $P=3$, $F=0$: the temperature and compositions are fixed. (2) In a two-phase region, draw the horizontal <em>tie line</em> at the temperature; its ends give the compositions of the two phases. (3) <em>Lever rule</em>: for an alloy of overall composition $C_0$ whose tie line ends at $C_\alpha$ and $C_\beta$, the weight fractions are $W_\alpha=\dfrac{C_\beta-C_0}{C_\beta-C_\alpha}$ and $W_\beta=\dfrac{C_0-C_\alpha}{C_\beta-C_\alpha}$: each phase fraction is the length of the lever arm on the opposite side divided by the whole tie line. The rule follows from conservation of mass, $C_0=W_\alpha C_\alpha+W_\beta C_\beta$ with $W_\alpha+W_\beta=1$.</p>
+            </div>
+            <p>Three kinds of binary diagram cover most situations. <strong>Isomorphous</strong> systems (Cu&ndash;Ni) have complete solubility in both liquid and solid; cooling an alloy gives a solid richer in the higher-melting component. <strong>Eutectic</strong> systems (Pb&ndash;Sn, Al&ndash;Si, Ag&ndash;Cu) have limited solid solubilities and a eutectic reaction $\mathrm{L}\rightleftharpoons\alpha+\beta$ at a fixed temperature and composition, the lowest melting point of the system; this is why solder is a Pb&ndash;Sn or now Sn&ndash;Ag&ndash;Cu eutectic alloy, and why cast irons and aluminium&ndash;silicon casting alloys are near-eutectic (they melt at low temperature and fill moulds well). <strong>Eutectoid</strong> reactions are the solid-state equivalent, $\gamma\rightleftharpoons\alpha+\mathrm{Fe_3C}$ in steel. The teaching diagram of <a href="lab-calphad-pycalphad.html">LAB 505</a> is of the eutectic kind.</p>
+            <h3>The lead&ndash;tin eutectic</h3>
+            <p>In the Pb&ndash;Sn diagram (composition in wt% Sn) the eutectic is at $183{}^\circ$C and $61.9$ wt% Sn. At that temperature the Pb-rich solid solution $\alpha$ holds up to $19.2$ wt% Sn and the Sn-rich solid solution $\beta$ up to $97.5$ wt% Sn; the solubility of Sn in $\alpha$ decreases on cooling.</p>
+            <div class="example">
+                <strong>Worked example 6.1: phases and microstructure of Pb&ndash;40 wt% Sn</strong>
+                <p class="given">Just below $183{}^\circ$C, find the fractions of $\alpha$ and $\beta$ in a Pb&ndash;$40$ wt% Sn alloy, and the fractions of <em>primary</em> (proeutectic) $\alpha$ and of eutectic microconstituent.</p>
+                <p>The tie line runs from $19.2$ to $97.5$ wt% Sn. $W_\alpha=(97.5-40)/(97.5-19.2)=0.734$ and $W_\beta=(40-19.2)/(97.5-19.2)=0.266$. These are the total fractions of the <em>phases</em>, regardless of how they are arranged. To find the microstructure, consider the alloy just <em>above</em> $183{}^\circ$C: it is a mixture of primary $\alpha$ (composition $19.2$) and liquid of the eutectic composition ($61.9$). By the lever rule $W_{\alpha\prime}=(61.9-40)/(61.9-19.2)=0.513$ and $W_\mathrm L=0.487$. On cooling through $183{}^\circ$C the liquid transforms entirely into the eutectic mixture of fine $\alpha$ and $\beta$ lamellae. The microstructure therefore contains $51.3\%$ large primary $\alpha$ grains and $48.7\%$ eutectic (which contains both $\alpha$ and $\beta$): the fraction of the eutectic microconstituent is not the same as the fraction of $\beta$ phase ($26.6\%$). Checking: the $\alpha$ in the eutectic is $0.487\times(97.5-61.9)/(97.5-19.2)=0.221$, and $0.513+0.221=0.734$ &check;.</p>
+            </div>
+
+            <h3>The iron&ndash;carbon diagram</h3>
+            <p>Iron is the base of steels (below $2.1$ wt% C) and cast irons (above). Pure iron is bcc ferrite ($\alpha$) up to $912{}^\circ$C, fcc austenite ($\gamma$) up to $1394{}^\circ$C, bcc ($\delta$) up to the melting point of $1538{}^\circ$C. The interstitial carbon is much more soluble in fcc austenite (maximum $2.14$ wt% at $1147{}^\circ$C, because the octahedral holes of fcc are larger) than in bcc ferrite (maximum $0.022$ wt% at $727{}^\circ$C). The compound <strong>cementite</strong> Fe$_3$C ($6.70$ wt% C) is hard and brittle. The most important features of the diagram are:</p>
             <ul>
-                <li><strong>Elastic region.</strong> Reversible; &sigma; = <em>E</em>&epsilon; (Hooke&rsquo;s law). The Poisson ratio &nu; = &minus;&epsilon;<sub>transverse</sub>/&epsilon;<sub>axial</sub> (about 0.3 for metals) links the moduli: <em>G</em> = <em>E</em>/[2(1 + &nu;)] and <em>K</em> = <em>E</em>/[3(1 &minus; 2&nu;)].</li>
-                <li><strong>Yield and plasticity.</strong> Permanent deformation starts at the yield strength. Afterwards the flow stress rises by strain hardening, often described by &sigma; = <em>K</em>&epsilon;<sup><em>n</em></sup> (Hollomon), up to the ultimate tensile strength, where necking begins (Consid&egrave;re criterion: at a true strain equal to <em>n</em> for a power law). Ductility is the strain to fracture.</li>
-                <li><strong>Hardness</strong>, resistance to local indentation, is roughly three times the yield strength for most metals.</li>
+            <li>the <strong>eutectoid</strong> at $727{}^\circ$C and $0.76$ wt% C: $\gamma\rightleftharpoons\alpha+\mathrm{Fe_3C}$, which gives the lamellar microconstituent <strong>pearlite</strong> (alternating plates of ferrite and cementite);</li>
+            <li>the <strong>eutectic</strong> at $1147{}^\circ$C and $4.30$ wt% C: $\mathrm L\rightleftharpoons\gamma+\mathrm{Fe_3C}$ (ledeburite), characteristic of white cast iron.</li>
             </ul>
-            <h3 id="failure">Fracture, fatigue and creep<a class="anchor" href="#failure" aria-label="Link to this section">#</a></h3>
+            <p>A steel with less than $0.76$ wt% C is <strong>hypoeutectoid</strong>: on cooling, proeutectoid ferrite forms from the austenite at the grain boundaries, then the remaining austenite (now $0.76$ wt% C) becomes pearlite at $727{}^\circ$C. A steel with more than $0.76$ wt% C is <strong>hypereutectoid</strong>, with proeutectoid cementite and pearlite.</p>
+            <div class="example">
+                <strong>Worked example 6.2: microstructure of a 0.4 wt% C steel</strong>
+                <p class="given">Slowly cooled to room temperature, find the fractions of proeutectoid ferrite and pearlite in a steel with $0.4$ wt% C, and the fraction of cementite in the pearlite. Use $0.022$, $0.76$ and $6.70$ wt% C for the boundaries of ferrite, eutectoid and cementite.</p>
+                <p>Just below $727{}^\circ$C, by the lever rule with the tie line from $0.022$ (ferrite) to $0.76$ (the eutectoid composition): the fraction of proeutectoid ferrite is $W_{\alpha\prime}=(0.76-0.4)/(0.76-0.022)=0.488$ and the fraction of pearlite $0.512$. Inside pearlite the total ferrite and cementite fractions follow from the tie line $0.022$&ndash;$6.70$: $W_\mathrm{Fe_3C}=(0.76-0.022)/(6.70-0.022)=0.111$, so pearlite is $11.1\%$ cementite and $88.9\%$ ferrite by weight. The strength of the steel increases with its pearlite fraction, and hence with its carbon content (a $0.8$ wt% C steel is fully pearlitic and a $0.2$ wt% steel is mostly ferrite: soft and ductile).</p>
+            </div>
+
+            <h2 id="process">Lecture 7. Microstructure, heat treatment and material selection<a class="anchor" href="#process" aria-label="Link to this section">#</a></h2>
+            <p>An equilibrium diagram says nothing about how fast a transformation occurs. Real microstructures are controlled by <strong>kinetics</strong>: diffusion (Lecture 4) is thermally activated, so rapid cooling can freeze structures that equilibrium would not give. The <em>nucleation and growth</em> of a new phase needs undercooling below the equilibrium temperature to get a driving force, and the overall rate is a product of a nucleation rate (which rises as the undercooling rises) and a growth rate limited by diffusion (which falls as the temperature falls): the rate has a maximum at an intermediate temperature, giving the C-shaped curves of the <strong>time&ndash;temperature&ndash;transformation (TTT) diagram</strong>.</p>
+            <h3>Heat treatment of steel</h3>
             <ul>
-                <li><strong>Fracture.</strong> Brittle fracture occurs when a crack grows at stresses below yield; the Griffith/Irwin result is &sigma;<sub>f</sub> = <em>K</em><sub>Ic</sub>/(<em>Y</em>&radic;(&pi;<em>a</em>)) for a crack of length <em>a</em>, with fracture toughness <em>K</em><sub>Ic</sub> a material property and <em>Y</em> a geometry factor. BCC metals show a ductile&ndash;brittle transition with temperature.</li>
-                <li><strong>Fatigue.</strong> Failure under repeated loading at stresses well below yield; described by S&ndash;N curves and the Paris law for crack growth, d<em>a</em>/d<em>N</em> = <em>C</em>(&Delta;<em>K</em>)<sup><em>m</em></sup>.</li>
-                <li><strong>Creep.</strong> Slow deformation under constant load at high temperature, controlled by diffusion, with steady-state rate &epsilon;&#775; = <em>A</em>&sigma;<sup><em>n</em></sup>exp(&minus;<em>Q</em>/<em>RT</em>).</li>
+            <li><strong>Annealing / normalising:</strong> heat to the austenite range, cool slowly (furnace) or in air; equilibrium coarse (annealed) or fine (normalised) pearlite, soft and ductile.</li>
+            <li><strong>Quenching:</strong> austenite cooled so rapidly (in water or oil) that diffusion cannot form ferrite and cementite; below the martensite start temperature the fcc lattice shears, without diffusion, to <strong>martensite</strong>, a body-centred tetragonal structure with all the carbon trapped in the lattice (supersaturated). Martensite is extremely hard (up to about $65$ on the Rockwell C scale for high-carbon steels) because of the lattice distortion, the high dislocation density and the fine lath structure, and it is brittle.</li>
+            <li><strong>Tempering:</strong> reheating martensite at $200$&ndash;$650{}^\circ$C lets carbon diffuse out as fine carbides, reducing the strength and restoring toughness: quench plus temper gives the combinations of strength and toughness of tool and structural steels, and the temperature of tempering is the control variable. Since tempering is controlled by diffusion, time and temperature trade off: a short time at a high temperature is equivalent to a long time at a low one (the Hollomon&ndash;Jaffe parameter $T(C+\log t)$).</li>
+            <li><strong>Hardenability:</strong> the ability of a steel to form martensite deep inside a thick section, set by the alloying elements (Cr, Mo, Mn, Ni) that delay the diffusional transformations to longer times (displacing the TTT curve to the right) so that a slower cooling rate of the interior still avoids pearlite.</li>
             </ul>
-            <h3 id="typical">Typical values<a class="anchor" href="#typical" aria-label="Link to this section">#</a></h3>
-            <p>Approximate room-temperature values give a feel for the range; real values depend strongly on composition and processing.</p>
-            <div class="table-scroll" role="region" aria-label="Typical values (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Material</th><th>Young&rsquo;s modulus (GPa)</th><th>Yield strength (MPa)</th><th>Density (g/cm<sup>3</sup>)</th></tr></thead>
-                <tbody>
-                    <tr><td>Pure aluminium, annealed</td><td>70</td><td>20&ndash;35</td><td>2.70</td></tr>
-                    <tr><td>Aluminium alloy 7075-T6</td><td>71</td><td>about 500</td><td>2.81</td></tr>
-                    <tr><td>Mild steel</td><td>about 210</td><td>about 250</td><td>7.85</td></tr>
-                    <tr><td>Advanced high-strength steels</td><td>about 210</td><td>700 to over 1000</td><td>7.85</td></tr>
-                    <tr><td>Titanium alloy Ti&ndash;6Al&ndash;4V</td><td>about 114</td><td>about 880</td><td>4.43</td></tr>
-                    <tr><td>Copper, annealed</td><td>about 120</td><td>about 70</td><td>8.96</td></tr>
-                    <tr><td>Alumina ceramic</td><td>about 370</td><td>brittle (bending strength 300&ndash;400)</td><td>3.9</td></tr>
-                    <tr><td>Nylon (polymer)</td><td>2&ndash;3</td><td>about 50&ndash;80</td><td>1.14</td></tr>
-                </tbody>
-            </table></div>
-            <p>Note that the modulus of a given material class barely changes with processing (it is set by bonding), whereas yield strength changes by an order of magnitude (it is set by microstructure). That contrast is why DFT is good at moduli and why strength needs multiscale modelling.</p>
-
-            <h2 id="functional">7. Other properties<a class="anchor" href="#functional" aria-label="Link to this section">#</a></h2>
-            <ul>
-                <li><strong>Electrical.</strong> Set by the band structure (see <a href="solid-state-physics.html#bands">solid state physics</a>): metals conduct (copper resistivity about 1.7 &times; 10<sup>&minus;8</sup> &Omega;&middot;m), semiconductors have a gap of order 1 eV that doping controls, insulators have gaps above about 3 eV.</li>
-                <li><strong>Thermal.</strong> Heat is carried by electrons and phonons: conductivity is about 400 W/(m&middot;K) for copper, 235 for aluminium, 50 for typical steels and above 1000 for diamond. Thermal expansion coefficients are about 12 &times; 10<sup>&minus;6</sup> K<sup>&minus;1</sup> for steel, 23 &times; 10<sup>&minus;6</sup> for aluminium and about 1.2 &times; 10<sup>&minus;6</sup> for Invar, an iron&ndash;nickel alloy whose magnetism cancels the expansion.</li>
-                <li><strong>Magnetic.</strong> Ferromagnets (Fe, Co, Ni) have aligned moments below their Curie temperatures; soft magnets are easy to magnetise and used in transformers, hard magnets resist demagnetisation.</li>
-                <li><strong>Corrosion and oxidation.</strong> Electrochemical or chemical reactions with the environment, governed by thermodynamic stability (Pourbaix and Ellingham diagrams) and by the kinetics of transport through any surface film.</li>
-            </ul>
-
-            <h2 id="processing">8. Processing routes<a class="anchor" href="#processing" aria-label="Link to this section">#</a></h2>
-            <div class="table-scroll" role="region" aria-label="8. Processing routes (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Route</th><th>What it controls</th><th>Where simulation enters</th></tr></thead>
-                <tbody>
-                    <tr><td>Casting and solidification</td><td>Grain structure, segregation, porosity</td><td>Heat flow and solidification path (<a href="finite-element-method.html">FEM</a> with <a href="thermodynamics-and-calphad.html">CALPHAD</a>); dendrite growth by phase-field</td></tr>
-                    <tr><td>Wrought processing (rolling, forging, extrusion)</td><td>Shape, texture, dislocation density, recrystallisation</td><td>Large-strain finite elements, crystal plasticity</td></tr>
-                    <tr><td>Heat treatment</td><td>Phases, precipitates, hardness</td><td>Diffusion and transformation models, thermal&ndash;mechanical FEM</td></tr>
-                    <tr><td>Powder metallurgy and sintering</td><td>Density, grain size</td><td>Diffusion, kinetic Monte Carlo, phase-field</td></tr>
-                    <tr><td>Additive manufacturing</td><td>Rapid solidification, residual stress, defects</td><td>Moving-heat-source FEM, solidification models</td></tr>
-                    <tr><td>Welding and joining</td><td>Heat-affected zone, distortion, residual stress</td><td>Thermal&ndash;metallurgical&ndash;mechanical FEM</td></tr>
-                    <tr><td>Coatings and thin films</td><td>Thickness, texture, stress, interfaces</td><td>Kinetic Monte Carlo, molecular dynamics</td></tr>
-                </tbody>
-            </table></div>
-
-            <h2 id="characterisation">9. Characterisation<a class="anchor" href="#characterisation" aria-label="Link to this section">#</a></h2>
-            <p>Simulations earn trust by being compared with measurements, so know what each technique reports.</p>
-            <div class="table-scroll" role="region" aria-label="9. Characterisation (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Technique</th><th>What it measures</th><th>Scale</th><th>Compare with</th></tr></thead>
-                <tbody>
-                    <tr><td>X-ray and neutron diffraction</td><td>Phases, lattice parameters, texture, strain</td><td>Average over a volume</td><td>Computed diffraction patterns, lattice constants from DFT</td></tr>
-                    <tr><td>SEM and EBSD</td><td>Grain size, orientation, phase maps</td><td>0.1 &micro;m&ndash;mm</td><td>Phase-field and crystal-plasticity microstructures</td></tr>
-                    <tr><td>TEM and STEM</td><td>Dislocations, precipitates, interfaces at atomic resolution</td><td>0.1&ndash;100 nm</td><td>Atomistic defect and interface structures</td></tr>
-                    <tr><td>Atom probe tomography</td><td>Three-dimensional composition, segregation, clusters</td><td>atomic to 100 nm</td><td>Monte Carlo segregation, precipitation models</td></tr>
-                    <tr><td>Tensile and compression tests</td><td>Modulus, yield, hardening, ductility</td><td>Specimen</td><td>Finite elements, crystal plasticity</td></tr>
-                    <tr><td>Nanoindentation and hardness</td><td>Local modulus and hardness</td><td>nm&ndash;&micro;m</td><td>Molecular dynamics, finite elements</td></tr>
-                    <tr><td>Calorimetry and dilatometry</td><td>Transformation temperatures, latent heat, expansion</td><td>Specimen</td><td>CALPHAD and transformation kinetics</td></tr>
-                    <tr><td>Tracer and couple diffusion experiments</td><td>Diffusion coefficients, activation energies</td><td>&micro;m</td><td>DFT with transition-state theory, kinetic Monte Carlo</td></tr>
-                </tbody>
-            </table></div>
+            <h3>Precipitation hardening</h3>
+            <p>An alloy with a solubility that falls with temperature (the solvus of Al&ndash;Cu, with $\alpha$ dissolving up to $5.65$ wt% Cu at $548{}^\circ$C and very little at room temperature) is heat treated in three steps: <em>solution treatment</em> (heat into the single-phase $\alpha$ region and hold), <em>quench</em> (to a supersaturated solid solution), and <em>ageing</em> (at room temperature or $100$&ndash;$200{}^\circ$C: fine coherent precipitates of Cu-rich phases form, which obstruct the dislocations). The strength is highest at a peak-aged state of fine precipitates (spacing of nanometres) and falls on over-ageing, when the precipitates coarsen and are bypassed (Orowan looping). This is how the aerospace alloys of the 2000 and 7000 series reach yield strengths of $400$&ndash;$500$ MPa from pure aluminium&rsquo;s $\sim30$ MPa. The phase-field and precipitate-growth simulations of <a href="phase-field-modelling.html">CMS 505</a> and <a href="lab-diffusion-fipy.html">LAB 506</a> are tools for this kind of microstructure design.</p>
+            <h3>Selecting materials</h3>
+            <p>Choosing a material means matching its properties to the function while minimising a quantity (mass, cost). The systematic method of Ashby plots one property against another on logarithmic axes and uses <strong>material indices</strong>. For a light beam that must meet a stiffness requirement in bending, the mass of a beam of fixed shape and length is proportional to $\rho/E^{1/2}$; for a light panel it is proportional to $\rho/E^{1/3}$; for a tie that must carry a tensile load without yielding, $\rho/\sigma_y$. The best materials have the largest $E^{1/2}/\rho$, $E^{1/3}/\rho$ and $\sigma_y/\rho$. A surprising fact comes out of the numbers:</p>
+            <div class="table-scroll" role="region" aria-label="Selecting materials (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Material</th><th>$E$ (GPa)</th><th>$\rho$ (g/cm$^3$)</th><th>$E/\rho$</th><th>$E^{1/2}/\rho$ (beam)</th><th>$E^{1/3}/\rho$ (panel)</th></tr></thead>
+            <tbody>
+            <tr><td>Steel</td><td>207</td><td>7.85</td><td>26.4</td><td>1.83</td><td>0.75</td></tr>
+            <tr><td>Aluminium alloy</td><td>70</td><td>2.70</td><td>25.9</td><td>3.10</td><td>1.53</td></tr>
+            <tr><td>Titanium alloy</td><td>114</td><td>4.43</td><td>25.7</td><td>2.41</td><td>1.09</td></tr>
+            <tr><td>Magnesium alloy</td><td>45</td><td>1.74</td><td>25.9</td><td>3.86</td><td>2.04</td></tr>
+            </tbody></table></div>
+            <p>All structural metals have nearly the same specific stiffness $E/\rho\approx26$ GPa/(g/cm$^3$), because stiffness and density both scale with the same atomic properties (bond stiffness per atom and atomic mass per volume), so a change of metal cannot make a tie that is stiffer per unit mass. The gain in bending comes from the shape: a lighter metal can have a thicker, hence much stiffer, section for the same mass, so the lighter metals win and the Mg beam weighs only $47.5\%$ of a steel beam of the same stiffness (Exercise 12). To go beyond $26$ one needs composites (carbon-fibre reinforced polymer along the fibres: $E/\rho$ of about $90$) or foams and structures that use the geometry.</p>
+            <div class="example">
+                <strong>Worked example 7.1: the aluminium beam</strong>
+                <p class="given">By what factor can the mass of a beam of fixed length and cross-section shape be reduced if aluminium ($E=70$ GPa, $\rho=2.70$) replaces steel ($207$ GPa, $7.85$) for the same bending stiffness?</p>
+                <p>For beams of the same shape the second moment of area scales with the size $t$ as $I\propto t^4$ and the bending stiffness as $EI$, so $t\propto E^{-1/4}$ and the mass $m\propto\rho t^2\propto\rho/E^{1/2}$. Ratio: $m_\mathrm{Al}/m_\mathrm{steel}=(2.70/\sqrt{70})/(7.85/\sqrt{207})=0.3227/0.5456=0.59$: a $41\%$ mass reduction. The aluminium section is larger, $t_\mathrm{Al}/t_\mathrm{steel}=(207/70)^{1/4}=1.31$, which is why aluminium aircraft skins are thicker than the steel they replace; for a tension member, where only $\rho/E$ matters, the aluminium member is no lighter than steel ($\rho/E$ is $0.0386$ against $0.0379$ g/cm$^3$ per GPa).</p>
+            </div>
 
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>Processing sets structure, structure sets properties, and properties set performance; simulation can enter at every link.</li>
-<li>Bonding type (metallic, covalent, ionic, van der Waals) decides which interatomic model or electronic method is appropriate.</li>
-<li>Defects control most useful properties: dislocations govern strength, vacancies govern diffusion, and boundaries govern grain-size effects.</li>
-<li>Phase diagrams give the equilibrium; transformation kinetics (nucleation, growth, diffusion) decide which microstructure actually forms.</li>
-<li>Know what each experiment measures (diffraction, microscopy, tensile tests, calorimetry), because that is what a simulation must be compared with.</li>
+<li>Materials science links four things: processing, structure, properties and performance; structure exists at every scale from the bond (0.1 nm) through crystals and defects (nm to um) to the microstructure of grains and phases (um to mm), and each scale has its own tools.</li>
+<li>The bond energy curve explains stiffness, melting and thermal expansion: for argon the Lennard-Jones potential gives r0 = 0.382 nm and a bond stiffness of 0.82 N/m, so the Young modulus is about k/r0 = 2.1 GPa (measured bulk modulus of solid argon: about 3 GPa); strong covalent bonds (diamond) are 500 times stiffer.</li>
+<li>Crystal structures are described by a lattice and a basis: fcc and hcp pack spheres at 74 per cent, bcc at 68 per cent, diamond at 34 per cent, and the density follows from the cell: copper (fcc, a = 0.3615 nm) is 8.93 g/cm3, iron (bcc, a = 0.2866 nm) 7.88 g/cm3.</li>
+<li>Defects control most properties: the equilibrium vacancy fraction exp(-E_f/kT) is 1e-5 for copper at 1300 K; dislocations (Burgers vector 0.256 nm in copper) carry plastic flow and raise the strength as sigma = alpha G b sqrt(rho), 37 MPa at 1e14 per m2; grain boundaries add strength by the Hall-Petch relation sigma_y = sigma_0 + k d^(-1/2).</li>
+<li>Phase diagrams give equilibrium phases and amounts by the lever rule: a Pb-40 wt% Sn alloy just below 183 C is 73.4 per cent alpha and 26.6 per cent beta, of which 48.7 per cent is eutectic; a 0.4 wt% C steel below 727 C is 48.8 per cent proeutectoid ferrite and 51.2 per cent pearlite.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>Why are metals usually ductile and covalent solids such as silicon brittle at room temperature?</summary>
-                <p>Metallic bonding is non-directional, so atoms can slip past each other and dislocations glide easily. Covalent bonds are directional, so moving a dislocation requires breaking strong bonds and the material cracks first.</p>
-            </details>
-            <details>
-                <summary>A steel obeys Hall&ndash;Petch with <em>k</em> = 0.6 MPa m<sup>1/2</sup>. How much stronger does refining the grain size from 20 &micro;m to 5 &micro;m make it?</summary>
-                <p>&Delta;&sigma; = <em>k</em>(5 &times; 10<sup>&minus;6</sup>)<sup>&minus;1/2</sup> &minus; <em>k</em>(20 &times; 10<sup>&minus;6</sup>)<sup>&minus;1/2</sup> = 0.6 &times; (447 &minus; 224) &asymp; 134 MPa, roughly 130 MPa stronger.</p>
-            </details>
-            <details>
-                <summary>Which simulation method would you use first to estimate the driving force for precipitating a carbide at 500 &deg;C, and why?</summary>
-                <p>CALPHAD: it gives the Gibbs energy change for forming the phase from the current matrix composition at that temperature, which is the thermodynamic input to nucleation and growth models, at a tiny cost compared with atomistic methods.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pms101-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Solid neon is bound by van der Waals forces, with a Lennard-Jones potential of $\varepsilon=0.0031$ eV and $\sigma=2.74$ &Aring;. (a) Find the equilibrium separation and the bond stiffness $k=57.15\,\varepsilon/\sigma^2$. (b) Estimate the Young modulus as $k/r_0$ and compare with argon (Worked example 1.1). (c) Why is neon softer and melts at a lower temperature than argon ($24.6$ K against $84$ K)?</p>
+            <details class="hint"><summary>Hint</summary><p>$r_0=2^{1/6}\sigma$ and $1$ eV $=1.602\times10^{-19}$ J.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $r_0=1.1225\times2.74=3.076$ &Aring;. $k=57.15\times(0.0031\times1.602\times10^{-19})/(2.74\times10^{-10})^2=0.378$ N/m. (b) $E\approx0.378/3.076\times10^{-10}=1.23$ GPa, about $0.6$ of argon&rsquo;s $2.1$ GPa (the measured modulus of solid neon is about $1$ GPa). (c) The well of neon is three times shallower ($0.0031$ eV against $0.0104$ eV), because the small neon atom has fewer, less polarisable electrons and so weaker dispersion forces. A shallower well means both a lower stiffness ($k\propto\varepsilon/\sigma^2$) and a lower melting temperature ($T_m\propto\varepsilon$: the ratio $24.6/84=0.29$ is close to $0.0031/0.0104=0.30$).</p>
+            <p class="answer">(a) $3.08$ &Aring;, $0.378$ N/m  (b) $1.2$ GPa  (c) weaker bonding: $T_m\propto\varepsilon$, $k\propto\varepsilon$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>Silicon has the diamond cubic structure with $a=0.5431$ nm and $A=28.09$. (a) How many atoms per cell? (b) Compute the density. (c) Compute the packing fraction from $a=8R/\sqrt3$, and the nearest-neighbour distance.</p>
+            <details class="hint"><summary>Hint</summary><p>Diamond cubic: fcc lattice with a two-atom basis, $8$ atoms per cell; atoms touch along the body diagonal for a quarter of its length: $\sqrt3a/4=2R$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $8\times\tfrac18+6\times\tfrac12+4=8$ atoms (corners, faces and four interior atoms). (b) $\rho=8(28.09)/[(0.5431\times10^{-7})^3(6.022\times10^{23})]=2.33$ g/cm$^3$ (measured $2.33$). (c) The nearest-neighbour distance is $\sqrt3a/4=0.2352$ nm, so $R=0.1176$ nm and the packing fraction is $8\cdot\tfrac43\pi R^3/a^3=\pi\sqrt3/16=0.340$: only $34\%$ of the volume is filled, a very open structure compared with fcc ($74\%$) because the four covalent bonds are directional (tetrahedral). It is also why silicon is lighter than its atomic mass would suggest and why the interstitial sites are large.</p>
+            <p class="answer">(a) $8$  (b) $2.33$ g/cm$^3$  (c) $0.340$; $0.235$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>(a) Give the Miller indices of the planes with intercepts $(1,\infty,\infty)$, $(\tfrac12,\tfrac12,\infty)$ and $(1,-1,\tfrac12)$ on the cubic axes. (b) Compute the interplanar spacings $d_{111}$, $d_{200}$ and $d_{220}$ in copper ($a=0.3615$ nm). (c) Which of them are close-packed planes of fcc?</p>
+            <details class="hint"><summary>Hint</summary><p>Take reciprocals of the intercepts and multiply by the smallest integer that clears the fractions; $d_{hkl}=a/\sqrt{h^2+k^2+l^2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Reciprocals: $(1,0,0)\to(100)$; $(2,2,0)\to(220)$ and after dividing by the common factor $2$, $(110)$; $(1,-1,2)\to(1\bar12)$. (b) $d_{111}=0.3615/\sqrt3=0.2087$ nm, $d_{200}=0.3615/2=0.1808$ nm, $d_{220}=0.3615/\sqrt8=0.1278$ nm (these numbers are the lattice-plane spacings used in the X-ray diffraction of <a href="lab-structures-ase.html">LAB 201</a>). (c) The close-packed planes are $\{111\}$: the $(111)$ planes, which also have the largest spacing and the highest planar density ($17.7$ atoms/nm$^2$). The $(200)$ planes are $(100)$ planes with an extra layer in the centre of the cell: for fcc the allowed $(hkl)$ are all odd or all even, so the first reflections are $(111)$ and $(200)$.</p>
+            <p class="answer">(a) $(100)$, $(110)$, $(1\bar12)$  (b) $0.2087$, $0.1808$, $0.1278$ nm  (c) $\{111\}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>A metal has a vacancy formation energy of $1.1$ eV and a formation entropy of $2k_\mathrm B$. (a) Find the equilibrium vacancy fraction at $900$ K and at $300$ K. (b) How many vacancies are there per cm$^3$ at $900$ K if the metal has $8.5\times10^{22}$ atoms/cm$^3$? (c) A specimen is quenched from $900$ K to $300$ K fast enough to keep the vacancies: by what factor is the vacancy concentration above equilibrium?</p>
+            <details class="hint"><summary>Hint</summary><p>$n/N=\exp(S_f/k_\mathrm B)\exp(-E_f/k_\mathrm BT)$, $k_\mathrm B=8.617\times10^{-5}$ eV/K.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) At $900$ K: $E_f/k_\mathrm BT=1.1/0.07756=14.18$, $e^{-14.18}=6.9\times10^{-7}$; times $e^2=7.39$: $5.1\times10^{-6}$. At $300$ K: $1.1/0.02585=42.55$, $e^{-42.55}=3.0\times10^{-19}$, times $7.39$: $2.2\times10^{-18}$. (b) $5.1\times10^{-6}\times8.5\times10^{22}=4.3\times10^{17}$ vacancies per cm$^3$. (c) The retained fraction exceeds the equilibrium one by $5.1\times10^{-6}/2.2\times10^{-18}=2.3\times10^{12}$. Such a quenched-in supersaturation drives vacancy clustering (voids, dislocation loops) and accelerates diffusion at room temperature, which is the origin of the early stage of age hardening in Al alloys.</p>
+            <p class="answer">(a) $5.1\times10^{-6}$, $2.2\times10^{-18}$  (b) $4.3\times10^{17}$ cm$^{-3}$  (c) $2.3\times10^{12}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Iron (bcc, $a=0.2866$ nm, $G=82$ GPa) has a Burgers vector $b=a\sqrt3/2$. (a) Compute $b$. (b) Estimate the strengthening from dislocations at $\rho=10^{12}$ and $5\times10^{14}$ m$^{-2}$ with $\alpha=0.3$. (c) What is the average spacing between dislocations at $5\times10^{14}$ m$^{-2}$ and how many Burgers vectors is this?</p>
+            <details class="hint"><summary>Hint</summary><p>Mean spacing $\approx\rho^{-1/2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $b=0.2866\times0.866=0.248$ nm (the close-packed direction $\langle111\rangle$ of bcc). (b) $\alpha Gb=0.3\times82\times10^9\times0.248\times10^{-9}=6.10$ N/m. For $\rho=10^{12}$: $\Delta\sigma=6.10\times10^6=6.1$ MPa; for $5\times10^{14}$: $6.10\times\sqrt{5\times10^{14}}=6.10\times2.24\times10^7=136$ MPa. (c) $\rho^{-1/2}=1/2.24\times10^7=45$ nm, which is $180\,b$: dislocations are far enough apart that the continuum elasticity of each is valid, but close enough to interact strongly. The relation $\Delta\sigma\propto\sqrt\rho$ means that quadrupling the dislocation density only doubles the strengthening, which is the characteristic parabolic work-hardening of metals.</p>
+            <p class="answer">(a) $0.248$ nm  (b) $6.1$ MPa, $136$ MPa  (c) $45$ nm $=180\,b$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>The diffusion coefficient of an interstitial is $1.0\times10^{-14}$ m$^2$/s at $1073$ K and $3.0\times10^{-13}$ m$^2$/s at $1273$ K. (a) Find the activation energy and $D_0$. (b) Predict $D$ at $1173$ K. (c) What temperature is needed for $D=10^{-12}$ m$^2$/s?</p>
+            <details class="hint"><summary>Hint</summary><p>$\ln(D_2/D_1)=(Q/R)(1/T_1-1/T_2)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Q=R\ln(30)/(1/1073-1/1273)=8.314\times3.401/(1.464\times10^{-4})=1.93\times10^5$ J/mol ($193$ kJ/mol, $2.0$ eV). $D_0=D_1\exp(Q/RT_1)=10^{-14}\exp(193\,136/(8.314\times1073))=10^{-14}\times2.5\times10^9=2.5\times10^{-5}$ m$^2$/s. (b) $D(1173)=2.5\times10^{-5}\exp(-193\,136/(8.314\times1173))=6.3\times10^{-14}$ m$^2$/s (the geometric mean of the two data would be $5.5\times10^{-14}$: the temperature is not midway in $1/T$). (c) $T=Q/[R\ln(D_0/D)]=193\,136/[8.314\ln(2.5\times10^{-5}/10^{-12})]=193\,136/(8.314\times16.99)=1367$ K.</p>
+            <p class="answer">(a) $193$ kJ/mol, $2.5\times10^{-5}$ m$^2$/s  (b) $6.3\times10^{-14}$ m$^2$/s  (c) $1367$ K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Steel with $0.2$ wt% C is carburised at $1000{}^\circ$C ($D=1.95\times10^{-11}$ m$^2$/s) with a surface content of $1.0$ wt% C for $4$ h. (a) At what depth is the carbon content $0.4$ wt%? (b) How deep would it be after the same time at $900{}^\circ$C ($D=5.9\times10^{-12}$ m$^2$/s)? (c) What does this say about the choice of temperature?</p>
+            <details class="hint"><summary>Hint</summary><p>$(C_s-C_x)/(C_s-C_0)=\mathrm{erf}(z)$ with $z=x/2\sqrt{Dt}$; you need $\mathrm{erf}(z)=0.75$, for which $z=0.813$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $(1.0-0.4)/(1.0-0.2)=0.75=\mathrm{erf}(0.813)$; $\sqrt{Dt}=\sqrt{1.95\times10^{-11}\times14\,400}=5.30\times10^{-4}$ m, so $x=2(0.813)(0.530)=0.862$ mm. (b) $x\propto\sqrt D$: $x_{900}=0.862\sqrt{5.9/19.5}=0.475$ mm. (c) $100$ K higher gives an $82\%$ deeper case in the same time, or the same depth in $3.3$ times less time: furnace time and cost fall with temperature, but at high temperature the austenite grains coarsen, so a compromise (about $925$ to $950{}^\circ$C) is used in practice.</p>
+            <p class="answer">(a) $0.86$ mm  (b) $0.48$ mm  (c) higher $T$ is much faster, limited by grain growth</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>An aluminium alloy specimen ($d_0=10.0$ mm, $L_0=50.0$ mm) is pulled. In the elastic range a load of $15$ kN gives an extension of $0.136$ mm. The offset yield load is $24$ kN, the maximum load $33$ kN; the specimen fractures at $L_f=58.5$ mm with a neck diameter of $7.1$ mm. Find $E$, $\sigma_y$, UTS, $\%EL$, $\%RA$ and the resilience.</p>
+            <details class="hint"><summary>Hint</summary><p>$A_0=\pi d_0^2/4=78.54$ mm$^2$; $U_r=\sigma_y^2/2E$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$E=(15\,000/78.54)/(0.136/50)=191.0\ \mathrm{MPa}/0.00272=70.2$ GPa. $\sigma_y=24\,000/78.54=306$ MPa; UTS $=33\,000/78.54=420$ MPa. $\%EL=(58.5-50)/50\times100=17\%$. $A_f=\pi(7.1)^2/4=39.6$ mm$^2$, $\%RA=(78.54-39.6)/78.54\times100=49.6\%$. $U_r=\sigma_y^2/2E=306^2/(2\times70\,200)=0.667$ MJ/m$^3$. The elastic strain at yield is $306/70\,200=0.44\%$, so the specimen has stretched by $0.22$ mm elastically at yield: elastic strains are small, plastic ones are large.</p>
+            <p class="answer">$E=70.2$ GPa; $\sigma_y=306$, UTS $=420$ MPa; $17\%$; $49.6\%$; $0.667$ MJ/m$^3$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>Model the yield strength of an aluminium alloy as the sum $\sigma_y=\sigma_0+k_yd^{-1/2}+\alpha Gb\sqrt\rho+\Delta\sigma_\mathrm{ss}+\Delta\sigma_\mathrm{ppt}$ with $\sigma_0=20$ MPa, $k_y=0.07$ MPa m$^{1/2}$, $d=20$ &micro;m, $\alpha=0.2$, $G=26$ GPa, $b=0.286$ nm, $\rho=10^{14}$ m$^{-2}$, $\Delta\sigma_\mathrm{ss}=40$ MPa and $\Delta\sigma_\mathrm{ppt}=100$ MPa. (a) Compute each term and the total. (b) Which two mechanisms could you remove by annealing? (c) Why is the linear sum only an approximation?</p>
+            <details class="hint"><summary>Hint</summary><p>$d=20\times10^{-6}$ m, so $d^{-1/2}=223.6$ m$^{-1/2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Grain size: $0.07\times223.6=15.6$ MPa. Dislocations: $0.2\times26\times10^9\times0.286\times10^{-9}\times10^7=14.9$ MPa. Total: $20+15.6+14.9+40+100=190.5$ MPa. The precipitates are the largest term ($52\%$), the solute second. (b) Annealing removes the work-hardening contribution (dislocations rearrange and annihilate: recovery and recrystallisation) and, if long and hot enough, coarsens the precipitates (over-ageing) and grows the grains, so reducing the Hall&ndash;Petch term. The solid solution contribution remains until the solute is precipitated. (c) The contributions are not independent: obstacles act on the same dislocations, and the combination of different obstacles is better described by a root-mean-square sum for obstacles of comparable strength or a linear sum for weak and strong ones; the model also ignores interactions (the precipitate size depends on the dislocation density through heterogeneous nucleation). The linear sum is a convenient first estimate and a good way to see where the strength comes from.</p>
+            <p class="answer">(a) $15.6$, $14.9$ MPa; total $190.5$ MPa  (b) work hardening and (when over-aged) precipitates  (c) not independent</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>A Pb&ndash;30 wt% Sn alloy is cooled slowly to just below $183{}^\circ$C (the eutectic at $61.9$ wt% Sn; $\alpha$ holds up to $19.2$ and $\beta$ up to $97.5$ wt% Sn). (a) Give the total fractions of $\alpha$ and $\beta$. (b) Give the fractions of primary $\alpha$ and of eutectic. (c) At $150{}^\circ$C the solvus compositions are about $11$ and $98$ wt% Sn: what are the phase fractions there?</p>
+            <details class="hint"><summary>Hint</summary><p>Use the tie line $19.2$&ndash;$97.5$ for the phases at $183{}^\circ$C, and the tie line $19.2$&ndash;$61.9$ above the eutectic for the microconstituents.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $W_\alpha=(97.5-30)/(97.5-19.2)=0.862$, $W_\beta=0.138$. (b) Just above $183{}^\circ$C: $W_{\alpha\prime}=(61.9-30)/(61.9-19.2)=0.747$ primary $\alpha$ and $W_\mathrm L=0.253$ liquid of eutectic composition, which becomes eutectic: so $74.7\%$ primary $\alpha$, $25.3\%$ eutectic. (c) At $150{}^\circ$C: $W_\alpha=(98-30)/(98-11)=0.782$ and $W_\beta=0.218$: on cooling, the solubility of Sn in $\alpha$ decreases and the fraction of $\alpha$ falls from $86.2\%$ to $78.2\%$ while $\beta$ precipitates from $\alpha$ (in a real casting the $\beta$ nucleates inside the $\alpha$ grains as fine particles).</p>
+            <p class="answer">(a) $86.2\%$ $\alpha$, $13.8\%$ $\beta$  (b) $74.7\%$ primary $\alpha$, $25.3\%$ eutectic  (c) $78.2\%$, $21.8\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>A hypereutectoid steel contains $1.0$ wt% C and is cooled slowly. (a) Find the fractions of proeutectoid cementite and of pearlite just below $727{}^\circ$C. (b) Find the total fraction of cementite. (c) Compare with the $0.4$ wt% steel of Worked example 6.2 and say which is harder and which tougher.</p>
+            <details class="hint"><summary>Hint</summary><p>For hypereutectoid steels, the tie line is from the eutectoid composition $0.76$ to cementite $6.70$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Proeutectoid cementite: $W_{\mathrm{Fe_3C}\prime}=(1.0-0.76)/(6.70-0.76)=0.040$ ($4.0\%$), pearlite $96.0\%$. (b) The total cementite is, with the ferrite&ndash;cementite tie line $0.022$&ndash;$6.70$, $W_\mathrm{Fe_3C}=(1.0-0.022)/(6.70-0.022)=0.146$ ($14.6\%$). (c) The $0.4$ wt% steel has $48.8\%$ ferrite and $51.2\%$ pearlite ($5.7\%$ cementite in total): it is softer and much tougher (large ductile ferrite fraction). The $1.0$ wt% steel is almost all pearlite plus a brittle network of cementite on the austenite grain boundaries (which is why it is heat treated, first spheroidised or quenched, before use as a tool steel): harder but less tough. Hardness rises with carbon content, toughness falls.</p>
+            <p class="answer">(a) $4.0\%$ cementite, $96.0\%$ pearlite  (b) $14.6\%$  (c) $1.0$ wt% is harder, $0.4$ wt% tougher</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pms101-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>A bicycle frame tube of fixed length and cross-section shape must have a given bending stiffness. (a) Compute the mass relative to steel for aluminium ($70$ GPa, $2.70$), titanium ($114$, $4.43$) and magnesium ($45$, $1.74$) using $m\propto\rho/E^{1/2}$. (b) Repeat for a panel ($m\propto\rho/E^{1/3}$). (c) Why are most bicycle frames not made of magnesium, and what changes if the same tube must also not yield under load?</p>
+            <details class="hint"><summary>Hint</summary><p>Take the ratio of $\rho/E^{1/2}$ to the value for steel, $7.85/\sqrt{207}=0.5456$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Beam: Al $0.591$, Ti $0.760$, Mg $0.475$ times the mass of the steel tube. (b) Panel: $\rho/E^{1/3}$ for steel is $7.85/5.916=1.327$; Al $2.70/4.121=0.655$ (ratio $0.494$), Ti $4.43/4.848=0.914$ ($0.688$), Mg $1.74/3.557=0.489$ ($0.369$). (c) Magnesium is the lightest for equal stiffness but it corrodes easily, is flammable when machined or welded, has a lower fatigue strength, and the thin sections it would need ($t\propto E^{-1/4}$, a $1.5$ times larger tube than steel) are impractical for the frame geometry; aluminium offers $41\%$ mass saving at low cost, and titanium is chosen when strength, fatigue and corrosion matter. If the tube must also not yield under a bending moment, the index is $\sigma_y^{2/3}/\rho$ and strong alloys (heat-treated Al 7075 with $\sigma_y=500$ MPa, Ti&ndash;6Al&ndash;4V with $880$ MPa) are favoured over soft ones: material selection always has several constraints, and the best choice is the one that satisfies all of them with the lowest mass or cost.</p>
+            <p class="answer">(a) $0.59$, $0.76$, $0.48$  (b) $0.49$, $0.69$, $0.37$  (c) corrosion, fatigue, flammability; strength changes the index</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qms101-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>Explain, using the bond energy curve, why materials with strong bonds have high melting points, high stiffness and low thermal expansion.</p>
+            <details class="solution"><summary>Solution</summary><p>A deep well means that a large energy is needed to separate the atoms ($T_m\propto E_0$). A narrow, steep well means a large curvature $k=\mathrm d^2E/\mathrm dr^2$ and so a large modulus $E\approx k/r_0$. Thermal expansion arises from the asymmetry of the well: at higher temperature the atoms vibrate with larger amplitude and, because the repulsive wall is steeper than the attractive tail, the mean separation increases. A deeper, narrower well is more symmetric over the thermal range, so the shift of the mean position is smaller.</p></details>
+            </div>
+            <div class="problem" id="qms101-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Basic</span></div>
+            <p>Compute the number of atoms per unit cell and the packing fraction of the bcc structure.</p>
+            <details class="solution"><summary>Solution</summary><p>$8\times\tfrac18+1=2$ atoms. Atoms touch along the body diagonal: $4R=\sqrt3a$, so $a=4R/\sqrt3$. Packing fraction $=2\cdot\tfrac43\pi R^3/a^3=\tfrac{8\pi R^3}{3}\cdot\tfrac{3\sqrt3}{64R^3}=\pi\sqrt3/8=0.680$.</p></details>
+            </div>
+            <div class="problem" id="qms101-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>What is the Burgers vector, and why does a dislocation allow plastic deformation at stresses a thousand times below the theoretical shear strength?</p>
+            <details class="solution"><summary>Solution</summary><p>The Burgers vector is the lattice vector that measures the closure failure of a circuit around the dislocation, giving the magnitude and direction of the slip it produces. A dislocation moves by shifting one row of atoms at a time, so only a few bonds are broken at once and the stress needed is that of the Peierls barrier ($\sim10^{-4}$&ndash;$10^{-2}G$ for metals), while shearing a whole plane rigidly would break all bonds across the plane simultaneously (about $G/10$).</p></details>
+            </div>
+            <div class="problem" id="qms101-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>The grain size of a steel is reduced from $100$ to $10$ &micro;m. By what factor does the Hall&ndash;Petch term $k_yd^{-1/2}$ increase, and does the toughness increase or decrease?</p>
+            <details class="solution"><summary>Solution</summary><p>$d^{-1/2}$ rises by $\sqrt{100/10}=3.16$. For the steel of Worked example 3.1, the term goes from $70$ to $221$ MPa. Grain refinement is exceptional among strengthening mechanisms because toughness also increases (more boundaries deflect cracks and the ductile&ndash;brittle transition temperature falls).</p></details>
+            </div>
+            <div class="problem" id="qms101-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>Define the lever rule and use it for an alloy of composition $C_0=20$ wt% B in a two-phase region whose tie line ends at $C_\alpha=10$ and $C_\beta=50$ wt% B.</p>
+            <details class="solution"><summary>Solution</summary><p>The weight fraction of a phase is the length of the lever arm on the opposite side of the alloy composition, divided by the tie-line length: $W_\alpha=(50-20)/(50-10)=0.75$, $W_\beta=(20-10)/(50-10)=0.25$. It follows from conservation of mass: $C_0=W_\alpha C_\alpha+W_\beta C_\beta$.</p></details>
+            </div>
+            <div class="problem" id="qms101-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>Why does quenching a $0.8$ wt% C steel give a hard, brittle structure whereas slow cooling gives a soft, ductile one, and what is the role of tempering?</p>
+            <details class="solution"><summary>Solution</summary><p>Slow cooling allows carbon to diffuse so that austenite transforms into pearlite (ferrite plus cementite lamellae), which is close to equilibrium and relatively soft. Fast quenching suppresses diffusion; the fcc lattice shears to martensite, in which all the carbon remains in solution in a distorted body-centred tetragonal lattice with a high dislocation density: very hard and brittle, with large internal stresses. Tempering at $200$&ndash;$650{}^\circ$C allows the carbon to diffuse out as fine carbides and the dislocations to rearrange, trading some hardness for much greater toughness; the temperature and time of tempering set the compromise.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Callister, W. D. and Rethwisch, D. G., <em>Materials Science and Engineering: An Introduction</em>, Wiley.</li>
-                <li>Ashby, M. F. and Jones, D. R. H., <em>Engineering Materials 1: An Introduction to Properties, Applications and Design</em>, Butterworth-Heinemann.</li>
-                <li>Porter, D. A., Easterling, K. E. and Sherif, M. Y., <em>Phase Transformations in Metals and Alloys</em>, CRC Press.</li>
-                <li>Bhadeshia, H. K. D. H. and Honeycombe, R., <em>Steels: Microstructure and Properties</em>, Butterworth-Heinemann.</li>
-                <li>Hull, D. and Bacon, D. J., <em>Introduction to Dislocations</em>, Butterworth-Heinemann.</li>
-                <li>Courtney, T. H., <em>Mechanical Behavior of Materials</em>, Waveland Press.</li>
-                <li>Dieter, G. E., <em>Mechanical Metallurgy</em>, McGraw-Hill.</li>
-                <li>Hall, E. O., The deformation and ageing of mild steel, <em>Proc. Phys. Soc. B</em> 64, 747 (1951); Petch, N. J., The cleavage strength of polycrystals, <em>J. Iron Steel Inst.</em> 174, 25 (1953).</li>
-                <li>Taylor, G. I., The mechanism of plastic deformation of crystals, <em>Proc. R. Soc. A</em> 145, 362 (1934).</li>
+                <li>Callister, W. D. and Rethwisch, D. G., <em>Materials Science and Engineering: An Introduction</em>, Wiley: the standard introductory textbook; the phase diagrams (Pb&ndash;Sn, Fe&ndash;C) and many example problems of this unit follow its conventions.</li>
+                <li>Ashby, M. F. and Jones, D. R. H., <em>Engineering Materials 1 and 2</em>, Butterworth-Heinemann; Ashby, M. F., <em>Materials Selection in Mechanical Design</em>: the material indices of Lecture 7.</li>
+                <li>Askeland, D. R. and Wright, W. J., <em>The Science and Engineering of Materials</em>; Shackelford, J. F., <em>Introduction to Materials Science for Engineers</em>; Porter, D. A. and Easterling, K. E., <em>Phase Transformations in Metals and Alloys</em> (Lecture 7).</li>
+                <li>Hull, D. and Bacon, D. J., <em>Introduction to Dislocations</em>: the basis of Lecture 3; Courtney, T. H., <em>Mechanical Behavior of Materials</em>.</li>
+                <li>Free courses: MIT OpenCourseWare 3.091 <em>Introduction to Solid State Chemistry</em> and 3.012 <em>Fundamentals of Materials Science</em>; <a href="lab-structures-ase.html">LAB 201</a> builds the crystals of Lecture 2 in Python, <a href="lab-md-lammps-copper.html">LAB 503</a> computes vacancy and surface energies and the stress&ndash;strain curve of a perfect copper crystal, and <a href="lab-calphad-pycalphad.html">LAB 505</a> draws a eutectic diagram from thermodynamic data. Next: <a href="crystal-structure-and-periodic-cells.html">MSE 201</a>.</li>
             </ul>
 
             <!-- pager:start -->
@@ -273,8 +467,11 @@
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=3f9c906b"></script>
-    <script src="../assets/pathdata.js?v=8c9b2fd7"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=8312632e"></script>
+    <script src="../assets/pathdata.js?v=3551f443"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
