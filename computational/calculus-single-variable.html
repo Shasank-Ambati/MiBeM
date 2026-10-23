@@ -36,16 +36,17 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#toolkit">1. The toolkit: functions you must know cold</a></li>
-                <li><a href="#limits">2. Limits and continuity</a></li>
-                <li><a href="#derivative">3. The derivative</a></li>
-                <li><a href="#applications">4. Using derivatives: extrema, stability and root finding</a></li>
-                <li><a href="#integrals">5. Integration</a></li>
-                <li><a href="#series">6. Sequences and series</a></li>
-                <li><a href="#taylor">7. Taylor series</a></li>
-                <li><a href="#summary-m1">8. How the pieces fit together</a></li>
-                <li><a href="#check">9. Problems</a></li>
-                <li><a href="#refs">10. References and further reading</a></li>
+                <li><a href="#toolkit">Lecture 1. The toolkit: functions you must know cold</a></li>
+                <li><a href="#limits">Lecture 2. Limits and continuity</a></li>
+                <li><a href="#derivative">Lecture 3. The derivative</a></li>
+                <li><a href="#applications">Lecture 4. Using derivatives: extrema, rates and root finding</a></li>
+                <li><a href="#integrals">Lecture 5. Integration</a></li>
+                <li><a href="#series">Lecture 6. Sequences and series</a></li>
+                <li><a href="#taylor">Lecture 7. Taylor series</a></li>
+                <li><a href="#summary-m1">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -59,7 +60,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 24 min</dd></div>
+<div><dt>Reading time</dt><dd>about 29 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="rates-of-change-calculus.html">S2. Rates of change</a><br><a href="maths-course-overview.html">M0. Course overview</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="multivariable-calculus.html">M2. Calculus II</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a><br><a href="fourier-analysis.html">M8. Fourier analysis</a><br><a href="probability-for-simulation.html">M10. Probability</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -78,10 +79,14 @@
                 <strong>You need:</strong> algebra, the exponential and logarithm, and basic trigonometry. The earlier page <a href="rates-of-change-calculus.html">S2. Rates of change</a> gives the picture without the proofs; this module is the full treatment.
             </div>
 
-            <h2 id="toolkit">1. The toolkit: functions you must know cold<a class="anchor" href="#toolkit" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a first-year university course. Seven <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution. The <strong>problem set</strong> (twelve problems with hints and full solutions) is what you submit to yourself, and a timed <strong>unit quiz</strong> at the end tests the whole unit. Allow about one week at six to eight hours: roughly one lecture per sitting, the problem set over two or three days, and the quiz at the end.</p>
+            </div>
+
+            <h2 id="toolkit">Lecture 1. The toolkit: functions you must know cold<a class="anchor" href="#toolkit" aria-label="Link to this section">#</a></h2>
             <p>Calculus is the study of how functions change, so fluency with the standard functions comes first. The table lists the ones that appear throughout simulation, with the facts that save you time.</p>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="1. The toolkit: functions you must know cold (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="Lecture 1. The toolkit: functions you must know cold (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Function</th><th>Key facts</th><th>Where it shows up</th></tr></thead>
                 <tbody>
                     <tr><td>Powers $x^n$</td><td>$x^a x^b = x^{a+b}$, $(x^a)^b = x^{ab}$, $x^{-n}=1/x^n$, $x^{1/2}=\sqrt{x}$</td><td>Potentials ($r^{-12}$, $r^{-6}$), scaling laws, polynomials</td></tr>
@@ -94,7 +99,7 @@
             </div>
             <p>Two habits repay themselves many times over. First, <strong>always keep track of units and dimensions</strong>: the argument of $e^x$, $\ln x$, $\sin x$ must be dimensionless, so a formula such as $e^{-E/(k_\mathrm{B}T)}$ is only meaningful because $E/(k_\mathrm{B}T)$ has no units. Second, <strong>sketch the function</strong> before computing anything: where it is positive, where it blows up, what it does as $x\to0$ and $x\to\infty$.</p>
 
-            <h2 id="limits">2. Limits and continuity<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+            <h2 id="limits">Lecture 2. Limits and continuity<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
             <h3 id="limit-idea">The idea of a limit<a class="anchor" href="#limit-idea" aria-label="Link to this section">#</a></h3>
             <p>The limit of $f(x)$ as $x\to a$ is the value $f(x)$ approaches as $x$ gets close to $a$, whether or not $f(a)$ itself is defined. Limits are what let us talk about <em>instantaneous</em> rates and <em>exact</em> areas, so every derivative and integral is secretly a limit.</p>
             <div class="note def"><strong>Definition (limit)</strong>
@@ -125,7 +130,7 @@
             <p>Continuum models treat matter as if limits like $\Delta V\to0$ exist (a &ldquo;density at a point&rdquo;). Atoms are discrete, so these limits only make sense for a volume large enough to contain many atoms but small compared with the sample. Knowing which limits are physical and which are idealisations is part of modelling judgement; numerically, the limit $\Delta x\to0$ is what mesh refinement approaches.</p>
             </div>
 
-            <h2 id="derivative">3. The derivative<a class="anchor" href="#derivative" aria-label="Link to this section">#</a></h2>
+            <h2 id="derivative">Lecture 3. The derivative<a class="anchor" href="#derivative" aria-label="Link to this section">#</a></h2>
             <h3 id="def-deriv">Definition and meaning<a class="anchor" href="#def-deriv" aria-label="Link to this section">#</a></h3>
             <div class="note def"><strong>Definition (derivative)</strong>
             <p>$$f'(x)=\frac{\mathrm{d}f}{\mathrm{d}x}=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}.$$
@@ -170,6 +175,21 @@
                 Since $e^{-3x}$ is never zero, $f'=0$ only for $x=0$ and $x=2/3$.</p>
             </div>
 
+            <h3 id="proofs">Why the rules hold<a class="anchor" href="#proofs" aria-label="Link to this section">#</a></h3>
+            <p>Each rule is a limit computation, and seeing one of them done once is enough to trust all of them.</p>
+            <p><strong>Power rule.</strong> For a positive integer $n$ the binomial theorem gives $(x+h)^n=x^n+nx^{n-1}h+\binom n2x^{n-2}h^2+\cdots$, so
+            $$\frac{(x+h)^n-x^n}{h}=nx^{n-1}+\binom n2x^{n-2}h+\cdots\ \longrightarrow\ nx^{n-1}\quad(h\to0).$$</p>
+            <p><strong>Product rule.</strong> Add and subtract $f(x+h)g(x)$ in the numerator:
+            $$\frac{f(x+h)g(x+h)-f(x)g(x)}h=f(x+h)\,\frac{g(x+h)-g(x)}h+g(x)\,\frac{f(x+h)-f(x)}h\ \longrightarrow\ f(x)g'(x)+g(x)f'(x),$$
+            using that $f$ is continuous, so $f(x+h)\to f(x)$.</p>
+            <p><strong>Chain rule (idea).</strong> Write the change of $f(g(x))$ as a product of two ratios, $\dfrac{\Delta f}{\Delta x}=\dfrac{\Delta f}{\Delta u}\cdot\dfrac{\Delta u}{\Delta x}$ with $u=g(x)$, and let $\Delta x\to0$ (which forces $\Delta u\to0$). This is why rates multiply.</p>
+            <p><strong>The exponential.</strong> $\dfrac{e^{x+h}-e^x}{h}=e^x\dfrac{e^h-1}{h}\to e^x$ by the standard limit of Lecture 2, so $e^x$ is its own derivative. Then $y=\ln x$ is the inverse of $e^y=x$, and implicit differentiation gives $e^y y'=1$, i.e. $(\ln x)'=1/x$.</p>
+            <div class="example">
+                <strong>Worked example 3.3: implicit differentiation</strong>
+                <p class="given">Find the slope of the curve $x^2+xy+y^2=3$ at the point $(1,1)$.</p>
+                <p>Differentiate both sides with respect to $x$, treating $y$ as a function of $x$: $2x+y+xy'+2yy'=0$. Solve for $y'$: $y'=-\dfrac{2x+y}{x+2y}$. At $(1,1)$: $y'=-\dfrac{3}{3}=-1$. The tangent line there is $y-1=-(x-1)$. (This method gives slopes of curves that cannot be written as $y=f(x)$, such as constant-energy contours.)</p>
+            </div>
+
             <h3 id="log-diff">Implicit and logarithmic differentiation<a class="anchor" href="#log-diff" aria-label="Link to this section">#</a></h3>
             <p>When $y$ is defined only implicitly by an equation $F(x,y)=0$, differentiate both sides with respect to $x$, remembering that $y$ depends on $x$ (so $\mathrm{d}(y^2)/\mathrm{d}x=2y\,y'$), and solve for $y'$. For products and powers, <strong>logarithmic differentiation</strong> is quicker: take $\ln$ first, because $\ln$ turns products into sums and powers into multiples. The identity
             $$\frac{\mathrm{d}}{\mathrm{d}x}\ln f=\frac{f'}{f}$$
@@ -185,7 +205,7 @@
             <h3 id="deriv-apps">Linear approximation and differentials<a class="anchor" href="#deriv-apps" aria-label="Link to this section">#</a></h3>
             <p>Near any point $a$ a differentiable function is almost linear: $f(x)\approx f(a)+f'(a)(x-a)$, with an error that shrinks faster than $(x-a)$. This <em>linearisation</em> is the basic tool for estimating how outputs respond to small input changes. For example, $\sqrt{1+\epsilon}\approx1+\epsilon/2$, $(1+\epsilon)^n\approx1+n\epsilon$, $e^\epsilon\approx1+\epsilon$ and $\ln(1+\epsilon)\approx\epsilon$ for small $\epsilon$. Section 7 shows how to make these approximations systematic and to bound their error.</p>
 
-            <h2 id="applications">4. Using derivatives: extrema, stability and root finding<a class="anchor" href="#applications" aria-label="Link to this section">#</a></h2>
+            <h2 id="applications">Lecture 4. Using derivatives: extrema, rates and root finding<a class="anchor" href="#applications" aria-label="Link to this section">#</a></h2>
             <h3 id="extrema">Stationary points and the second derivative test<a class="anchor" href="#extrema" aria-label="Link to this section">#</a></h3>
             <p>A <strong>stationary point</strong> of $f$ is a point where $f'(x_0)=0$. The second derivative classifies it:</p>
             <ul>
@@ -206,6 +226,26 @@
                 So $r_0$ is a stable minimum: the atoms sit about $1.12\sigma$ apart in a pair, and a small displacement $x$ costs energy $\tfrac12 k x^2$ with $k\approx57.1\,\varepsilon/\sigma^2$.</p>
             </div>
 
+            <h3 id="mvt">The mean value theorem<a class="anchor" href="#mvt" aria-label="Link to this section">#</a></h3>
+            <div class="note thm"><strong>Rolle&rsquo;s theorem and the mean value theorem</strong>
+            <p>If $f$ is continuous on $[a,b]$ and differentiable inside, there is a point $c\in(a,b)$ with
+            $$f'(c)=\frac{f(b)-f(a)}{b-a}.$$
+            (Rolle&rsquo;s theorem is the case $f(a)=f(b)$, where the conclusion is $f'(c)=0$: a smooth curve that returns to its starting height must have a flat point.)</p>
+            </div>
+            <p>Geometrically, somewhere between the endpoints the tangent is parallel to the chord. Consequences used constantly: if $f'=0$ on an interval then $f$ is constant; if $f'&gt;0$ then $f$ is increasing; and the error of a linear approximation is controlled by the size of $f''$. Physically: if you averaged $60$ km/h over a journey, at some instant your speed was exactly $60$ km/h. The theorem is also the engine behind the remainder in Taylor&rsquo;s theorem (Lecture 7).</p>
+
+            <h3 id="rates">Rates of change and optimisation<a class="anchor" href="#rates" aria-label="Link to this section">#</a></h3>
+            <div class="example">
+                <strong>Worked example 4.3: a growing precipitate</strong>
+                <p class="given">A spherical precipitate of radius $r$ grows with $\mathrm dr/\mathrm dt=2$ nm/s. How fast is its volume increasing when $r=50$ nm?</p>
+                <p>$V=\tfrac43\pi r^3$, so by the chain rule $\dfrac{\mathrm dV}{\mathrm dt}=4\pi r^2\dfrac{\mathrm dr}{\mathrm dt}=4\pi(50)^2(2)=6.3\times10^4$ nm$^3$/s. The rate of volume gain grows as $r^2$ even at constant growth speed, since a larger surface sweeps more volume.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.4: minimum surface for a given volume</strong>
+                <p class="given">A closed cylindrical can of fixed volume $V$ has radius $r$ and height $h$. Find the shape with the least surface area.</p>
+                <p>$V=\pi r^2h$ gives $h=V/(\pi r^2)$. The area is $A(r)=2\pi r^2+2\pi rh=2\pi r^2+\dfrac{2V}{r}$. Setting $A'(r)=4\pi r-\dfrac{2V}{r^2}=0$ gives $r^3=\dfrac V{2\pi}$, so $r=\bigl(V/2\pi\bigr)^{1/3}$ and then $h=2r$. Check: $A''=4\pi+4V/r^3&gt;0$, a minimum. The optimal can is as tall as it is wide ($h=2r$). Minimising surface at fixed volume is also how surface tension shapes droplets and grains (the cube and Wulff results of <a href="multivariable-calculus.html">M2</a>).</p>
+            </div>
+
             <h3 id="newton">Newton&rsquo;s method<a class="anchor" href="#newton" aria-label="Link to this section">#</a></h3>
             <p>To solve $f(x)=0$ numerically, replace $f$ by its tangent line at a guess $x_n$ and take the root of that line as the next guess:
             $$x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}.$$
@@ -220,7 +260,7 @@
             <div class="demo" data-demo="newton"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="integrals">5. Integration<a class="anchor" href="#integrals" aria-label="Link to this section">#</a></h2>
+            <h2 id="integrals">Lecture 5. Integration<a class="anchor" href="#integrals" aria-label="Link to this section">#</a></h2>
             <h3 id="integral-def">The definite integral and the fundamental theorem<a class="anchor" href="#integral-def" aria-label="Link to this section">#</a></h3>
             <p>The <strong>definite integral</strong> $\int_a^b f(x)\,\mathrm{d}x$ is the limit of Riemann sums $\sum_i f(x_i)\Delta x$ as the strips become infinitely thin: the signed area under the graph. Anything that is a &ldquo;sum of many small contributions&rdquo; is an integral: work done is $\int F\,\mathrm{d}x$, charge is $\int\rho\,\mathrm{d}V$, a thermal average is $\int A(x)p(x)\,\mathrm{d}x$.</p>
             <div class="note thm"><strong>Fundamental theorem of calculus</strong>
@@ -244,6 +284,16 @@
                 $\displaystyle\int_0^1u^3\,\allowbreak \mathrm{d}u=\tfrac14$.</p>
             </div>
 
+            <h3 id="more-techniques">Partial fractions and trigonometric substitution<a class="anchor" href="#more-techniques" aria-label="Link to this section">#</a></h3>
+            <p>Two further tools finish most of the integrals of a first course. A <strong>rational function</strong> with factorised denominator is split into simple fractions: $\dfrac1{(x-1)(x+2)}=\dfrac A{x-1}+\dfrac B{x+2}$ with $A=\tfrac13$, $B=-\tfrac13$ (multiply through and set $x=1$, then $x=-2$). Each piece integrates to a logarithm:
+            $$\int\frac{\mathrm dx}{(x-1)(x+2)}=\frac13\ln\Bigl|\frac{x-1}{x+2}\Bigr|+C.$$
+            For integrands with $\sqrt{a^2-x^2}$ substitute $x=a\sin\theta$ (so $\sqrt{a^2-x^2}=a\cos\theta$ and $\mathrm dx=a\cos\theta\,\allowbreak \mathrm d\theta$); for $a^2+x^2$ use $x=a\tan\theta$.</p>
+            <div class="example">
+                <strong>Worked example 5.2: area of a quarter disc</strong>
+                <p class="given">Evaluate $\displaystyle\int_0^1\sqrt{1-x^2}\,\allowbreak \mathrm dx$.</p>
+                <p>Let $x=\sin\theta$, $\mathrm dx=\cos\theta\,\allowbreak \mathrm d\theta$, limits $\theta=0$ to $\pi/2$: $\displaystyle\int_0^{\pi/2}\cos^2\theta\,\allowbreak \mathrm d\theta=\int_0^{\pi/2}\tfrac12(1+\cos2\theta)\,\allowbreak \mathrm d\theta=\tfrac12\Bigl[\theta+\tfrac12\sin2\theta\Bigr]_0^{\pi/2}=\dfrac\pi4$. This is the area of a quarter of the unit disc, as it should be.</p>
+            </div>
+
             <h3 id="improper">Improper integrals and the Gaussian<a class="anchor" href="#improper" aria-label="Link to this section">#</a></h3>
             <p>An integral over an infinite range, or of a function that blows up, is defined as a limit: $\int_a^\infty f\,\allowbreak \mathrm{d}x=\lim_{R\to\infty}\int_a^Rf\,\allowbreak \mathrm{d}x$. It <em>converges</em> if that limit is finite. For powers: $\int_1^\infty x^{-p}\mathrm{d}x$ converges only if $p&gt;1$, and $\int_0^1x^{-p}\mathrm{d}x$ only if $p&lt;1$. This matters in practice: for the $r^{-6}$ attraction in a Lennard-Jones solid, $\int_{R}^\infty r^{-6}\,\allowbreak r^2\,\allowbreak \mathrm{d}r$ converges, so a finite cut-off radius gives a small, correctable error, whereas for a $1/r$ Coulomb interaction the corresponding sum does not converge absolutely, which is why Ewald summation is needed.</p>
             <div class="note thm"><strong>The Gaussian integral</strong>
@@ -259,12 +309,20 @@
             $$T_n=h\Bigl[\tfrac12f_0+f_1+\cdots+f_{n-1}+\tfrac12f_n\Bigr],\qquad S_n=\frac h3\bigl[f_0+4f_1+2f_2+4f_3+\cdots+4f_{n-1}+f_n\bigr]\ (n\ \text{even}).$$
             <p>The <strong>trapezoid rule</strong> replaces the graph by straight segments and has error $\approx-\dfrac{(b-a)h^2}{12}f''(\xi)$, so it is <em>second order</em>: halving $h$ cuts the error by about $4$. <strong>Simpson&rsquo;s rule</strong> fits parabolas and has error $\approx-\dfrac{(b-a)h^4}{180}f^{(4)}(\xi)$, <em>fourth order</em>: halving $h$ cuts the error by $16$. Section 7 derives the trapezoid error from the Taylor series. For periodic functions integrated over a full period, the trapezoid rule is astonishingly accurate (it converges faster than any power of $h$), which is why plane-wave codes use uniform grids.</p>
 
-            <h2 id="series">6. Sequences and series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
+            <h2 id="series">Lecture 6. Sequences and series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
             <p>An infinite series $\sum_{n=0}^\infty a_n$ converges if its partial sums $S_N=\sum_{n=0}^Na_n$ approach a limit. The one you must know is the <strong>geometric series</strong>:
             $$\sum_{n=0}^\infty r^n=\frac{1}{1-r}\quad(|r|&lt;1),\qquad \sum_{n=0}^{N}r^n=\frac{1-r^{N+1}}{1-r}.$$
             Proof: multiply $S_N$ by $r$ and subtract. It sums the Boltzmann weights of a harmonic oscillator (Problem 10). To test convergence in general: if $a_n\not\to0$ the series diverges; the <strong>ratio test</strong> says that if $|a_{n+1}/a_n|\to L$ then the series converges for $L&lt;1$ and diverges for $L&gt;1$. A <strong>power series</strong> $\sum c_n(x-a)^n$ converges for $|x-a|&lt;R$ (the radius of convergence) and may be differentiated and integrated term by term inside that radius. That is what makes the next section work.</p>
 
-            <h2 id="taylor">7. Taylor series<a class="anchor" href="#taylor" aria-label="Link to this section">#</a></h2>
+            <h3 id="tests">Testing convergence<a class="anchor" href="#tests" aria-label="Link to this section">#</a></h3>
+            <p>Three tests settle almost every series you will meet. (i) The <strong>comparison test</strong>: if $0\le a_n\le b_n$ and $\sum b_n$ converges, so does $\sum a_n$. For example $\sum1/n^2$ converges (it is bounded by an integral, since $\int_1^\infty x^{-2}\mathrm dx$ is finite) while the harmonic series $\sum1/n$ diverges. (ii) The <strong>ratio test</strong> given above. (iii) The <strong>alternating series test</strong>: if the terms alternate in sign and decrease to zero, the series converges, with an error smaller than the first omitted term. So $1-\tfrac12+\tfrac13-\cdots=\ln2$ converges, but slowly: it is only <em>conditionally</em> convergent, because the series of absolute values is the divergent harmonic series.</p>
+            <div class="example">
+                <strong>Worked example 6.1: radius of convergence</strong>
+                <p class="given">For which $x$ does $\displaystyle\sum_{n=1}^\infty\frac{x^n}{n}$ converge?</p>
+                <p>Ratio test: $\left|\dfrac{x^{n+1}/(n+1)}{x^n/n}\right|=|x|\dfrac n{n+1}\to|x|$, so it converges for $|x|&lt;1$ and diverges for $|x|&gt;1$. At $x=1$ it is the harmonic series (diverges); at $x=-1$ it is the alternating harmonic series (converges). So the interval of convergence is $-1\le x&lt;1$. This is the series of $-\ln(1-x)$.</p>
+            </div>
+
+            <h2 id="taylor">Lecture 7. Taylor series<a class="anchor" href="#taylor" aria-label="Link to this section">#</a></h2>
             <h3 id="taylor-thm">Taylor&rsquo;s theorem<a class="anchor" href="#taylor-thm" aria-label="Link to this section">#</a></h3>
             <p>Suppose you know a function and all its derivatives at one point $a$ and want its value nearby. The best polynomial of degree $n$ that matches $f$, $f'$, $\ldots$, $f^{(n)}$ at $a$ is the Taylor polynomial, and the theorem tells you the size of the leftover.</p>
             <div class="note thm"><strong>Taylor&rsquo;s theorem (Lagrange form)</strong>
@@ -288,6 +346,12 @@
             <div class="demo" data-demo="taylor"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
+            <div class="example">
+                <strong>Worked example 7.1: how many terms do I need?</strong>
+                <p class="given">Approximate $e^{0.5}$ with the degree-4 Taylor polynomial and bound the error.</p>
+                <p>$P_4(0.5)=1+0.5+\dfrac{0.25}{2}+\dfrac{0.125}{6}+\dfrac{0.0625}{24}=1.6484375$. The remainder is $R_4=\dfrac{e^\xi}{5!}(0.5)^5$ for some $\xi\in(0,0.5)$; since $e^\xi&lt;e^{0.5}&lt;1.65$, $|R_4|&lt;\dfrac{1.65\times0.03125}{120}=4.3\times10^{-4}$. The true error is $e^{0.5}-P_4(0.5)=1.64872-1.64844=2.8\times10^{-4}$, inside the bound. To get error below $10^{-6}$ you would need $n=7$ (bound $\approx1.65(0.5)^8/8!=1.0\times10^{-7}$). Bounding the remainder in advance is how a code decides how many terms of a series to sum.</p>
+            </div>
+
             <h3 id="harmonic">The harmonic approximation<a class="anchor" href="#harmonic" aria-label="Link to this section">#</a></h3>
             <p>Let $U(x)$ have a minimum at $x_0$. Taylor-expand about $x_0$ and use $U'(x_0)=0$:
             $$U(x_0+u)=U(x_0)+\tfrac12U''(x_0)\,u^2+\tfrac16U'''(x_0)\,u^3+\cdots .$$
@@ -310,7 +374,7 @@
             <div class="demo" data-demo="fderr"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="summary-m1">8. How the pieces fit together<a class="anchor" href="#summary-m1" aria-label="Link to this section">#</a></h2>
+            <h2 id="summary-m1">Summary of the unit<a class="anchor" href="#summary-m1" aria-label="Link to this section">#</a></h2>
             <p>The same few ideas now connect a surprising range of topics. The derivative gives rates and forces ($F=-U'$). The second derivative classifies equilibria and sets stiffness and vibration frequency. Taylor series show that every smooth minimum is a parabola, justify finite differences, and measure the error of every numerical method by its order. The integral computes averages and totals, and the Gaussian integral turns Boltzmann statistics for a harmonic well into closed-form results. The next module extends each of these to functions of several variables, where the derivative becomes the gradient and the second derivative becomes the Hessian matrix.</p>
 
             <!-- takeaways:start -->
@@ -324,7 +388,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem on paper before opening the hint, and the hint before opening the solution. The labels show the level: <em>Basic</em> problems check the techniques, <em>Core</em> problems apply them to materials settings, and <em>Challenge</em> problems combine several ideas. Tick &ldquo;Mark as solved&rdquo; as you go (stored only in your browser).</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -479,7 +543,40 @@
             </details>
             </div>
 
-            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly. A good target is full marks on questions 1&ndash;4 and the right method on 5&ndash;6.</p>
+            <div class="problem" id="q1-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Limits</span></div>
+            <p>Evaluate $\displaystyle\lim_{x\to0}\frac{e^{2x}-1-2x}{x^2}$.</p>
+            <details class="solution"><summary>Solution</summary><p>Using the series $e^{2x}=1+2x+2x^2+\tfrac43x^3+\cdots$, the numerator is $2x^2+\tfrac43x^3+\cdots$, so the ratio tends to $2$. (By L&rsquo;H&ocirc;pital twice: $\dfrac{2e^{2x}-2}{2x}\to\dfrac{4e^{2x}}{2}=2$.)</p></details>
+            </div>
+            <div class="problem" id="q1-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Differentiation</span></div>
+            <p>Find $\dfrac{\mathrm d}{\mathrm dx}\,x^x$ for $x&gt;0$.</p>
+            <details class="solution"><summary>Solution</summary><p>Logarithmic differentiation: $\ln y=x\ln x$, so $y'/y=\ln x+1$ and $y'=x^x(\ln x+1)$.</p></details>
+            </div>
+            <div class="problem" id="q1-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Extrema</span></div>
+            <p>Find and classify the stationary point of $f(x)=xe^{-x/2}$ for $x&gt;0$, and the maximum value.</p>
+            <details class="solution"><summary>Solution</summary><p>$f'=e^{-x/2}\bigl(1-\tfrac x2\bigr)=0$ gives $x=2$. $f''=e^{-x/2}\bigl(-\tfrac12-\tfrac12+\tfrac x4\bigr)=e^{-x/2}\bigl(\tfrac x4-1\bigr)$, which is $-\tfrac1{2e}&lt;0$ at $x=2$: a maximum, with $f(2)=2/e=0.736$.</p></details>
+            </div>
+            <div class="problem" id="q1-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Integration</span></div>
+            <p>Evaluate $\displaystyle\int_0^\infty x^2e^{-x}\,\allowbreak \mathrm dx$.</p>
+            <details class="solution"><summary>Solution</summary><p>By parts twice: $\int_0^\infty x^2e^{-x}\mathrm dx=\bigl[-x^2e^{-x}\bigr]_0^\infty+2\int_0^\infty xe^{-x}\mathrm dx=0+2(1)=2$, using Example 5.1(a). (This is $\Gamma(3)=2!$.)</p></details>
+            </div>
+            <div class="problem" id="q1-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Series</span></div>
+            <p>Find the first three non-zero terms of the Taylor series of $\ln(\cos x)$ about $0$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\cos x=1-u$ with $u=\tfrac{x^2}2-\tfrac{x^4}{24}+\tfrac{x^6}{720}$, and $\ln(1-u)=-u-\tfrac{u^2}2-\tfrac{u^3}3-\cdots$. Collect powers: $x^2$: $-\tfrac12$. $x^4$: $+\tfrac1{24}-\tfrac12\cdot\tfrac14=-\tfrac1{12}$. $x^6$: $-\tfrac1{720}-\tfrac12\bigl(2\cdot\tfrac12\cdot(-\tfrac1{24})\bigr)-\tfrac13\cdot\tfrac18=-\tfrac1{720}+\tfrac1{48}-\tfrac1{24}=-\tfrac1{45}$. So $\ln\cos x=-\dfrac{x^2}2-\dfrac{x^4}{12}-\dfrac{x^6}{45}-\cdots$. (Check: differentiating gives $-\tan x=-x-\tfrac{x^3}3-\tfrac{2x^5}{15}$. &check;)</p></details>
+            </div>
+            <div class="problem" id="q1-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Numerics</span></div>
+            <p>Use Simpson&rsquo;s rule with $n=2$ to estimate $\displaystyle\int_0^1x^4\,\mathrm dx$ and find the error. Why is Simpson&rsquo;s rule not exact here although it is exact for cubics?</p>
+            <details class="solution"><summary>Solution</summary><p>$S_2=\dfrac{0.5}3\bigl[0+4(0.5)^4+1\bigr]=\dfrac16(1.25)=0.20833$; the exact value is $0.2$, so the error is $+0.00833$. Simpson&rsquo;s rule fits parabolas through three points and integrates cubics exactly (the cubic error terms cancel by symmetry), but its error is proportional to $f^{(4)}$, which for $x^4$ is the non-zero constant $24$: error $=\dfrac{(b-a)h^4}{180}f^{(4)}=\dfrac{0.0625\times24}{180}=0.00833$. &check;</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Stewart, J., <em>Calculus: Early Transcendentals</em>, Cengage. A standard first-year text with many exercises.</li>
                 <li>Thomas, G. B., <em>Thomas&rsquo; Calculus</em>, Pearson.</li>
@@ -506,7 +603,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=a30be6b4"></script>
+    <script src="../assets/topics.js?v=75820cef"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

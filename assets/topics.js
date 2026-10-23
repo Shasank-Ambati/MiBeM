@@ -198,7 +198,7 @@ window.MIBEM_TOPICS = [
     "short": "Calculus I",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 24,
+    "minutes": 29,
     "title": "Calculus I: functions of one variable",
     "blurb": "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
     "builds": [
