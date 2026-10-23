@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum mechanics - MiBeM</title>
+    <meta name="description" content="University-level quantum mechanics for materials science: wave-particle duality, the Schrodinger equation, particle in a box, operators and uncertainty, tunnelling and the harmonic oscillator, the hydrogen atom, spin and the exclusion principle, and perturbation and variational methods, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/quantum-mechanics.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Quantum mechanics - MiBeM">
+    <meta property="og:description" content="University-level quantum mechanics for materials science: wave-particle duality, the Schrodinger equation, particle in a box, operators and uncertainty, tunnelling and the harmonic oscillator, the hydrogen atom, spin and the exclusion principle, and perturbation and variational methods, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/quantum-mechanics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="40">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#origins">Lecture 1. Waves, particles and the wavefunction</a></li>
+                <li><a href="#schro">Lecture 2. The Schr&ouml;dinger equation and the particle in a box</a></li>
+                <li><a href="#operators">Lecture 3. Operators, measurement and uncertainty</a></li>
+                <li><a href="#tunnel">Lecture 4. Tunnelling and the harmonic oscillator</a></li>
+                <li><a href="#hydrogen">Lecture 5. The hydrogen atom and angular momentum</a></li>
+                <li><a href="#spin">Lecture 6. Spin, identical particles and the periodic table</a></li>
+                <li><a href="#approx">Lecture 7. Perturbation theory, the variational principle and two-level systems</a></li>
+                <li><a href="#summary-p201">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 201</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" class="here" aria-current="page" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a></nav>
+<!-- coursenav:end -->
+            <h1>Quantum mechanics</h1>
+            <p class="lead">Atoms, bonds, the colour of a semiconductor and the hardness of a metal cannot be understood with classical mechanics. Electrons obey quantum mechanics, and every first-principles method in this curriculum, density functional theory above all, is an approximation to it. This course introduces quantum mechanics at the level of a second-year university degree: the wavefunction and the Schr&ouml;dinger equation, the simplest solvable systems (a particle in a box, the harmonic oscillator, tunnelling, hydrogen), spin and the exclusion principle, and the approximation methods used for realistic systems.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 32 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="classical-mechanics.html">PHYS 101: Classical mechanics</a><br><a href="electricity-magnetism-and-waves.html">PHYS 103: Electricity, magnetism, waves</a><br><a href="eigenvalues-and-decompositions.html">MATH 202: Linear algebra II</a><br><a href="ordinary-differential-equations.html">MATH 203: ODEs</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 2: core tools</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Describe the evidence for wave&ndash;particle duality and use $E=hf$ and $\lambda=h/p$.</li>
+                    <li>Interpret the wavefunction and solve the time-independent Schr&ouml;dinger equation for a particle in a box and for simple potentials.</li>
+                    <li>Use operators, expectation values, commutators and the uncertainty principle.</li>
+                    <li>Estimate tunnelling probabilities and use the energy levels of the harmonic oscillator for molecular vibrations.</li>
+                    <li>Describe the hydrogen atom, its quantum numbers and its spectrum, and angular momentum in quantum mechanics.</li>
+                    <li>Apply spin and the Pauli principle to build atomic configurations and explain magnetism.</li>
+                    <li>Use first-order perturbation theory, two-level systems and the variational principle.</li>
+                </ul>
+                <strong>You need:</strong> <a href="classical-mechanics.html">PHYS 101: Classical mechanics</a>, <a href="electricity-magnetism-and-waves.html">PHYS 103: Electricity, magnetism and waves</a> (waves, photons), <a href="ordinary-differential-equations.html">MATH 203: ODEs</a> and <a href="eigenvalues-and-decompositions.html">MATH 202: Linear algebra II</a> (eigenvalue problems). The Fourier analysis of <a href="fourier-analysis.html">MATH 205</a> helps in Lecture 3.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 2 (the Schr&ouml;dinger equation) and 7 (approximation methods) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="origins">Lecture 1. Waves, particles and the wavefunction<a class="anchor" href="#origins" aria-label="Link to this section">#</a></h2>
+            <p>By 1925 experiments had shown that classical physics fails for light and for electrons.</p>
+            <ul>
+                <li><strong>Photoelectric effect.</strong> Light shining on a metal ejects electrons only if the frequency exceeds a threshold, whatever the intensity, and the maximum kinetic energy of the electrons grows linearly with the frequency: $K_\mathrm{max}=hf-\phi$, with $\phi$ the work function of the metal. Einstein (1905): light comes in quanta (photons) of energy $E=hf=\hbar\omega$, with $h=6.626\times10^{-34}$ J s ($\hbar=h/2\pi$). Photon momentum is $p=h/\lambda$.</li>
+                <li><strong>Electron diffraction.</strong> Electrons scattered from crystals form diffraction patterns obeying Bragg&rsquo;s law, with a wavelength $\lambda=h/p$ (de Broglie, 1924; Davisson and Germer, 1927). Neutrons, atoms and even large molecules do the same.</li>
+                <li><strong>Atomic spectra.</strong> Atoms emit light only at discrete frequencies, so their electrons occupy discrete energy levels: classical electrons orbiting a nucleus would radiate continuously and spiral into it.</li>
+            </ul>
+            <p>The resolution is that a particle is described by a <strong>wavefunction</strong> $\psi(\mathbf r,t)$, a complex function. <strong>Born&rsquo;s rule</strong>: $|\psi(\mathbf r,t)|^2\,\mathrm dV$ is the probability of finding the particle in the small volume $\mathrm dV$, so the wavefunction is normalised, $\int|\psi|^2\mathrm dV=1$. Waves can add, so $\psi$ obeys the <strong>superposition principle</strong>: if $\psi_1$ and $\psi_2$ are possible states, so is $c_1\psi_1+c_2\psi_2$, and the probability $|c_1\psi_1+c_2\psi_2|^2$ contains an interference term. This is why electrons make fringes in a double-slit experiment even when they arrive one at a time. A measurement yields a definite result, with probabilities set by $|\psi|^2$; before the measurement the state is the superposition. Planck&rsquo;s constant sets the scale at which this matters: the de Broglie wavelength is tiny for everyday objects and comparable with atomic spacings for electrons of a few eV.</p>
+            <div class="example">
+                <strong>Worked example 1.1: photoelectrons</strong>
+                <p class="given">Sodium has a work function $\phi=2.28$ eV. Light of $400$ nm falls on it. Find the maximum photoelectron energy, the stopping potential and the threshold wavelength. What if the intensity is doubled?</p>
+                <p>The photon energy is $1239.8/400=3.10$ eV, so $K_\mathrm{max}=3.10-2.28=0.82$ eV and the stopping potential is $0.82$ V. The threshold is at $\lambda=1239.8/2.28=544$ nm: green light and longer wavelengths eject nothing, however bright. Doubling the intensity doubles the number of photoelectrons but leaves $K_\mathrm{max}$ unchanged: each electron absorbs one photon. The photoelectron spectroscopies XPS and UPS measure binding energies of electrons in solids with exactly this equation.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.2: de Broglie wavelengths</strong>
+                <p class="given">Find the wavelength of a $100$ eV electron, of a $25$ meV neutron and of a $0.145$ kg baseball at $40$ m/s. Which would diffract from a crystal?</p>
+                <p>For an electron, $\lambda=h/\sqrt{2mE}=0.1226$ nm$\,\times\sqrt{(100\ \mathrm{eV})/E}$: $0.123$ nm at $100$ eV, comparable with atomic spacings, so electrons of this energy diffract from crystals (low-energy electron diffraction, LEED). A thermal neutron has $0.181$ nm and diffracts. The baseball has $\lambda=h/mv=6.6\times10^{-34}/(0.145\times40)=1.1\times10^{-34}$ m, $10^{19}$ times smaller than a nucleus: wave effects are completely unobservable.</p>
+            </div>
+
+            <h2 id="schro">Lecture 2. The Schr&ouml;dinger equation and the particle in a box<a class="anchor" href="#schro" aria-label="Link to this section">#</a></h2>
+            <p>The wavefunction obeys the <strong>time-dependent Schr&ouml;dinger equation</strong>
+            $$i\hbar\frac{\partial\psi}{\partial t}=\hat H\psi,\qquad\hat H=-\frac{\hbar^2}{2m}\nabla^2+V(\mathbf r),$$
+            where the Hamiltonian is the total energy with momentum replaced by the operator $-i\hbar\nabla$ (Lecture 3). For a particle in a free-space wave $e^{i(kx-\omega t)}$ it reproduces de Broglie: $E=\hbar\omega$, $p=\hbar k$, $E=p^2/2m$. When $V$ does not depend on time, solutions separate, $\psi=\phi(\mathbf r)e^{-iEt/\hbar}$, where $\phi$ satisfies the <strong>time-independent Schr&ouml;dinger equation</strong>
+            $$\hat H\phi=E\phi\quad\Longleftrightarrow\quad-\frac{\hbar^2}{2m}\frac{\mathrm d^2\phi}{\mathrm dx^2}+V(x)\phi=E\phi.$$
+            This is an eigenvalue problem (<a href="eigenvalues-and-decompositions.html">MATH 202</a>): the allowed energies $E_n$ and states $\phi_n$ are the eigenvalues and eigenfunctions of $\hat H$, and a general state is a superposition $\psi=\sum_nc_n\phi_ne^{-iE_nt/\hbar}$ with $|c_n|^2$ the probability of finding the energy $E_n$. The probability density $|\phi|^2$ of an eigenstate does not change in time: it is a <strong>stationary state</strong>. Solutions must be continuous, with continuous derivative where $V$ is finite, and normalisable; these conditions, not the equation, produce <strong>quantisation</strong>.</p>
+            <div class="note thm"><strong>The particle in a box</strong>
+            <p>An electron confined to $0&lt;x&lt;L$ between infinitely high walls has $V=0$ inside and $\phi=0$ outside. Inside, $\phi''=-k^2\phi$ with $k^2=2mE/\hbar^2$, so $\phi=A\sin kx+B\cos kx$. The condition $\phi(0)=0$ gives $B=0$ and $\phi(L)=0$ requires $kL=n\pi$, $n=1,2,3,\dots$ Normalising, $\int_0^L|\phi|^2\mathrm dx=A^2L/2=1$, so
+            $$\phi_n(x)=\sqrt{\frac2L}\sin\frac{n\pi x}L,\qquad E_n=\frac{\hbar^2k^2}{2m}=\frac{n^2h^2}{8mL^2}.$$
+            The energy is quantised because only whole numbers of half-wavelengths fit in the box. Three results recur: the lowest energy is not zero (a particle confined in $L$ has momentum $\sim h/L$, hence kinetic energy $\sim h^2/mL^2$, the zero-point energy); the energy scales as $1/L^2$ (squeezing a particle raises its energy); and the state with quantum number $n$ has $n-1$ nodes (more nodes, more curvature, more kinetic energy). The functions $\phi_n$ are orthonormal, $\int\phi_m\phi_n\mathrm dx=\delta_{mn}$, the sine series of <a href="fourier-analysis.html">MATH 205</a>.</p>
+            </div>
+            <div class="demo" data-demo="box"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <div class="note mat"><strong>In materials science: confinement and quantum dots</strong>
+            <p>Semiconductor nanocrystals confine electrons and holes in all three directions; the energy levels move up as the size decreases and the colour of the emitted light shifts from red to blue, which is why quantum-dot displays can be tuned by crystal size alone. The same $1/L^2$ law explains why electrons in a metal have kinetic energies of several eV (confinement in the crystal and exclusion between electrons; <a href="physics-for-simulation.html">PHYS 100</a>), and why bonds form: spreading the electron over two atoms lowers its confinement energy (Lecture 7).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: an electron in a 1 nm box</strong>
+                <p class="given">Find the lowest three energies of an electron in a box $L=1.0$ nm wide, the wavelength absorbed when it is excited from $n=1$ to $n=2$, and how the energy changes if the box is halved.</p>
+                <p>$E_1=h^2/(8mL^2)=0.376$ eV, so $E_2=4E_1=1.504$ eV and $E_3=9E_1=3.384$ eV. The $1\to2$ transition needs $1.128$ eV, a wavelength $1240/1.128=1099$ nm (infrared). Halving $L$ to $0.5$ nm quadruples every energy ($E_1=1.504$ eV) and the $1\to2$ wavelength falls to $275$ nm. The electrons of a conjugated dye molecule behave approximately like this box, and lengthening the molecule moves its absorption to longer wavelengths, which is how its colour is tuned.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.2: a quantum dot</strong>
+                <p class="given">A CdSe nanocrystal is modelled as a cube of side $5$ nm with an electron effective mass $0.13m_e$, in a material with bulk band gap $1.74$ eV. Estimate the confinement energy of the electron and the emission wavelength (ignoring the hole and the Coulomb term).</p>
+                <p>For a cube the ground state is $E=3\times\dfrac{h^2}{8m^*L^2}=3\times0.376\ \mathrm{eV}\times\dfrac{1}{0.13\times25}=0.347$ eV (three directions, each like a 1D box). The gap grows from $1.74$ to about $2.09$ eV, so the emission wavelength moves from $712$ nm (bulk) to $\approx594$ nm (orange). Making the dots $3$ nm wide raises the confinement energy to about $0.96$ eV and the emission shifts into the blue, as observed. This estimate is crude (a real calculation includes the hole and Coulomb attraction) but the $1/L^2$ trend is correct.</p>
+            </div>
+
+            <h2 id="operators">Lecture 3. Operators, measurement and uncertainty<a class="anchor" href="#operators" aria-label="Link to this section">#</a></h2>
+            <p>Every measurable quantity (observable) corresponds to a <strong>Hermitian operator</strong> acting on the wavefunction; position is multiplication by $x$, and momentum is $\hat p=-i\hbar\,\partial/\partial x$ (the plane wave $e^{ikx}$ is its eigenfunction with eigenvalue $\hbar k$). Kinetic energy is $\hat p^2/2m$, and the Hamiltonian $\hat H=\hat p^2/2m+V$. The possible results of measuring an observable $A$ are the eigenvalues $a_i$ of $\hat A$, which are real because $\hat A$ is Hermitian; the probability of $a_i$ is $|c_i|^2$ where $c_i$ is the overlap of the state with the eigenfunction; and after the measurement the state is the corresponding eigenfunction. The <strong>expectation value</strong>, the average over many identical measurements, is
+            $$\langle A\rangle=\int\psi^*\hat A\psi\,\mathrm dx,$$
+            for a normalised $\psi$. The spread is $\Delta A=\sqrt{\langle A^2\rangle-\langle A\rangle^2}$.</p>
+            <p><strong>Commutators.</strong> Two operators have simultaneous sharp values only if they commute. The key non-commuting pair is $[\hat x,\hat p]=\hat x\hat p-\hat p\hat x=i\hbar$. <em>Proof.</em> Acting on any $f$: $x(-i\hbar f')-(-i\hbar)(xf)'=-i\hbar xf'+i\hbar f+i\hbar xf'=i\hbar f$. The general consequence is the <strong>uncertainty relation</strong> $\Delta A\,\allowbreak \Delta B\ge\tfrac12|\langle[\hat A,\hat B]\rangle|$, which for position and momentum reads
+            $$\Delta x\,\Delta p\ge\frac\hbar2.$$
+            It also follows from the Fourier relation of <a href="fourier-analysis.html">MATH 205</a>: a wave packet that is narrow in $x$ is a superposition of many wavenumbers, and a function and its transform obey $\sigma_x\sigma_k\ge\tfrac12$. It is not a limit of measuring technique but a property of waves: a state has no sharp position and momentum together.</p>
+            <p><strong>Energy&ndash;time and size.</strong> The consequence for confinement is quantitative. Squeezing a particle into a region of size $\Delta x$ forces $\Delta p\gtrsim\hbar/2\Delta x$ and a kinetic energy of at least $\sim(\Delta p)^2/2m$. That estimate gives the size of an atom, as the balance between kinetic energy rising as $1/r^2$ and Coulomb energy falling as $-1/r$, with minimum near the Bohr radius: matter is stable because of the uncertainty principle.</p>
+            <div class="example">
+                <strong>Worked example 3.1: expectation values in a box</strong>
+                <p class="given">For the ground state of a particle in a box of width $L$, find the probability of finding it in the left third, and $\langle x\rangle$, $\Delta x$ and $\Delta p$. Check the uncertainty relation.</p>
+                <p>With $\phi_1=\sqrt{2/L}\sin(\pi x/L)$, the probability in $0&lt;x&lt;L/3$ is $\int_0^{L/3}\dfrac2L\sin^2\dfrac{\pi x}L\mathrm dx=\dfrac13-\dfrac{\sin(2\pi/3)}{2\pi}=0.1955$: less than a third, because the density is small near the walls. By symmetry $\langle x\rangle=L/2$. $\langle x^2\rangle=L^2\bigl(\tfrac13-\tfrac1{2\pi^2}\bigr)=0.2827L^2$, so $\Delta x=0.181L$. For momentum, $\langle p\rangle=0$ and $\langle p^2\rangle=2mE_1=\pi^2\hbar^2/L^2$, so $\Delta p=\pi\hbar/L$. The product is $0.181\pi\hbar=0.568\hbar&gt;\hbar/2$ &check;, close to the minimum.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.2: why electrons are not in the nucleus</strong>
+                <p class="given">An electron confined to a nucleus ($\Delta x\approx1$ fm) and a proton so confined: estimate their kinetic energies.</p>
+                <p>The uncertainty principle gives $\Delta p\ge\hbar/2\Delta x=5.3\times10^{-20}$ kg m/s. For an electron this momentum is relativistic: $E\approx pc=99$ MeV, far larger than any nuclear binding energy (about $8$ MeV per nucleon), so an electron cannot be bound in a nucleus. For a proton $E\approx p^2/2m=5.2$ MeV, comparable with nuclear binding energies: protons and neutrons can be. In an atom, $\Delta x\approx0.1$ nm gives $E\approx0.95$ eV for the electron, the electron-volt scale of chemistry.</p>
+            </div>
+
+            <h2 id="tunnel">Lecture 4. Tunnelling and the harmonic oscillator<a class="anchor" href="#tunnel" aria-label="Link to this section">#</a></h2>
+            <p><strong>Barriers.</strong> Where the potential $V$ exceeds the energy $E$ a classical particle cannot go. The Schr&ouml;dinger equation $\phi''=\dfrac{2m(V-E)}{\hbar^2}\phi=\kappa^2\phi$ has there the solutions $e^{\pm\kappa x}$, with
+            $$\kappa=\frac{\sqrt{2m(V-E)}}\hbar,$$
+            so the wavefunction does not vanish inside the barrier but <em>decays exponentially</em>, $\phi\propto e^{-\kappa x}$, over a length $1/\kappa$. If the barrier is thin the amplitude is still non-zero on the far side, and the particle has a finite probability of appearing there: <strong>tunnelling</strong>. For a rectangular barrier of height $V$ and width $d$ with $\kappa d\gg1$, the transmission probability is
+            $$T\approx e^{-2\kappa d}.$$
+            It is extremely sensitive to the width: an electron facing a $4.5$ eV barrier has $\kappa=1.09\times10^{10}\ \mathrm{m^{-1}}$ ($1.09\ \mathrm{\AA^{-1}}$), so a change of $0.1$ nm in the width changes $T$ by $e^{2.17}=8.8$ times. Heavier particles tunnel much less ($\kappa\propto\sqrt m$): protons tunnel over short distances (in hydrogen diffusion at low temperatures and in some enzymes), but only electrons tunnel appreciably through nanometre barriers.</p>
+            <div class="note mat"><strong>In materials science: tunnelling in microscopes and devices</strong>
+            <p>In the <strong>scanning tunnelling microscope</strong> a sharp metal tip is held about $0.5$ nm above a surface and a bias is applied; the tunnelling current $I\propto e^{-2\kappa d}$ with $\kappa=\sqrt{2m\phi}/\hbar$ (the work function $\phi\approx4$&ndash;$5$ eV) changes by a factor of ten for each $0.1$ nm of height, which gives sub-atomic vertical resolution and maps individual atoms. Tunnelling underlies flash memory, the tunnel diode, Josephson junctions, field emission, and alpha decay. In simulation, quantum tunnelling of light atoms is one reason that classical molecular dynamics can fail for hydrogen at low temperature.</p>
+            </div>
+            <p><strong>The harmonic oscillator.</strong> Near a stable equilibrium every potential is $V=\tfrac12m\omega^2x^2$ (<a href="classical-mechanics.html">PHYS 101</a>). The Schr&ouml;dinger equation can be solved exactly, with the results
+            $$E_n=\Bigl(n+\tfrac12\Bigr)\hbar\omega,\qquad n=0,1,2,\dots,\qquad\phi_0(x)\propto e^{-m\omega x^2/2\hbar}.$$
+            The levels are equally spaced by $\hbar\omega$, the ground state is a Gaussian, and the energy at the bottom is the <strong>zero-point energy</strong> $\tfrac12\hbar\omega$: even at $T=0$ the oscillator is not at rest. <em>The estimate:</em> confining the oscillator to $\Delta x$ costs kinetic energy $\sim\hbar^2/(8m\Delta x^2)$ and potential energy $\tfrac12m\omega^2\Delta x^2$; minimising their sum gives $\Delta x\sim\sqrt{\hbar/m\omega}$ and $E\sim\hbar\omega$. The spacing $\hbar\omega$ is exactly the quantum that a mode absorbs or emits as a photon or a <strong>phonon</strong> in a solid (<a href="thermal-physics.html">PHYS 102</a>, Einstein model), which is why the heat capacity of stiff bonds is frozen out when $\hbar\omega\gg k_\mathrm BT$: the Boltzmann population of the first excited state is $e^{-\hbar\omega/k_\mathrm BT}$.</p>
+            <div class="example">
+                <strong>Worked example 4.1: tunnelling in the STM</strong>
+                <p class="given">The work function of a tungsten tip is $4.5$ eV. Estimate the decay constant $\kappa$, the transmission through a $0.5$ nm vacuum gap, and the change in current when the tip is retracted by $0.1$ nm.</p>
+                <p>$$\kappa=\frac{\sqrt{2m\phi}}{\hbar}=\frac{\sqrt{2(9.109\times10^{-31})(4.5)(1.602\times10^{-19})}}{1.055\times10^{-34}}=1.09\times10^{10}\ \text{m}^{-1}.$$ For $d=0.5$ nm, $T\approx e^{-2\kappa d}=e^{-10.9}=1.9\times10^{-5}$. Retracting by $0.1$ nm multiplies $T$ by $e^{-2(1.09\times10^{10})(10^{-10})}=e^{-2.17}=0.114$: the current falls by a factor $8.8$. Because atoms on a surface differ in height by $\sim0.01$&ndash;$0.1$ nm, the current resolves them. For a proton under the same barrier, $\kappa$ is $\sqrt{1836}=43$ times larger and tunnelling over $0.5$ nm is smaller by $e^{-450}$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: the vibration of CO</strong>
+                <p class="given">The C&ndash;O bond has $k=1857$ N/m and reduced mass $6.857$ u. Find $\hbar\omega$, the zero-point energy and the wavenumber of the $0\to1$ absorption, and the fraction of molecules in $n=1$ at $300$ K.</p>
+                <p>$\omega=\sqrt{k/\mu}=\sqrt{1857/(6.857\times1.6605\times10^{-27})}=4.04\times10^{14}$ rad/s, so $\hbar\omega=0.266$ eV and the zero-point energy is $0.133$ eV. The absorption wavenumber is $\omega/2\pi c=2144\ \mathrm{cm^{-1}}$, within $0.1\%$ of the measured $2143\ \mathrm{cm^{-1}}$. At $300$ K, $k_\mathrm BT=0.0259$ eV and the population ratio of $n=1$ to $n=0$ is $e^{-10.3}=3.4\times10^{-5}$: practically all molecules are in the ground state, and classical equipartition (which would give each molecule $k_\mathrm BT$ of vibrational energy) does not apply. The zero-point energy of bonds is why isotope substitution changes bond energies and reaction rates: it enters free-energy calculations for hydrogen in metals.</p>
+            </div>
+
+            <h2 id="hydrogen">Lecture 5. The hydrogen atom and angular momentum<a class="anchor" href="#hydrogen" aria-label="Link to this section">#</a></h2>
+            <p>For an electron bound to a proton the potential is the Coulomb potential $V=-e^2/4\pi\varepsilon_0r$, which depends only on the distance $r$. In spherical coordinates the Schr&ouml;dinger equation separates into a radial equation and an angular part, $\phi=R_{nl}(r)\,\allowbreak Y_{lm}(\theta,\varphi)$. The angular part is the same for every central potential. The boundary conditions give integer <strong>quantum numbers</strong>:</p>
+            <ul>
+                <li><strong>principal</strong> $n=1,2,3,\dots$, which fixes the energy;</li>
+                <li><strong>orbital angular momentum</strong> $l=0,1,\dots,n-1$ (labelled s, p, d, f for $l=0,1,2,3$), with $|\mathbf L|=\hbar\sqrt{l(l+1)}$;</li>
+                <li><strong>magnetic</strong> $m=-l,\dots,l$, with $L_z=m\hbar$.</li>
+            </ul>
+            <p>The energies are
+            $$E_n=-\frac{13.606\ \mathrm{eV}}{n^2},\qquad a_0=\frac{4\pi\varepsilon_0\hbar^2}{m_ee^2}=0.0529\ \mathrm{nm}\ \text{(Bohr radius)},$$
+            independent of $l$ and $m$ for the pure Coulomb potential (so level $n$ has $n^2$ states, doubled by spin). The ground state is $\phi_{1s}=e^{-r/a_0}/\sqrt{\pi a_0^3}$, spherical; p orbitals have a nodal plane and a dumbbell shape, and d orbitals have two nodal surfaces. Transitions between levels emit or absorb photons: $hf=E_{n_2}-E_{n_1}=13.6\,\allowbreak \bigl(1/n_1^2-1/n_2^2\bigr)$ eV (the Rydberg formula). The first line in the visible (Balmer H$\alpha$, $3\to2$) has $1.89$ eV, $\lambda=656$ nm; the Lyman series ($n_1=1$) is in the ultraviolet, with Lyman $\alpha$ at $10.2$ eV $=121.5$ nm. For a one-electron ion of nuclear charge $Z$, $E_n=-13.6Z^2/n^2$ eV and the size shrinks by $1/Z$. The scale <em>atomic units</em> (Hartree $=27.211$ eV for energy, $a_0$ for length) is the natural unit system of electronic-structure codes.</p>
+            <p><strong>Angular momentum and rotation.</strong> The result $L^2=\hbar^2l(l+1)$, $L_z=m\hbar$ holds for any rotating system. A rigid rotor (a diatomic molecule) has energies $E_J=\dfrac{\hbar^2}{2I}J(J+1)=BJ(J+1)$, with $I=\mu r^2$ (<a href="classical-mechanics.html">PHYS 101</a>, Lecture 6): the classical $L^2/2I$ with $L^2\to\hbar^2J(J+1)$. The $J\to J+1$ absorption occurs at $2B(J+1)$, in the microwave region; levels have degeneracy $2J+1$, so at temperature $T$ the populations peak at $J_\mathrm{max}\approx\sqrt{k_\mathrm BT/2B}-\tfrac12$.</p>
+            <div class="note mat"><strong>In materials science: why orbitals matter</strong>
+            <p>The shapes of s, p and d orbitals decide bond directions: the tetrahedral bonds of silicon and diamond come from $sp^3$ hybrids, the planar network of graphite from $sp^2$, and the strong directional bonds and magnetism of the transition metals from the compact, partly filled d shell. The quantum numbers also label the states of the electrons in a solid: the d bands of transition metals, the s&ndash;p bands of semiconductors (<a href="physics-for-simulation.html">PHYS 100</a>). Atom-centred basis functions in DFT codes (<a href="density-functional-theory.html">CMS 501</a>) are labelled the same way.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: the hydrogen and helium-ion spectra</strong>
+                <p class="given">Find the wavelength of H$\alpha$ and of Lyman $\alpha$ in hydrogen, the ionisation energy of hydrogen, and the wavelength of the $2\to1$ line of He$^+$.</p>
+                <p>H$\alpha$: $13.606(\tfrac14-\tfrac19)=1.890$ eV, $\lambda=1239.8/1.890=656$ nm (red). Lyman $\alpha$: $13.606(1-\tfrac14)=10.20$ eV, $\lambda=121.5$ nm (ultraviolet). The ionisation energy of the ground state is $13.606$ eV. For He$^+$ ($Z=2$) every energy is multiplied by $4$: the $2\to1$ line has $4\times10.20=40.8$ eV, $\lambda=30.4$ nm, in the extreme ultraviolet, and the ionisation energy is $54.4$ eV. The radius of the $1s$ orbit in He$^+$ is $a_0/2=0.026$ nm. The scaling $E\propto Z^2$ explains why the inner (core) electrons of heavy atoms are bound by keV and give X-ray lines (the K$\alpha$ lines used in diffraction).</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: rotational levels of nitrogen</strong>
+                <p class="given">N$_2$ has $B=1.998\ \mathrm{cm^{-1}}$ ($2.477\times10^{-4}$ eV). Find the wavenumber and wavelength of the $J=0\to1$ transition, and the most populated rotational level at $300$ K.</p>
+                <p>The transition energy is $2B=3.996\ \mathrm{cm^{-1}}$, a wavelength $1/(3.996\ \mathrm{cm^{-1}})=2.5$ mm (microwave). At $300$ K, $k_\mathrm BT/2B=0.0259/(4.95\times10^{-4})=52.2$, so $J_\mathrm{max}\approx\sqrt{52.2}-\tfrac12=6.7$: the population $\propto(2J+1)e^{-BJ(J+1)/k_\mathrm BT}$ (the degeneracy rises, the Boltzmann factor falls) peaks at $J=7$, with $\sim8.8$ times the population of $J=0$ per level, so many rotational states are occupied and the classical equipartition value $k_\mathrm BT$ of rotational energy is a good approximation. (For N$_2$ nuclear-spin symmetry modifies alternate levels, which does not change this estimate.)</p>
+            </div>
+
+            <h2 id="spin">Lecture 6. Spin, identical particles and the periodic table<a class="anchor" href="#spin" aria-label="Link to this section">#</a></h2>
+            <p>Electrons, protons and neutrons carry an intrinsic angular momentum, <strong>spin</strong>, with quantum number $s=\tfrac12$: two states, $m_s=\pm\tfrac12$ (&ldquo;up&rdquo; and &ldquo;down&rdquo;), with $S_z=\pm\hbar/2$ and an associated magnetic moment of about one Bohr magneton (<a href="electricity-magnetism-and-waves.html">PHYS 103</a>). The Stern&ndash;Gerlach experiment shows it: a beam of silver atoms passing through an inhomogeneous magnetic field splits into exactly two beams. A complete one-electron state is therefore labelled $(n,l,m,m_s)$.</p>
+            <p><strong>Identical particles.</strong> All electrons are exactly alike, so the wavefunction of several electrons must give the same probability when two are exchanged. Experiment shows that for <em>fermions</em> (half-integer spin: electrons, protons, neutrons) the wavefunction changes sign on exchange, $\psi(\mathbf r_1,\mathbf r_2)=-\psi(\mathbf r_2,\mathbf r_1)$, whereas for <em>bosons</em> (integer spin: photons, phonons) it does not. The <strong>Pauli exclusion principle</strong> follows: two fermions cannot occupy the same single-particle state, because $\psi(\mathbf r,\mathbf r)=-\psi(\mathbf r,\mathbf r)=0$. For two electrons in orbitals $a$ and $b$ the antisymmetric combination is $\psi=\tfrac1{\sqrt2}[a(1)b(2)-b(1)a(2)]$ (a Slater determinant); it vanishes if $a=b$. When the spins are parallel the spatial part must be antisymmetric, so the electrons avoid each other, lowering their Coulomb repulsion: this <em>exchange</em> energy, an effect of statistics and not a new force, is the origin of ferromagnetism and of Hund&rsquo;s rule.</p>
+            <p><strong>The periodic table.</strong> Atoms fill the hydrogen-like orbitals in order of increasing energy, with at most two electrons (opposite spins) per orbital: $1s^2\,\allowbreak 2s^2\,\allowbreak 2p^6\,\allowbreak 3s^2\,\allowbreak 3p^6\,\allowbreak 4s^2\,\allowbreak 3d^{10}\,\allowbreak 4p^6\dots$ The $4s$ fills before $3d$ because the $s$ orbitals penetrate close to the nucleus where the screening by other electrons is weaker. Hund&rsquo;s rule: electrons occupy degenerate orbitals singly with parallel spins before pairing, to maximise exchange. So carbon is $1s^22s^22p^2$ (two unpaired p electrons), iron $[\mathrm{Ar}]3d^64s^2$ (four unpaired d electrons) and copper $[\mathrm{Ar}]3d^{10}4s^1$ (a filled d shell and one s electron: the single conduction electron per atom). The outer (valence) electrons decide chemistry: noble gases have closed shells, alkali metals one weakly-bound s electron, and the transition metals a partly filled d shell, responsible for their magnetism, catalytic activity and high cohesive energies.</p>
+            <p>The number of unpaired spins gives an estimate of the atomic moment, $\mu=g\sqrt{S(S+1)}\mu_\mathrm B\approx\sqrt{n(n+2)}\,\allowbreak \mu_\mathrm B$ for $n$ unpaired electrons ($g=2$): $\mathrm{Fe^{2+}}$ ($3d^6$, $n=4$) has $4.9\,\mu_\mathrm B$. In the solid the d electrons delocalise into bands and the moment of metallic iron is only $2.2\,\mu_\mathrm B$ (<a href="electricity-magnetism-and-waves.html">PHYS 103</a>, Worked example 4.2).</p>
+            <div class="example">
+                <strong>Worked example 6.1: configurations and moments</strong>
+                <p class="given">Write the ground-state configurations of N, Mg and Fe$^{2+}$, give the number of unpaired electrons, and the spin-only moment for Fe$^{2+}$ and Mn$^{2+}$ ($3d^5$).</p>
+                <p>N (7 electrons): $1s^22s^22p^3$, three unpaired p electrons (Hund). Mg (12): $1s^22s^22p^63s^2$, none unpaired, a closed-shell s$^2$ atom. Fe$^{2+}$: iron loses its two $4s$ electrons first, leaving $[\mathrm{Ar}]3d^6$: one orbital doubly filled and four singly occupied, so $n=4$ and $\mu=\sqrt{4\times6}=4.90\,\allowbreak \mu_\mathrm B$. Mn$^{2+}$ ($3d^5$) has five parallel spins, $\mu=\sqrt{5\times7}=5.92\,\allowbreak \mu_\mathrm B$, the largest spin-only moment of any 3d ion, which is why Mn compounds are strongly magnetic.</p>
+            </div>
+
+            <h2 id="approx">Lecture 7. Perturbation theory, the variational principle and two-level systems<a class="anchor" href="#approx" aria-label="Link to this section">#</a></h2>
+            <p>Only a handful of problems (hydrogen, the oscillator, the box) can be solved exactly. Everything else, including every molecule and solid, relies on approximations, and two are essential.</p>
+            <p><strong>Perturbation theory.</strong> Suppose $\hat H=\hat H_0+\hat H'$, where $\hat H_0$ has known eigenstates $\phi_n$ and energies $E_n^{(0)}$ and $\hat H'$ is small. To first order the energy shift of state $n$ is the expectation value of the perturbation in the unperturbed state,
+            $$E_n\approx E_n^{(0)}+\langle\phi_n|\hat H'|\phi_n\rangle,$$
+            and to second order there is a further shift $\sum_{m\ne n}\dfrac{|\langle\phi_m|\hat H'|\phi_n\rangle|^2}{E_n^{(0)}-E_m^{(0)}}$, which always <em>lowers</em> the ground state, since the denominators are negative: states mix, repel each other, and the lowest is pushed down. <em>Two-level example.</em> Two levels $0$ and $\Delta$ coupled by $v$ have the exact energies $\tfrac\Delta2\pm\sqrt{\Delta^2/4+v^2}$; for $v\ll\Delta$ the lower is $-v^2/\Delta$, the second-order result.</p>
+            <p><strong>The variational principle.</strong> For any normalised trial function $\psi$, the energy expectation value is never below the true ground-state energy:
+            $$E[\psi]=\frac{\langle\psi|\hat H|\psi\rangle}{\langle\psi|\psi\rangle}\ \ge\ E_0.$$
+            <em>Proof.</em> Expand $\psi=\sum c_n\phi_n$ in the exact eigenstates; then $E[\psi]=\sum|c_n|^2E_n/\sum|c_n|^2\ge E_0$ because every $E_n\ge E_0$. The strategy: choose a trial function with adjustable parameters and minimise $E$ over them (<a href="calculus-of-variations-and-optimisation.html">MATH 304</a>); the lower the energy, the better the function. Errors in the energy are second order in the error of the wavefunction, so the method works even with crude functions. It is the foundation of Hartree&ndash;Fock theory and DFT (the energy is minimised over the density).</p>
+            <p><strong>Two-site (tight-binding) model.</strong> Take two identical atoms, each with one orbital of energy $\varepsilon$, with a coupling (hopping) $-t$ between them ($t&gt;0$). In the basis of the two atomic orbitals the Hamiltonian is the matrix $\begin{pmatrix}\varepsilon&amp;-t\\-t&amp;\varepsilon\end{pmatrix}$, whose eigenvalues (<a href="eigenvalues-and-decompositions.html">MATH 202</a>) are $\varepsilon\mp t$: a <strong>bonding</strong> state $(\phi_1+\phi_2)/\sqrt2$ with energy $\varepsilon-t$ and an <strong>antibonding</strong> state $(\phi_1-\phi_2)/\sqrt2$ with energy $\varepsilon+t$. Two electrons of opposite spin both occupy the bonding state and gain $2t$: a covalent bond. A chain of $N$ atoms gives states $E(k)=\varepsilon-2t\cos(ka)$, a <strong>band</strong> of width $4t$: the origin of the electronic bands of solids (<a href="physics-for-simulation.html">PHYS 100</a>).</p>
+            <div class="note mat"><strong>In materials science: from this lecture to DFT</strong>
+            <p>The variational principle is why computed total energies are upper bounds and can be compared and minimised, and why a larger basis set can only lower the energy. The two-site model, with $N$ sites and different on-site energies, is the tight-binding method; it explains why metals, semiconductors and insulators differ in the filling of the bands. The many-electron problem is too hard to solve exactly, so DFT (<a href="density-functional-theory.html">CMS 501</a>) replaces the many-electron wavefunction by the electron density and minimises an energy functional variationally.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: helium by the variational method</strong>
+                <p class="given">Estimate the ground-state energy of helium using the trial function $\psi=e^{-Z_\mathrm{eff}(r_1+r_2)/a_0}$ with $Z_\mathrm{eff}$ variable. In atomic units the energy is $E(Z_\mathrm{eff})=Z_\mathrm{eff}^2-\tfrac{27}{8}Z_\mathrm{eff}$ (hartree). Find the optimum and compare with experiment ($-79.01$ eV).</p>
+                <p>The three contributions are the kinetic energy of the two electrons, $Z_\mathrm{eff}^2$; the attraction to the nucleus with $Z=2$, $-4Z_\mathrm{eff}$; and the electron repulsion, $+\tfrac58Z_\mathrm{eff}$, which sum to the stated formula. Setting $\mathrm dE/\mathrm dZ_\mathrm{eff}=2Z_\mathrm{eff}-\tfrac{27}8=0$ gives $Z_\mathrm{eff}=\tfrac{27}{16}=1.69$: each electron sees a nucleus of charge $2$ screened to $1.69$ by the other. The energy is $-(27/16)^2=-2.848$ hartree $=-77.49$ eV, $1.9\%$ above the exact $-79.01$ eV, as required for an upper bound. The calculated ionisation energy (energy of He$^+$, $-54.42$ eV, minus $-77.49$ eV) is $23.1$ eV against $24.6$ eV measured. Screening is the idea behind effective nuclear charges in the periodic table and behind the exchange&ndash;correlation corrections of DFT.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.2: perturbation theory for two levels, and a tight-binding band</strong>
+                <p class="given">(a) Two levels at $0$ and $1$ eV are coupled by $v=0.1$ eV. Compare the exact and second-order energies of the lower state. (b) A chain with $t=1$ eV: find the band width and the energy at the zone edge.</p>
+                <p>(a) Exact: $0.5-\sqrt{0.25+0.01}=-0.00990$ eV. Second order: $-v^2/\Delta=-0.0100$ eV, accurate to $1\%$, with the states repelling each other. (b) $E(k)=\varepsilon-2t\cos ka$ runs from $\varepsilon-2t$ at $k=0$ to $\varepsilon+2t$ at the zone edge $k=\pi/a$, so the width is $4t=4$ eV: stronger coupling (smaller spacing, larger orbital overlap) means a wider band and lighter carriers, with effective mass $m^*=\hbar^2/(2ta^2)$, a measurable quantity in semiconductors.</p>
+            </div>
+
+            <h2 id="summary-p201">Summary of the unit<a class="anchor" href="#summary-p201" aria-label="Link to this section">#</a></h2>
+            <p>Quantum mechanics describes particles by wavefunctions whose squared modulus is a probability; observables are operators; and the Schr&ouml;dinger equation is an eigenvalue problem whose boundary conditions quantise the energy. Confinement raises energies as $1/L^2$, tunnelling lets particles cross barriers, bonds vibrate with quantised energies $(n+\tfrac12)\hbar\omega$ and electrons in atoms occupy shells whose structure comes from the angular momentum, spin and Pauli exclusion. Approximation methods (perturbation theory, the variational principle, tight binding) make realistic problems tractable. The next step is the quantum mechanics of many atoms and of crystals, in solid-state physics, and its computational form, density functional theory (<a href="density-functional-theory.html">CMS 501</a>).</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Light and matter show both wave and particle behaviour: photons carry energy $E=hf$, and particles have wavelength $\lambda=h/p$; the state of a particle is a wavefunction $\psi$ whose squared modulus $|\psi|^2$ is the probability density.</li>
+<li>The time-independent Schrodinger equation $\hat H\psi=E\psi$ is an eigenvalue problem: boundary conditions force quantised energies, as for a particle in a box, $E_n=n^2h^2/8mL^2$, where confinement raises the energy as $1/L^2$ (the origin of quantum-dot colour and of the stability of atoms).</li>
+<li>Observables are Hermitian operators, $\hat p=-i\hbar\,\mathrm d/\mathrm dx$; operators that do not commute, such as $\hat x$ and $\hat p$ with $[\hat x,\hat p]=i\hbar$, cannot be sharp together, giving $\Delta x\,\Delta p\ge\hbar/2$.</li>
+<li>A particle can tunnel through a barrier with probability $\sim e^{-2\kappa d}$ (the basis of the scanning tunnelling microscope), and a harmonic oscillator has energies $(n+\tfrac12)\hbar\omega$ with a zero-point energy; hydrogen has $E_n=-13.6\ \mathrm{eV}/n^2$ and orbitals labelled by $n,l,m$.</li>
+<li>Electrons have spin $\tfrac12$ and obey the Pauli exclusion principle, which builds the shell structure of the periodic table and bonding; when exact solutions are impossible, perturbation theory and the variational principle (energy of any trial function is an upper bound on the ground state) are the working methods of electronic-structure theory.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p201-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Light of wavelength $400$ nm falls on sodium ($\phi=2.28$ eV). (a) Find the maximum kinetic energy of the photoelectrons and the stopping voltage. (b) Find the threshold wavelength. (c) Light of $600$ nm and ten times the intensity is used: what is observed?</p>
+            <details class="hint"><summary>Hint</summary><p>$K_\mathrm{max}=hf-\phi=1239.8/\lambda\,\allowbreak (\mathrm{nm})-\phi$ in eV.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E_\mathrm{ph}=3.10$ eV, $K_\mathrm{max}=0.82$ eV, stopping voltage $0.82$ V. (b) $\lambda_0=1239.8/2.28=544$ nm. (c) A $600$ nm photon has $2.07$ eV $&lt;\phi$, so no photoelectrons are emitted at any intensity: the photon energy, not the intensity, decides.</p>
+            <p class="answer">(a) $0.82$ eV, $0.82$ V; (b) $544$ nm; (c) none</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>Find the de Broglie wavelength of (a) an electron accelerated through $100$ V, (b) a neutron of $25$ meV, (c) a proton of $1$ eV, and (d) the electron of (a) if accelerated through $10$ kV.</p>
+            <details class="hint"><summary>Hint</summary><p>$\lambda=h/\sqrt{2mE}$; for electrons $\lambda\,\allowbreak (\mathrm{nm})=1.226/\sqrt{V}$ (volts, non-relativistic).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $1.226/\sqrt{100}=0.1226$ nm. (b) $0.181$ nm. (c) $\lambda=h/\sqrt{2m_pE}=0.0286$ nm, a factor $\sqrt{1836}=42.8$ shorter than an electron of the same energy: $0.1226\ \mathrm{nm}\times\sqrt{100/1}/42.8=0.0286$ nm. (d) $0.01226$ nm at $10$ kV. The electron wavelength at a few keV is far shorter than atomic spacings, which is why electron microscopes resolve atoms.</p>
+            <p class="answer">(a) $0.123$ nm; (b) $0.181$ nm; (c) $0.0286$ nm; (d) $0.0123$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>An electron is in a one-dimensional box of width $1.0$ nm. (a) Find $E_1,E_2,E_3$. (b) What is the wavelength of the photon emitted in $2\to1$? (c) How wide must the box be for the $1\to2$ transition to be at $500$ nm?</p>
+            <details class="hint"><summary>Hint</summary><p>$E_n=n^2\cdot0.376\ \mathrm{eV}\,\allowbreak (1\ \mathrm{nm}/L)^2$ and $E_2-E_1=3E_1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $0.376$, $1.504$, $3.384$ eV. (b) $\Delta E=1.128$ eV gives $\lambda=1099$ nm. (c) $3E_1=2.48$ eV, so $E_1=0.827$ eV $=0.376/L^2$ (nm), $L=\sqrt{0.376/0.827}=0.674$ nm.</p>
+            <p class="answer">(a) $0.376$, $1.504$, $3.384$ eV; (b) $1099$ nm; (c) $0.67$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>For the ground state of an infinite well of width $L$, (a) verify the normalisation, (b) find the probability that the particle is in the middle third, (c) find $\langle x^2\rangle$ and check the uncertainty relation. (d) For the state $n=2$, where are the nodes and what is the probability in the left half?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $\sin^2u=\tfrac12(1-\cos2u)$. For (c): $\langle p^2\rangle=2mE_1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\int_0^L\tfrac2L\sin^2\tfrac{\pi x}L\mathrm dx=\tfrac2L\cdot\tfrac L2=1$. (b) $P=\int_{L/3}^{2L/3}\tfrac2L\sin^2\tfrac{\pi x}L\mathrm dx=\tfrac13+\tfrac{\sin(2\pi/3)}{\pi}=0.609$: more than the classical $1/3$, since the density peaks at the centre. (c) $\langle x^2\rangle=L^2(\tfrac13-\tfrac1{2\pi^2})=0.2827L^2$, $\Delta x=0.181L$, $\Delta p=\pi\hbar/L$ and $\Delta x\Delta p=0.568\hbar\ge0.5\hbar$ &check;. (d) $n=2$: $\phi\propto\sin(2\pi x/L)$ with nodes at $x=0,L/2,L$; the probability in the left half is exactly $1/2$ by symmetry, and the particle is never found at the centre.</p>
+            <p class="answer">(b) $0.609$; (c) $\Delta x\Delta p=0.568\hbar$; (d) node at $L/2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Use the uncertainty principle to estimate (a) the minimum kinetic energy of an electron confined to $0.10$ nm, (b) the kinetic energy of an electron and of a proton confined to $1$ fm, (c) the ground-state energy of hydrogen by minimising $E(r)=\hbar^2/(2mr^2)-e^2/(4\pi\varepsilon_0r)$.</p>
+            <details class="hint"><summary>Hint</summary><p>Take $p\sim\hbar/r$. For (c) minimise over $r$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Delta p=\hbar/2\Delta x=5.3\times10^{-25}$ kg m/s gives $K=\Delta p^2/2m=0.95$ eV. (b) $\Delta p=5.3\times10^{-20}$ kg m/s: the electron is relativistic, $E\approx pc=99$ MeV; the proton has $p^2/2m_p=5.2$ MeV. The electron&rsquo;s energy far exceeds nuclear binding, so electrons cannot sit in nuclei, but protons can. (c) $\mathrm dE/\mathrm dr=-\hbar^2/(mr^3)+e^2/(4\pi\varepsilon_0r^2)=0$ gives $r=4\pi\varepsilon_0\hbar^2/(me^2)=a_0=0.0529$ nm, and $E=-e^2/(8\pi\varepsilon_0a_0)=-13.6$ eV: the estimate happens to give the exact result for hydrogen, showing that the atom&rsquo;s size is set by the competition between kinetic and Coulomb energy.</p>
+            <p class="answer">(a) $0.95$ eV; (b) $99$ MeV, $5.2$ MeV; (c) $r=a_0$, $E=-13.6$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>An STM tip is $0.60$ nm above a surface with an effective work function $4.0$ eV. (a) Find $\kappa$. (b) Find the factor by which the current changes if the tip is raised by $0.10$ nm. (c) By what height change does the current change by a factor $10$?</p>
+            <details class="hint"><summary>Hint</summary><p>$I\propto e^{-2\kappa d}$ with $\kappa=\sqrt{2m\phi}/\hbar$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\kappa=\sqrt{2(9.109\times10^{-31})(4.0)(1.602\times10^{-19})}/1.055\times10^{-34}=1.03\times10^{10}\ \mathrm{m^{-1}}$. (b) Current ratio $e^{-2\kappa(0.1\ \mathrm{nm})}=e^{-2.05}=0.13$: a factor $7.8$ lower. (c) A factor $10$ needs $\Delta d=\ln10/2\kappa=0.112$ nm. Heights are therefore read to $\sim0.001$ nm if the current is measured to $1\%$, finer than an atom&rsquo;s diameter.</p>
+            <p class="answer">(a) $1.03\times10^{10}\ \mathrm{m^{-1}}$; (b) $\times0.13$; (c) $0.112$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>(a) Verify that $\phi_0=Ae^{-m\omega x^2/2\hbar}$ satisfies the Schr&ouml;dinger equation for the oscillator and find $E_0$. (b) Compute $\hbar\omega$, the zero-point energy and the thermal occupation of $n=1$ at $300$ K for the HCl stretch ($5.63\times10^{14}$ rad/s). (c) Repeat for DCl, with reduced mass $1.90$ u.</p>
+            <details class="hint"><summary>Hint</summary><p>For (a) differentiate twice. For (c) $\omega\propto1/\sqrt\mu$ at fixed $k$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $\alpha=m\omega/\hbar$: $\phi_0'=-\alpha x\phi_0$, $\phi_0''=(\alpha^2x^2-\alpha)\phi_0$. Then $-\tfrac{\hbar^2}{2m}\phi_0''+\tfrac12m\omega^2x^2\phi_0=\bigl[-\tfrac{\hbar^2\alpha^2x^2}{2m}+\tfrac{\hbar^2\alpha}{2m}+\tfrac12m\omega^2x^2\bigr]\phi_0=\tfrac{\hbar^2\alpha}{2m}\phi_0=\tfrac12\hbar\omega\,\allowbreak \phi_0$ since $\hbar^2\alpha^2/2m=m\omega^2/2$: $E_0=\tfrac12\hbar\omega$. (b) $\hbar\omega=0.371$ eV, zero-point $0.185$ eV; $e^{-0.371/0.02585}=e^{-14.4}=5.8\times10^{-7}$. (c) $\omega$ scales by $\sqrt{0.98/1.90}=0.718$: $\hbar\omega=0.266$ eV, zero-point $0.133$ eV, $\tilde\nu=2144\ \mathrm{cm^{-1}}$ against $2990$ for HCl (the isotope shift used to assign spectra); occupation $e^{-10.3}=3.4\times10^{-5}$. The zero-point energies differ by $0.052$ eV, which is enough to change bond strengths and rates measurably.</p>
+            <p class="answer">$E_0=\tfrac12\hbar\omega$; $0.371$ eV, $5.8\times10^{-7}$; DCl: $0.266$ eV, $3.4\times10^{-5}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>(a) Find the wavelengths of the first three Balmer lines ($n\to2$ for $n=3,4,5$) of hydrogen. (b) Find the series limit. (c) Find the ionisation energy of Li$^{2+}$ and the wavelength of its $2\to1$ line.</p>
+            <details class="hint"><summary>Hint</summary><p>$E=13.606\,Z^2(1/n_1^2-1/n_2^2)$ eV, $\lambda=1239.8/E$ nm.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $n=3$: $1.890$ eV, $656.1$ nm; $n=4$: $2.552$ eV, $485.9$ nm; $n=5$: $2.857$ eV, $434.0$ nm. (b) The limit ($n\to\infty$) is $3.401$ eV, $364.6$ nm, where the lines crowd together. (c) For Li$^{2+}$ ($Z=3$), $E_\mathrm{ion}=9\times13.606=122.5$ eV; the $2\to1$ line has $9\times10.204=91.8$ eV, $\lambda=13.5$ nm.</p>
+            <p class="answer">(a) $656$, $486$, $434$ nm; (b) $364.6$ nm; (c) $122.5$ eV, $13.5$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>(a) Find $B$ for CO, with bond length $0.1128$ nm and $\mu=6.857$ u, in $\mathrm{cm^{-1}}$. (b) Where are the first three rotational absorption lines? (c) At $300$ K, find the most populated $J$ and the ratio of the population of that level to $J=0$.</p>
+            <details class="hint"><summary>Hint</summary><p>$B=\hbar^2/2\mu r^2$; lines at $2B(J+1)$; $J_\mathrm{max}\approx\sqrt{k_\mathrm BT/2B}-\tfrac12$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $I=\mu r^2=6.857(1.6605\times10^{-27})(0.1128\times10^{-9})^2=1.449\times10^{-46}$ kg m$^2$, $B=\hbar^2/2I=3.84\times10^{-23}$ J $=1.93\ \mathrm{cm^{-1}}$. (b) $2B,\allowbreak 4B,\allowbreak 6B=3.86,\allowbreak \,\allowbreak 7.72,\allowbreak \,\allowbreak 11.6\ \mathrm{cm^{-1}}$ (wavelengths $2.6$, $1.3$, $0.86$ mm). (c) $B=2.39\times10^{-4}$ eV: $J_\mathrm{max}=\sqrt{0.02585/(4.79\times10^{-4})}-0.5=6.8$, so $J=7$; the ratio $(2J+1)e^{-BJ(J+1)/k_\mathrm BT}=15e^{-0.518}=8.9$.</p>
+            <p class="answer">(a) $1.93\ \mathrm{cm^{-1}}$; (b) $3.9,7.7,11.6\ \mathrm{cm^{-1}}$; (c) $J=7$, ratio $8.9$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Write the ground-state electron configurations of O, Si, Cr ($Z=24$, an exception) and Cu. For each give the number of unpaired electrons, and the spin-only moment of Cr$^{3+}$ and Ni$^{2+}$ ($3d^8$).</p>
+            <details class="hint"><summary>Hint</summary><p>Fill $1s,2s,2p,3s,3p,4s,3d$ and apply Hund&rsquo;s rule. Spin-only: $\mu=\sqrt{n(n+2)}\,\mu_\mathrm B$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>O: $1s^22s^22p^4$ (two unpaired). Si: $[\mathrm{Ne}]3s^23p^2$ (two unpaired, forming four $sp^3$ bonds after promotion). Cr: $[\mathrm{Ar}]3d^54s^1$ (six unpaired: half-filled shells gain exchange energy, so one $4s$ electron moves to $3d$). Cu: $[\mathrm{Ar}]3d^{10}4s^1$ (one unpaired). Cr$^{3+}$ is $3d^3$ with $n=3$, $\mu=\sqrt{15}=3.87\,\mu_\mathrm B$. Ni$^{2+}$ is $3d^8$: two unpaired ($t_{2g}^6e_g^2$ in an octahedral field), $\mu=\sqrt8=2.83\,\mu_\mathrm B$.</p>
+            <p class="answer">Unpaired: $2,2,6,1$; $3.87\,\mu_\mathrm B$ and $2.83\,\mu_\mathrm B$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>Use a variational trial function to estimate the ground state of helium. (a) Minimise $E(Z_\mathrm{eff})=Z_\mathrm{eff}^2-\tfrac{27}8Z_\mathrm{eff}$ (hartree). (b) Convert to eV and compare with $-79.01$ eV. (c) Estimate the first ionisation energy and compare with $24.59$ eV. (d) What would the energy be if the electron repulsion were ignored with $Z_\mathrm{eff}=2$?</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathrm dE/\mathrm dZ=0$; $1$ hartree $=27.211$ eV; the energy of He$^+$ ground state is $-2$ hartree.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Z_\mathrm{eff}=27/16=1.6875$, $E=-(27/16)^2=-2.848$ hartree. (b) $-77.49$ eV, $1.9\%$ above $-79.01$ eV (upper bound &check;). (c) $\mathrm{IE}=E(\mathrm{He^+})-E(\mathrm{He})=-2+2.848=0.848$ hartree $=23.07$ eV, versus $24.59$ eV. (d) With no repulsion and $Z_\mathrm{eff}=2$, each electron has energy $-Z^2/2=-2$ hartree, total $-4$ hartree $=-108.8$ eV, much too low: electron&ndash;electron repulsion costs $+29.8$ eV and cannot be neglected; the optimised $Z_\mathrm{eff}$ accounts for it by screening.</p>
+            <p class="answer">(a) $1.6875$, $-2.848$ hartree; (b) $-77.49$ eV; (c) $23.07$ eV; (d) $-108.8$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p201-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>(a) Show that the two-site tight-binding Hamiltonian $\begin{pmatrix}\varepsilon&amp;-t\\-t&amp;\varepsilon\end{pmatrix}$ has eigenvalues $\varepsilon\mp t$ and give the eigenvectors. (b) Two electrons occupy the lower state: find the bonding energy gain for $t=2.0$ eV. (c) If the atoms have different on-site energies $\varepsilon_1,\allowbreak \varepsilon_2=\varepsilon_1+\Delta$ with $\Delta=3$ eV and $t=0.5$ eV, find the two energies and the charge on each atom in the lower state (an ionic bond). (d) For a chain of $N$ atoms, show $E(k)=\varepsilon-2t\cos ka$ gives a band of width $4t$.</p>
+            <details class="hint"><summary>Hint</summary><p>Diagonalise the matrix; for (c) use $E=\bar\varepsilon\pm\sqrt{(\Delta/2)^2+t^2}$ and the mixing angle $\tan2\theta=2t/\Delta$. For (d) use plane waves $c_j=e^{ikja}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The eigenvectors $(1,1)/\sqrt2$ and $(1,-1)/\sqrt2$ give $-t$ and $+t$ added to $\varepsilon$ (the matrix is $\varepsilon\mathbf I-t\sigma_x$). (b) Both electrons in the lower state gain $2t=4.0$ eV relative to the isolated atoms. (c) $E_\pm=\varepsilon_1+\tfrac\Delta2\pm\sqrt{(1.5)^2+0.25}=\varepsilon_1+1.5\pm1.581$, i.e. $\varepsilon_1-0.081$ eV and $\varepsilon_1+3.081$ eV. The lower state has weight $\sin^2\theta$ on atom 2, with $\tan2\theta=0.333$, $\theta=9.2^\circ$: $2.6\%$ on atom 2, so $97.4\%$ on atom 1: the bonding electrons sit almost entirely on the lower-energy atom, the polarisation that makes an ionic bond when $\Delta\gg t$ and a covalent bond when $\Delta\ll t$. (d) Put $c_j=e^{ikja}$ in $\varepsilon c_j-t(c_{j+1}+c_{j-1})=Ec_j$: $E=\varepsilon-t(e^{ika}+e^{-ika})=\varepsilon-2t\cos ka$, from $\varepsilon-2t$ to $\varepsilon+2t$: width $4t$. With $t=2.0$ eV the width is $8$ eV, the order of a metal&rsquo;s band width.</p>
+            <p class="answer">(b) $4.0$ eV; (c) $\varepsilon_1-0.081$ and $\varepsilon_1+3.081$ eV, $97.4\%$ on atom 1; (d) $4t$</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q201-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Duality</span></div>
+            <p>What is the energy of a $550$ nm photon? What is the de Broglie wavelength of a $100$ eV electron?</p>
+            <details class="solution"><summary>Solution</summary><p>$1239.8/550=2.25$ eV; $\lambda=0.1226$ nm.</p></details>
+            </div>
+            <div class="problem" id="q201-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Box</span></div>
+            <p>Find the lowest energy of an electron in a $0.5$ nm box and the wavelength of the $1\to2$ transition.</p>
+            <details class="solution"><summary>Solution</summary><p>$E_1=0.376/0.25=1.504$ eV; $E_2-E_1=3E_1=4.51$ eV, $\lambda=275$ nm (ultraviolet).</p></details>
+            </div>
+            <div class="problem" id="q201-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Uncertainty</span></div>
+            <p>State $[\hat x,\hat p]$ and estimate the kinetic energy of an electron confined to $0.1$ nm.</p>
+            <details class="solution"><summary>Solution</summary><p>$[\hat x,\hat p]=i\hbar$, so $\Delta x\Delta p\ge\hbar/2$. $\Delta p\approx5.3\times10^{-25}$ kg m/s and $K\approx(\Delta p)^2/2m\approx0.95$ eV.</p></details>
+            </div>
+            <div class="problem" id="q201-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Tunnelling</span></div>
+            <p>An electron faces a $4$ eV barrier $0.5$ nm wide. Estimate $T$. What happens if the width is doubled?</p>
+            <details class="solution"><summary>Solution</summary><p>$\kappa=1.03\times10^{10}\ \mathrm{m^{-1}}$, $T\approx e^{-2\kappa d}=e^{-10.3}=3\times10^{-5}$. Doubling the width squares it: $T\approx10^{-9}$.</p></details>
+            </div>
+            <div class="problem" id="q201-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Hydrogen</span></div>
+            <p>Find the wavelength of the Lyman-$\alpha$ line and the energy of the $n=3$ level of He$^+$.</p>
+            <details class="solution"><summary>Solution</summary><p>$10.2$ eV, $121.5$ nm; $E_3(\mathrm{He^+})=-4\times13.606/9=-6.05$ eV.</p></details>
+            </div>
+            <div class="problem" id="q201-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Variational principle</span></div>
+            <p>Why is the variational energy always above the true ground-state energy? Give the optimum $Z_\mathrm{eff}$ and energy of the helium trial function.</p>
+            <details class="solution"><summary>Solution</summary><p>Expanding the trial function in the true eigenstates shows $E[\psi]=\sum|c_n|^2E_n\ge E_0$. For helium $Z_\mathrm{eff}=27/16$ and $E=-77.5$ eV, above the true $-79.0$ eV.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Griffiths, D. J. and Schroeter, D. F., <em>Introduction to Quantum Mechanics</em>, Cambridge University Press: the standard second-year text, with clear derivations and many problems.</li>
+                <li>French, A. P. and Taylor, E. F., <em>An Introduction to Quantum Physics</em>, Norton: experiments and physical reasoning behind the formalism.</li>
+                <li>Feynman, R. P., Leighton, R. B. and Sands, M., <em>The Feynman Lectures on Physics, Volume III</em>: quantum behaviour, spin and identical particles.</li>
+                <li>Atkins, P. and Friedman, R., <em>Molecular Quantum Mechanics</em>, Oxford University Press: from atoms to molecules, with spectroscopy.</li>
+                <li>Sakurai, J. J. and Napolitano, J., <em>Modern Quantum Mechanics</em>, Cambridge University Press: the graduate treatment of operators, angular momentum and perturbation theory.</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: from tight binding and free electrons to the band theory of solids.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="electricity-magnetism-and-waves.html"><span class="dir">Previous course</span>Electricity, magnetism and waves</a>
+<a class="next" href="statistical-mechanics.html"><span class="dir">Next course</span>Statistical mechanics for simulation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=c3f43998"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity, magnetism and waves - MiBeM</title>
+    <meta name="description" content="University-level electricity, magnetism and waves for materials science: electric fields and potentials, Gauss law and dielectrics, current and circuits, magnetic forces and magnetism of matter, induction and Maxwell equations, electromagnetic waves and optics, interference and diffraction including Bragg law, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/electricity-magnetism-and-waves.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Electricity, magnetism and waves - MiBeM">
+    <meta property="og:description" content="University-level electricity, magnetism and waves for materials science: electric fields and potentials, Gauss law and dielectrics, current and circuits, magnetic forces and magnetism of matter, induction and Maxwell equations, electromagnetic waves and optics, interference and diffraction including Bragg law, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/electricity-magnetism-and-waves.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="39">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#field">Lecture 1. Electric charge, field and potential</a></li>
+                <li><a href="#gauss">Lecture 2. Gauss&rsquo;s law, capacitors and dielectrics</a></li>
+                <li><a href="#current">Lecture 3. Current, resistance and circuits</a></li>
+                <li><a href="#magnetic">Lecture 4. Magnetic fields, forces and magnetism of matter</a></li>
+                <li><a href="#maxwell">Lecture 5. Induction and Maxwell&rsquo;s equations</a></li>
+                <li><a href="#optics">Lecture 6. Electromagnetic waves and light in matter</a></li>
+                <li><a href="#wave">Lecture 7. Waves, interference and diffraction</a></li>
+                <li><a href="#summary-p103">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 103</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" class="here" aria-current="page" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a></nav>
+<!-- coursenav:end -->
+            <h1>Electricity, magnetism and waves</h1>
+            <p class="lead">Atoms are held together by electric forces, solids conduct or insulate because of how electrons respond to electric fields, magnets and magnetic materials rely on electron spin and orbital motion, and almost every characterisation technique (X-ray diffraction, electron microscopy, optical spectroscopy) probes a material with waves. This course covers the electricity, magnetism and wave physics of a first-year university degree, aimed at what materials scientists need: the interaction energies between charges, dielectrics, conduction, magnetism, light and diffraction.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 34 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="multivariable-calculus.html">MATH 102: Calculus II</a><br><a href="classical-mechanics.html">PHYS 101: Classical mechanics</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a></dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Compute fields, potentials and energies for point charges and simple symmetric distributions, using Coulomb&rsquo;s law and Gauss&rsquo;s law.</li>
+                    <li>Analyse capacitors and dielectrics and explain polarisation.</li>
+                    <li>Use the Drude model, Ohm&rsquo;s law and Kirchhoff&rsquo;s rules for conduction and simple circuits, including time constants.</li>
+                    <li>Calculate magnetic forces, cyclotron motion, Hall voltages and the magnetisation of atomic moments.</li>
+                    <li>State and apply Faraday&rsquo;s law and Maxwell&rsquo;s equations, and derive the speed of electromagnetic waves.</li>
+                    <li>Solve problems in refraction, reflection and polarisation, and in interference and diffraction, including Bragg&rsquo;s law for crystals.</li>
+                </ul>
+                <strong>You need:</strong> <a href="classical-mechanics.html">PHYS 101: Classical mechanics</a> (forces, energy, oscillations) and <a href="multivariable-calculus.html">MATH 102: Calculus II</a> (partial derivatives and multiple integrals). The vector calculus of <a href="vector-calculus.html">MATH 201</a> is introduced as it is needed and makes Lectures 2 and 5 much clearer.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 1 (the electric force between charges) and 7 (diffraction) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="field">Lecture 1. Electric charge, field and potential<a class="anchor" href="#field" aria-label="Link to this section">#</a></h2>
+            <p>Charge $q$ is measured in coulombs; the elementary charge is $e=1.602\times10^{-19}$ C, and charge is conserved and quantised. <strong>Coulomb&rsquo;s law</strong> gives the force between two point charges separated by $r$:
+            $$\mathbf F=\frac{q_1q_2}{4\pi\varepsilon_0r^2}\hat{\mathbf r},\qquad\frac1{4\pi\varepsilon_0}=8.988\times10^9\ \mathrm{N\,m^2/C^2},$$
+            repulsive for like charges and attractive for unlike. It is an inverse-square force like gravity, but incomparably stronger: between two electrons the electric repulsion exceeds the gravitational attraction by a factor $4\times10^{42}$. The <strong>electric field</strong> $\mathbf E=\mathbf F/q$ at a point is the force per unit charge on a small test charge, so a point charge $Q$ produces $E=Q/(4\pi\varepsilon_0r^2)$, and fields add vectorially (<strong>superposition</strong>) for any number of charges: $\mathbf E=\sum_i\mathbf E_i$ or $\int\mathrm d\mathbf E$ for a continuous distribution.</p>
+            <p>The Coulomb force is conservative (it depends only on $r$), so it has a <strong>potential energy</strong> and the field a <strong>potential</strong> $V$ (volts, $1$ V $=1$ J/C) defined by $\mathbf E=-\nabla V$. For a point charge $V=Q/(4\pi\varepsilon_0r)$, and for two charges the potential energy is $U=q_1q_2/(4\pi\varepsilon_0r)$. Potentials add as scalars, which is easier than adding vectors. The natural energy unit for atoms is the electron-volt, the energy of one electron through one volt, $1$ eV $=1.602\times10^{-19}$ J. The combination
+            $$\frac{e^2}{4\pi\varepsilon_0}=1.440\ \mathrm{eV\,nm}$$
+            gives the energy of two elementary charges at once: at $r=0.1$ nm it is $14.4$ eV. This number is the starting point for estimating every bond energy.</p>
+            <div class="note thm"><strong>Potential energy of a charge in a field and of a dipole</strong>
+            <p>A charge $q$ moved from A to B in a field $\mathbf E$ changes its potential energy by $\Delta U=-\int_A^Bq\mathbf E\cdot\mathrm d\mathbf r=q(V_B-V_A)$. A <strong>dipole</strong> (charges $\pm q$ separated by $\mathbf d$, moment $\mathbf p=q\mathbf d$) in a uniform field has energy $U=-\mathbf p\cdot\mathbf E$ and feels a torque $\mathbf p\times\mathbf E$ trying to align it with the field. <em>Proof of the energy.</em> Put $-q$ at position $\mathbf r$ and $+q$ at $\mathbf r+\mathbf d$. The potential at the second is $V(\mathbf r+\mathbf d)\approx V(\mathbf r)+\mathbf d\cdot\nabla V=V(\mathbf r)-\mathbf d\cdot\mathbf E$, so $U=qV(\mathbf r+\mathbf d)-qV(\mathbf r)=-q\mathbf d\cdot\mathbf E=-\mathbf p\cdot\mathbf E$.</p>
+            </div>
+            <p>Far from a dipole the potential is $V=\dfrac{\mathbf p\cdot\hat{\mathbf r}}{4\pi\varepsilon_0r^2}$ and the field falls as $1/r^3$: faster than for a single charge because the two charges nearly cancel. Dipoles matter greatly in materials: a water molecule has $p=1.85$ D $=6.2\times10^{-30}$ C m, an ion pair in a crystal is a dipole, and the induced dipoles of neutral atoms produce the van der Waals attraction between them.</p>
+            <div class="example">
+                <strong>Worked example 1.1: charges at atomic distances</strong>
+                <p class="given">(a) Find the force between two electrons $1$ nm apart. (b) Find the Coulomb energy of Na$^+$ and Cl$^-$ at their separation in NaCl, $0.236$ nm. (c) Find the field and potential of a proton at the Bohr radius $0.0529$ nm.</p>
+                <p>(a) $F=\dfrac{e^2}{4\pi\varepsilon_0r^2}=\dfrac{1.440\ \mathrm{eV\,nm}}{(1\ \mathrm{nm})^2}=1.44$ eV/nm, i.e. $2.31\times10^{-10}$ N. (b) $U=-1.440/0.236=-6.10$ eV for the ion pair. In the crystal each ion is attracted by all the other ions, and the sum over the lattice multiplies the pair energy by the Madelung constant $1.748$, partly cancelled by the short-range repulsion between the ion cores, giving a lattice energy of about $8$ eV per ion pair. (c) $E=\dfrac{e}{4\pi\varepsilon_0r^2}=5.1\times10^{11}$ V/m, the field an electron feels in hydrogen, and $V=27.2$ V, so the potential energy of the electron is $-27.2$ eV, twice the binding energy $13.6$ eV (the kinetic energy supplies the rest: virial theorem).</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.2: a dipole in a field</strong>
+                <p class="given">A water molecule ($p=6.17\times10^{-30}$ C m) sits in a field of $10^8$ V/m. Compare the energy of alignment with $k_\mathrm BT$ at $300$ K.</p>
+                <p>$U=pE=6.17\times10^{-30}\times10^8=6.2\times10^{-22}$ J $=3.9\times10^{-3}$ eV, compared with $k_\mathrm BT=0.0259$ eV: the alignment energy is about $15\%$ of the thermal energy, so thermal motion keeps the molecules mostly disordered and the polarisation is only a partial alignment, proportional to $E$ (Curie behaviour, $P\approx np^2E/3k_\mathrm BT$). This is why liquid water has a large dielectric constant ($\varepsilon_r=80$) that falls with temperature.</p>
+            </div>
+
+            <h2 id="gauss">Lecture 2. Gauss&rsquo;s law, capacitors and dielectrics<a class="anchor" href="#gauss" aria-label="Link to this section">#</a></h2>
+            <p>The <strong>electric flux</strong> through a surface is $\Phi=\int\mathbf E\cdot\mathrm d\mathbf A$. <strong>Gauss&rsquo;s law</strong> says that the flux through any closed surface equals the enclosed charge over $\varepsilon_0$:
+            $$\oint\mathbf E\cdot\mathrm d\mathbf A=\frac{Q_\mathrm{enc}}{\varepsilon_0}\qquad\Longleftrightarrow\qquad\nabla\cdot\mathbf E=\frac\rho{\varepsilon_0}.$$
+            The differential form follows from the divergence theorem of <a href="vector-calculus.html">MATH 201</a>. For a point charge it is the statement that the field lines through a sphere of radius $r$ always total the same, since the field falls as $1/r^2$ while the area grows as $r^2$: Gauss&rsquo;s law holds because the Coulomb force is inverse-square. When the charge distribution has symmetry, the law gives the field with no integration:</p>
+            <ul>
+                <li><strong>Sphere or point</strong> with total charge $Q$: $E=Q/4\pi\varepsilon_0r^2$ outside. Inside a uniformly charged sphere of radius $R$, $E=Qr/(4\pi\varepsilon_0R^3)$, growing linearly with $r$.</li>
+                <li><strong>Infinite plane</strong> with surface charge $\sigma$: $E=\sigma/2\varepsilon_0$ on each side, independent of distance.</li>
+                <li><strong>Infinite line</strong> with charge $\lambda$ per length: $E=\lambda/2\pi\varepsilon_0r$.</li>
+                <li><strong>Conductor</strong> in equilibrium: the field inside is zero (otherwise the free charges would move), so all excess charge sits on the surface, and the field just outside is $\sigma/\varepsilon_0$, perpendicular to the surface.</li>
+            </ul>
+            <p><em>Example of the method (plane).</em> Draw a small cylinder through the plane with its ends of area $A$ parallel to the plane. The flux leaves only through the two ends, $2EA$, and the enclosed charge is $\sigma A$, so $E=\sigma/2\varepsilon_0$.</p>
+            <p><strong>Capacitors.</strong> Two conductors carrying $\pm Q$ at a potential difference $V$ form a capacitor with capacitance $C=Q/V$ (farads). For parallel plates of area $A$ separated by $d$, the field between them is $E=\sigma/\varepsilon_0=Q/(\varepsilon_0A)$ (two planes: the fields add between and cancel outside), so $V=Ed=Qd/(\varepsilon_0A)$ and $C=\varepsilon_0A/d$. The work to charge it is stored as <strong>energy</strong> $U=\tfrac12CV^2=\tfrac12QV$, which is the energy of the field with <strong>energy density</strong> $u=\tfrac12\varepsilon_0E^2$ per unit volume.</p>
+            <p><strong>Dielectrics.</strong> An insulator placed in a field is <em>polarised</em>: the electron clouds shift slightly from the nuclei, or permanent dipoles partly align, creating a dipole moment per volume $\mathbf P$. The bound charge that appears on the surface produces a field that opposes the applied one, so the net field is reduced by the <strong>relative permittivity</strong> $\varepsilon_r$ (dielectric constant): $\mathbf P=\varepsilon_0\chi_e\mathbf E$ with $\varepsilon_r=1+\chi_e$, and the capacitance with a dielectric filling the gap is multiplied by $\varepsilon_r$: $C=\varepsilon_0\varepsilon_rA/d$. Typical values: vacuum $1$, glass $4$&ndash;$7$, silicon $11.7$, water $80$, barium titanate (a ferroelectric) $10^3$&ndash;$10^4$. A dielectric stops conducting only up to a limit, the <strong>breakdown field</strong> ($3\times10^6$ V/m for air, $10^7$&ndash;$10^9$ V/m for solid insulators).</p>
+            <div class="note mat"><strong>In materials science: dielectrics, ferroelectrics and the capacitor in your phone</strong>
+            <p>Multilayer ceramic capacitors alternate thin layers of a high-$\varepsilon_r$ ceramic such as BaTiO$_3$ with metal electrodes, packing large capacitance into small volumes. Ferroelectrics have a spontaneous polarisation that can be switched by a field; they are used in memories and in sensors, and their behaviour near the transition follows the Landau theory used in phase-field modelling (<a href="phase-field-modelling.html">CMS 505</a>). Computing $\varepsilon_r$ from first principles is a standard application of density functional theory (<a href="density-functional-theory.html">CMS 501</a>), via the response of the electrons to a small field.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: a ceramic capacitor</strong>
+                <p class="given">A BaTiO$_3$ film of area $1$ cm$^2$ and thickness $1\ \mu$m has $\varepsilon_r=1000$. Find its capacitance, the field and stored energy at $5$ V, and compare with a vacuum gap of the same size.</p>
+                <p>$C=\varepsilon_0\varepsilon_rA/d=(8.854\times10^{-12})(1000)(10^{-4})/10^{-6}=8.85\times10^{-7}$ F $=0.89\ \mu$F. The field is $V/d=5\times10^6$ V/m, below breakdown, and the energy $\tfrac12CV^2=\tfrac12(8.85\times10^{-7})(25)=11\ \mu$J. A vacuum gap would give $C=0.89$ nF, one thousand times less. Check with the energy density: $\tfrac12\varepsilon_0\varepsilon_rE^2=\tfrac12(8.854\times10^{-12})(1000)(5\times10^6)^2=1.1\times10^5\ \mathrm{J/m^3}$, times the volume $10^{-10}\ \mathrm{m^3}$ gives $11\ \mu$J &check;.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.2: the field inside a charged sphere</strong>
+                <p class="given">A sphere of radius $R=1$ nm carries total charge $+e$ spread uniformly. Find the field at $r=0.5$ nm and at $2$ nm.</p>
+                <p>Outside: $E=e/(4\pi\varepsilon_0r^2)=1.44\ \mathrm{V\,nm}/(2\ \mathrm{nm})^2=0.36$ V/nm $=3.6\times10^8$ V/m. Inside, the enclosed charge is $e(r/R)^3=e/8$, so $E=\dfrac{(e/8)}{4\pi\varepsilon_0r^2}=\dfrac{1.44/8}{0.25}=0.72$ V/nm. The field is largest at the surface ($1.44$ V/nm $=1.4\times10^9$ V/m). Fields of order $1$ V/nm are normal on the atomic scale, which is why atomic-scale electrostatics is strong compared with laboratory fields, and why a field of this size is needed to field-evaporate atoms in atom probe tomography.</p>
+            </div>
+
+            <h2 id="current">Lecture 3. Current, resistance and circuits<a class="anchor" href="#current" aria-label="Link to this section">#</a></h2>
+            <p><strong>Current</strong> $I=\mathrm dQ/\mathrm dt$ (amperes) is the flow of charge; the current density $\mathbf J$ (A/m$^2$) is the current per unit cross-section, $\mathbf J=nq\mathbf v_d$ for carriers of charge $q$, number density $n$ and drift velocity $\mathbf v_d$. In most materials $\mathbf J$ is proportional to the field, <strong>Ohm&rsquo;s law</strong> in local form: $\mathbf J=\sigma\mathbf E$, with the conductivity $\sigma=1/\rho$ ($\rho$ the resistivity, $\Omega$ m). For a wire of length $L$ and cross-section $A$ this gives $V=IR$ with $R=\rho L/A$. The power dissipated as heat is $P=IV=I^2R$ (<strong>Joule heating</strong>), or $\mathbf J\cdot\mathbf E$ per volume.</p>
+            <p><strong>The Drude model.</strong> Treat the conduction electrons as a gas of free particles that accelerate in the field and scatter, on average every $\tau$ seconds, losing their drift velocity. Newton&rsquo;s law gives $m\dot v_d=-eE-mv_d/\tau$; in the steady state $v_d=-e\tau E/m$ and $\mathbf J=-ne\mathbf v_d$, so
+            $$\sigma=\frac{ne^2\tau}{m}.$$
+            The conductivity is large when there are many carriers $n$ and long scattering times $\tau$. Impurities and defects shorten $\tau$ (Matthiessen&rsquo;s rule: the scattering rates add, $1/\tau=1/\tau_\mathrm{phonon}+1/\tau_\mathrm{defect}$), and phonons shorten it as temperature rises, which is why the resistivity of a metal increases with $T$ (roughly linearly above the Debye temperature) while that of a semiconductor decreases as thermal excitation creates carriers.</p>
+            <p><strong>Circuits.</strong> Kirchhoff&rsquo;s two rules, the conservation of charge (currents into a junction sum to zero) and the conservation of energy (potential differences around a loop sum to zero), solve any resistor network. Resistors in series add, $R=\sum R_i$; in parallel the conductances add, $1/R=\sum1/R_i$. A capacitor $C$ discharging through a resistor $R$ obeys $RC\dot V=-V$, so $V=V_0e^{-t/RC}$ with <strong>time constant</strong> $\tau=RC$; charging gives $V=V_0(1-e^{-t/RC})$. The same exponential relaxation, first-order and set by one time constant, governs the diffusion of heat in a lumped body (<a href="thermal-physics.html">PHYS 102</a>) and many kinetic processes (<a href="ordinary-differential-equations.html">MATH 203</a>).</p>
+            <div class="example">
+                <strong>Worked example 3.1: electrons in copper</strong>
+                <p class="given">Copper has $n=8.49\times10^{28}\ \mathrm{m^{-3}}$ conduction electrons and a room-temperature resistivity $1.68\times10^{-8}\ \Omega$ m. Find the scattering time and the drift speed for $1$ A in a wire of cross-section $1$ mm$^2$, and the resistance and heating of $10$ m of this wire.</p>
+                <p>From the Drude formula, $$\tau=\dfrac{m}{\rho ne^2}=\dfrac{9.11\times10^{-31}}{(1.68\times10^{-8})(8.49\times10^{28})(1.602\times10^{-19})^2}=2.5\times10^{-14}\ \text{s}.$$ The drift speed is $$v_d=\dfrac{I}{nAe}=\dfrac{1}{(8.49\times10^{28})(10^{-6})(1.602\times10^{-19})}=7.4\times10^{-5}\ \text{m/s}:$$ electrons crawl at $0.07$ mm/s, though the signal propagates at nearly the speed of light because the field is set up through the whole wire. The resistance is $R=\rho L/A=0.168\ \Omega$ and the power $I^2R=0.17$ W. The electrons move at the Fermi speed, about $1.6\times10^6$ m/s, between collisions, which gives a mean free path of $v_F\tau=40$ nm; the free electron picture of a metal is developed in <a href="physics-for-simulation.html">PHYS 100</a>.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.2: an RC circuit</strong>
+                <p class="given">A $1$ k$\Omega$ resistor discharges a $1\ \mu$F capacitor charged to $5$ V. Find the time constant, the voltage after $3$ ms, and the energy dissipated.</p>
+                <p>$\tau=RC=10^3\times10^{-6}=1$ ms. After $3$ ms, $V=5e^{-3}=0.25$ V, i.e. $5\%$ of the initial. The energy dissipated in the resistor is the initial energy, $\tfrac12CV_0^2=12.5\ \mu$J, whatever the value of $R$ (a larger $R$ only slows the dissipation). Time constants of this kind limit how fast a memory cell or a gate can switch, and a measured $RC$ is how thin-film resistivity and dielectric thickness are determined.</p>
+            </div>
+
+            <h2 id="magnetic">Lecture 4. Magnetic fields, forces and magnetism of matter<a class="anchor" href="#magnetic" aria-label="Link to this section">#</a></h2>
+            <p>Moving charges feel a second force. In a magnetic field $\mathbf B$ (tesla) the total <strong>Lorentz force</strong> on a charge $q$ with velocity $\mathbf v$ is
+            $$\mathbf F=q\bigl(\mathbf E+\mathbf v\times\mathbf B\bigr).$$
+            The magnetic part is perpendicular to the velocity, so it does no work and changes only the direction of motion. A charge entering a uniform field perpendicular to it moves on a circle of radius $r=\dfrac{mv}{|q|B}$ (from $mv^2/r=qvB$) with the <strong>cyclotron frequency</strong> $\omega_c=\dfrac{|q|B}m$, independent of the speed. A current-carrying wire of length $\mathbf L$ feels $\mathbf F=I\mathbf L\times\mathbf B$. Currents create fields: <strong>Ampere&rsquo;s law</strong> $\oint\mathbf B\cdot\mathrm d\mathbf l=\mu_0I_\mathrm{enc}$ gives $B=\mu_0I/2\pi r$ around a long straight wire and $B=\mu_0nI$ inside a long solenoid with $n$ turns per metre ($\mu_0=4\pi\times10^{-7}$ T m/A). Because magnetic field lines have no ends, $\nabla\cdot\mathbf B=0$ (no magnetic monopoles).</p>
+            <p><strong>The Hall effect.</strong> Send a current $I$ along a conducting strip of thickness $t$ in a perpendicular field $B$. The Lorentz force pushes the carriers to one edge until a transverse (Hall) electric field balances it: $eE_H=ev_dB$, so $V_H=E_Hw=\dfrac{IB}{nqt}$. Measuring $V_H$ gives the carrier density $n$ and, from its sign, whether the carriers are electrons or holes: a standard characterisation of semiconductors.</p>
+            <p><strong>Magnetic moments.</strong> A current loop of area $A$ carrying $I$ has a magnetic moment $\mu=IA$, feels a torque $\boldsymbol\mu\times\mathbf B$, and has energy $-\boldsymbol\mu\cdot\mathbf B$, in exact analogy with the electric dipole. An electron in an atom has a moment from its orbital motion and from its spin, of order the <strong>Bohr magneton</strong> $\mu_\mathrm B=\dfrac{e\hbar}{2m_e}=9.274\times10^{-24}$ J/T $=5.79\times10^{-5}$ eV/T. The magnetisation $\mathbf M$ is the moment per unit volume, and materials are classified by their response to an applied field:</p>
+            <ul>
+                <li><strong>Diamagnetic</strong>: the induced moment opposes the field ($\chi\sim-10^{-5}$), present in all materials and dominant in those with filled shells (water, Cu, noble gases, graphite strongly).</li>
+                <li><strong>Paramagnetic</strong>: atoms with permanent moments partly align with the field against thermal disorder, giving the Curie law $\chi=C/T$ ($\chi\sim10^{-3}$ to $10^{-5}$).</li>
+                <li><strong>Ferromagnetic</strong>: below the Curie temperature the exchange interaction (a quantum effect, <a href="quantum-mechanics.html">PHYS 201</a>) aligns neighbouring moments spontaneously, giving a large spontaneous magnetisation ($T_\mathrm C=1043$ K for Fe, $627$ K for Ni, $1394$ K for Co) and hysteresis.</li>
+            </ul>
+            <div class="note mat"><strong>In materials science: magnetic moments from first principles</strong>
+            <p>Atomic moments of the 3d metals come from unpaired electron spins; DFT calculates them and they determine which structures are stable (the bcc/fcc competition in iron depends on magnetism). Magnetic materials are used in motors, transformers (soft magnets with narrow loops), and data storage and permanent magnets (hard magnets with wide loops). Magnetic fields also deflect electron beams in a microscope and guide the electrons in a mass spectrometer, through the Lorentz force of this lecture.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: cyclotron motion and the Hall effect</strong>
+                <p class="given">(a) An electron with speed $10^6$ m/s enters a field of $0.10$ T perpendicular to its velocity. Find the radius and cyclotron frequency. (b) A strip $0.1$ mm thick carries $10$ mA in a field of $0.5$ T. Find the Hall voltage for copper ($n=8.49\times10^{28}\ \mathrm{m^{-3}}$) and for a semiconductor with $n=10^{22}\ \mathrm{m^{-3}}$.</p>
+                <p>(a) $r=mv/eB=\dfrac{(9.11\times10^{-31})(10^6)}{(1.602\times10^{-19})(0.10)}=5.7\times10^{-5}$ m $=57\ \mu$m; $\omega_c=eB/m=1.76\times10^{10}$ rad/s, i.e. $2.8$ GHz for $0.1$ T (independent of speed). (b) $V_H=IB/(net)$: for copper $=\dfrac{(0.01)(0.5)}{(8.49\times10^{28})(1.602\times10^{-19})(10^{-4})}=3.7$ nV, unmeasurably small; for the semiconductor, $V_H=31$ mV, easily measured. Metals have so many carriers that the Hall field is tiny; semiconductors with few carriers give large signals, which is why Hall sensors are made from them.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: the magnetisation of iron</strong>
+                <p class="given">An iron atom in bcc iron ($a=0.2866$ nm, two atoms per cell) has a moment $2.2\ \mu_\mathrm B$. Estimate the saturation magnetisation and compare with the measured $1.71\times10^6$ A/m. How large is the Zeeman energy of one $\mu_\mathrm B$ in $1$ T compared with $k_\mathrm BT$ at $300$ K?</p>
+                <p>The number density is $n=2/a^3=2/(0.2866\times10^{-9})^3=8.49\times10^{28}\ \mathrm{m^{-3}}$, so $M_s=n\mu=8.49\times10^{28}\times2.2\times9.274\times10^{-24}=1.73\times10^6$ A/m, within $1.5\%$ of experiment. The energy of one $\mu_\mathrm B$ in $1$ T is $5.8\times10^{-5}$ eV, only $0.2\%$ of $k_\mathrm BT=0.0259$ eV: an applied field alone cannot align atomic moments against thermal motion at room temperature, which is why paramagnets have small susceptibilities. Ferromagnetic order exists only because the exchange interaction between neighbouring atoms is far stronger, of order $0.1$ eV.</p>
+            </div>
+
+            <h2 id="maxwell">Lecture 5. Induction and Maxwell&rsquo;s equations<a class="anchor" href="#maxwell" aria-label="Link to this section">#</a></h2>
+            <p>A changing magnetic flux $\Phi_B=\int\mathbf B\cdot\mathrm d\mathbf A$ through a loop induces an electromotive force (<strong>Faraday&rsquo;s law</strong>)
+            $$\mathcal E=-\frac{\mathrm d\Phi_B}{\mathrm dt},\qquad\oint\mathbf E\cdot\mathrm d\mathbf l=-\frac{\mathrm d\Phi_B}{\mathrm dt}\ \Longleftrightarrow\ \nabla\times\mathbf E=-\frac{\partial\mathbf B}{\partial t}.$$
+            The minus sign (<strong>Lenz&rsquo;s law</strong>) says that the induced current opposes the change that causes it, as required by energy conservation. A coil of $N$ turns, area $A$, in a field changing by $\Delta B$ in a time $\Delta t$ produces $\mathcal E=NA\Delta B/\Delta t$. A coil carrying a changing current induces an emf in itself, $\mathcal E=-L\,\mathrm dI/\mathrm dt$, defining its <strong>inductance</strong> $L$ (henries); a long solenoid has $L=\mu_0N^2A/\ell$ and stores energy $\tfrac12LI^2$, the magnetic analogue of the capacitor. Induced currents in bulk conductors (<em>eddy currents</em>) heat them, which is the basis of induction heating of metals, and shield their interior from fast-changing fields: the field penetrates only a <strong>skin depth</strong> $\delta=\sqrt{2/(\omega\mu_0\sigma)}$.</p>
+            <p><strong>Maxwell&rsquo;s equations.</strong> Two further laws completed the electromagnetic theory. Ampere&rsquo;s law of Lecture 4 is inconsistent with charge conservation when charge accumulates (as on a charging capacitor), and Maxwell added the <em>displacement current</em> $\varepsilon_0\partial\mathbf E/\partial t$, a changing electric field acting as a source of magnetic field. The complete set, in vacuum with charge density $\rho$ and current density $\mathbf J$, reads (<a href="vector-calculus.html">MATH 201</a>):</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 5. Induction and Maxwell’s equations (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Law</th><th>Differential form</th><th>Meaning</th></tr></thead>
+                <tbody>
+                    <tr><td>Gauss</td><td>$\nabla\cdot\mathbf E=\rho/\varepsilon_0$</td><td>charges are sources of $\mathbf E$</td></tr>
+                    <tr><td>Gauss for magnetism</td><td>$\nabla\cdot\mathbf B=0$</td><td>no magnetic charges</td></tr>
+                    <tr><td>Faraday</td><td>$\nabla\times\mathbf E=-\partial\mathbf B/\partial t$</td><td>changing $\mathbf B$ produces $\mathbf E$</td></tr>
+                    <tr><td>Ampere&ndash;Maxwell</td><td>$\nabla\times\mathbf B=\mu_0\mathbf J+\mu_0\varepsilon_0\,\allowbreak \partial\mathbf E/\partial t$</td><td>currents and changing $\mathbf E$ produce $\mathbf B$</td></tr>
+                </tbody>
+            </table></div>
+            <div class="note thm"><strong>Electromagnetic waves from Maxwell&rsquo;s equations</strong>
+            <p>In empty space ($\rho=0$, $\mathbf J=0$) take the curl of Faraday&rsquo;s law: $\nabla\times(\nabla\times\mathbf E)=-\dfrac\partial{\partial t}(\nabla\times\mathbf B)=-\mu_0\varepsilon_0\dfrac{\partial^2\mathbf E}{\partial t^2}$. The vector identity $\nabla\times(\nabla\times\mathbf E)=\nabla(\nabla\cdot\mathbf E)-\nabla^2\mathbf E=-\nabla^2\mathbf E$ gives
+            $$\nabla^2\mathbf E=\mu_0\varepsilon_0\frac{\partial^2\mathbf E}{\partial t^2},$$
+            the wave equation (<a href="partial-differential-equations.html">MATH 301</a>) with speed $c=1/\sqrt{\mu_0\varepsilon_0}=2.998\times10^8$ m/s: the speed of light, computed from two constants measured with static charges and currents. Maxwell concluded that light is an electromagnetic wave.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: induction</strong>
+                <p class="given">(a) A coil of $100$ turns and area $10$ cm$^2$ sits in a field that rises from $0$ to $0.5$ T in $10$ ms. Find the emf. (b) Find the inductance of a solenoid with $1000$ turns, length $10$ cm and area $1$ cm$^2$, and its energy at $1$ A. (c) Find the skin depth in copper ($\sigma=5.96\times10^7$ S/m) at $50$ Hz and $1$ MHz.</p>
+                <p>(a) $\mathcal E=NA\Delta B/\Delta t=100(10^{-3})(0.5)/0.01=5.0$ V. (b) $L=\mu_0N^2A/\ell=(4\pi\times10^{-7})(10^6)(10^{-4})/0.1=1.26$ mH; $U=\tfrac12LI^2=0.63$ mJ. (c) $\delta=\sqrt{2/(\omega\mu_0\sigma)}$ gives $9.2$ mm at $50$ Hz and $65\ \mu$m at $1$ MHz. Induction heating at $1$ MHz therefore heats only a thin surface layer of a steel part, which is how surface hardening is performed, while at mains frequency a transformer core must be laminated in sheets thinner than $\delta$ to suppress eddy currents.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: the fields in sunlight</strong>
+                <p class="given">Sunlight has an intensity of about $1000$ W/m$^2$ at the ground. Find the amplitudes of $\mathbf E$ and $\mathbf B$ in it.</p>
+                <p>For a plane wave the intensity is $I=\tfrac12c\varepsilon_0E_0^2$, so $$E_0=\sqrt{\frac{2I}{c\varepsilon_0}}=\sqrt{\frac{2(1000)}{(2.998\times10^8)(8.854\times10^{-12})}}=868\ \text{V/m}$$ and $B_0=E_0/c=2.9\ \mu$T. The electric field of sunlight ($0.9$ V/mm) is tiny compared with the $1$ V/nm fields inside atoms, so light is a weak perturbation of matter and linear optics holds; intense laser pulses reach $10^9$ V/m and produce non-linear optical effects such as second-harmonic generation in crystals without inversion symmetry (compare the odd-rank tensor argument in <a href="tensors-stress-and-strain.html">MATH 302</a>).</p>
+            </div>
+
+            <h2 id="optics">Lecture 6. Electromagnetic waves and light in matter<a class="anchor" href="#optics" aria-label="Link to this section">#</a></h2>
+            <p>A plane wave solving the wave equation of Lecture 5 has the form $\mathbf E=\mathbf E_0\cos(kx-\omega t)$ with $\omega=ck$, and the magnetic field $\mathbf B$ perpendicular to both $\mathbf E$ and the direction of propagation with $B_0=E_0/c$. The wave is <strong>transverse</strong>; its direction of $\mathbf E$ is the <strong>polarisation</strong>. It carries energy: the energy flux (intensity) is $I=\tfrac12c\varepsilon_0E_0^2$ and the momentum flux is $I/c$ (radiation pressure). The wavelength, frequency and photon energy satisfy $c=f\lambda$ and $E_\mathrm{ph}=hf=\dfrac{1239.8\ \mathrm{eV\,nm}}{\lambda}$. The spectrum runs from radio waves through microwaves, infrared, visible light ($400$&ndash;$700$ nm, $1.8$&ndash;$3.1$ eV), ultraviolet, X-rays ($\sim0.1$ nm, $\sim10$ keV) to gamma rays; different parts probe different excitations of a material (infrared: bond vibrations; visible: electronic transitions; X-ray: core electrons and diffraction).</p>
+            <p><strong>Light in matter.</strong> In a transparent dielectric the wave drives the electrons, which re-radiate, and the net effect is a wave with speed $v=c/n$ where $n=\sqrt{\varepsilon_r}$ (at optical frequencies) is the <strong>refractive index</strong>: $1.0003$ for air, $1.33$ for water, $1.5$ for glass, $2.42$ for diamond, $3.5$ for silicon. The frequency is unchanged, so the wavelength shrinks to $\lambda/n$. At a flat interface between media of indices $n_1,n_2$ the wave obeys:</p>
+            <ul>
+                <li><strong>Snell&rsquo;s law</strong>: $n_1\sin\theta_1=n_2\sin\theta_2$. <em>Proof.</em> The wave fronts must match along the surface, so the wavelength component along the interface is equal on both sides: $k_1\sin\theta_1=k_2\sin\theta_2$ with $k=n\omega/c$.</li>
+                <li><strong>Total internal reflection</strong> when light goes from a higher to a lower index and $\sin\theta_1&gt;n_2/n_1$: the critical angle is $\theta_c=\arcsin(n_2/n_1)$. Optical fibres and diamond&rsquo;s sparkle depend on it.</li>
+                <li><strong>Reflectance</strong> at normal incidence: $R=\bigl(\dfrac{n_1-n_2}{n_1+n_2}\bigr)^2$ ($4\%$ for air to glass). At the <strong>Brewster angle</strong> $\tan\theta_B=n_2/n_1$ light polarised in the plane of incidence is not reflected at all.</li>
+            </ul>
+            <p>Absorption occurs at frequencies where the wave excites the material: a semiconductor absorbs photons above its band gap $E_g$ (Si: $1.12$ eV, so it is opaque below $1107$ nm), a metal reflects because its free electrons screen the field below the plasma frequency, and a dielectric absorbs near its vibrational and electronic resonances. The complex refractive index $\tilde n=n+i\kappa$ describes both effects, with intensity decaying as $e^{-\alpha z}$ and $\alpha=4\pi\kappa/\lambda$.</p>
+            <div class="note mat"><strong>In materials science: anti-reflection coatings and optical characterisation</strong>
+            <p>A coating of index $n_f=\sqrt{n_s}$ and thickness $\lambda/4n_f$ cancels the reflection from a substrate $n_s$ by destructive interference between the two interfaces; magnesium fluoride ($n=1.38$) on glass ($1.5$) cuts the reflectance from $4\%$ to $1.4\%$ at the design wavelength. Ellipsometry and UV&ndash;visible spectroscopy measure the optical constants and band gaps of films, and the dielectric function computed from first principles is directly comparable with such measurements.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 6.1: refraction and reflection at glass</strong>
+                <p class="given">Light hits glass ($n=1.5$) from air at $30^\circ$. Find the refraction angle, the critical angle for light leaving the glass, the Brewster angle, and the reflectance at normal incidence. What thickness of MgF$_2$ ($n=1.38$) is an anti-reflection coating for $550$ nm?</p>
+                <p>Snell: $\sin\theta_2=\sin30^\circ/1.5=0.333$, $\theta_2=19.5^\circ$. Critical angle (glass to air): $\arcsin(1/1.5)=41.8^\circ$. Brewster angle: $\arctan1.5=56.3^\circ$. Normal reflectance: $(0.5/2.5)^2=4.0\%$. A quarter-wave coating has $t=\lambda/4n_f=550/(4\times1.38)=99.6$ nm and reduces the reflectance to $[(1.5-1.38^2)/(1.5+1.38^2)]^2=1.4\%$; a still better match needs $n_f=1.22$, which no durable material offers.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: photons and band gaps</strong>
+                <p class="given">Find the photon energy of green light ($550$ nm) and of Cu K$\alpha$ X-rays ($0.15406$ nm), the wavelength at which silicon stops absorbing, and the photon rate of a $1$ mW, $532$ nm laser.</p>
+                <p>$E=1239.8/550=2.25$ eV for green light, and $1239.8/0.15406=8.05$ keV for Cu K$\alpha$. A band gap of $1.12$ eV corresponds to $\lambda=1239.8/1.12=1107$ nm: silicon is opaque to visible light but transparent in the infrared beyond this. A $532$ nm photon has $3.73\times10^{-19}$ J, so $1$ mW delivers $P/E=2.7\times10^{15}$ photons per second. The point-like arrival of photons is one of the experimental facts that forced quantum mechanics (<a href="quantum-mechanics.html">PHYS 201</a>).</p>
+            </div>
+
+            <h2 id="wave">Lecture 7. Waves, interference and diffraction<a class="anchor" href="#wave" aria-label="Link to this section">#</a></h2>
+            <p>Every wave obeys the one-dimensional wave equation $\partial^2y/\partial t^2=v^2\partial^2y/\partial x^2$ and, by linearity, <strong>superposition</strong>: when two waves overlap the displacements add. A travelling sinusoidal wave is $y=A\cos(kx-\omega t)$ with $k=2\pi/\lambda$, $\omega=2\pi f$, $v=f\lambda=\omega/k$. Two waves of equal amplitude and phase difference $\phi$ add to an amplitude $2A\cos(\phi/2)$: <strong>constructive interference</strong> when $\phi=2\pi m$ (path difference $m\lambda$) and <strong>destructive</strong> when $\phi=(2m+1)\pi$. Waves on a string of length $L$ with fixed ends form standing waves $y=A\sin(n\pi x/L)\cos\omega_nt$ with $f_n=nv/2L$ (the modes of <a href="partial-differential-equations.html">MATH 301</a>); sound in a bar and lattice vibrations are the same phenomenon.</p>
+            <p><strong>Two slits and gratings.</strong> Light from two narrow slits a distance $d$ apart reaches a screen with path difference $d\sin\theta$, so bright fringes occur at $d\sin\theta=m\lambda$, with spacing $\Delta y=\lambda L/d$ on a screen at distance $L$. A <strong>diffraction grating</strong> with many equally spaced lines has the same condition $d\sin\theta=m\lambda$ but the maxima are very sharp, with width $\sim\lambda/(Nd)$ for $N$ lines: this is why a grating resolves wavelengths so well. A <strong>single slit</strong> of width $a$ produces its own pattern with the first minimum at $a\sin\theta=\lambda$: an aperture of size $a$ spreads a wave by an angle $\sim\lambda/a$, so the finer the structure, the wider the diffraction (a reciprocal relation, the Fourier transform of <a href="fourier-analysis.html">MATH 205</a>: the pattern is the transform of the aperture). Imaging is limited the same way: two points are resolved only if their separation exceeds about $\lambda/(2\,\mathrm{NA})$ (the Rayleigh criterion $\theta=1.22\lambda/D$), which is why electron microscopes, with wavelengths of picometres, resolve atoms and light microscopes cannot.</p>
+            <div class="note thm"><strong>Bragg&rsquo;s law</strong>
+            <p>A crystal is a stack of parallel atomic planes with spacing $d$. A wave of wavelength $\lambda$ incident at a glancing angle $\theta$ to the planes is scattered by each plane; the beams scattered from neighbouring planes differ in path length by $2d\sin\theta$ (the extra distance down to the second plane and back). They interfere constructively, giving a strong reflected beam, when this is a whole number of wavelengths:
+            $$2d\sin\theta=n\lambda.$$
+            The detector is placed at $2\theta$ to the incident beam. Because $\sin\theta\le1$, diffraction needs $\lambda\le2d$: the wavelength must be comparable to the atomic spacing, $\sim0.1$ nm, so visible light cannot diffract from atoms but X-rays, thermal neutrons and fast electrons can. The set of $d$-spacings of a crystal is its fingerprint: for a cubic crystal of lattice parameter $a$, $d_{hkl}=a/\sqrt{h^2+k^2+l^2}$, and the relative intensities depend on the atoms in the cell (<a href="crystal-structure-and-periodic-cells.html">MSE 201</a>).</p>
+            </div>
+            <p>Equivalently, in reciprocal space (<a href="linear-algebra-foundations.html">MATH 103</a>) the scattered wave vector difference $\mathbf q=\mathbf k'-\mathbf k$ must equal a reciprocal-lattice vector $\mathbf G$: the Laue condition, which is the same statement as Bragg&rsquo;s law. The width of a diffraction peak is inversely proportional to the size of the coherently scattering crystal (Scherrer): $\beta=K\lambda/(L\cos\theta)$, with $K\approx0.9$ and $\beta$ the width in radians.</p>
+            <div class="note mat"><strong>In materials science: three kinds of diffraction</strong>
+            <p>X-rays scatter from electrons and are used for phase identification, lattice parameters, strain and crystallite size. Neutrons scatter from nuclei (and from magnetic moments), so they see light atoms like hydrogen and distinguish isotopes and magnetic order. Electrons scatter strongly, so electron diffraction and imaging work on nanometre volumes in the transmission electron microscope. All three obey the same Bragg condition, with a different wavelength: $0.154$ nm for Cu K$\alpha$ X-rays, $0.18$ nm for $25$ meV neutrons and $2.5$ pm for $200$ keV electrons.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: slits, gratings and apertures</strong>
+                <p class="given">Light of $633$ nm falls on (a) two slits $0.25$ mm apart with a screen $2$ m away, (b) a grating of $600$ lines/mm, (c) a single slit $0.1$ mm wide. Find the fringe spacing, the first-order angle and the angle of the first minimum.</p>
+                <p>(a) $\Delta y=\lambda L/d=(633\times10^{-9})(2)/(0.25\times10^{-3})=5.06$ mm. (b) $d=1/600$ mm $=1.667\ \mu$m, so $\sin\theta=\lambda/d=0.380$ and $\theta=22.3^\circ$ (second order at $49.5^\circ$). (c) $\sin\theta=\lambda/a=6.33\times10^{-3}$, so $\theta=6.3$ mrad $=0.36^\circ$; on a screen at $2$ m the central maximum is $2\times2\times6.33\times10^{-3}=25$ mm wide. Narrower slit, wider pattern.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.2: Bragg angles for X-rays, neutrons and electrons</strong>
+                <p class="given">Silicon has $a=0.5431$ nm, so $d_{111}=0.3136$ nm. Find the (111) diffraction angle $2\theta$ for Cu K$\alpha$ ($0.15406$ nm), the second-order angle, and the Bragg angles for $25$ meV neutrons and $200$ keV electrons.</p>
+                <p>X-rays: $\sin\theta=0.15406/(2\times0.3136)=0.2456$, $\theta=14.22^\circ$, so $2\theta=28.44^\circ$; second order ($n=2$, equivalent to (222) with $d=0.1568$ nm) gives $\sin\theta=0.4912$, $2\theta=58.86^\circ$. Neutrons of $25$ meV have $\lambda=h/\sqrt{2mE}=0.181$ nm and $\theta=16.8^\circ$ ($2\theta=33.5^\circ$). Electrons of $200$ keV have $\lambda=2.51$ pm (relativistic), so $\theta=0.23^\circ$ ($4$ mrad): diffraction angles in an electron microscope are tiny, and the reflecting planes are nearly parallel to the beam.</p>
+            </div>
+
+            <h2 id="summary-p103">Summary of the unit<a class="anchor" href="#summary-p103" aria-label="Link to this section">#</a></h2>
+            <p>Electric forces between charges, $1.44\ \mathrm{eV\,nm}/r$, set the scale of bonding and the interaction of matter with fields. Gauss&rsquo;s law and dielectrics describe how matter responds to electric fields; Drude&rsquo;s model explains conduction and Joule heating; the Lorentz force gives cyclotron motion, the Hall effect and the magnetic moments of atoms. Maxwell&rsquo;s equations unify electricity and magnetism and predict light, whose interaction with matter is described by refractive index, absorption and photon energy. Finally, waves interfere and diffract; Bragg&rsquo;s law connects observed diffraction angles to atomic spacing and is the basis of crystallography. The next steps are quantum mechanics (<a href="quantum-mechanics.html">PHYS 201</a>), which explains atoms, bonds and photons, and the reciprocal-space description of crystals used in <a href="crystal-structure-and-periodic-cells.html">MSE 201</a>.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Coulomb&#x27;s law gives the field $\mathbf E=\mathbf F/q$ and the potential $V$ with $\mathbf E=-\nabla V$; the energy of two charges is $e^2/4\pi\varepsilon_0r=1.44\ \mathrm{eV\,nm}/r$, which sets the scale of ionic and covalent bonding energies.</li>
+<li>Gauss&#x27;s law $\oint\mathbf E\cdot\mathrm d\mathbf A=Q/\varepsilon_0$ yields fields from symmetry; capacitors store energy $\tfrac12CV^2$ with $C=\varepsilon_0\varepsilon_rA/d$, and a dielectric of relative permittivity $\varepsilon_r$ reduces fields through polarisation of its atoms.</li>
+<li>In a conductor $\mathbf J=\sigma\mathbf E$ with $\sigma=ne^2\tau/m$ (Drude); drift speeds are tiny (about $0.07$ mm/s at $1$ A in copper) yet the electric signal travels near light speed, and Joule heating $I^2R$ dissipates the energy.</li>
+<li>A moving charge feels the Lorentz force $\mathbf F=q(\mathbf E+\mathbf v\times\mathbf B)$, which gives cyclotron motion, the Hall effect (carrier density and sign) and, for atomic moments of order the Bohr magneton, the magnetism of materials.</li>
+<li>Maxwell&#x27;s equations combine Gauss, Faraday and Ampere laws with displacement current and predict electromagnetic waves of speed $c=1/\sqrt{\mu_0\varepsilon_0}$; diffraction of waves with $\lambda\sim d$ from a periodic structure follows Bragg&#x27;s law $2d\sin\theta=n\lambda$, the basis of X-ray, neutron and electron diffraction.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p103-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Two protons are $1$ fm ($10^{-15}$ m) apart inside a nucleus. Find the electric repulsion force and the potential energy, and say why nuclei do not fly apart.</p>
+            <details class="hint"><summary>Hint</summary><p>Use $e^2/4\pi\varepsilon_0=1.440$ MeV fm.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$U=1.440/1=1.44$ MeV and $F=U/r=1.44\ \mathrm{MeV/fm}=231$ N, an enormous force on a particle of mass $1.7\times10^{-27}$ kg (acceleration $10^{29}\ \mathrm{m/s^2}$). The nucleus is held together by the strong nuclear force, which is attractive and about a hundred times stronger than the Coulomb repulsion at this distance but acts over only a few femtometres.</p>
+            <p class="answer">$231$ N; $1.44$ MeV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>An infinite sheet carries a surface charge density $\sigma=10^{-5}\ \mathrm{C/m^2}$. (a) Find its field using Gauss&rsquo;s law. (b) What is the field between two parallel plates carrying $\pm\sigma$? (c) What is the field just outside a conductor with the same surface density?</p>
+            <details class="hint"><summary>Hint</summary><p>The field of a single sheet is $\sigma/2\varepsilon_0$ on each side. Fields superpose.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E=\sigma/2\varepsilon_0=10^{-5}/(2\times8.854\times10^{-12})=5.65\times10^5$ V/m. (b) The fields of the two sheets add between them and cancel outside: $E=\sigma/\varepsilon_0=1.13\times10^6$ V/m. (c) For a conductor $E=\sigma/\varepsilon_0=1.13\times10^6$ V/m directly outside, zero inside: the same as one plate of the capacitor.</p>
+            <p class="answer">(a) $5.65\times10^5$ V/m; (b) $1.13\times10^6$ V/m; (c) $1.13\times10^6$ V/m</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>A parallel-plate capacitor has plates of $2$ cm$^2$ separated by $0.10$ mm of a dielectric with $\varepsilon_r=4$. Find $C$, and the charge and energy at $100$ V. What would happen to $C$ and to the stored energy at fixed $V$ if the dielectric were removed?</p>
+            <details class="hint"><summary>Hint</summary><p>$C=\varepsilon_0\varepsilon_rA/d$, $Q=CV$, $U=\tfrac12CV^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$C=(8.854\times10^{-12})(4)(2\times10^{-4})/(10^{-4})=70.8$ pF; $Q=CV=7.08$ nC; $U=\tfrac12CV^2=354$ nJ. Removing the dielectric divides $C$ by $4$ to $17.7$ pF; at fixed $V$ the energy falls to $88$ nJ (and the charge to $1.77$ nC). The dielectric allows four times as much charge and energy at the same voltage because its polarisation cancels part of the field.</p>
+            <p class="answer">$70.8$ pF, $7.08$ nC, $354$ nJ; $C/4$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Aluminium has $n=1.81\times10^{29}\ \mathrm{m^{-3}}$ conduction electrons and $\rho=2.65\times10^{-8}\ \Omega$ m. (a) Find the Drude scattering time. (b) At the Fermi speed $2.0\times10^6$ m/s find the mean free path. (c) If alloying adds a resistivity $\Delta\rho=1.0\times10^{-8}\ \Omega$ m, find the new scattering time (Matthiessen&rsquo;s rule).</p>
+            <details class="hint"><summary>Hint</summary><p>$\tau=m/(\rho ne^2)$; the rates add: $1/\tau=1/\tau_1+1/\tau_2$, equivalent to adding resistivities.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau=\dfrac{9.11\times10^{-31}}{(2.65\times10^{-8})(1.81\times10^{29})(1.602\times10^{-19})^2}=7.4\times10^{-15}$ s. (b) $\ell=v_F\tau=2.0\times10^6\times7.4\times10^{-15}=15$ nm. (c) Resistivities add, $\rho=3.65\times10^{-8}\ \Omega$ m, so $\tau=7.4\times10^{-15}\times2.65/3.65=5.4\times10^{-15}$ s: the alloy scatters electrons $38\%$ more often. Solute atoms, vacancies and dislocations all add to the resistivity in this way, and it can be used to monitor defect concentrations.</p>
+            <p class="answer">(a) $7.4\times10^{-15}$ s; (b) $15$ nm; (c) $5.4\times10^{-15}$ s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>A $12$ V battery drives a $4\ \Omega$ resistor in series with a parallel pair of $6\ \Omega$ and $3\ \Omega$. Find the current in each resistor and the total power.</p>
+            <details class="hint"><summary>Hint</summary><p>Reduce the parallel pair to one equivalent resistor first.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>The parallel pair is $1/(1/6+1/3)=2\ \Omega$, so the total is $6\ \Omega$ and $I=12/6=2$ A through the $4\ \Omega$. The voltage across the pair is $2\times2=4$ V, so $4/6=0.667$ A flows in the $6\ \Omega$ and $4/3=1.333$ A in the $3\ \Omega$ (sum $2$ A &check;). Power: $I^2R$ gives $16+2.67+5.33=24$ W $=12\times2$ W from the battery &check;.</p>
+            <p class="answer">$2$ A, $0.667$ A, $1.333$ A; $24$ W</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>Singly charged ions of lithium-7 and lithium-6 are accelerated through $1.0$ kV and enter a perpendicular field of $0.10$ T. (a) Find the speed and radius for $^7$Li ($7.016$ u). (b) How far apart do $^6$Li ($6.015$ u) and $^7$Li land on a detector placed after a half-circle?</p>
+            <details class="hint"><summary>Hint</summary><p>$qV=\tfrac12mv^2$ and $r=mv/qB=\sqrt{2mV/q}/B$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $v=\sqrt{2qV/m}=\sqrt{2(1.602\times10^{-19})(1000)/(1.165\times10^{-26})}=1.66\times10^5$ m/s and $r=\sqrt{2mV/q}/B=0.1206$ m. (b) For $^6$Li $r=0.1117$ m ($r\propto\sqrt m$), so the landing points are separated by the difference of the diameters, $2(0.1206-0.1117)=17.9$ mm: easy to resolve. This is the principle of the magnetic-sector mass spectrometer, used for isotope ratios in dating and in tracer diffusion experiments.</p>
+            <p class="answer">(a) $1.66\times10^5$ m/s, $12.06$ cm; (b) $17.9$ mm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>A germanium strip $0.50$ mm thick carries $5.0$ mA in a field of $0.40$ T and develops a Hall voltage of magnitude $62.5\ \mu$V, with the sign of electrons. Its resistivity is $1.0\times10^{-4}\ \Omega$ m. Find the carrier density and the mobility $\mu=v_d/E$.</p>
+            <details class="hint"><summary>Hint</summary><p>$V_H=IB/(net)$, and $\sigma=ne\mu$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$n=\dfrac{IB}{etV_H}=\dfrac{(5\times10^{-3})(0.4)}{(1.602\times10^{-19})(5\times10^{-4})(62.5\times10^{-6})}=4.0\times10^{23}\ \mathrm{m^{-3}}$ ($4\times10^{17}\ \mathrm{cm^{-3}}$, a doped semiconductor). The mobility is $\mu=\dfrac1{\rho ne}=\dfrac1{(10^{-4})(4.0\times10^{23})(1.602\times10^{-19})}=0.156\ \mathrm{m^2/V\,s}=1560\ \mathrm{cm^2/V\,s}$, a typical value for electrons in doped Ge. Hall plus resistivity measurements together give $n$ and $\mu$, the two numbers that characterise a semiconductor sample.</p>
+            <p class="answer">$n=4.0\times10^{23}\ \mathrm{m^{-3}}$ (electrons); $\mu=0.156\ \mathrm{m^2/V\,s}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>A generator has a coil of $200$ turns, area $0.010$ m$^2$, rotating at $50$ Hz in a $0.20$ T field. Find the peak and rms emf. Why does the output oscillate?</p>
+            <details class="hint"><summary>Hint</summary><p>The flux is $\Phi=NBA\cos\omega t$; differentiate. $V_\mathrm{rms}=V_0/\sqrt2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\Phi=NBA\cos\omega t$, so $\mathcal E=-\mathrm d\Phi/\mathrm dt=NBA\omega\sin\omega t$ with $\omega=2\pi(50)=314$ rad/s. Peak: $200\times0.2\times0.01\times314=126$ V; rms: $126/\sqrt2=89$ V. The output oscillates because the flux through the loop changes sign as the coil rotates; Lenz&rsquo;s law means a load current exerts a braking torque, which is why the engine must supply the electrical power.</p>
+            <p class="answer">$126$ V peak, $89$ V rms</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>A laser of $1.0$ mW and wavelength $532$ nm has a beam of diameter $1.0$ mm. Find the intensity, the electric-field amplitude, the magnetic-field amplitude and the photon rate. How does the electric field compare with the field in a hydrogen atom?</p>
+            <details class="hint"><summary>Hint</summary><p>$I=P/A$; $E_0=\sqrt{2I/c\varepsilon_0}$; $B_0=E_0/c$; $N=P\lambda/hc$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$I=10^{-3}/[\pi(0.5\times10^{-3})^2]=1273$ W/m$^2$; $E_0=\sqrt{2(1273)/(2.998\times10^8\times8.854\times10^{-12})}=979$ V/m; $B_0=3.3\ \mu$T; photon energy $3.73\times10^{-19}$ J, so $N=2.7\times10^{15}\ \mathrm s^{-1}$. The atomic field is $5\times10^{11}$ V/m ($5\times10^8$ times larger), so laser light of this power is a tiny perturbation on the electrons of an atom, and linear optics holds.</p>
+            <p class="answer">$1273$ W/m$^2$; $979$ V/m; $3.3\ \mu$T; $2.7\times10^{15}\ \mathrm{s^{-1}}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Light from a diamond ($n=2.42$) hits the diamond&ndash;air surface from inside. (a) Find the critical angle and the speed of light in diamond. (b) A $1$ mm thick diamond plate is illuminated at normal incidence: what fraction of the intensity is reflected at each surface, and what is the overall transmission (ignoring absorption and multiple reflections)? (c) Why does a diamond sparkle?</p>
+            <details class="hint"><summary>Hint</summary><p>$R=\bigl[(n-1)/(n+1)\bigr]^2$; $\theta_c=\arcsin(1/n)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\theta_c=\arcsin(1/2.42)=24.4^\circ$; $v=c/n=1.24\times10^8$ m/s. (b) $R=(1.42/3.42)^2=0.172$, so $17\%$ is reflected at each surface and about $(1-0.172)^2=0.69$ is transmitted (with multiple reflections included, $2n/(n^2+1)=0.70$). (c) The small critical angle means most rays inside a well-cut stone strike the facets beyond $24.4^\circ$ and are totally internally reflected until they leave through the top, and the high index also gives a large dispersion, so the stone appears bright and splits the colours.</p>
+            <p class="answer">(a) $24.4^\circ$, $1.24\times10^8$ m/s; (b) $17\%$, $69\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>Cu K$\alpha$ X-rays ($0.15406$ nm) are diffracted from the (111) planes of silicon ($d=0.3136$ nm). (a) Find $2\theta$ for the first and second orders. (b) Find $2\theta$ for neutrons of $25$ meV ($\lambda=0.181$ nm) and the Bragg angle of $200$ keV electrons ($\lambda=2.51$ pm). (c) What wavelength is needed to see the (111) reflection at all? What is the smallest $d$ that Cu K$\alpha$ can probe?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $2d\sin\theta=n\lambda$ and the requirement $\sin\theta\le1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $n=1$: $\sin\theta=0.2456$, $2\theta=28.44^\circ$; $n=2$: $\sin\theta=0.4912$, $2\theta=58.86^\circ$. (b) Neutrons: $\sin\theta=0.181/0.6272=0.2886$, $2\theta=33.5^\circ$; electrons: $\sin\theta=2.51\times10^{-3}/0.6272=4.0\times10^{-3}$, $\theta=0.23^\circ$. (c) $\lambda\le2d=0.627$ nm for the first order. For Cu K$\alpha$ the smallest $d$ is $\lambda/2=0.077$ nm, which is why powder patterns with this radiation cannot resolve spacings shorter than $0.077$ nm; shorter-wavelength sources (Mo K$\alpha$, $0.071$ nm; synchrotron radiation; neutrons) reach smaller $d$.</p>
+            <p class="answer">(a) $28.44^\circ$, $58.86^\circ$; (b) $33.5^\circ$, $0.23^\circ$; (c) $0.077$ nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p103-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>An X-ray peak at $2\theta=40^\circ$ with Cu K$\alpha$ radiation has a full width at half maximum of $0.50^\circ$, of which $0.10^\circ$ is instrumental broadening. (a) Use the Scherrer equation with $K=0.9$ to estimate the crystallite size. (b) Explain why a nanocrystal gives a broad peak, using the Fourier relation between width and size. (c) How does the size estimate change if the instrumental part is ignored?</p>
+            <details class="hint"><summary>Hint</summary><p>Subtract widths in quadrature: $\beta^2=\beta_\mathrm{meas}^2-\beta_\mathrm{inst}^2$. Use $\beta$ in radians and $\theta=20^\circ$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\beta=\sqrt{0.50^2-0.10^2}=0.490^\circ=8.55\times10^{-3}$ rad, $\theta=20^\circ$: $L=\dfrac{K\lambda}{\beta\cos\theta}=\dfrac{0.9(0.15406)}{(8.55\times10^{-3})(0.940)}=17.3$ nm. (b) A crystal of $N$ planes is a finite stack of scatterers; its diffraction pattern is the Fourier transform of its shape, a function of width $\sim1/L$ in reciprocal space (<a href="fourier-analysis.html">MATH 205</a>, scaling property). The smaller the crystal, the broader the peak. (c) Ignoring the instrument, $\beta=0.50^\circ$ gives $L=16.9$ nm, a $2\%$ underestimate here; for narrow peaks from larger crystals the instrumental part is dominant and must be removed with a standard. Scherrer sizes apply to coherently scattering domains, which can be smaller than grains, and ignore strain broadening.</p>
+            <p class="answer">(a) $17.3$ nm; (c) $16.9$ nm ($2\%$ smaller)</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q103-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Coulomb</span></div>
+            <p>Find the Coulomb energy of Na$^+$ and Cl$^-$ at $0.282$ nm separation (the NaCl lattice parameter is $0.564$ nm) and the electric field $0.1$ nm from a proton.</p>
+            <details class="solution"><summary>Solution</summary><p>$U=-1.440/0.282=-5.1$ eV. $E=1.44\ \mathrm{V\,nm}/(0.1\ \mathrm{nm})^2=144$ V/nm $=1.44\times10^{11}$ V/m.</p></details>
+            </div>
+            <div class="problem" id="q103-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Capacitors</span></div>
+            <p>What is the capacitance of a $1$ cm$^2$ capacitor with a $1\ \mu$m film of $\varepsilon_r=1000$? How much energy does it store at $5$ V?</p>
+            <details class="solution"><summary>Solution</summary><p>$C=\varepsilon_0\varepsilon_rA/d=0.89\ \mu$F; $U=\tfrac12CV^2=11\ \mu$J.</p></details>
+            </div>
+            <div class="problem" id="q103-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Conduction</span></div>
+            <p>Find the drift velocity for $1$ A in a $1$ mm$^2$ copper wire ($n=8.49\times10^{28}\ \mathrm{m^{-3}}$). Why does a lamp light instantly?</p>
+            <details class="solution"><summary>Solution</summary><p>$v_d=I/(nAe)=7.4\times10^{-5}$ m/s. The electric field is set up along the entire wire at nearly the speed of light, so all carriers start moving together.</p></details>
+            </div>
+            <div class="problem" id="q103-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Magnetism</span></div>
+            <p>An electron moves at $10^6$ m/s perpendicular to a $0.1$ T field. Find the radius of its orbit and the cyclotron frequency. Do the same force and radius apply to a proton at the same speed?</p>
+            <details class="solution"><summary>Solution</summary><p>$r=mv/eB=57\ \mu$m and $f=\omega_c/2\pi=2.8$ GHz. A proton has $1836$ times the mass, so at the same speed $r=0.104$ m and $f=1.5$ MHz.</p></details>
+            </div>
+            <div class="problem" id="q103-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Waves</span></div>
+            <p>What is the speed of electromagnetic waves in terms of $\mu_0$ and $\varepsilon_0$? What is the wavelength in glass ($n=1.5$) of $600$ nm light?</p>
+            <details class="solution"><summary>Solution</summary><p>$c=1/\sqrt{\mu_0\varepsilon_0}=2.998\times10^8$ m/s. The frequency is unchanged and the speed falls by $n$, so $\lambda=600/1.5=400$ nm.</p></details>
+            </div>
+            <div class="problem" id="q103-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Diffraction</span></div>
+            <p>Cu K$\alpha$ ($0.15406$ nm) diffracts from the (200) planes of NaCl ($a=0.5640$ nm). At what $2\theta$ is the peak?</p>
+            <details class="solution"><summary>Solution</summary><p>$d=a/2=0.282$ nm, $\sin\theta=0.15406/0.564=0.2732$, $\theta=15.85^\circ$, $2\theta=31.7^\circ$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Purcell, E. M. and Morin, D. J., <em>Electricity and Magnetism</em>, Cambridge University Press: the best undergraduate treatment, with fields and relativity.</li>
+                <li>Griffiths, D. J., <em>Introduction to Electrodynamics</em>, Cambridge University Press: Maxwell&rsquo;s equations and waves with full vector calculus.</li>
+                <li>Hecht, E., <em>Optics</em>, Pearson: refraction, interference and diffraction in depth.</li>
+                <li>Halliday, D., Resnick, R. and Walker, J., <em>Fundamentals of Physics</em>, Wiley: problem sets covering the whole unit.</li>
+                <li>Cullity, B. D. and Stock, S. R., <em>Elements of X-ray Diffraction</em>, Pearson: Bragg&rsquo;s law, intensities and crystallite size in practice.</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: Drude conduction, the Hall effect and magnetism of solids.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="thermal-physics.html"><span class="dir">Previous course</span>Thermal physics</a>
+<a class="next" href="quantum-mechanics.html"><span class="dir">Next course</span>Quantum mechanics</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=c3f43998"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+</body>
+</html>

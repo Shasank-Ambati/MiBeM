@@ -187,6 +187,33 @@ window.MIBEM_TOPICS = [
     "katex": true
   },
   {
+    "id": 39,
+    "label": "PHYS 103",
+    "code": "PHYS 103",
+    "dept": "PHYS",
+    "level": 1,
+    "slug": "electricity-magnetism-and-waves",
+    "short": "Electricity, magnetism, waves",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 34,
+    "title": "Electricity, magnetism and waves",
+    "blurb": "Fields, potentials, Maxwell's equations, light and wave phenomena, including diffraction.",
+    "builds": [
+      25,
+      37
+    ],
+    "related": [],
+    "takeaways": [
+      "Coulomb's law gives the field $\\mathbf E=\\mathbf F/q$ and the potential $V$ with $\\mathbf E=-\\nabla V$; the energy of two charges is $e^2/4\\pi\\varepsilon_0r=1.44\\ \\mathrm{eV\\,nm}/r$, which sets the scale of ionic and covalent bonding energies.",
+      "Gauss's law $\\oint\\mathbf E\\cdot\\mathrm d\\mathbf A=Q/\\varepsilon_0$ yields fields from symmetry; capacitors store energy $\\tfrac12CV^2$ with $C=\\varepsilon_0\\varepsilon_rA/d$, and a dielectric of relative permittivity $\\varepsilon_r$ reduces fields through polarisation of its atoms.",
+      "In a conductor $\\mathbf J=\\sigma\\mathbf E$ with $\\sigma=ne^2\\tau/m$ (Drude); drift speeds are tiny (about $0.07$ mm/s at $1$ A in copper) yet the electric signal travels near light speed, and Joule heating $I^2R$ dissipates the energy.",
+      "A moving charge feels the Lorentz force $\\mathbf F=q(\\mathbf E+\\mathbf v\\times\\mathbf B)$, which gives cyclotron motion, the Hall effect (carrier density and sign) and, for atomic moments of order the Bohr magneton, the magnetism of materials.",
+      "Maxwell's equations combine Gauss, Faraday and Ampere laws with displacement current and predict electromagnetic waves of speed $c=1/\\sqrt{\\mu_0\\varepsilon_0}$; diffraction of waves with $\\lambda\\sim d$ from a periodic structure follows Bragg's law $2d\\sin\\theta=n\\lambda$, the basis of X-ray, neutron and electron diffraction."
+    ],
+    "katex": true
+  },
+  {
     "id": 14,
     "label": "MSE 101",
     "code": "MSE 101",
@@ -406,6 +433,35 @@ window.MIBEM_TOPICS = [
       "The discrete Fourier transform computed by the FFT in $O(N\\log N)$ underlies spectral solvers, plane-wave DFT and Ewald summation; sampling at spacing $\\Delta$ resolves wavenumbers only up to $\\pi/\\Delta$, and faster oscillations alias to false lower frequencies.",
       "Diffraction is the Fourier transform of the scattering density: a lattice transforms into a reciprocal lattice, a finite crystal gives peaks of width $\\propto1/L$ (Scherrer), and Bloch's theorem expands electron states in plane waves $e^{i(\\mathbf{k}+\\mathbf{G})\\cdot\\mathbf{r}}$."
     ]
+  },
+  {
+    "id": 40,
+    "label": "PHYS 201",
+    "code": "PHYS 201",
+    "dept": "PHYS",
+    "level": 2,
+    "slug": "quantum-mechanics",
+    "short": "Quantum mechanics",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 32,
+    "title": "Quantum mechanics",
+    "blurb": "Wavefunctions, the Schrödinger equation, operators, the hydrogen atom, spin and perturbation theory.",
+    "builds": [
+      37,
+      39,
+      28,
+      30
+    ],
+    "related": [],
+    "takeaways": [
+      "Light and matter show both wave and particle behaviour: photons carry energy $E=hf$, and particles have wavelength $\\lambda=h/p$; the state of a particle is a wavefunction $\\psi$ whose squared modulus $|\\psi|^2$ is the probability density.",
+      "The time-independent Schrodinger equation $\\hat H\\psi=E\\psi$ is an eigenvalue problem: boundary conditions force quantised energies, as for a particle in a box, $E_n=n^2h^2/8mL^2$, where confinement raises the energy as $1/L^2$ (the origin of quantum-dot colour and of the stability of atoms).",
+      "Observables are Hermitian operators, $\\hat p=-i\\hbar\\,\\mathrm d/\\mathrm dx$; operators that do not commute, such as $\\hat x$ and $\\hat p$ with $[\\hat x,\\hat p]=i\\hbar$, cannot be sharp together, giving $\\Delta x\\,\\Delta p\\ge\\hbar/2$.",
+      "A particle can tunnel through a barrier with probability $\\sim e^{-2\\kappa d}$ (the basis of the scanning tunnelling microscope), and a harmonic oscillator has energies $(n+\\tfrac12)\\hbar\\omega$ with a zero-point energy; hydrogen has $E_n=-13.6\\ \\mathrm{eV}/n^2$ and orbitals labelled by $n,l,m$.",
+      "Electrons have spin $\\tfrac12$ and obey the Pauli exclusion principle, which builds the shell structure of the periodic table and bonding; when exact solutions are impossible, perturbation theory and the variational principle (energy of any trial function is an upper bound on the ground state) are the working methods of electronic-structure theory."
+    ],
+    "katex": true
   },
   {
     "id": 2,
@@ -879,29 +935,6 @@ window.MIBEM_TOPICS = [
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
 window.MIBEM_PLANNED = [
-  {
-    "code": "PHYS 103",
-    "dept": "PHYS",
-    "level": 1,
-    "title": "Electricity, magnetism and waves",
-    "blurb": "Fields, potentials, Maxwell's equations, light and wave phenomena, including diffraction.",
-    "needs": [
-      "MATH 102",
-      "PHYS 101"
-    ]
-  },
-  {
-    "code": "PHYS 201",
-    "dept": "PHYS",
-    "level": 2,
-    "title": "Quantum mechanics",
-    "blurb": "Wavefunctions, the Schrödinger equation, operators, the hydrogen atom, spin and perturbation theory.",
-    "needs": [
-      "MATH 202",
-      "MATH 203",
-      "PHYS 101"
-    ]
-  },
   {
     "code": "PHYS 302",
     "dept": "PHYS",
