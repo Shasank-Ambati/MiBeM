@@ -134,6 +134,32 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 37,
+    "label": "PHYS 101",
+    "code": "PHYS 101",
+    "dept": "PHYS",
+    "level": 1,
+    "slug": "classical-mechanics",
+    "short": "Classical mechanics",
+    "part": "Physics",
+    "tone": "a",
+    "minutes": 34,
+    "title": "Classical mechanics",
+    "blurb": "Newton's laws, energy, momentum, oscillations, rotation and Lagrangian mechanics: the physics that molecular dynamics integrates.",
+    "builds": [
+      24
+    ],
+    "related": [],
+    "takeaways": [
+      "Newton's second law $m\\ddot{\\mathbf r}=\\mathbf F$ turns a force law into motion: given forces and initial conditions, the trajectory follows, which is exactly what molecular dynamics integrates for every atom.",
+      "A force that depends only on position and does no net work around closed paths is conservative and equals minus the gradient of a potential energy, $\\mathbf F=-\\nabla U$; energy conservation $\\tfrac12mv^2+U=E$ then gives speeds directly and stable equilibria are minima of $U$.",
+      "Momentum is conserved when no external force acts (Newton's third law), the centre of mass moves as if all mass and external force were concentrated there, and collisions are solved with momentum plus, for elastic cases, energy conservation.",
+      "Near a stable equilibrium every potential is a spring, $U\\approx\\tfrac12k x^2$, giving simple harmonic motion with $\\omega=\\sqrt{k/m}$; damping, driving and coupling lead to resonance and normal modes, the classical origin of phonons.",
+      "Lagrangian mechanics replaces forces by one scalar, $L=T-U$, and the Euler-Lagrange equations $\\tfrac{d}{dt}\\partial L/\\partial\\dot q=\\partial L/\\partial q$ hold in any coordinates; symmetries of $L$ give conserved quantities, and the Hamiltonian $H=T+U$ is the starting point of statistical and quantum mechanics."
+    ],
+    "katex": true
+  },
+  {
     "id": 14,
     "label": "MSE 101",
     "code": "MSE 101",
@@ -826,13 +852,94 @@ window.MIBEM_TOPICS = [
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
 window.MIBEM_PLANNED = [
-  {"code": "PHYS 101", "dept": "PHYS", "level": 1, "title": "Classical mechanics", "blurb": "Newton's laws, energy, momentum, oscillations, rotation and Lagrangian mechanics: the physics that molecular dynamics integrates.", "needs": ["MATH 101"]},
-  {"code": "PHYS 102", "dept": "PHYS", "level": 1, "title": "Thermal physics", "blurb": "Temperature, heat, entropy and the laws of thermodynamics, with the kinetic theory of gases.", "needs": ["MATH 101", "PHYS 101"]},
-  {"code": "PHYS 103", "dept": "PHYS", "level": 1, "title": "Electricity, magnetism and waves", "blurb": "Fields, potentials, Maxwell's equations, light and wave phenomena, including diffraction.", "needs": ["MATH 102", "PHYS 101"]},
-  {"code": "PHYS 201", "dept": "PHYS", "level": 2, "title": "Quantum mechanics", "blurb": "Wavefunctions, the Schrödinger equation, operators, the hydrogen atom, spin and perturbation theory.", "needs": ["MATH 202", "MATH 203", "PHYS 101"]},
-  {"code": "PHYS 302", "dept": "PHYS", "level": 3, "title": "Solid state physics", "blurb": "Lattice vibrations, free electrons, bands and the Bloch theorem: the physics behind density functional theory.", "needs": ["PHYS 201", "PHYS 301", "MSE 201"]},
-  {"code": "MSE 202", "dept": "MSE", "level": 2, "title": "Mechanical behaviour of materials", "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.", "needs": ["MSE 101", "MATH 302"]},
-  {"code": "CMS 701", "dept": "CMS", "level": 7, "title": "Beyond DFT: many-body methods", "blurb": "GW, quantum Monte Carlo and coupled-cluster methods for systems where DFT is unreliable.", "needs": ["CMS 501"]},
-  {"code": "CMS 702", "dept": "CMS", "level": 7, "title": "Multiscale modelling", "blurb": "Linking atoms to continuum: coarse-graining, concurrent coupling and homogenisation.", "needs": ["CMS 502", "CMS 505", "CMS 506"]},
-  {"code": "CMS 703", "dept": "CMS", "level": 7, "title": "Machine-learned interatomic potentials", "blurb": "Descriptors, neural-network and equivariant potentials, active learning and uncertainty.", "needs": ["CMS 502", "CMS 507"]}
+  {
+    "code": "PHYS 102",
+    "dept": "PHYS",
+    "level": 1,
+    "title": "Thermal physics",
+    "blurb": "Temperature, heat, entropy and the laws of thermodynamics, with the kinetic theory of gases.",
+    "needs": [
+      "MATH 101",
+      "PHYS 101"
+    ]
+  },
+  {
+    "code": "PHYS 103",
+    "dept": "PHYS",
+    "level": 1,
+    "title": "Electricity, magnetism and waves",
+    "blurb": "Fields, potentials, Maxwell's equations, light and wave phenomena, including diffraction.",
+    "needs": [
+      "MATH 102",
+      "PHYS 101"
+    ]
+  },
+  {
+    "code": "PHYS 201",
+    "dept": "PHYS",
+    "level": 2,
+    "title": "Quantum mechanics",
+    "blurb": "Wavefunctions, the Schrödinger equation, operators, the hydrogen atom, spin and perturbation theory.",
+    "needs": [
+      "MATH 202",
+      "MATH 203",
+      "PHYS 101"
+    ]
+  },
+  {
+    "code": "PHYS 302",
+    "dept": "PHYS",
+    "level": 3,
+    "title": "Solid state physics",
+    "blurb": "Lattice vibrations, free electrons, bands and the Bloch theorem: the physics behind density functional theory.",
+    "needs": [
+      "PHYS 201",
+      "PHYS 301",
+      "MSE 201"
+    ]
+  },
+  {
+    "code": "MSE 202",
+    "dept": "MSE",
+    "level": 2,
+    "title": "Mechanical behaviour of materials",
+    "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.",
+    "needs": [
+      "MSE 101",
+      "MATH 302"
+    ]
+  },
+  {
+    "code": "CMS 701",
+    "dept": "CMS",
+    "level": 7,
+    "title": "Beyond DFT: many-body methods",
+    "blurb": "GW, quantum Monte Carlo and coupled-cluster methods for systems where DFT is unreliable.",
+    "needs": [
+      "CMS 501"
+    ]
+  },
+  {
+    "code": "CMS 702",
+    "dept": "CMS",
+    "level": 7,
+    "title": "Multiscale modelling",
+    "blurb": "Linking atoms to continuum: coarse-graining, concurrent coupling and homogenisation.",
+    "needs": [
+      "CMS 502",
+      "CMS 505",
+      "CMS 506"
+    ]
+  },
+  {
+    "code": "CMS 703",
+    "dept": "CMS",
+    "level": 7,
+    "title": "Machine-learned interatomic potentials",
+    "blurb": "Descriptors, neural-network and equivariant potentials, active learning and uncertainty.",
+    "needs": [
+      "CMS 502",
+      "CMS 507"
+    ]
+  }
 ];

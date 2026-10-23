@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Register a new course in assets/topics.js, taking over its entry in the planned list.
 
-    python tools/add_course.py PHYS\ 101 classical-mechanics "Classical mechanics" --short "Classical mechanics" \
+    python tools/add_course.py "PHYS 101" classical-mechanics "Classical mechanics" --short "Classical mechanics" \
         --builds "MATH 101" --blurb "One-sentence description." [--katex]
 
 Afterwards write the page source and run  python tools/new_page.py source.html  then  python tools/build.py.

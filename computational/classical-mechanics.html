@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classical mechanics - MiBeM</title>
+    <meta name="description" content="University-level classical mechanics for computational materials science: kinematics, Newton laws, energy and potentials, momentum and collisions, oscillations and normal modes, rotation and central forces, and Lagrangian and Hamiltonian mechanics, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/classical-mechanics.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Classical mechanics - MiBeM">
+    <meta property="og:description" content="University-level classical mechanics for computational materials science: kinematics, Newton laws, energy and potentials, momentum and collisions, oscillations and normal modes, rotation and central forces, and Lagrangian and Hamiltonian mechanics, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/classical-mechanics.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=cf197cab">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="37">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#kin">Lecture 1. Describing motion</a></li>
+                <li><a href="#newton">Lecture 2. Newton's laws and forces</a></li>
+                <li><a href="#energy">Lecture 3. Work, energy and potentials</a></li>
+                <li><a href="#momentum">Lecture 4. Momentum, systems of particles and collisions</a></li>
+                <li><a href="#osc">Lecture 5. Oscillations and normal modes</a></li>
+                <li><a href="#rot">Lecture 6. Rotation, angular momentum and central forces</a></li>
+                <li><a href="#lagr">Lecture 7. Lagrangian and Hamiltonian mechanics</a></li>
+                <li><a href="#summary-p101">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Physics</span><span>PHYS 101</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="physics-for-simulation.html" title="PHYS 100: Physics for simulation">100</a><a href="classical-mechanics.html" class="here" aria-current="page" title="PHYS 101: Classical mechanics">101</a><a href="statistical-mechanics.html" title="PHYS 301: Statistical mechanics for simulation">301</a></nav>
+<!-- coursenav:end -->
+            <h1>Classical mechanics</h1>
+            <p class="lead">Every simulation of atoms is, at heart, a calculation of classical mechanics: the forces on each atom are found, Newton's second law gives its acceleration, and the positions are advanced a tiny step in time. This course teaches the mechanics that this calculation rests on, at the level of a first-year university physics degree: motion, forces, energy, momentum, oscillations, rotation, and the more powerful Lagrangian and Hamiltonian formulations that connect to statistical and quantum mechanics.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 34 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">MATH 101: Calculus I</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Describe motion with vectors and solve problems with constant and variable acceleration, including projectile and circular motion.</li>
+                    <li>Apply Newton's laws to systems with friction, springs, tension and drag, drawing free-body diagrams and solving the resulting equations.</li>
+                    <li>Use work, kinetic and potential energy, and recognise conservative forces; find equilibria and their stability from a potential energy curve.</li>
+                    <li>Use momentum, impulse and the centre of mass, and solve elastic and inelastic collisions.</li>
+                    <li>Solve simple, damped, driven and coupled oscillators and find normal modes.</li>
+                    <li>Handle torque, angular momentum, moment of inertia and central-force motion.</li>
+                    <li>Derive equations of motion from a Lagrangian and use conservation laws from symmetry.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">MATH 101: Calculus I</a> (derivatives and integrals) and vectors at the level of school mathematics. The vector algebra is reviewed here as it is used; <a href="linear-algebra-foundations.html">MATH 103</a> and <a href="multivariable-calculus.html">MATH 102</a> can be taken alongside.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 3 (energy) and 5 (oscillations) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="kin">Lecture 1. Describing motion<a class="anchor" href="#kin" aria-label="Link to this section">#</a></h2>
+            <p>Position, velocity and acceleration are vectors. A particle at position $\mathbf r(t)$ has velocity $\mathbf v=\mathrm d\mathbf r/\mathrm dt$ and acceleration $\mathbf a=\mathrm d\mathbf v/\mathrm dt=\mathrm d^2\mathbf r/\mathrm dt^2$. Each Cartesian component obeys the one-dimensional calculus of <a href="calculus-single-variable.html">MATH 101</a>, and the three components of a motion in space are independent as long as the forces are. Reading the relations backwards, velocity is the integral of acceleration and position the integral of velocity, with the initial values as constants of integration.</p>
+            <div class="note thm"><strong>Constant acceleration</strong>
+            <p>If $\mathbf a$ is constant then $\mathbf v=\mathbf v_0+\mathbf at$ and $\mathbf r=\mathbf r_0+\mathbf v_0t+\tfrac12\mathbf at^2$. Eliminating $t$ in one dimension gives $v^2=v_0^2+2a(x-x_0)$. <em>Proof.</em> Integrate $\mathrm d\mathbf v/\mathrm dt=\mathbf a$ once to get $\mathbf v$, then again to get $\mathbf r$. For the last relation, solve $t=(v-v_0)/a$ and substitute into $x-x_0=v_0t+\tfrac12at^2$: $x-x_0=\dfrac{v^2-v_0^2}{2a}$.</p>
+            </div>
+            <p>A <strong>projectile</strong> launched at speed $v_0$ at angle $\theta$ above the horizontal has $a_x=0$ and $a_y=-g$ with $g=9.81\ \mathrm{m/s^2}$. The components are independent: $x=v_0\cos\theta\,t$ and $y=v_0\sin\theta\,t-\tfrac12gt^2$. Eliminating $t$ gives the parabola $y=x\tan\theta-\dfrac{gx^2}{2v_0^2\cos^2\theta}$. The flight time (back to launch height) is $T=2v_0\sin\theta/g$, the range $R=v_0^2\sin2\theta/g$ (largest at $45^\circ$) and the highest point $H=v_0^2\sin^2\theta/(2g)$.</p>
+            <p><strong>Circular motion.</strong> A particle moving on a circle of radius $r$ at constant speed $v$ has angular velocity $\omega=v/r$ (radians per second), period $T=2\pi/\omega$, and an acceleration pointing towards the centre with magnitude $a_c=v^2/r=\omega^2r$. <em>Proof.</em> With $\mathbf r=r(\cos\omega t,\sin\omega t)$, $\mathbf v=r\omega(-\sin\omega t,\cos\omega t)$ and $\mathbf a=-r\omega^2(\cos\omega t,\sin\omega t)=-\omega^2\mathbf r$: the speed is constant but the direction of $\mathbf v$ changes, so there is an acceleration, directed inward.</p>
+            <div class="example">
+                <strong>Worked example 1.1: a projectile</strong>
+                <p class="given">A ball is thrown at $20\ \mathrm{m/s}$ at $30^\circ$ above the horizontal from level ground. Find the flight time, range and maximum height.</p>
+                <p>Flight time $T=2(20)\sin30^\circ/9.81=2.04$ s. Range $R=20^2\sin60^\circ/9.81=35.3$ m. Maximum height $H=20^2\sin^230^\circ/(2\times9.81)=5.10$ m, reached at $t=T/2=1.02$ s. The horizontal speed $20\cos30^\circ=17.3$ m/s never changes, and $17.3\times2.04=35.3$ m &check;.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 1.2: a centrifuge</strong>
+                <p class="given">A sample sits $0.10$ m from the axis of a centrifuge turning at $10\,000$ rpm. What is its acceleration in units of $g$?</p>
+                <p>$\omega=10\,000\times2\pi/60=1047$ rad/s, so $a=\omega^2r=1047^2\times0.10=1.10\times10^5\ \mathrm{m/s^2}$, which is $11\,200\,g$. Centrifuges and ball mills use this inward acceleration to separate particles by density or to drive collisions that grind powders to a fine size.</p>
+            </div>
+
+            <p>Relative velocities add as vectors: if a frame moves with constant velocity $\mathbf V$ relative to another, a particle with velocity $\mathbf v$ in the first has $\mathbf v+\mathbf V$ in the second, while accelerations are the same in both. Frames related this way are <strong>inertial frames</strong>, and Newton's laws take the same form in all of them (Galilean invariance).</p>
+
+            <h2 id="newton">Lecture 2. Newton's laws and forces<a class="anchor" href="#newton" aria-label="Link to this section">#</a></h2>
+            <p><strong>Newton's laws.</strong> (1) A body subject to no net force moves with constant velocity in an inertial frame. (2) The net force on a body equals its mass times its acceleration, $\mathbf F=m\mathbf a=\mathrm d\mathbf p/\mathrm dt$ with momentum $\mathbf p=m\mathbf v$. (3) If body A exerts a force on B, B exerts an equal and opposite force on A. The second law is the equation of motion; the whole of this course, and of molecular dynamics, is the art of finding $\mathbf F$ and then solving $m\ddot{\mathbf r}=\mathbf F$. Mass is measured in kilograms and force in newtons ($1\ \mathrm N=1\ \mathrm{kg\,m/s^2}$).</p>
+            <p>The forces met most often:</p>
+            <ul>
+                <li><strong>Gravity</strong> near the Earth's surface: $\mathbf F=m\mathbf g$ with $g=9.81\ \mathrm{m/s^2}$; generally $F=GMm/r^2$ (Lecture 6).</li>
+                <li><strong>Spring (Hooke's law)</strong>: $F=-kx$, restoring and proportional to the displacement from equilibrium; $k$ is the stiffness in N/m. Every bond is a spring for small displacements (Lecture 3).</li>
+                <li><strong>Tension and normal forces</strong>: constraints. A rope pulls along itself, and a surface pushes perpendicular to itself, with whatever magnitude is needed to prevent motion through them.</li>
+                <li><strong>Friction</strong>: $f\le\mu_sN$ while sticking and $f=\mu_kN$ while sliding, opposing the motion, with $N$ the normal force.</li>
+                <li><strong>Drag</strong> from a fluid: $\mathbf F=-b\mathbf v$ at low speed (viscous), $\propto v^2$ at high speed.</li>
+            </ul>
+            <p>The method for any problem: draw a <strong>free-body diagram</strong> of each body, choose axes along the expected motion, write $\sum F=ma$ for each axis, add constraint equations (a rope of fixed length links accelerations), and solve.</p>
+            <div class="note"><strong>Why the third law gives conservation of momentum</strong>
+            <p>For two particles that interact only with each other, $\mathbf F_{12}=-\mathbf F_{21}$, so $\dfrac{\mathrm d}{\mathrm dt}(\mathbf p_1+\mathbf p_2)=\mathbf F_{12}+\mathbf F_{21}=\mathbf0$: the total momentum does not change. The same argument for $N$ particles gives Lecture 4.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: a block on an incline</strong>
+                <p class="given">A block slides down a $30^\circ$ incline with coefficient of kinetic friction $\mu_k=0.30$. Find its acceleration.</p>
+                <p>Along the slope the forces are the gravity component $mg\sin\theta$ (down) and friction $\mu_kN$ (up), with $N=mg\cos\theta$ from balance perpendicular to the slope. So $ma=mg\sin\theta-\mu_kmg\cos\theta$ and $a=g(\sin\theta-\mu_k\cos\theta)=9.81(0.500-0.260)=2.36\ \mathrm{m/s^2}$. The mass cancels. The block slides at all only if $\tan\theta&gt;\mu_s$, the same condition as for the angle of repose of a powder pile.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.2: an Atwood machine</strong>
+                <p class="given">Masses $m_1=3$ kg and $m_2=2$ kg hang from a light rope over a frictionless pulley. Find the acceleration and the tension.</p>
+                <p>The rope links the motions: if $m_1$ descends with acceleration $a$, $m_2$ rises with $a$. Newton for each: $m_1g-T=m_1a$ and $T-m_2g=m_2a$. Adding, $a=g\dfrac{m_1-m_2}{m_1+m_2}=9.81\times\dfrac15=1.96\ \mathrm{m/s^2}$ and $T=\dfrac{2m_1m_2}{m_1+m_2}g=23.5$ N. Check: $T$ lies between $m_2g=19.6$ N and $m_1g=29.4$ N &check;, and $a\to0$, $T\to mg$ for equal masses.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 2.3: motion with viscous drag</strong>
+                <p class="given">A $10$ g bead falls in a viscous liquid with drag $F=-bv$, $b=0.050$ kg/s. Find its velocity as a function of time and the terminal velocity.</p>
+                <p>Taking down as positive, $m\dot v=mg-bv$. This is first-order linear (see <a href="ordinary-differential-equations.html">MATH 203</a>): $v(t)=\dfrac{mg}{b}\bigl(1-e^{-bt/m}\bigr)$. The terminal velocity is $mg/b=0.0981/0.050=1.96$ m/s, approached with time constant $\tau=m/b=0.20$ s; $90\%$ of it is reached at $\tau\ln10=0.46$ s. The same equation $m\dot v=F-bv$ with a random force added is the <em>Langevin equation</em> that thermostats atoms in molecular dynamics (<a href="molecular-dynamics.html">CMS 502</a>).</p>
+            </div>
+
+            <h2 id="energy">Lecture 3. Work, energy and potentials<a class="anchor" href="#energy" aria-label="Link to this section">#</a></h2>
+            <p>The <strong>work</strong> done by a force $\mathbf F$ along a path from A to B is the line integral $W=\int_A^B\mathbf F\cdot\mathrm d\mathbf r$ (<a href="vector-calculus.html">MATH 201</a>); in one dimension, $W=\int F\,\mathrm dx$, with units of joules. The power is $P=\mathbf F\cdot\mathbf v$.</p>
+            <div class="note thm"><strong>Work&ndash;energy theorem</strong>
+            <p>The net work done on a particle equals the change in its kinetic energy $K=\tfrac12mv^2$. <em>Proof.</em> In one dimension, $W=\int F\,\allowbreak \mathrm dx=\int m\dfrac{\mathrm dv}{\mathrm dt}\,\allowbreak \mathrm dx=\int m\dfrac{\mathrm dv}{\mathrm dt}v\,\allowbreak \mathrm dt=\int\mathrm d\bigl(\tfrac12mv^2\bigr)=\tfrac12mv_B^2-\tfrac12mv_A^2$. The same follows in three dimensions with $\mathbf F\cdot\mathrm d\mathbf r=m\dot{\mathbf v}\cdot\mathbf v\,\allowbreak \mathrm dt=\mathrm d(\tfrac12mv^2)$.</p>
+            </div>
+            <p>A force is <strong>conservative</strong> if the work it does between two points is independent of the path, equivalently zero around any closed loop. Then a <strong>potential energy</strong> $U(\mathbf r)$ exists with
+            $$\mathbf F=-\nabla U,\qquad W_{A\to B}=U(A)-U(B).$$
+            In one dimension $F=-\mathrm dU/\mathrm dx$. Combining with the work&ndash;energy theorem gives <strong>conservation of mechanical energy</strong>: $E=\tfrac12mv^2+U(\mathbf r)$ is constant. Gravity ($U=mgh$), springs ($U=\tfrac12kx^2$), the Coulomb force and the interatomic forces of simulation are conservative; friction and drag are not, and convert mechanical energy into heat. If forces are known from a potential, speeds follow from energy alone: $v=\sqrt{2(E-U)/m}$.</p>
+            <p><strong>Energy diagrams.</strong> A graph of $U(x)$ shows the whole story. Motion is confined to the region where $E\ge U$, with turning points where $E=U$. <em>Equilibria</em> are points where $\mathrm dU/\mathrm dx=0$ (no force); a minimum ($U''&gt;0$) is stable and a maximum ($U''&lt;0$) is unstable. Near a stable minimum $x_0$ the Taylor series of <a href="calculus-single-variable.html">MATH 101</a> gives $U\approx U(x_0)+\tfrac12U''(x_0)(x-x_0)^2$: <strong>every stable equilibrium is a spring</strong> with stiffness $k=U''(x_0)$ (Lecture 5).</p>
+            <div class="demo" data-demo="lj"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <div class="note mat"><strong>In materials science: the interatomic potential</strong>
+            <p>The force on each atom in a simulation is minus the gradient of one function, the total potential energy $U(\mathbf r_1,\dots,\mathbf r_N)$. A simple model for noble gases is the Lennard&ndash;Jones pair potential $U(r)=4\varepsilon[(\sigma/r)^{12}-(\sigma/r)^6]$, with a minimum $-\varepsilon$ at $r_0=2^{1/6}\sigma$. The repulsive wall comes from overlapping electron clouds and the attractive tail from dispersion forces. Because $U$ is conservative, energy is conserved in an isolated simulation, which provides the standard check of an integrator (<a href="ordinary-differential-equations.html">MATH 203</a>).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 3.1: energy conservation for a pendulum</strong>
+                <p class="given">A pendulum bob on a $1.0$ m string is released from rest at $60^\circ$ to the vertical. How fast is it moving at the bottom?</p>
+                <p>The bob falls a height $h=L(1-\cos60^\circ)=0.50$ m. The tension does no work (it is perpendicular to the motion), so $\tfrac12mv^2=mgh$ and $v=\sqrt{2gh}=\sqrt{2\times9.81\times0.50}=3.13$ m/s, independent of the mass. Solving this with Newton&rsquo;s law alone would require the nonlinear equation of motion.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 3.2: an argon dimer</strong>
+                <p class="given">For argon, $\varepsilon=0.0103$ eV and $\sigma=3.405$ &Aring;. Find the equilibrium separation of two atoms, the force at $r=1.2\sigma$ and the vibration frequency of the dimer.</p>
+                <p>$r_0=2^{1/6}\sigma=1.122\times3.405=3.82$ &Aring;. The force is $F=-\mathrm dU/\mathrm dr=\dfrac{24\varepsilon}{\sigma}\bigl[2(\sigma/r)^{13}-(\sigma/r)^7\bigr]$, which at $r=1.2\sigma$ equals $-1.07\times10^{-11}$ N (attractive, since $r&gt;r_0$). The stiffness at the minimum is $k=U^{\prime\prime}(r_0)=57.15\,\allowbreak \varepsilon/\sigma^2=0.813$ N/m. The atoms oscillate against each other, so the effective mass is the reduced mass $\mu=m/2$ (Lecture 4): $\omega=\sqrt{k/\mu}$ gives $f=0.79$ THz, a wavenumber of $26\ \mathrm{cm^{-1}}$. This is a weak bond: a covalent bond is about a thousand times stiffer.</p>
+            </div>
+
+            <h2 id="momentum">Lecture 4. Momentum, systems of particles and collisions<a class="anchor" href="#momentum" aria-label="Link to this section">#</a></h2>
+            <p>For a system of particles the <strong>centre of mass</strong> is $\mathbf R=\dfrac1M\sum m_i\mathbf r_i$ with $M=\sum m_i$, and the total momentum is $\mathbf P=\sum m_i\mathbf v_i=M\dot{\mathbf R}$. Summing Newton's second law over all particles, the internal forces cancel in pairs by the third law, leaving
+            $$M\ddot{\mathbf R}=\mathbf F_\mathrm{ext}.$$
+            <strong>The centre of mass moves as if all the mass were concentrated there and acted on by the total external force.</strong> If $\mathbf F_\mathrm{ext}=0$, $\mathbf P$ is conserved: a molecule's internal vibrations cannot move its centre of mass, and a thrown object spinning in flight still follows a parabola with its centre of mass.</p>
+            <p><strong>Impulse.</strong> The impulse $\mathbf J=\int\mathbf F\,\allowbreak \mathrm dt=\Delta\mathbf p$ is the momentum delivered by a force acting for a time; the average force on a wall from gas atoms (the origin of pressure) is the rate of momentum transfer.</p>
+            <p><strong>Collisions.</strong> In every collision of an isolated system, total momentum is conserved. If kinetic energy is also conserved the collision is <em>elastic</em>; if the bodies stick together it is <em>perfectly inelastic</em> and the maximum possible energy is lost to heat. For a one-dimensional elastic collision of $m_1$ moving at $v$ into $m_2$ at rest, momentum $m_1v=m_1v_1'+m_2v_2'$ and energy $\tfrac12m_1v^2=\tfrac12m_1v_1'^2+\tfrac12m_2v_2'^2$ give
+            $$v_1'=\frac{m_1-m_2}{m_1+m_2}v,\qquad v_2'=\frac{2m_1}{m_1+m_2}v.$$
+            <em>Proof.</em> Rearrange the two equations as $m_1(v-v_1')=m_2v_2'$ and $m_1(v^2-v_1'^2)=m_2v_2'^2$; dividing the second by the first gives $v+v_1'=v_2'$ (the relative speed of approach equals that of separation), and substituting back gives the result. The fraction of kinetic energy transferred to the target is $\dfrac{4m_1m_2}{(m_1+m_2)^2}$, equal to $1$ only for equal masses.</p>
+            <p>The motion of two interacting bodies separates into the motion of the centre of mass and the <strong>relative motion</strong>, which behaves as a single particle of <strong>reduced mass</strong> $\mu=\dfrac{m_1m_2}{m_1+m_2}$ in the force between them. This is why a diatomic molecule vibrates with $\omega=\sqrt{k/\mu}$ and why the hydrogen atom in quantum mechanics uses the reduced electron mass.</p>
+            <div class="example">
+                <strong>Worked example 4.1: elastic and inelastic collisions</strong>
+                <p class="given">A $2$ kg block moving at $3$ m/s hits a stationary $1$ kg block. Find the velocities after an elastic collision and after a perfectly inelastic one.</p>
+                <p>Elastic: $v_1'=\tfrac13(3)=1$ m/s and $v_2'=\tfrac43(3)=4$ m/s; kinetic energy before $\tfrac12(2)(9)=9$ J, after $\tfrac12(2)(1)+\tfrac12(1)(16)=9$ J &check;. Inelastic: $v=(2\times3)/(2+1)=2$ m/s for both; the energy afterwards is $\tfrac12(3)(4)=6$ J, so $3$ J ($33\%$) has become heat.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.2: the centre of mass of a water molecule</strong>
+                <p class="given">Find the centre of mass of H$_2$O, with O&ndash;H bonds of length $0.9572$ &Aring; and an H&ndash;O&ndash;H angle of $104.52^\circ$.</p>
+                <p>Put the oxygen at the origin and the symmetry axis along $y$. Each hydrogen is at $$(x,y)=\bigl(\pm0.9572\sin52.26^\circ,\ 0.9572\cos52.26^\circ\bigr)=(\pm0.757,\ 0.586)\ \text{\AA}.$$ By symmetry $X=0$ and $$Y=\dfrac{2(1.008)(0.586)}{15.999+2.016}=0.066\ \text{\AA}.$$ The centre of mass is very close to the oxygen because oxygen is sixteen times heavier than hydrogen. Molecular dynamics codes remove the net momentum of the whole box at the start for exactly this reason: otherwise the centre of mass drifts at constant velocity forever.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 4.3: energy transfer in a collision</strong>
+                <p class="given">A helium atom ($4$ u) hits a stationary argon atom ($40$ u) head-on. What is the largest fraction of energy that can be transferred, and what does this say about thermalising a gas?</p>
+                <p>The fraction is $4m_1m_2/(m_1+m_2)^2=4\times4\times40/44^2=0.33$. A light projectile bounces off a heavy target giving up only a third of its energy per head-on collision (and less at glancing angles), so many collisions are needed to equilibrate. The same formula explains why neutrons are slowed best by light nuclei, such as hydrogen in water, and why they lose only $28\%$ of their energy in the best case on carbon-12 ($4\times1\times12/13^2=0.284$): a neutron needs about $115$ collisions to be moderated from $2$ MeV to thermal energy ($0.025$ eV) in graphite (Problem 6).</p>
+            </div>
+
+            <h2 id="osc">Lecture 5. Oscillations and normal modes<a class="anchor" href="#osc" aria-label="Link to this section">#</a></h2>
+            <p><strong>Simple harmonic motion.</strong> A mass $m$ on a spring of stiffness $k$ obeys $m\ddot x=-kx$, that is $\ddot x=-\omega^2x$ with $\omega=\sqrt{k/m}$. The general solution is $x=A\cos(\omega t+\varphi)$, where the amplitude $A$ and phase $\varphi$ are fixed by the initial position and velocity (<a href="ordinary-differential-equations.html">MATH 203</a>). The period is $T=2\pi/\omega$ and does not depend on the amplitude. The energy $E=\tfrac12m\dot x^2+\tfrac12kx^2=\tfrac12kA^2$ is constant, flowing back and forth between kinetic and potential forms, each averaging $\tfrac14kA^2$. <em>Proof.</em> $\dot x=-A\omega\sin(\omega t+\varphi)$, so $E=\tfrac12mA^2\omega^2\sin^2+\tfrac12kA^2\cos^2=\tfrac12kA^2(\sin^2+\cos^2)$ using $m\omega^2=k$.</p>
+            <p>By Lecture 3 every stable equilibrium behaves like this for small displacements, with $k=U''(x_0)$. Larger motion explores the <strong>anharmonic</strong> part of the potential: the period then depends on the amplitude, and because real bonds are softer to stretch than to compress, atoms spend more time on the stretched side, which is the origin of thermal expansion.</p>
+            <div class="demo" data-demo="oscillator"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p><strong>Damping.</strong> With a drag force $-b\dot x$ the equation is $\ddot x+\gamma\dot x+\omega_0^2x=0$ with $\gamma=b/m$. For $\gamma&lt;2\omega_0$ the motion is a decaying oscillation $x=Ae^{-\gamma t/2}\cos(\omega_dt+\varphi)$ at the slightly lower frequency $\omega_d=\sqrt{\omega_0^2-\gamma^2/4}$, and the energy decays as $e^{-\gamma t}$. The <strong>quality factor</strong> $Q=\omega_0/\gamma$ is the number of radians the system oscillates while its energy falls by $1/e$. For larger damping the motion is overdamped. <strong>Driving</strong> the oscillator with a force $F\cos\omega t$ produces, after transients die away, an oscillation at the drive frequency whose amplitude peaks near $\omega_0$ at about $Q$ times the static displacement (resonance), with the full analysis in <a href="ordinary-differential-equations.html">MATH 203</a>.</p>
+            <p><strong>Coupled oscillators and normal modes.</strong> Two identical masses $m$ sit between fixed walls, each joined to its wall by a spring $k$ and to each other by a spring $k_c$. With displacements $x_1,x_2$:
+            $$m\ddot x_1=-kx_1-k_c(x_1-x_2),\qquad m\ddot x_2=-kx_2-k_c(x_2-x_1).$$
+            Adding and subtracting the equations decouples them: for $s=x_1+x_2$, $m\ddot s=-ks$; for $d=x_1-x_2$, $m\ddot d=-(k+2k_c)d$. So there are two independent oscillations, the <strong>normal modes</strong>: the in-phase mode $(1,1)$ with $\omega_1=\sqrt{k/m}$ (the coupling spring is never stretched) and the out-of-phase mode $(1,-1)$ with $\omega_2=\sqrt{(k+2k_c)/m}$. Any motion is a combination of the two; if only one mass is displaced initially, the energy shuttles between them with a beat period $2\pi/(\omega_2-\omega_1)$. In matrix language (<a href="eigenvalues-and-decompositions.html">MATH 202</a>) the modes are the eigenvectors of $K/m$ and the squared frequencies are its eigenvalues.</p>
+            <div class="note mat"><strong>In materials science: bonds, phonons and thermal motion</strong>
+            <p>A chain of $N$ coupled atoms has $N$ normal modes, and a crystal of $N$ atoms has $3N$: these are the <strong>phonons</strong> that carry heat, scatter neutrons and limit conductivity. Each atom vibrates about its site with the equipartition energy $\tfrac12k_\mathrm BT$ per mode, so in the classical limit the rms displacement is $\sqrt{k_\mathrm BT/k}$; the Lindemann criterion says that a crystal melts when this reaches about a tenth of the atomic spacing. The classical estimate fails for stiff bonds: when $\hbar\omega\gg k_\mathrm BT$ the mode is frozen in its quantum ground state (<a href="physics-for-simulation.html">PHYS 100</a>), which is why the heat capacity of a stiff material falls below the classical value at low temperature.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: a spring-mass system</strong>
+                <p class="given">A $0.50$ kg mass on a spring with $k=200$ N/m is pulled $5.0$ cm and released. Find the period, maximum speed, maximum acceleration and energy.</p>
+                <p>$\omega=\sqrt{200/0.50}=20$ rad/s, so $T=2\pi/20=0.314$ s. The maximum speed is $A\omega=0.050\times20=1.0$ m/s (at the centre), the maximum acceleration $A\omega^2=20$ m/s$^2$ (at the ends), and $E=\tfrac12kA^2=\tfrac12(200)(0.05)^2=0.25$ J. Check: $\tfrac12mv_\mathrm{max}^2=\tfrac12(0.5)(1)^2=0.25$ J &check;.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.2: the vibration of HCl</strong>
+                <p class="given">The H&ndash;Cl bond has stiffness $k=516$ N/m. Find the vibration frequency.</p>
+                <p>The reduced mass is $\mu=\dfrac{1.008\times35.45}{1.008+35.45}=0.980$ u $=1.63\times10^{-27}$ kg. Then $\omega=\sqrt{k/\mu}=\sqrt{516/1.63\times10^{-27}}=5.63\times10^{14}$ rad/s, $f=8.96\times10^{13}$ Hz, which corresponds to a wavenumber $f/c=2990\ \mathrm{cm^{-1}}$, within a fraction of a percent of the measured infrared absorption of HCl. The chlorine barely moves because it is $35$ times heavier than the hydrogen, which is why $\mu$ is so close to the hydrogen mass. The same calculation for a heavier bond partner (D instead of H) lowers the frequency by $\sqrt2$, a routine way to identify vibrational modes.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.3: a damped oscillator</strong>
+                <p class="given">A system has $m=1$ kg, $k=100$ N/m and damping rate $\gamma=0.4\ \mathrm{s^{-1}}$. Find $\omega_d$, $Q$, and the time for the energy to halve.</p>
+                <p>$\omega_0=10$ rad/s and $\omega_d=\sqrt{100-0.04}=9.998$ rad/s (a negligible shift). $Q=\omega_0/\gamma=25$. The energy decays as $e^{-\gamma t}$, so it halves after $t=\ln2/\gamma=1.73$ s, during which the system oscillates $1.73/0.628=2.8$ times. A high $Q$ means a sharp resonance of width $\gamma$: in this example the peak has a full width of $0.4$ rad/s on $10$ rad/s.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 5.4: normal modes of two coupled masses</strong>
+                <p class="given">Two masses of $1$ kg are joined to walls by springs with $k=100$ N/m and to each other by a spring $k_c=20$ N/m. Find the normal-mode frequencies and the beat period.</p>
+                <p>$\omega_1=\sqrt{100/1}=10$ rad/s with motion $(1,1)$ and $\omega_2=\sqrt{(100+40)/1}=11.83$ rad/s with motion $(1,-1)$. If mass 1 is displaced and released, the beat period is $2\pi/(\omega_2-\omega_1)=2\pi/1.83=3.43$ s: mass 1 slowly stops and mass 2 takes over the motion, then back. The stronger the coupling, the larger the splitting of the two frequencies, as for the two energy levels of a bond formed from two atomic states.</p>
+            </div>
+
+            <h2 id="rot">Lecture 6. Rotation, angular momentum and central forces<a class="anchor" href="#rot" aria-label="Link to this section">#</a></h2>
+            <p>The <strong>torque</strong> of a force about the origin is $\boldsymbol\tau=\mathbf r\times\mathbf F$ and the <strong>angular momentum</strong> of a particle is $\mathbf L=\mathbf r\times\mathbf p$. Differentiating, $\dot{\mathbf L}=\dot{\mathbf r}\times\mathbf p+\mathbf r\times\dot{\mathbf p}=\mathbf0+\mathbf r\times\mathbf F=\boldsymbol\tau$: <strong>torque is the rate of change of angular momentum</strong>, and $\mathbf L$ is conserved when there is no torque. For a rigid body rotating at angular velocity $\omega$ about a fixed axis,
+            $$L=I\omega,\qquad K=\tfrac12I\omega^2,\qquad\tau=I\dot\omega,\qquad I=\sum m_ir_i^2=\int r^2\,\mathrm dm,$$
+            with $r_i$ the distance from the axis. The <strong>moment of inertia</strong> $I$ plays the role of mass for rotation. Standard values about the symmetry axis: hoop $MR^2$; solid cylinder $\tfrac12MR^2$; solid sphere $\tfrac25MR^2$; and for a rod about its centre $\tfrac1{12}ML^2$. The <strong>parallel-axis theorem</strong> says that about an axis a distance $d$ from the centre of mass, $I=I_\mathrm{cm}+Md^2$. A body that rolls without slipping has $v=\omega R$ and kinetic energy $\tfrac12Mv^2+\tfrac12I\omega^2$.</p>
+            <p><strong>Central forces.</strong> A force directed along the line to a fixed centre, $\mathbf F=F(r)\hat{\mathbf r}$, exerts no torque, so $\mathbf L$ is constant: the motion stays in a plane and the area swept out per unit time, $\tfrac12r^2\dot\theta=L/2m$, is constant (Kepler's second law). With $L=mr^2\dot\theta$ the radial motion reduces to a one-dimensional problem in an <strong>effective potential</strong>,
+            $$m\ddot r=-\frac{\mathrm d}{\mathrm dr}U_\mathrm{eff},\qquad U_\mathrm{eff}(r)=U(r)+\frac{L^2}{2mr^2},$$
+            where the second term is the centrifugal barrier. For gravity, $U=-GMm/r$, a circular orbit at radius $r$ requires $mv^2/r=GMm/r^2$, so $v=\sqrt{GM/r}$ and the period is $T=2\pi\sqrt{r^3/GM}$ (Kepler's third law, $T^2\propto r^3$). The minimum of $U_\mathrm{eff}$ is the circular orbit and the energy above it gives elliptical orbits; the same analysis describes two atoms scattering off each other.</p>
+            <div class="example">
+                <strong>Worked example 6.1: a race down an incline</strong>
+                <p class="given">A hoop, a solid cylinder and a solid sphere roll without slipping down an incline of height $h=1.0$ m. Which arrives first, and how fast are they going at the bottom?</p>
+                <p>Energy conservation gives $Mgh=\tfrac12Mv^2+\tfrac12I\omega^2=\tfrac12Mv^2(1+I/MR^2)$, so $v=\sqrt{\dfrac{2gh}{1+I/MR^2}}$. Hoop ($I/MR^2=1$): $v=\sqrt{gh}=3.13$ m/s. Cylinder ($\tfrac12$): $v=\sqrt{4gh/3}=3.62$ m/s. Sphere ($\tfrac25$): $v=\sqrt{10gh/7}=3.74$ m/s. The sphere wins, the hoop is last, whatever the masses and radii: the more of the mass sits near the axis, the less energy goes into rotation. The acceleration down a slope of angle $\theta$ is $a=g\sin\theta/(1+I/MR^2)$, so a solid cylinder at $30^\circ$ accelerates at $\tfrac23g\sin30^\circ=3.27$ m/s$^2$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: rotation of the nitrogen molecule</strong>
+                <p class="given">N$_2$ has a bond length of $1.098$ &Aring;. Find its moment of inertia and the rotational constant $B=\hbar^2/(2I)$ in wavenumbers.</p>
+                <p>The reduced mass is $\mu=14.003/2=7.00$ u $=1.163\times10^{-26}$ kg, so $I=\mu r^2=1.163\times10^{-26}\times(1.098\times10^{-10})^2=1.40\times10^{-46}$ kg m$^2$. Then $B=\hbar^2/(2I)=3.97\times10^{-23}$ J, or $1.997\ \mathrm{cm^{-1}}$ after dividing by $hc$, in agreement with the measured $1.998\ \mathrm{cm^{-1}}$. Rotational spectra therefore measure bond lengths to a fraction of a percent: the quantum energies are $E_J=BJ(J+1)$ (<a href="physics-for-simulation.html">PHYS 100</a>), the classical $L^2/2I$ with $L^2\to\hbar^2J(J+1)$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.3: conservation of angular momentum</strong>
+                <p class="given">A skater spinning at $2.0$ rad/s with $I=4.0\ \mathrm{kg\,m^2}$ pulls in her arms, reducing $I$ to $1.5\ \mathrm{kg\,m^2}$. Find the new rate and the change in kinetic energy.</p>
+                <p>No external torque acts, so $I_1\omega_1=I_2\omega_2$ and $\omega_2=2.0\times4.0/1.5=5.33$ rad/s. The kinetic energy rises from $\tfrac12(4)(4)=8$ J to $\tfrac12(1.5)(5.33)^2=21.3$ J: the extra $13.3$ J is supplied by the work the skater does pulling her arms against the (apparent) centrifugal force. The same principle spins up a collapsing star and a contracting cloud of atoms.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.4: an orbit</strong>
+                <p class="given">A satellite orbits $400$ km above the Earth ($R_E=6371$ km, $GM_E=3.986\times10^{14}\ \mathrm{m^3/s^2}$). Find its speed and period.</p>
+                <p>$r=6.771\times10^6$ m, so $v=\sqrt{GM/r}=\sqrt{3.986\times10^{14}/6.771\times10^6}=7.67$ km/s and $T=2\pi r/v=5545$ s $=92.4$ min. The escape speed from the surface, $\sqrt{2GM/R_E}=11.19$ km/s, is $\sqrt2$ times the circular speed there. These orbital numbers reappear in atomic problems: the Bohr model of hydrogen uses the same effective-potential argument with the Coulomb force.</p>
+            </div>
+
+            <h2 id="lagr">Lecture 7. Lagrangian and Hamiltonian mechanics<a class="anchor" href="#lagr" aria-label="Link to this section">#</a></h2>
+            <p>Newton's equations in Cartesian coordinates are inconvenient for a bead on a wire, a pendulum or a rigid molecule, where the motion is restricted by constraints. The Lagrangian formulation works with any set of <strong>generalised coordinates</strong> $q_1,\dots,q_n$ (angles, distances, bond lengths) that describe the configuration. Define the <strong>Lagrangian</strong>
+            $$L(q,\dot q,t)=T-U,$$
+            the kinetic energy minus the potential energy, written in terms of the generalised coordinates and velocities. The path actually followed makes the <strong>action</strong> $S=\int L\,\mathrm dt$ stationary (Hamilton's principle), and by the calculus of variations (<a href="calculus-of-variations-and-optimisation.html">MATH 304</a>) this is equivalent to the <strong>Euler&ndash;Lagrange equations</strong>
+            $$\frac{\mathrm d}{\mathrm dt}\frac{\partial L}{\partial\dot q_i}-\frac{\partial L}{\partial q_i}=0 .$$
+            <em>Check in Cartesian coordinates.</em> For one particle, $L=\tfrac12m\dot x^2-U(x)$ gives $\partial L/\partial\dot x=m\dot x$ and $\partial L/\partial x=-U'$, so the equation is $m\ddot x=-U'(x)=F$: Newton's second law. The quantity $p_i=\partial L/\partial\dot q_i$ is the <strong>generalised momentum</strong>.</p>
+            <p><strong>Conservation laws from symmetry.</strong> If $L$ does not depend on a coordinate $q_i$ (it is <em>cyclic</em>), then $\partial L/\partial q_i=0$ and the Euler&ndash;Lagrange equation says $\dot p_i=0$: the conjugate momentum is conserved. Translation invariance gives conservation of linear momentum, rotation invariance gives conservation of angular momentum. If $L$ has no explicit dependence on time, the <strong>Hamiltonian</strong> $H=\sum_ip_i\dot q_i-L$ is conserved. <em>Proof.</em> $\dfrac{\mathrm dH}{\mathrm dt}=\sum_i\dot p_i\dot q_i+p_i\ddot q_i-\dfrac{\partial L}{\partial q_i}\dot q_i-\dfrac{\partial L}{\partial\dot q_i}\ddot q_i-\dfrac{\partial L}{\partial t}$; the Euler&ndash;Lagrange equation replaces $\dot p_i$ by $\partial L/\partial q_i$ and the terms cancel, leaving $-\partial L/\partial t=0$. For ordinary mechanical systems $H=T+U$, the total energy. (This is a special case of Noether's theorem: every continuous symmetry gives a conservation law.)</p>
+            <p><strong>Hamilton's equations.</strong> Writing $H$ as a function of the coordinates and the momenta $p$, the equations of motion become the first-order pair
+            $$\dot q_i=\frac{\partial H}{\partial p_i},\qquad\dot p_i=-\frac{\partial H}{\partial q_i}.$$
+            For $H=p^2/2m+U(q)$ these are $\dot q=p/m$ and $\dot p=-U'$, Newton's law again. The state of the system is a point in <strong>phase space</strong> $(q,p)$ and it flows along curves of constant $H$. A key property (Liouville's theorem) is that the flow preserves phase-space volume; integrators that respect this, like velocity Verlet, are called <em>symplectic</em> and conserve energy over very long runs (<a href="ordinary-differential-equations.html">MATH 203</a>). The Hamiltonian is also the object that statistical mechanics averages over, with the weight $e^{-H/k_\mathrm BT}$ (<a href="statistical-mechanics.html">PHYS 301</a>), and that becomes the quantum Hamiltonian operator in <a href="physics-for-simulation.html">PHYS 100</a>.</p>
+            <div class="demo" data-demo="integrators"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <div class="note mat"><strong>In materials science: constraints and rigid molecules</strong>
+            <p>Water models in molecular dynamics keep the O&ndash;H bonds and the H&ndash;O&ndash;H angle fixed. This removes the fastest vibration (about $9$ fs), allowing a time step four times larger. With generalised coordinates one simply does not include the frozen degrees of freedom; in Cartesian coordinates the same effect needs <em>Lagrange multipliers</em> adding constraint forces (the SHAKE and RATTLE algorithms). The Lagrangian view also generalises beyond particles: the continuum free-energy functionals of <a href="calculus-of-variations-and-optimisation.html">MATH 304</a> and the phase-field models of <a href="phase-field-modelling.html">CMS 505</a> are stationarity principles of exactly this kind.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: the pendulum</strong>
+                <p class="given">Derive the equation of motion of a simple pendulum of length $\ell$ and compare the small-angle and exact periods for an amplitude of $60^\circ$ with $\ell=1.00$ m.</p>
+                <p>The coordinate is the angle $\theta$. The bob has speed $\ell\dot\theta$ and height $-\ell\cos\theta$ below the pivot, so $L=\tfrac12m\ell^2\dot\theta^2+mg\ell\cos\theta$. Then $\partial L/\partial\dot\theta=m\ell^2\dot\theta$ and $\partial L/\partial\theta=-mg\ell\sin\theta$, so the Euler&ndash;Lagrange equation is $\ddot\theta=-(g/\ell)\sin\theta$ (no tension appears: constraints are built in). For small angles $\sin\theta\approx\theta$ and $\omega=\sqrt{g/\ell}$, $T_0=2\pi\sqrt{\ell/g}=2.006$ s. For a $60^\circ$ amplitude the exact period, from the elliptic integral $T=\dfrac{2T_0}{\pi}K(\sin^2\tfrac{\theta_0}2)$, is $2.153$ s, longer by $7.3\%$; the expansion $T\approx T_0(1+\theta_0^2/16)$ gives $2.139$ s. The period increases with amplitude because the potential $-\cos\theta$ is softer than a parabola: the anharmonic effect described in Lecture 5.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.2: the Atwood machine again</strong>
+                <p class="given">Derive the acceleration in Worked example 2.2 with one generalised coordinate.</p>
+                <p>Let $x$ be the downward displacement of $m_1$; then $m_2$ rises by $x$ (the rope length is fixed). $T=\tfrac12(m_1+m_2)\dot x^2$ and $U=-m_1gx+m_2gx$, so $L=\tfrac12(m_1+m_2)\dot x^2+(m_1-m_2)gx$ and the Euler&ndash;Lagrange equation $(m_1+m_2)\ddot x=(m_1-m_2)g$ gives $a=g\dfrac{m_1-m_2}{m_1+m_2}=1.96\ \mathrm{m/s^2}$ with no free-body diagrams and no tension.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 7.3: a central force in polar coordinates</strong>
+                <p class="given">Use $L$ in polar coordinates to obtain conservation of angular momentum and the effective potential of Lecture 6.</p>
+                <p>For a particle in a plane with potential $U(r)$, $L=\tfrac12m(\dot r^2+r^2\dot\theta^2)-U(r)$. The angle $\theta$ does not appear in $L$ (it is cyclic), so $p_\theta=mr^2\dot\theta$ is conserved: this is the angular momentum. The $r$ equation is $m\ddot r=mr\dot\theta^2-U^\prime(r)=\dfrac{p_\theta^2}{mr^3}-U^\prime(r)=-\dfrac{\mathrm d}{\mathrm dr}\Bigl(U+\dfrac{p_\theta^2}{2mr^2}\Bigr)$, the effective potential of Lecture 6, obtained in two lines without vectors.</p>
+            </div>
+
+            <h2 id="summary-p101">Summary of the unit<a class="anchor" href="#summary-p101" aria-label="Link to this section">#</a></h2>
+            <p>Newton's second law turns forces into motion, and the other results of the unit are its consequences organised for use: work and potential energy for forces that depend on position, momentum for isolated systems, the harmonic oscillator for any small motion about a stable equilibrium, and angular momentum for central forces. The Lagrangian and Hamiltonian reformulations make the same physics coordinate-independent and expose the link between symmetry and conservation, and they lead directly to statistical mechanics (<a href="statistical-mechanics.html">PHYS 301</a>), where the Hamiltonian is averaged over, and to quantum mechanics, where it becomes an operator. The oscillation and normal-mode results are the classical form of the lattice-vibration theory used throughout simulation.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Newton&#x27;s second law $m\ddot{\mathbf r}=\mathbf F$ turns a force law into motion: given forces and initial conditions, the trajectory follows, which is exactly what molecular dynamics integrates for every atom.</li>
+<li>A force that depends only on position and does no net work around closed paths is conservative and equals minus the gradient of a potential energy, $\mathbf F=-\nabla U$; energy conservation $\tfrac12mv^2+U=E$ then gives speeds directly and stable equilibria are minima of $U$.</li>
+<li>Momentum is conserved when no external force acts (Newton&#x27;s third law), the centre of mass moves as if all mass and external force were concentrated there, and collisions are solved with momentum plus, for elastic cases, energy conservation.</li>
+<li>Near a stable equilibrium every potential is a spring, $U\approx\tfrac12k x^2$, giving simple harmonic motion with $\omega=\sqrt{k/m}$; damping, driving and coupling lead to resonance and normal modes, the classical origin of phonons.</li>
+<li>Lagrangian mechanics replaces forces by one scalar, $L=T-U$, and the Euler-Lagrange equations $\tfrac{d}{dt}\partial L/\partial\dot q=\partial L/\partial q$ hold in any coordinates; symmetries of $L$ give conserved quantities, and the Hamiltonian $H=T+U$ is the starting point of statistical and quantum mechanics.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p101-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>A ball is kicked at $15$ m/s at $45^\circ$ above the horizontal over level ground. (a) Find the flight time, range and maximum height. (b) At $30^\circ$ the range is the same as at some other angle: which, and how do the maximum heights compare?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $T=2v_0\sin\theta/g$, $R=v_0^2\sin2\theta/g$, $H=v_0^2\sin^2\theta/2g$. Note $\sin2\theta=\sin(180^\circ-2\theta)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $T=2(15)(0.7071)/9.81=2.16$ s; $R=225\times1/9.81=22.9$ m; $H=225\times0.5/(2\times9.81)=5.73$ m.</p><p>(b) At $30^\circ$: $R=225\sin60^\circ/9.81=19.86$ m. The same range occurs at $90^\circ-30^\circ=60^\circ$, since $\sin(2\cdot60^\circ)=\sin120^\circ=\sin60^\circ$. The maximum heights are $225\sin^230^\circ/19.62=2.87$ m and $225\sin^260^\circ/19.62=8.60$ m, and the flight times $1.53$ s and $2.65$ s: the high trajectory takes longer and rises higher, for the same landing point.</p>
+            <p class="answer">(a) $2.16$ s, $22.9$ m, $5.73$ m; (b) $60^\circ$; heights $2.87$ m and $8.60$ m</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>A box starts from rest on a $25^\circ$ slope with $\mu_k=0.20$. (a) Find its acceleration and its speed after sliding $3.0$ m. (b) If $\mu_s=0.45$, will the box start to slide on its own?</p>
+            <details class="hint"><summary>Hint</summary><p>Along the slope: $ma=mg\sin\theta-\mu_kmg\cos\theta$. For (b) compare $\tan\theta$ with $\mu_s$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $a=g(\sin25^\circ-0.20\cos25^\circ)=9.81(0.4226-0.1813)=2.37$ m/s$^2$. From $v^2=2as$: $v=\sqrt{2(2.37)(3.0)}=3.77$ m/s (taking $1.59$ s).</p><p>(b) Sliding starts only if $\tan\theta&gt;\mu_s$. Here $\tan25^\circ=0.466&gt;0.45$, so the box just does start to slide (the critical angle is $\arctan0.45=24.2^\circ$).</p>
+            <p class="answer">(a) $2.37$ m/s$^2$, $3.77$ m/s; (b) yes, since $25^\circ&gt;24.2^\circ$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>A $20$ g bead is released from rest in a viscous liquid with drag $F=-bv$, $b=0.10$ kg/s. Find (a) the terminal velocity and time constant, (b) the velocity after $0.50$ s, and (c) the distance fallen in that time.</p>
+            <details class="hint"><summary>Hint</summary><p>$v=v_t(1-e^{-t/\tau})$ with $v_t=mg/b$, $\tau=m/b$; integrate for the distance.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $v_t=mg/b=0.02(9.81)/0.10=1.96$ m/s; $\tau=m/b=0.20$ s.</p><p>(b) $v=1.962(1-e^{-2.5})=1.962(0.9179)=1.80$ m/s, already $92\%$ of the terminal value.</p><p>(c) $x=\int_0^tv\,\allowbreak \mathrm dt=v_t\bigl[t-\tau(1-e^{-t/\tau})\bigr]=1.962[0.50-0.20(0.9179)]=0.621$ m. Without drag it would have fallen $\tfrac12gt^2=1.23$ m.</p>
+            <p class="answer">(a) $1.96$ m/s, $0.20$ s; (b) $1.80$ m/s; (c) $0.62$ m</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Basic</span></div>
+            <p>A $0.50$ kg block is pressed $0.10$ m against a spring ($k=500$ N/m) on a horizontal floor and released. (a) Find its speed on leaving the spring if there is no friction. (b) With $\mu_k=0.20$ everywhere, find the speed on leaving the spring and the total distance travelled from the release point.</p>
+            <details class="hint"><summary>Hint</summary><p>Energy: stored spring energy $\tfrac12kx^2$ goes to kinetic energy and, with friction, to work $\mu mgs$ done against it.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tfrac12mv^2=\tfrac12kx^2$ gives $v=x\sqrt{k/m}=0.10\sqrt{1000}=3.16$ m/s.</p><p>(b) Over the first $0.10$ m friction removes $\mu mg x=0.2(0.5)(9.81)(0.1)=0.098$ J, so $\tfrac12mv^2=2.50-0.098=2.40$ J and $v=\sqrt{2(2.40)/0.50}=3.10$ m/s. The block stops when all $2.50$ J has gone to heat: $\mu mg s=2.50$, so $s=2.50/(0.2\times0.5\times9.81)=2.55$ m from the release point.</p>
+            <p class="answer">(a) $3.16$ m/s; (b) $3.10$ m/s and $2.55$ m</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>The hydrogen molecule is modelled by the Morse potential $U(r)=D\bigl[1-e^{-a(r-r_e)}\bigr]^2$ with $D=4.75$ eV, $a=1.94\ \mathrm{\AA^{-1}}$ and $r_e=0.741$ &Aring;. (a) Find the force and show that $r_e$ is the equilibrium. (b) Find the stiffness $k$ at the minimum and the vibration frequency in $\mathrm{cm^{-1}}$ (reduced mass $0.504$ u). (c) Find the largest restoring force the bond can supply, and where.</p>
+            <details class="hint"><summary>Hint</summary><p>$F=-\mathrm dU/\mathrm dr$. Let $y=e^{-a(r-r_e)}$. The stiffness is $U^{\prime\prime}(r_e)$; the force is largest where $\mathrm dF/\mathrm dr=0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $y=e^{-a(r-r_e)}$, $U=D(1-y)^2$ and $\mathrm dy/\mathrm dr=-ay$, so $F=-\dfrac{\mathrm dU}{\mathrm dr}=-2D(1-y)(ay)=-2Da\,\allowbreak y(1-y)$. At $r=r_e$, $y=1$ and $F=0$: equilibrium. For $r&gt;r_e$, $y&lt;1$ and $F&lt;0$ (attractive); for $r&lt;r_e$, $F&gt;0$ (repulsive).</p><p>(b) $U^{\prime\prime}(r_e)=2Da^2=2(4.75\times1.602\times10^{-19})(1.94\times10^{10})^2=573$ N/m. Then $\omega=\sqrt{k/\mu}=\sqrt{573/(0.504\times1.661\times10^{-27})}=8.27\times10^{14}$ rad/s, i.e. $4390\ \mathrm{cm^{-1}}$, close to the measured $4400\ \mathrm{cm^{-1}}$ for H$_2$.</p><p>(c) $F(r)=-2Da(y-y^2)$ is most negative where $y=1/2$, i.e. $a(r-r_e)=\ln2$, $r-r_e=0.357$ &Aring;; there $|F|_\mathrm{max}=Da/2=7.4$ nN. A harmonic spring would give an ever-growing force; the real bond has a maximum strength and then lets go: this is the connection between the potential curve and the breaking of a bond.</p>
+            <p class="answer">$k=573$ N/m, $4390\ \mathrm{cm^{-1}}$; $F_\mathrm{max}=7.4$ nN at $r_e+0.357$ &Aring;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>Neutrons are moderated by elastic collisions with nuclei of mass number $A$. (a) Find the largest fraction of energy a neutron can lose in one head-on collision with carbon-12. (b) The average logarithmic energy loss per collision is $\xi=1+\dfrac{(A-1)^2}{2A}\ln\dfrac{A-1}{A+1}$ ($\xi=1$ for hydrogen). How many collisions bring a neutron from $2$ MeV to $0.025$ eV in H, D and C?</p>
+            <details class="hint"><summary>Hint</summary><p>Use $4m_1m_2/(m_1+m_2)^2$ for (a), and $n=\ln(E_0/E)/\xi$ for (b).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $4(1)(12)/(13)^2=48/169=0.284$: at most $28\%$.</p><p>(b) $\ln(2\times10^6/0.025)=\ln(8\times10^7)=18.20$. Hydrogen: $\xi=1$ so $n=18.2\approx18$. Deuterium ($A=2$): $\xi=1+\tfrac14\ln\tfrac13=0.725$, $n=25$. Carbon ($A=12$): $\xi=1+\tfrac{121}{24}\ln\tfrac{11}{13}=0.158$, $n=115$. Light nuclei are far better moderators, which is why reactors use water, heavy water or graphite with a large volume.</p>
+            <p class="answer">(a) $28.4\%$; (b) about $18$, $25$ and $115$ collisions</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>A damped oscillator with period $0.20$ s is observed to decay from an amplitude of $5.0$ mm to $3.0$ mm in $10$ cycles. Find (a) the damping rate $\gamma$, (b) the quality factor $Q$, (c) the fraction of energy lost per cycle.</p>
+            <details class="hint"><summary>Hint</summary><p>The amplitude decays as $e^{-\gamma t/2}$ and the energy as $e^{-\gamma t}$; the elapsed time is $10T$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $e^{-\gamma t/2}=3/5$ with $t=10(0.20)=2.0$ s gives $\gamma=2\ln(5/3)/2.0=0.511\ \mathrm{s^{-1}}$.</p><p>(b) $\omega_0\approx2\pi/0.20=31.4$ rad/s (the damping barely shifts the frequency), so $Q=\omega_0/\gamma=61.5$.</p><p>(c) Per cycle the energy is multiplied by $e^{-\gamma T}=e^{-0.102}=0.903$, so $9.7\%$ is lost. This agrees with the rule of thumb $2\pi/Q=0.102$, valid for large $Q$.</p>
+            <p class="answer">$\gamma=0.51\ \mathrm{s^{-1}}$, $Q=61.5$, $9.7\%$ per cycle</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>Two masses of $2.0$ kg are each joined to a wall by a spring of $300$ N/m, and to each other by a spring of $100$ N/m. Mass 1 is displaced by $A$ and released from rest, with mass 2 at its equilibrium. (a) Find the normal-mode frequencies. (b) Write $x_1(t)$ and $x_2(t)$. (c) After what time has all the energy first passed to mass 2?</p>
+            <details class="hint"><summary>Hint</summary><p>The modes are $(1,1)$ and $(1,-1)$ with $\omega^2=k/m$ and $(k+2k_c)/m$. The initial condition is half of each mode.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\omega_1=\sqrt{300/2}=12.25$ rad/s; $\omega_2=\sqrt{(300+200)/2}=15.81$ rad/s.</p><p>(b) The initial state $(A,0)=\tfrac A2(1,1)+\tfrac A2(1,-1)$, at rest, so $x_1=\tfrac A2(\cos\omega_1t+\cos\omega_2t)=A\cos\bar\omega t\,\allowbreak \cos\tfrac{\Delta}{2}t$ and $x_2=\tfrac A2(\cos\omega_1t-\cos\omega_2t)=A\sin\bar\omega t\,\allowbreak \sin\tfrac\Delta2t$, where $\bar\omega=\tfrac12(\omega_1+\omega_2)=14.03$ rad/s and $\Delta=\omega_2-\omega_1=3.56$ rad/s.</p><p>(c) $x_1$ envelope vanishes first when $\tfrac\Delta2t=\tfrac\pi2$, i.e. $t=\pi/\Delta=0.88$ s. The full beat period is $1.76$ s.</p>
+            <p class="answer">$12.25$ and $15.81$ rad/s; transfer time $0.88$ s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>A $10$ g bullet is fired into a $2.0$ kg block hanging on strings (a ballistic pendulum) and embeds in it; the block swings up $0.15$ m. Find the bullet speed and the fraction of the kinetic energy lost in the collision.</p>
+            <details class="hint"><summary>Hint</summary><p>Two stages: a perfectly inelastic collision (conserve momentum), then the swing (conserve energy).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>After the collision the combined mass $2.01$ kg moves at $V$ with $\tfrac12(m+M)V^2=(m+M)gh$, so $V=\sqrt{2gh}=\sqrt{2(9.81)(0.15)}=1.72$ m/s. Momentum in the collision: $mv=(m+M)V$, so $v=\dfrac{2.01}{0.010}(1.716)=345$ m/s. The energy fraction retained is $\dfrac{\tfrac12(m+M)V^2}{\tfrac12mv^2}=\dfrac{m}{m+M}=0.005$, so $99.5\%$ of the bullet&rsquo;s kinetic energy becomes heat and deformation. (This is why momentum, not energy, is used for the first stage.)</p>
+            <p class="answer">$345$ m/s; $99.5\%$ lost</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>(a) Find the radius and speed of a geostationary orbit (period $86\,164$ s, $GM_E=3.986\times10^{14}\ \mathrm{m^3/s^2}$) and its height above the surface ($R_E=6371$ km). (b) Show that the escape speed from a circular orbit of speed $v_c$ is $\sqrt2\,v_c$.</p>
+            <details class="hint"><summary>Hint</summary><p>Circular orbit: $mv^2/r=GMm/r^2$ and $T=2\pi r/v$; escape means total energy zero.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) From $T^2=4\pi^2r^3/GM$: $r=(GMT^2/4\pi^2)^{1/3}=4.216\times10^7$ m; the speed is $\sqrt{GM/r}=3.07$ km/s and the height is $4.216\times10^7-6.371\times10^6=3.58\times10^7$ m ($35\,800$ km).</p><p>(b) The energy of the satellite is $\tfrac12mv^2-GMm/r$. Escape needs $E=0$, so $v_\mathrm{esc}=\sqrt{2GM/r}$. Since $v_c=\sqrt{GM/r}$, $v_\mathrm{esc}=\sqrt2\,v_c$.</p>
+            <p class="answer">(a) $4.216\times10^7$ m, $3.07$ km/s, $35\,800$ km; (b) shown</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>A bead of mass $m$ slides without friction on a vertical circular hoop of radius $R=0.20$ m which rotates about its vertical diameter at constant angular velocity $\Omega$. Let $\theta$ be the angle of the bead from the bottom. (a) Write the Lagrangian and the equation of motion. (b) Find the equilibria and their stability as $\Omega$ increases. (c) For $\Omega=10$ rad/s, find the new equilibrium angle and the frequency of small oscillations about it.</p>
+            <details class="hint"><summary>Hint</summary><p>$T=\tfrac12mR^2(\dot\theta^2+\Omega^2\sin^2\theta)$ and $U=-mgR\cos\theta$. For (b) examine the sign of $\mathrm d\ddot\theta/\mathrm d\theta$ at the equilibria.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $L=\tfrac12mR^2\bigl(\dot\theta^2+\Omega^2\sin^2\theta\bigr)+mgR\cos\theta$. The Euler&ndash;Lagrange equation $\dfrac{\mathrm d}{\mathrm dt}(mR^2\dot\theta)=mR^2\Omega^2\sin\theta\cos\theta-mgR\sin\theta$ gives $\ddot\theta=\sin\theta\,\allowbreak \bigl(\Omega^2\cos\theta-g/R\bigr)$.</p><p>(b) Equilibria: $\sin\theta=0$ (bottom, $\theta=0$) or $\cos\theta_0=g/(R\Omega^2)$, which exists only if $\Omega^2&gt;g/R$. At $\theta=0$, linearising ($\sin\theta\approx\theta$, $\cos\theta\approx1$) gives $\ddot\theta=(\Omega^2-g/R)\theta$: stable for $\Omega&lt;\Omega_c=\sqrt{g/R}=7.00$ rad/s and unstable above it, where the two symmetric equilibria $\pm\theta_0$ appear and are stable. This is a pitchfork bifurcation: the symmetric state loses stability and symmetry is spontaneously broken, the same structure as Landau&rsquo;s theory of a phase transition (<a href="ordinary-differential-equations.html">MATH 203</a>, Lecture 2).</p><p>(c) $\cos\theta_0=9.81/(0.20\times100)=0.4905$, so $\theta_0=60.6^\circ$. Linearising about $\theta_0$: $\mathrm d\ddot\theta/\mathrm d\theta=\cos\theta_0(\Omega^2\cos\theta_0-g/R)-\Omega^2\sin^2\theta_0=-\Omega^2\sin^2\theta_0$, so $\omega^2=\Omega^2\sin^2\theta_0=100(1-0.4905^2)=75.9$ and $\omega=8.71$ rad/s.</p>
+            <p class="answer">$\Omega_c=7.00$ rad/s; $\theta_0=60.6^\circ$, $\omega=8.71$ rad/s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>A molecular dynamics time step must be much shorter than the fastest vibration. (a) Find the periods of the O&ndash;H stretch ($3700\ \mathrm{cm^{-1}}$) and the H&ndash;O&ndash;H bend ($1600\ \mathrm{cm^{-1}}$) and the time steps that give about $20$ steps per period. (b) At $300$ K an argon atom has $v_\mathrm{rms}=\sqrt{3k_\mathrm BT/m}$; how far does it move in $2$ fs? (c) What is the total kinetic energy of $1000$ argon atoms at $300$ K?</p>
+            <details class="hint"><summary>Hint</summary><p>Period $=1/(\tilde\nu c)$ with $c=3.0\times10^{10}$ cm/s; kinetic energy per atom is $\tfrac32k_\mathrm BT$ by equipartition.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The stretch has $T=1/(3700\times2.998\times10^{10})=9.0$ fs, so $\Delta t\approx0.45$ fs; the bend has $T=20.8$ fs, so $\Delta t\approx1.0$ fs. Freezing both with constraints removes these limits and allows $\Delta t=2$ fs, set then by the slower librations and by the collisions. Without constraints the step must be about $0.5$ fs.</p><p>(b) $v_\mathrm{rms}=\sqrt{3(1.381\times10^{-23})(300)/(39.95\times1.661\times10^{-27})}=433$ m/s, so in $2$ fs it moves $8.7\times10^{-13}$ m $=0.0087$ &Aring;, or $0.25\%$ of the nearest-neighbour distance. A step that is small compared with the length over which forces change is what lets the integrator follow the motion.</p><p>(c) $K=\tfrac32Nk_\mathrm BT=1.5\times1000\times0.02585$ eV $=38.8$ eV $=6.2\times10^{-18}$ J. The instantaneous temperature in a simulation is defined by inverting this relation, $T=2K/(3Nk_\mathrm B)$.</p>
+            <p class="answer">(a) $9.0$ fs, $20.8$ fs, steps $0.45$ and $1.0$ fs; (b) $0.0087$ &Aring;; (c) $38.8$ eV</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q101-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Kinematics</span></div>
+            <p>A car travels at $20$ m/s round a bend of radius $100$ m. Find its acceleration. If a ball is thrown at $20$ m/s at $30^\circ$, find the range.</p>
+            <details class="solution"><summary>Solution</summary><p>$a=v^2/r=400/100=4.0\ \mathrm{m/s^2}$, directed towards the centre of the bend. Range $=v_0^2\sin2\theta/g=400\sin60^\circ/9.81=35.3$ m.</p></details>
+            </div>
+            <div class="problem" id="q101-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Newton</span></div>
+            <p>Masses of $3$ kg and $2$ kg hang over a frictionless pulley. Find the acceleration and the rope tension.</p>
+            <details class="solution"><summary>Solution</summary><p>$a=g(m_1-m_2)/(m_1+m_2)=1.96\ \mathrm{m/s^2}$; $T=2m_1m_2g/(m_1+m_2)=23.5$ N.</p></details>
+            </div>
+            <div class="problem" id="q101-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Energy</span></div>
+            <p>A pendulum of length $1.0$ m is released from $60^\circ$. Find the speed at the bottom. What is the force on a particle in a potential $U=\tfrac12kx^2$?</p>
+            <details class="solution"><summary>Solution</summary><p>$v=\sqrt{2gL(1-\cos60^\circ)}=\sqrt{9.81}=3.13$ m/s. The force is $F=-\mathrm dU/\mathrm dx=-kx$, Hooke&rsquo;s law.</p></details>
+            </div>
+            <div class="problem" id="q101-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Collisions</span></div>
+            <p>A $4$ u atom hits a stationary $40$ u atom head-on, elastically. What is the largest fraction of energy that can be transferred? Which target mass would take all of it?</p>
+            <details class="solution"><summary>Solution</summary><p>$4m_1m_2/(m_1+m_2)^2=0.33$. All the energy is transferred only when $m_2=m_1$ (a $4$ u target); then the projectile stops.</p></details>
+            </div>
+            <div class="problem" id="q101-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Oscillations</span></div>
+            <p>The H&ndash;Cl bond has $k=516$ N/m and reduced mass $0.98$ u. Find the vibration frequency in $\mathrm{cm^{-1}}$. How does it change if H is replaced by D?</p>
+            <details class="solution"><summary>Solution</summary><p>$\omega=\sqrt{k/\mu}=5.63\times10^{14}$ rad/s, giving $\omega/2\pi c=2990\ \mathrm{cm^{-1}}$. For DCl the reduced mass is $1.90$ u, so the frequency falls by $\sqrt{0.98/1.90}=0.72$, to about $2140\ \mathrm{cm^{-1}}$.</p></details>
+            </div>
+            <div class="problem" id="q101-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Lagrangian</span></div>
+            <p>Write the Lagrangian of a mass on a spring and derive its equation of motion. Which quantity is conserved and why?</p>
+            <details class="solution"><summary>Solution</summary><p>$L=\tfrac12m\dot x^2-\tfrac12kx^2$. $\dfrac{\mathrm d}{\mathrm dt}(m\dot x)=-kx$, i.e. $m\ddot x=-kx$. $L$ has no explicit time dependence, so the Hamiltonian $H=\tfrac12m\dot x^2+\tfrac12kx^2$ (the energy) is conserved.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Kleppner, D. and Kolenkow, R. J., <em>An Introduction to Mechanics</em>, Cambridge University Press: a rigorous first-year text with many challenging problems.</li>
+                <li>Morin, D., <em>Introduction to Classical Mechanics: With Problems and Solutions</em>, Cambridge University Press: hundreds of worked problems and a clear treatment of the Lagrangian method.</li>
+                <li>Taylor, J. R., <em>Classical Mechanics</em>, University Science Books: oscillations, central forces and Lagrangian mechanics at the second-year level.</li>
+                <li>Goldstein, H., Poole, C. and Safko, J., <em>Classical Mechanics</em>, Addison&ndash;Wesley: the standard graduate text for Hamiltonian mechanics and symmetries.</li>
+                <li>Landau, L. D. and Lifshitz, E. M., <em>Mechanics</em>, Butterworth&ndash;Heinemann: a short, deep account of the Lagrangian formulation and conservation laws.</li>
+                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press: how the equations of this unit are integrated for atoms.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="physics-for-simulation.html"><span class="dir">Previous course</span>Physics for simulation</a>
+<a class="next" href="statistical-mechanics.html"><span class="dir">Next course</span>Statistical mechanics for simulation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=64100909"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
+</body>
+</html>
