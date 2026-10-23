@@ -1151,6 +1151,62 @@ window.MIBEM_TOPICS = [
       "A database for a real alloy must be assessed from experimental data (diagrams, calorimetry, activities); copying a TDB file without checking the validity range, the phase list and the reference states gives plausible but wrong diagrams."
     ],
     "katex": true
+  },
+  {
+    "id": 50,
+    "label": "LAB 506",
+    "code": "LAB 506",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-diffusion-fipy",
+    "short": "FiPy: diffusion, spinodal",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 24,
+    "title": "Lab: Diffusion and phase separation with FiPy",
+    "blurb": "Solve Fick's law for carburising and compare with the erf solution, test mesh and time-step errors, recover D(c) with the Boltzmann-Matano method, and simulate spinodal decomposition with the Cahn-Hilliard equation.",
+    "builds": [
+      8,
+      9,
+      32
+    ],
+    "related": [],
+    "takeaways": [
+      "FiPy solves transport equations by the finite-volume method: a mesh, CellVariable objects and equations written as TransientTerm() == DiffusionTerm(coeff=D); boundary conditions are set with constrain, and each solve call advances one implicit time step.",
+      "For carburising of steel at 927 C (D = 8.3e-12 m2/s) the simulated profile matches the error-function solution to 1.1e-3 wt% and the case depth to 0.5 wt% carbon after 10 h is 0.685 mm (analytic 0.687 mm); the error is dominated by the time step (first order, halving dt halves the error) once the mesh has more than about 100 cells.",
+      "With a concentration-dependent diffusivity D(c) the profiles still collapse as a function of x divided by the square root of time (Boltzmann), and the Boltzmann-Matano formula recovers D(c) from one profile to within 1.5 per cent for c between 0.3 and 0.9 of the surface value.",
+      "The Cahn-Hilliard equation dc/dt = div(M grad mu) with mu = f'(c) - kappa laplacian(c) conserves the mean composition (0.500028 at all times) and lowers the free energy (0.0080 to 0.0029); from c0 = 0.5, inside the spinodal, the fastest-growing wavelength is 2 pi/sqrt(0.2) = 14.05 and the simulation gives 13.9 to 14.4.",
+      "Phase-separated domains coarsen and finally reach the equilibrium compositions of the double well (minimum 0.300 and maximum 0.700 in the final snapshot); in a small periodic box the late stage is limited by the box (stripes spanning the cell), so coarsening exponents measured in such runs (about 0.25 here) must be quoted with that limitation."
+    ],
+    "katex": true
+  },
+  {
+    "id": 51,
+    "label": "LAB 507",
+    "code": "LAB 507",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-fem-scikit-fem",
+    "short": "FEM: scikit-fem",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 29,
+    "title": "Lab: Finite elements with scikit-fem",
+    "blurb": "Build finite-element solutions from a 1D bar to a plate with a hole: convergence rates, linear elasticity, stress recovery, and the stress concentration factor checked against Kirsch and Peterson.",
+    "builds": [
+      10,
+      32,
+      29
+    ],
+    "related": [],
+    "takeaways": [
+      "A finite-element calculation has a fixed sequence: write the weak form, build a mesh, choose a finite-element basis, assemble the stiffness matrix and load vector, impose the boundary conditions, solve the linear system, and post-process; scikit-fem does each step in a line or two of Python.",
+      "Convergence must be measured, not assumed: for -u'' = 1 the error in the gradient halves when the mesh is halved (first order) while the error of the value falls by four (second order), and in 2D the centre value of the torsion problem converges as h^2 for linear and about h^4 for quadratic triangles.",
+      "A plate with a circular hole under tension has a stress concentration factor of 2.731 based on the net-section stress for d/W = 0.1 (finite elements, quadratic triangles, 369 nodes), against 2.722 from Peterson's chart: +0.3 per cent; the ratio to the gross stress is 3.03, so always say which nominal stress is used.",
+      "Quadratic elements reached 1.4 per cent accuracy on the coarsest mesh (134 nodes) while linear elements needed about 680 nodes for 0.6 per cent, and the stress at the hole edge is obtained by projecting the discontinuous element stress to nodes, which can overshoot on coarse meshes (+17 per cent for linear elements with 170 nodes).",
+      "Verification checks that cost nothing: the force transmitted through the ligament equals the applied force (4998.5 against 5000 N/mm), the far-field stress ratio follows Kirsch's solution, and for a traction-loaded plate the stresses do not depend on E or on the Poisson ratio (303.4 MPa for all four material choices) while the displacement scales as 1/E."
+    ],
+    "katex": true
   }
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
@@ -1227,7 +1283,9 @@ window.MIBEM_PATHPLAN = [
       "LAB 504",
       "CMS 504",
       "CMS 505",
+      "LAB 506",
       "CMS 506",
+      "LAB 507",
       "CMS 507"
     ]
   }

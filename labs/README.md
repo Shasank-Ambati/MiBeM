@@ -9,6 +9,8 @@ Input files, scripts and figures for the hands-on labs of the site (`computation
 | `lab-504` | Monte Carlo of the Ising model | Python, numba, numpy, scipy, matplotlib |
 | `lab-505` | Phase diagrams with CALPHAD | pycalphad, numpy, matplotlib (own teaching database `teach.tdb`) |
 | `lab-301` | Phonons of copper | phonopy, ASE, scipy, matplotlib (no DFT code needed) |
+| `lab-506` | Diffusion and spinodal decomposition | FiPy, scipy, numpy, matplotlib |
+| `lab-507` | Finite elements: bar to plate with a hole | scikit-fem, triangle, numpy, scipy, matplotlib |
 | `lab-502` | Molecular dynamics of liquid argon | LAMMPS, Python (numpy, matplotlib) |
 | `lab-503` | A metal with LAMMPS: copper with an EAM potential | LAMMPS, ASE |
 

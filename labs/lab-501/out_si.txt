@@ -1,2 +1,9 @@
 1. k-point convergence (a = 5.43 A, basis gth-szv)
    k mesh   k points   E per cell (Ha)   dE vs the densest (meV/atom)   time (s)
+   1 x 1 x 1      1          -7.109820         9459.34                    8.4
+   2 x 2 x 2      8          -7.714434         1233.14                   16.5
+   3 x 3 x 3     27          -7.789758          208.31                   32.9
+   4 x 4 x 4     64          -7.805069            0.00                   70.8
+
+2. equation of state and band gap
+   gth-szv   a0 = 10.719 A   B =  10.3 GPa   gap on the 4x4x4 mesh = -0.11 eV   direct gap at Gamma = 0.00 eV   (293 s)
