@@ -222,7 +222,7 @@ window.MIBEM_TOPICS = [
     "short": "Programming and workflow",
     "part": "Computing",
     "tone": "b",
-    "minutes": 11,
+    "minutes": 43,
     "title": "Programming and workflow",
     "blurb": "The command line, Python for science, version control, running on clusters, reproducibility and testing your own code.",
     "builds": [],
@@ -230,12 +230,13 @@ window.MIBEM_TOPICS = [
       11
     ],
     "takeaways": [
-      "A scripting language (Python with NumPy, SciPy and Matplotlib) plus the command line covers most day-to-day computational work.",
-      "Keep inputs, scripts and notes under version control; keep large outputs elsewhere and record how they were made.",
-      "On a cluster, test small, request only the resources you need, use job arrays for parameter sweeps and checkpoint long runs.",
-      "Reproducibility means recorded versions, seeds, units and inputs so that someone else, or you in a year, can rerun the work.",
-      "Test your own code against analytic solutions and simple limits before trusting it on real problems."
-    ]
+      "Scientific programming in Python rests on a small stack: the language for control flow and functions, NumPy for arrays (whole-array operations are about 500 times faster than a Python loop: 0.174 s against 0.00034 s for a million-element dot product), SciPy for algorithms and Matplotlib for figures.",
+      "Computers represent real numbers with finite precision: 0.1 + 0.2 is 0.30000000000000004, the spacing of double-precision numbers near 1 is 2.2e-16, subtracting nearly equal numbers loses digits ((1 - cos x)/x^2 returns 0 instead of 0.5 at x = 1e-8) and a naive variance of numbers near 1e9 is 384 instead of 1; the cure is a mathematically equivalent but stable formula.",
+      "Write code as small functions with clear inputs and outputs, test them against cases with known answers (assert, pytest), and learn the usual bugs: mutable default arguments, views against copies in NumPy, integer overflow in fixed-size integers and shape errors in broadcasting.",
+      "Algorithmic complexity decides what is possible: an all-pairs distance calculation grows as N^2 (1.46 s for 4000 particles) while a cell or tree neighbour list grows as N (0.032 s for the same 4000 particles and the same 56 182 pairs), which is the reason molecular-dynamics codes use neighbour lists.",
+      "A result is only science if it can be reproduced: keep scripts and inputs under version control, fix random seeds, pin package versions in a virtual environment, and save a run record next to the output (see LAB 101)."
+    ],
+    "katex": true
   },
   {
     "id": 23,

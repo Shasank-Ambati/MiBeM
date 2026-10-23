@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programming and Workflow - MiBeM</title>
-    <meta name="description" content="The command line, Python for science, data formats, version control, running on clusters, reproducibility and testing your own code.">
+    <title>Programming and workflow - MiBeM</title>
+    <meta name="description" content="University-level introduction to scientific programming for computational materials science: Python and NumPy, floating-point arithmetic and numerical errors, writing and testing correct code, data input and plotting, algorithmic complexity and performance, and reproducible workflow, with worked examples and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/programming-and-workflow.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Programming and Workflow - MiBeM">
-    <meta property="og:description" content="The command line, Python for science, data formats, version control, running on clusters, reproducibility and testing your own code.">
+    <meta property="og:title" content="Programming and workflow - MiBeM">
+    <meta property="og:description" content="University-level introduction to scientific programming for computational materials science: Python and NumPy, floating-point arithmetic and numerical errors, writing and testing correct code, data input and plotting, algorithmic complexity and performance, and reproducible workflow, with worked examples and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/programming-and-workflow.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="16">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,17 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#scope">1. What you need</a></li>
-                <li><a href="#shell">2. The command line</a></li>
-                <li><a href="#python">3. Python for science</a></li>
-                <li><a href="#data">4. Units and data formats</a></li>
-                <li><a href="#git">5. Version control</a></li>
-                <li><a href="#cluster">6. Running on a cluster</a></li>
-                <li><a href="#workflow">7. Workflows and reproducibility</a></li>
-                <li><a href="#testing">8. Testing your code</a></li>
-                <li><a href="#habits">9. Debugging and habits</a></li>
-                <li><a href="#check">10. Check your understanding</a></li>
-                <li><a href="#refs">11. References</a></li>
+                <li><a href="#python">Lecture 1. Python in one lecture</a></li>
+                <li><a href="#numpy">Lecture 2. Arrays and vectorisation with NumPy</a></li>
+                <li><a href="#floats">Lecture 3. How computers store numbers, and what goes wrong</a></li>
+                <li><a href="#correct">Lecture 4. Writing correct code: functions, tests and debugging</a></li>
+                <li><a href="#data">Lecture 5. Data in and out, and making figures</a></li>
+                <li><a href="#performance">Lecture 6. Speed: complexity, vectorisation and neighbour lists</a></li>
+                <li><a href="#workflow">Lecture 7. Reproducible workflow</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -55,11 +55,11 @@
 <nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" class="here" aria-current="page" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" title="COMP 201: Numerical methods essentials">201</a></nav>
 <!-- coursenav:end -->
             <h1>Programming and workflow</h1>
-            <p class="lead">Computational work is as much about organisation as about equations: running many calculations, keeping track of what produced which result, and being able to repeat it months later. This page covers the practical skills that make that routine: the command line, a scripting language, version control, clusters and testing.</p>
+            <p class="lead">Every method in this curriculum is, in the end, a program: a molecular-dynamics code integrates equations of motion, a Monte Carlo code samples a distribution, a finite-element code assembles and solves a sparse matrix. You do not need to become a software engineer, but you do need to write programs that are correct, fast enough and reproducible, and to read other people&rsquo;s. This unit teaches the programming ideas that matter for scientific computing, in Python because it is the language in which nearly all the tools of the field (ASE, pymatgen, phonopy, PySCF, scikit-learn) can be driven, and every number in it was produced by running the code shown.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 11 min</dd></div>
+<div><dt>Reading time</dt><dd>about 43 min</dd></div>
 <div><dt>Builds on</dt><dd>Nothing: this is the place to start</dd></div>
 <div><dt>Leads to</dt><dd><a href="your-first-simulation.html">COMP 102: Your first simulation</a><br><a href="lab-workstation-setup.html">LAB 101: Workstation setup</a><br><a href="numerical-methods-essentials.html">COMP 201: Numerical methods</a><br><a href="introduction.html">CMS 401: Introduction</a><br><a href="machine-learning-for-materials.html">CMS 507: Machine learning</a><br><a href="lab-md-lammps-argon.html">LAB 502: LAMMPS: liquid argon</a></dd></div>
 <div><dt>Level</dt><dd>Year 1: foundations</dd></div>
@@ -67,207 +67,550 @@
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Move around and automate tasks from the command line, including simple loops and pipes.</li>
-                    <li>Read data, fit and plot it in Python with NumPy, SciPy and Matplotlib.</li>
-                    <li>Keep a project under version control and describe a reproducible folder layout.</li>
-                    <li>Submit and manage jobs on a cluster scheduler, and test a piece of your own code.</li>
+                    <li>Write Python programs with variables, control flow and functions, and read tracebacks.</li>
+                    <li>Use NumPy arrays: indexing, slicing, broadcasting and vectorised operations, and know when a view is not a copy.</li>
+                    <li>Explain how real numbers are stored, estimate rounding errors, and rewrite expressions that lose precision.</li>
+                    <li>Structure code in functions and modules, write tests with known answers, and debug systematically.</li>
+                    <li>Read and write data files (text, CSV, JSON, NumPy and crystal-structure formats) and produce clear plots.</li>
+                    <li>Estimate the cost of an algorithm as a function of system size and replace a quadratic loop by a neighbour list.</li>
+                    <li>Keep a project reproducible with virtual environments, version control, seeds and run records.</li>
                 </ul>
+                <strong>You need:</strong> nothing beyond school mathematics; the first lab of the curriculum, <a href="lab-workstation-setup.html">LAB 101</a>, sets up the tools used here (terminal, Python environment, git) and should be done alongside Lectures 1 and 7. The follow-up course <a href="your-first-simulation.html">COMP 102</a> writes your first simulations, and <a href="numerical-methods-essentials.html">COMP 201</a> treats numerical algorithms.
             </div>
 
-            <p><strong>Starting point:</strong> If you have never programmed, start with <a href="your-first-simulation.html">Your first simulation</a>, which introduces Python step by step and runs in a browser, then come back here for the working habits. </p>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>Seven <strong>lectures</strong> with code that you should type and run; a <strong>problem set</strong> of twelve problems with hints and full solutions (with the output of the code); and a <strong>unit quiz</strong>. The code was run with Python 3.13 and NumPy 2.5; newer versions behave the same way for everything shown here, with the exceptions noted.</p>
+            </div>
 
-            <h2 id="scope">1. What you need<a class="anchor" href="#scope" aria-label="Link to this section">#</a></h2>
-            <p>You do not need to be a software engineer. A modest, well-chosen set of tools covers nearly all work in this series.</p>
-            <div class="table-scroll" role="region" aria-label="1. What you need (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Skill</th><th>Why</th><th>Typical tools</th></tr></thead>
-                <tbody>
-                    <tr><td>Command line</td><td>Simulation codes and clusters are driven from a text terminal</td><td>bash or zsh, ssh, rsync</td></tr>
-                    <tr><td>A scripting language</td><td>Build inputs, run sweeps, analyse and plot output</td><td>Python with NumPy, SciPy, Matplotlib</td></tr>
-                    <tr><td>Version control</td><td>History, collaboration, recovery from mistakes</td><td>git with GitHub or GitLab</td></tr>
-                    <tr><td>Cluster use</td><td>Large runs need many cores</td><td>Slurm or PBS, MPI, courses</td></tr>
-                    <tr><td>Reproducibility habits</td><td>Results must be repeatable and traceable</td><td>Environments, containers, notes, seeds</td></tr>
-                </tbody>
-            </table></div>
-
-            <h2 id="shell">2. The command line<a class="anchor" href="#shell" aria-label="Link to this section">#</a></h2>
-            <p>A <strong>shell</strong> reads commands, runs programs and glues them together. On Linux and macOS it is built in; on Windows, the Windows Subsystem for Linux (WSL) provides one. Everything is addressed by <em>paths</em>: absolute paths start at the root (<code>/home/you/project</code>), relative ones from the current directory, with <code>.</code> for the current and <code>..</code> for the parent directory. The most useful commands:</p>
-            <div class="table-scroll" role="region" aria-label="2. The command line (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Task</th><th>Commands</th></tr></thead>
-                <tbody>
-                    <tr><td>Navigate and list</td><td><code>pwd</code>, <code>cd</code>, <code>ls -l</code></td></tr>
-                    <tr><td>Create, copy, move, delete</td><td><code>mkdir</code>, <code>cp</code>, <code>mv</code>, <code>rm</code> (deletion is permanent: there is no recycle bin)</td></tr>
-                    <tr><td>Look at files</td><td><code>cat</code>, <code>less</code>, <code>head</code>, <code>tail</code>, <code>wc -l</code></td></tr>
-                    <tr><td>Search</td><td><code>grep</code> (text inside files), <code>find</code> (files by name or date)</td></tr>
-                    <tr><td>Compare</td><td><code>diff</code>, <code>sort</code>, <code>uniq</code></td></tr>
-                    <tr><td>Remote machines</td><td><code>ssh</code> to log in; <code>scp</code> and <code>rsync</code> to copy files</td></tr>
-                    <tr><td>Processes</td><td><code>top</code>, <code>ps</code>, <code>kill</code></td></tr>
-                </tbody>
-            </table></div>
-            <p>Two ideas give the shell its power. A <strong>pipe</strong> sends the output of one command into the next, and <code>&gt;</code> redirects output to a file. A <strong>loop</strong> repeats a command for many cases. Together they turn a morning of clicking into a line:</p>
-<pre><code># last total energy printed in a VASP OUTCAR file
-grep "free  energy   TOTEN" OUTCAR | tail -1
-
-# make one folder per temperature
-for T in 300 600 900; do mkdir T$T; done</code></pre>
-            <p><strong>Environment variables</strong> (such as <code>PATH</code>, the list of places searched for programs) and <strong>courses</strong> (<code>course load lammps</code> on most clusters) control which software versions you get. Python and other packages are managed in isolated <em>environments</em> (<code>python -m venv</code>, or <code>conda</code> / <code>mamba</code>), so that one project&rsquo;s libraries do not break another&rsquo;s.</p>
-
-            <h2 id="python">3. Python for science<a class="anchor" href="#python" aria-label="Link to this section">#</a></h2>
-            <p>Python is the usual glue language: readable, with a large scientific ecosystem. The core is small. Lists and dictionaries hold data, loops and functions structure the work, and f-strings format output. The scientific stack adds:</p>
+            <h2 id="python">Lecture 1. Python in one lecture<a class="anchor" href="#python" aria-label="Link to this section">#</a></h2>
+            <p>A program is a sequence of instructions that the computer executes. Python reads it line by line (it is <em>interpreted</em>), so you can try ideas interactively: type <code>python</code> in the terminal, or run a script with <code>python script.py</code>. The basic ingredients:</p>
             <ul>
-                <li><strong>NumPy</strong>: fast arrays with <em>vectorised</em> operations (apply a formula to a million numbers without writing a loop), slicing and <em>broadcasting</em> (arrays of different shapes combine by stretching the smaller one).</li>
-                <li><strong>SciPy</strong>: linear algebra, optimisation, integration, interpolation, statistics and ODE solvers (see <a href="numerical-methods-essentials.html">numerical methods</a>).</li>
-                <li><strong>Matplotlib</strong>: plots; <strong>pandas</strong>: tables of mixed data; <strong>Jupyter</strong> notebooks for exploring and documenting.</li>
-                <li>Materials-specific libraries: ASE and pymatgen (structures and workflows), pycalphad (thermodynamics), matminer and scikit-learn (<a href="machine-learning-for-materials.html">machine learning</a>).</li>
+            <li><strong>Values and types.</strong> <code>int</code> (arbitrary-size integers), <code>float</code> (64-bit real numbers), <code>bool</code>, <code>str</code>, <code>list</code>, <code>tuple</code>, <code>dict</code>. The type decides what operations mean: <code>3 + 4</code> adds numbers, <code>"3" + "4"</code> joins strings. <code>type(x)</code> shows the type.</li>
+            <li><strong>Variables</strong> are names attached to values: <code>x = 3.5</code>. Assignment does not copy a list: <code>m = l</code> makes a second name for the same list (see below).</li>
+            <li><strong>Arithmetic</strong>: <code>+ - * /</code>, <code>//</code> (floor division), <code>%</code> (remainder), <code>**</code> (power). In Python 3, <code>/</code> always gives a float.</li>
+            <li><strong>Control flow</strong>: <code>if</code>/<code>elif</code>/<code>else</code>, <code>for</code> loops over any sequence (<code>for k in range(5)</code> gives $0,\ldots,4$), <code>while</code> loops. Blocks are defined by <em>indentation</em>, not braces.</li>
+            <li><strong>Functions</strong>: <code>def name(args): ... return value</code>. A function takes arguments, computes, and returns a result; a function with no side effects is easy to test and reuse.</li>
+            <li><strong>Modules</strong>: <code>import numpy as np</code> brings in a library; the standard library (<code>math</code>, <code>json</code>, <code>csv</code>, <code>time</code>) is always available, and <code>pip install</code> adds more (<a href="lab-workstation-setup.html">LAB 101</a>).</li>
             </ul>
-            <p>A typical job reads data, computes, writes a result and plots it. This script fits the Arrhenius law (see <a href="diffusion-and-kinetics.html">diffusion and kinetics</a>) to tabulated diffusivities and then evaluates it:</p>
-<pre><code>import numpy as np
+            <pre data-file="first.py"><code># a first program: the Lennard-Jones potential and its minimum
+            import math
 
-kB = 8.617333e-5                 # eV/K
-D0, Q = 2.0e-6, 0.87             # m^2/s, eV (illustrative values)
-T = np.linspace(500, 1000, 6)    # K
-D = D0 * np.exp(-Q / (kB * T))   # vectorised: no loop needed
+            def lj(r, epsilon=1.0, sigma=1.0):
+                &quot;&quot;&quot;Lennard-Jones energy of a pair at distance r (reduced units by default).&quot;&quot;&quot;
+                x = (sigma / r) ** 6
+                return 4.0 * epsilon * (x * x - x)
 
-for t, d in zip(T, D):
-    print(f"{t:6.0f} K   D = {d:.2e} m^2/s")
+            r_min = 2 ** (1 / 6)                  # position of the minimum
+            print(&quot;r_min = %.6f, E(r_min) = %.6f&quot; % (r_min, lj(r_min)))
+            for r in (0.95, 1.0, 1.12, 1.5, 2.5):
+                print(&quot;r = %.2f   E = %9.5f&quot; % (r, lj(r)))</code></pre>
+            <pre class="out"><code>r_min = 1.122462, E(r_min) = -1.000000
+            r = 0.95   E =   1.96097
+            r = 1.00   E =   0.00000
+            r = 1.12   E =  -0.99982
+            r = 1.50   E =  -0.32034
+            r = 2.50   E =  -0.01632</code></pre>
+            <p>(The values follow from the formula; check one by hand: at $r=1.5$, $x=(1/1.5)^6=0.0878$ and $E=4(0.00771-0.0878)=-0.3203$.) Three points about this short program matter for everything that follows. <strong>(1)</strong> The function has a <em>docstring</em> (the text in triple quotes) that says what it does; <code>help(lj)</code> shows it. <strong>(2)</strong> Default arguments (<code>epsilon=1.0</code>) make the function usable in reduced units and in real units: <code>lj(3.8, 0.0104, 3.405)</code> gives $-0.01039$ eV, the energy of an argon pair at $3.8$ &Aring;. <strong>(3)</strong> The potential is computed with <code>x*x - x</code> rather than two separate powers, saving a call to the slow power function: an optimisation that costs nothing in readability.</p>
+            <h3>Sequences, comprehensions and the traps of mutable objects</h3>
+            <p>A <code>list</code> is an ordered, changeable collection: <code>l = [1, 2, 3]</code>, <code>l[0]</code> is $1$ (indexing starts at <strong>zero</strong>), <code>l[-1]</code> is the last element, <code>l[1:3]</code> is the slice <code>[2, 3]</code> (start included, end excluded). A <em>comprehension</em> builds a list in one line: <code>[k**2 for k in range(20) if k % 2 == 0]</code> gives <code>[0, 4, 16, 36, 64, 100, 144, 196, 256, 324]</code>. Lists are <em>mutable</em>, which leads to two classic bugs. First, names are not copies:</p>
+            <pre data-file="traps.py"><code>l = [1, 2, 3]
+            m = l              # a second name for the SAME list
+            m.append(4)
+            print(l)           # the original has changed
+            n = list(l)        # a real (shallow) copy
+            n.append(5)
+            print(l, n)
 
-# fit ln D against 1/T: the slope is -Q/kB
-slope, intercept = np.polyfit(1 / T, np.log(D), 1)
-print("recovered Q =", -slope * kB, "eV")</code></pre>
-            <p>And turning a molecular-dynamics mean-squared displacement into a diffusion coefficient (see <a href="molecular-dynamics.html">molecular dynamics</a>) takes four lines. Conversions are a classic source of mistakes: 1 &Aring;&sup2;/ps = 10<sup>&minus;8</sup> m&sup2;/s.</p>
-<pre><code>import numpy as np
+            def add_item(x, lst=[]):      # BUG: the default list is created once, when the function is defined
+                lst.append(x)
+                return lst
+            print(add_item(1), add_item(2))</code></pre>
+            <pre class="out"><code>[1, 2, 3, 4]
+            [1, 2, 3, 4] [1, 2, 3, 4, 5]
+            [1, 2] [1, 2]</code></pre>
+            <p>The last line should have been <code>[1] [2]</code>; the default argument is shared between all calls. The cure is <code>def add_item(x, lst=None)</code> and <code>if lst is None: lst = []</code> inside. A third trap is integer division and remainders with negative numbers: <code>7/2</code> is $3.5$, <code>7//2</code> is $3$, but <code>-7//2</code> is $-4$ (floor, not truncation) and <code>-7 % 3</code> is $2$ (the remainder has the sign of the divisor), which matters when wrapping coordinates into a periodic box: <code>x % L</code> maps any $x$ into $[0,L)$ for $L&gt;0$, exactly what is needed in <a href="lab-ising-monte-carlo.html">LAB 504</a> (<code>(i - 1) % L</code> wraps from $0$ to $L-1$).</p>
+            <div class="note thm"><strong>Reading a traceback</strong>
+            <p>When a program fails, Python prints a <em>traceback</em>: a list of the calls that led to the error, with the most recent last, and the error message on the last line. Read it from the bottom: the type of error (<code>ValueError</code>, <code>IndexError</code>, <code>KeyError</code>, <code>TypeError</code>, <code>ZeroDivisionError</code>, <code>FileNotFoundError</code>) and its message say what is wrong; the line just above gives where. Most errors are fixed by reading the message and the line number with attention; searching the exact message is the second step. Never ignore warnings (<code>RuntimeWarning: overflow encountered</code>): they point to real numerical problems.</p>
+            </div>
+            <h2 id="numpy">Lecture 2. Arrays and vectorisation with NumPy<a class="anchor" href="#numpy" aria-label="Link to this section">#</a></h2>
+            <p>Scientific data are arrays of numbers: positions of atoms $(N\times3)$, energies as a function of lattice constant, a stress tensor $(3\times3)$. The <strong>NumPy</strong> library provides the <code>ndarray</code>, a fixed-type block of memory with fast operations on whole arrays. <code>a = np.array([[1,2,3],[4,5,6]])</code> has <code>a.shape == (2, 3)</code> and <code>a.dtype == int64</code>. Useful constructors: <code>np.zeros((3, 3))</code>, <code>np.linspace(0, 1, 11)</code>, <code>np.arange(0, 10, 2)</code>, <code>np.random.default_rng(seed).random((N, 3))</code>.</p>
+            <p><strong>Arithmetic on arrays is element by element</strong>: <code>a * b</code> multiplies entries, <code>a @ b</code> is the matrix product (<a href="linear-algebra-foundations.html">MATH 103</a>), and functions such as <code>np.sin</code>, <code>np.exp</code>, <code>np.sqrt</code> apply to every entry. Reductions collapse an axis: <code>a.sum()</code>, <code>a.sum(axis=0)</code> (sum of each column), <code>a.mean()</code>, <code>a.max()</code>, <code>np.linalg.norm(v)</code>.</p>
+            <h3>Indexing and slicing</h3>
+            <pre data-file="slicing.py"><code>import numpy as np
+            A = np.arange(12).reshape(3, 4)
+            print(A)
+            print(A.shape, A[1], A[:, 1], A[1:, ::2])</code></pre>
+            <pre class="out"><code>[[ 0  1  2  3]
+             [ 4  5  6  7]
+             [ 8  9 10 11]]
+            (3, 4) [4 5 6 7] [1 5 9] [[ 4  6]
+             [ 8 10]]</code></pre>
+            <p><code>A[1]</code> is the second row; <code>A[:, 1]</code> the second column; <code>A[1:, ::2]</code> takes rows from the second on and every second column. <em>Boolean masks</em> select entries: <code>A[A &gt; 5]</code> gives the entries larger than $5$. A crucial fact: <strong>a slice is a view, not a copy</strong>. It shares the memory of the original, so modifying it modifies the parent:</p>
+            <pre data-file="views.py"><code>a = np.arange(6)
+            b = a[:3]            # a view
+            b[0] = 99
+            print(a, b.base is a)
+            c = a[:3].copy()     # an independent copy
+            c[0] = -1
+            print(a[0])</code></pre>
+            <pre class="out"><code>[99  1  2  3  4  5] True
+            99</code></pre>
+            <p>The first line shows that changing <code>b</code> changed <code>a</code>; <code>b.base is a</code> confirms it is a view. This saves memory and time, but it causes bugs when you modify what you meant to keep. Use <code>.copy()</code> when you need independence.</p>
+            <h3>Broadcasting</h3>
+            <p>Operations between arrays of different shapes are allowed when the shapes are <em>compatible</em>: the shapes are compared from the last axis backwards, and two dimensions are compatible if they are equal or one of them is $1$ (that one is stretched). A column of shape $(3,1)$ plus a row of shape $(4,)$ gives a $(3,4)$ array, which is how one computes all pairwise differences without loops:</p>
+            <pre data-file="broadcast.py"><code>col = np.array([[1], [2], [3]])
+            row = np.array([10, 20, 30, 40])
+            print((col + row).shape)
+            print(col + row)
+            x = np.array([1, 2, 3]); y = np.array([1, 2, 3, 4])
+            try:
+                x + y
+            except ValueError as e:
+                print(&quot;ValueError:&quot;, e)</code></pre>
+            <pre class="out"><code>(3, 4)
+            [[11 21 31 41]
+             [12 22 32 42]
+             [13 23 33 43]]
+            ValueError: operands could not be broadcast together with shapes (3,) (4,) </code></pre>
+            <p>The error message states the shapes that failed: $3$ and $4$ are neither equal nor $1$. To compute the distance between every pair of $N$ atoms with positions <code>p</code> of shape $(N,3)$, the expression <code>p[:, None, :] - p[None, :, :]</code> has shape $(N,N,3)$ (every difference vector), and <code>np.linalg.norm(..., axis=-1)</code> reduces it to the $N\times N$ matrix of distances. It needs $O(N^2)$ memory, which is fine for $N\sim10^3$ and hopeless for $10^5$ (Lecture 6).</p>
+            <h3>Why vectorise?</h3>
+            <p>A Python loop executes interpreter code for each element, which costs about $50$&ndash;$100$ ns per operation; a NumPy operation runs a compiled loop over the whole array. For the sum of squares of $10^6$ random numbers:</p>
+            <pre data-file="speed.py"><code>import time
+            x = np.random.default_rng(1).random(10**6)
+            t0 = time.perf_counter()
+            s = 0.0
+            for v in x:                 # Python loop
+                s += v * v
+            t1 = time.perf_counter()
+            s2 = np.dot(x, x)           # NumPy
+            t2 = time.perf_counter()
+            print(&quot;python loop %.3f s, numpy dot %.5f s, ratio %.0f, results %.6f %.6f&quot; % (t1 - t0, t2 - t1, (t1 - t0) / (t2 - t1), s, s2))</code></pre>
+            <pre class="out"><code>python loop 0.174 s, numpy dot 0.00034 s, ratio 509, results 333329.041014 333329.041014</code></pre>
+            <p>The vectorised version is about $500$ times faster and gives the same number. (Your timings will differ with the machine, and the ratio depends on the operation, but the order of magnitude is typical.) The rule is: <strong>never loop over array elements in Python if a NumPy expression does the job</strong>; do the loop where it is unavoidable (time steps of a simulation, where each step depends on the previous one) and vectorise inside it.</p>
+            <div class="example">
+                <strong>Worked example 2.1: the energy of a cluster, vectorised</strong>
+                <p class="given">Compute the Lennard-Jones energy $E=\sum_{i&lt;j}4(r_{ij}^{-12}-r_{ij}^{-6})$ of the $216$ atoms of a simple cubic block with spacing $1.12$ (reduced units), first with two nested loops and then with NumPy, and compare the time and the result.</p>
+                <p>The double loop over the $N(N-1)/2=23\,220$ pairs takes $0.090$ s and gives $E=-851.971322$. The vectorised version builds the $216\times216\times3$ array of differences, takes the norm over the last axis, extracts the upper triangle with <code>np.triu_indices(N, 1)</code> (each pair once) and sums: it takes $0.0040$ s ($22$ times faster) and gives the same $E$ to $4\times10^{-11}$, the difference due to the order of summation (Lecture 3). The ratio is smaller than for the dot product because most of the vectorised time is spent building the $N\times N\times3$ array in memory.</p>
+            </div>
 
-data = np.loadtxt("msd.dat")                 # columns: time (ps), MSD (A^2)
-t, msd = data[:, 0], data[:, 1]
-slope, intercept = np.polyfit(t, msd, 1)     # MSD = 6 D t  in three dimensions
-print(f"D = {slope / 6 * 1e-8:.3e} m^2/s")</code></pre>
+            <h2 id="floats">Lecture 3. How computers store numbers, and what goes wrong<a class="anchor" href="#floats" aria-label="Link to this section">#</a></h2>
+            <p>A computer stores a real number as a <strong>floating-point number</strong>: a sign, a mantissa and an exponent, in a fixed number of bits. The standard <em>double precision</em> (IEEE 754, Python <code>float</code>, NumPy <code>float64</code>) uses 64 bits: $\pm m\times2^e$ with a mantissa of $53$ bits (about $16$ decimal digits) and $|e|\lesssim1023$ (numbers from $\sim10^{-308}$ to $10^{308}$). Single precision (<code>float32</code>) has $24$ bits ($7$ digits) and is used on graphics processors and in machine learning. Three consequences matter every day.</p>
+            <p><strong>(1) Most decimal fractions are not exactly representable.</strong> $0.1$ in binary is $0.000110011\ldots$ and is rounded. Hence:</p>
+            <pre data-file="floats.py"><code>print(0.1 + 0.2, 0.1 + 0.2 == 0.3)
+            s = 0.0
+            for _ in range(10):
+                s += 0.1
+            print(s, s == 1.0)
+            print(abs((0.1 + 0.2) - 0.3) &lt; 1e-12)       # the right way to compare
+            print(np.finfo(np.float64).eps, np.finfo(np.float32).eps)</code></pre>
+            <pre class="out"><code>0.30000000000000004 False
+            0.9999999999999999 False
+            True
+            2.220446049250313e-16 1.1920929e-07</code></pre>
+            <p>Never compare floats with <code>==</code>; use a tolerance (<code>abs(a - b) &lt; tol</code> or <code>np.isclose(a, b)</code>). The <strong>machine epsilon</strong> $\epsilon_\mathrm{mach}=2.2\times10^{-16}$ is the spacing of the numbers just above $1$: any rounding of a number of size one makes a relative error up to $\epsilon_\mathrm{mach}/2$. (Python&rsquo;s built-in <code>sum</code> of a list of ten $0.1$ returns exactly $1.0$ in recent versions because it uses compensated summation, while the plain loop above returns $0.9999999999999999$: the same arithmetic done differently gives different last digits.) Adding a small number to a large one loses it: <code>1e16 + 1 == 1e16</code> is <code>True</code>, because the spacing of doubles near $10^{16}$ is $2$.</p>
+            <p><strong>(2) Subtraction of nearly equal numbers destroys precision</strong> (<em>catastrophic cancellation</em>). If $a$ and $b$ agree to $10$ digits, $a-b$ has only about $6$ correct digits left, whatever the arithmetic. Two examples that arise in practice, evaluated with the naive and with an algebraically equivalent stable formula:</p>
+            <pre data-file="cancel.py"><code>import math
+            for x in (1e-1, 1e-4, 1e-8):
+                naive  = (1 - math.cos(x)) / x**2
+                stable = 2 * math.sin(x / 2) ** 2 / x**2          # since 1 - cos x = 2 sin^2(x/2)
+                print(&quot;x=%g  naive %.10f  stable %.10f&quot; % (x, naive, stable))
+            for x in (1e-5, 1e-10, 1e-15):
+                print(&quot;x=%g  (exp(x)-1)/x = %.12g   expm1: %.12g&quot; % (x, (math.exp(x) - 1) / x, math.expm1(x) / x))</code></pre>
+            <pre class="out"><code>x=0.1  naive 0.4995834722  stable 0.4995834722
+            x=0.0001  naive 0.4999999970  stable 0.4999999996
+            x=1e-08  naive 0.0000000000  stable 0.5000000000
+            x=1e-05  (exp(x)-1)/x = 1.00000500001   expm1: 1.00000500002
+            x=1e-10  (exp(x)-1)/x = 1.00000008274   expm1: 1.00000000005
+            x=1e-15  (exp(x)-1)/x = 1.11022302463   expm1: 1</code></pre>
+            <p>The limit of $(1-\cos x)/x^2$ is $\tfrac12$ as $x\to0$; the naive formula returns $0$ at $x=10^{-8}$ (the cosine is rounded to exactly $1$) and has only $8$ correct digits at $x=10^{-4}$. The limit of $(e^x-1)/x$ is $1$; the naive formula returns $1.11$ at $x=10^{-15}$, an error of $11\%$, while <code>math.expm1</code> (which is accurate for small arguments) is exact. A third classic example is the variance of numbers with a large mean:</p>
+            <pre data-file="variance.py"><code>data = np.random.default_rng(0).normal(1e9, 1.0, 100000)       # mean 1e9, standard deviation 1
+            naive_var = np.mean(data**2) - np.mean(data)**2                 # &lt;x^2&gt; - &lt;x&gt;^2
+            print(&quot;naive variance&quot;, naive_var, &quot;  two-pass variance&quot;, np.var(data), &quot;  (true value 1.0)&quot;)</code></pre>
+            <pre class="out"><code>naive variance 384.0   two-pass variance 1.000257024656903   (true value 1.0)</code></pre>
+            <p>The naive formula subtracts two numbers of size $10^{18}$ whose difference is $1$, so the $16$ digits are all spent and the result is $384$. This is not an exotic situation: the variance of an energy that fluctuates by $0.1$ eV around $-10^4$ eV (a molecular-dynamics run!) is affected in the same way; the stable method computes the mean first and then the mean of the squared deviations, or uses an online algorithm (Welford). Another case is the quadratic formula for $x^2+10^8x+1=0$: the naive root $x_1=(-b+\sqrt{b^2-4ac})/2a$ gives $-7.45\times10^{-9}$ instead of $-10^{-8}$ (a $25\%$ error) while using the product of roots, $x_1=c/(a x_2)$, gives it correctly (Exercise 5).</p>
+            <p><strong>(3) Truncation versus rounding error.</strong> Numerical derivatives illustrate the competition between the two. The forward difference $[f(x+h)-f(x)]/h$ has a <em>truncation</em> error $\sim h$; the central difference $[f(x+h)-f(x-h)]/2h$ has $\sim h^2$; but both suffer <em>rounding</em> errors $\sim\epsilon_\mathrm{mach}/h$ because of the subtraction. For $f=\sin$ at $x=1$ the observed errors are:</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. How computers store numbers, and what goes wrong (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>$h$</th><th>forward difference error</th><th>central difference error</th></tr></thead>
+            <tbody>
+            <tr><td>$10^{-1}$</td><td>$4.3\times10^{-2}$</td><td>$9.0\times10^{-4}$</td></tr>
+            <tr><td>$10^{-3}$</td><td>$4.2\times10^{-4}$</td><td>$9.0\times10^{-8}$</td></tr>
+            <tr><td>$10^{-5}$</td><td>$4.2\times10^{-6}$</td><td>$1.1\times10^{-11}$</td></tr>
+            <tr><td>$10^{-8}$</td><td>$3.0\times10^{-9}$</td><td>$2.6\times10^{-9}$</td></tr>
+            <tr><td>$10^{-11}$</td><td>$1.2\times10^{-6}$</td><td>$1.2\times10^{-6}$</td></tr>
+            <tr><td>$10^{-14}$</td><td>$3.7\times10^{-3}$</td><td>$3.7\times10^{-3}$</td></tr>
+            </tbody></table></div>
+            <p>The error falls as $h$ (or $h^2$) until $h\approx10^{-8}$ (forward) or $10^{-5}$ (central), where rounding takes over, and then it grows as $1/h$: there is an <em>optimal</em> step, about $\sqrt{\epsilon_\mathrm{mach}}\approx10^{-8}$ for the forward difference and $\epsilon_\mathrm{mach}^{1/3}\approx6\times10^{-6}$ for the central one, and making $h$ smaller is not better. The same competition appears in the choice of time step of a simulation (<a href="lab-md-lammps-argon.html">LAB 502</a>), in the mesh size of finite elements (<a href="lab-fem-scikit-fem.html">LAB 507</a>) and in the tolerances of optimisers. And integers are different again: Python integers have unlimited size, but NumPy integers wrap around: <code>np.int8(127) + np.int8(1)</code> gives $-128$ with only a warning, which is why LAB 504 uses 64-bit integers for the spin sums.</p>
+            <h2 id="correct">Lecture 4. Writing correct code: functions, tests and debugging<a class="anchor" href="#correct" aria-label="Link to this section">#</a></h2>
+            <p>A program that runs is not necessarily a program that is right. In simulation, wrong code usually does not crash: it produces plausible numbers. The defence is to build code from small, understandable pieces and to test each against answers known independently.</p>
+            <h3>Functions and modules</h3>
+            <p>A <strong>function</strong> should do one thing, take its inputs as arguments and return its result (instead of reading and writing global variables), and have a name that says what it does. A <strong>module</strong> is a file of functions that other files import. The file below, <code>lj.py</code>, contains two functions; the second one uses NumPy broadcasting to compute the energy of $N$ atoms as in Lecture 2, taking each pair once through the upper triangle of the distance matrix:</p>
+            <pre data-file="lj.py"><code>&quot;&quot;&quot;Lennard-Jones energy of a set of atoms (reduced units by default).&quot;&quot;&quot;
+            import numpy as np
 
-            <h2 id="data">4. Units and data formats<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
-            <p>Unit systems differ between programs (see the electron-volt and nanometre units of <a href="electricity-magnetism-and-waves.html#field">PHYS 103</a>), so write the unit next to every number: in column headers, variable names and file comments. File formats matter for exchange and long-term use.</p>
-            <div class="table-scroll" role="region" aria-label="4. Units and data formats (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Format</th><th>Holds</th><th>Notes</th></tr></thead>
-                <tbody>
-                    <tr><td>CIF</td><td>Crystal structures from databases and journals</td><td>Text; the standard for experimental structures</td></tr>
-                    <tr><td>POSCAR, XYZ and extended XYZ</td><td>Atomic positions (and cell, forces, energies in extended XYZ)</td><td>Simple text; ASE converts between formats</td></tr>
-                    <tr><td>LAMMPS data and dump files</td><td>Starting structures and trajectories for molecular dynamics</td><td>Text; large trajectories use binary or compressed formats</td></tr>
-                    <tr><td>CSV and plain columns</td><td>Tables of numbers</td><td>Easy to read anywhere; add a header with units</td></tr>
-                    <tr><td>JSON and YAML</td><td>Settings, parameters and metadata</td><td>Human-readable, structured; ideal for configuration</td></tr>
-                    <tr><td>HDF5 and NetCDF</td><td>Large numerical arrays with attributes</td><td>Binary, self-describing, fast; used for big simulation output</td></tr>
-                </tbody>
-            </table></div>
+            def pair_energy(r, epsilon=1.0, sigma=1.0):
+                &quot;&quot;&quot;Energy of one pair at distance r.&quot;&quot;&quot;
+                x = (sigma / r) ** 6
+                return 4.0 * epsilon * (x * x - x)
 
-            <h2 id="git">5. Version control<a class="anchor" href="#git" aria-label="Link to this section">#</a></h2>
-            <p><strong>Git</strong> records the history of a project as a series of snapshots (<em>commits</em>), each with a message saying why it changed. It lets you return to any earlier state, try ideas on separate <em>branches</em>, compare versions with <code>git diff</code>, and share work through a remote such as GitHub or GitLab. A basic session:</p>
-<pre><code>git init                      # start tracking this folder
-git add run.py in.lammps      # choose what goes in the next snapshot
-git commit -m "Add vacancy-formation input and run script"
-git status                    # what has changed
-git log --oneline             # the history
-git switch -c larger-cell     # try something on a new branch
-git push                      # share it</code></pre>
-            <p>What to track: scripts, input files, notes, small data and the instructions to rebuild the rest. What to leave out: large outputs (trajectories, wavefunctions), temporary files, binaries and anything secret such as passwords or access keys; list them in a <code>.gitignore</code> file and describe how to regenerate them in the README. Write commit messages that say <em>why</em>, make commits small and focused, and tag the commit that produced each published figure.</p>
+            def total_energy(positions, epsilon=1.0, sigma=1.0, cutoff=None):
+                &quot;&quot;&quot;Sum of pair energies over all distinct pairs (open boundaries). Pairs beyond cutoff are ignored.&quot;&quot;&quot;
+                positions = np.asarray(positions, dtype=float)
+                d = np.linalg.norm(positions[:, None, :] - positions[None, :, :], axis=-1)
+                i, j = np.triu_indices(len(positions), 1)               # each pair once
+                r = d[i, j]
+                if cutoff is not None:
+                    r = r[r &lt; cutoff]
+                return float(np.sum(pair_energy(r, epsilon, sigma)))</code></pre>
+            <h3>Tests with known answers</h3>
+            <p>How do you know that <code>total_energy</code> is right? You cannot compare with a result you do not have, but you can check properties that must hold. A <strong>test</strong> is a function that calls your code with an input for which the answer is known and asserts that the result is correct (<code>assert condition</code> raises an error if the condition is false); the program <code>pytest</code> finds all functions whose names start with <code>test_</code> in files named <code>test_*.py</code>, runs them and reports. Good tests of a physics code come from several sources: <em>analytic cases</em> (the minimum of the Lennard-Jones potential has depth $\varepsilon$ at $2^{1/6}\sigma$; two atoms have the energy of one pair), <em>symmetries</em> (the energy cannot change if the whole system is translated, rotated, or if the atoms are relabelled), and <em>limits</em> (an infinite cutoff reproduces the sum without a cutoff):</p>
+            <pre data-file="test_lj.py"><code>import numpy as np
+            from lj import pair_energy, total_energy
 
-            <h2 id="cluster">6. Running on a cluster<a class="anchor" href="#cluster" aria-label="Link to this section">#</a></h2>
-            <p>You log in to a <em>login node</em> to prepare and submit work (never run heavy calculations there) and a <strong>scheduler</strong>, most often Slurm, places your job on <em>compute nodes</em> when resources are free. A job is described by a batch script whose <code>#SBATCH</code> lines request resources:</p>
-<pre><code>#!/bin/bash
-#SBATCH --job-name=cu_vac
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=32
-#SBATCH --time=02:00:00
-#SBATCH --output=%x_%j.out
+            def test_minimum_depth():
+                assert abs(pair_energy(2 ** (1 / 6)) + 1.0) &lt; 1e-12           # the well depth is epsilon
 
-course load lammps
-srun lmp -in in.vacancy</code></pre>
-            <p>Submit it with <code>sbatch job.sh</code>, watch it with <code>squeue -u $USER</code>, cancel with <code>scancel &lt;jobid&gt;</code> and review finished jobs with <code>sacct</code>. A <strong>job array</strong> runs the same script for many parameter values, for example ten temperatures:</p>
-<pre><code>#SBATCH --array=0-9
-T=$((300 + 100 * SLURM_ARRAY_TASK_ID))     # 300, 400, ... 1200 K
-srun lmp -in in.melt -var T $T</code></pre>
-            <p>Good practice on shared machines:</p>
-            <ul>
-                <li><strong>Test small first</strong>, then measure how the run time scales with core count before requesting hundreds of cores (see <a href="numerical-methods-essentials.html#performance">parallel scaling</a>).</li>
-                <li><strong>Ask for what you need.</strong> Requests far above the need wait longer in the queue; a time limit set too short kills the job. Allow a safety margin of 20&ndash;30% on measured run time.</li>
-                <li><strong>Checkpoint long runs</strong> (write restart files regularly) so a failure costs hours, not days.</li>
-                <li><strong>Mind the file systems.</strong> Fast scratch storage is for running jobs and is often purged; home or project storage is for keeping results. Copy what matters off scratch, and compress or delete bulky intermediate files.</li>
-                <li><strong>Read the error first.</strong> The usual failures are out of memory, exceeded time limit, a missing course or a wrong path, and the scheduler and program logs say which.</li>
-            </ul>
+            def test_zero_crossing():
+                assert abs(pair_energy(1.0)) &lt; 1e-12                           # E(sigma) = 0
 
-            <h2 id="workflow">7. Workflows and reproducibility<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
-            <p>A <strong>reproducible</strong> result is one that you, or someone else, can regenerate from recorded inputs. That needs organisation more than clever tools.</p>
-            <ul>
-                <li><strong>A predictable folder layout</strong>, one project per directory with separate places for inputs, scripts, raw output and results. A common structure: <code>inputs/</code>, <code>scripts/</code>, <code>runs/&lt;case&gt;/</code>, <code>results/</code>, <code>notes.md</code>.</li>
-                <li><strong>Scripts, not clicks.</strong> Generate input files and run sweeps from a script, so changing a parameter and re-running is one command. Notebooks are excellent for exploring; move stable steps into scripts.</li>
-                <li><strong>Record the environment</strong>: code versions, library versions (<code>pip freeze</code>, <code>conda env export</code>), the potential or pseudopotential files used, the random seeds, and the units. Containers (Docker, Apptainer) freeze a whole software stack.</li>
-                <li><strong>Name things consistently</strong>, with parameters in directory names (<code>Cu_vac_4x4x4_T300</code>) or, better, recorded in a metadata file next to the output.</li>
-                <li><strong>Workflow managers</strong> (Snakemake, AiiDA, signac, jobflow) automate dependencies between steps and store provenance; they pay off once a project has hundreds of calculations.</li>
-                <li><strong>Share and archive</strong> the inputs and scripts behind a paper in a repository that issues a persistent identifier (Zenodo, Materials Cloud). Data that are findable, accessible, interoperable and reusable (the <em>FAIR</em> principles) are worth more than data that are merely posted.</li>
-            </ul>
+            def test_two_atoms_equals_pair():
+                pos = [[0, 0, 0], [1.3, 0, 0]]
+                assert abs(total_energy(pos) - pair_energy(1.3)) &lt; 1e-12
 
-            <h2 id="testing">8. Testing your code<a class="anchor" href="#testing" aria-label="Link to this section">#</a></h2>
-            <p>Research code is easy to get quietly wrong. Cheap checks catch most errors before they reach a paper:</p>
-            <ul>
-                <li><strong>Test against known answers</strong>: analytic solutions, limiting cases, textbook numbers, a published benchmark.</li>
-                <li><strong>Check invariants</strong>: conserved energy or mass, symmetry, correct units, results that must be positive or monotonic.</li>
-                <li><strong>Automate it</strong> with unit tests that run in one command, so a later change that breaks something is noticed at once. With <code>pytest</code>, a test is a function whose name starts with <code>test_</code>:</li>
-            </ul>
-<pre><code>import numpy as np
+            def test_translation_and_rotation_invariance():
+                rng = np.random.default_rng(0)
+                pos = rng.random((10, 3)) * 3
+                shifted = pos + np.array([5.0, -2.0, 1.0])
+                rotated = pos @ np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]]).T
+                e0 = total_energy(pos)
+                assert abs(total_energy(shifted) - e0) &lt; 1e-9 * abs(e0)
+                assert abs(total_energy(rotated) - e0) &lt; 1e-9 * abs(e0)
 
-def arrhenius(T, D0, Q, kB=8.617333e-5):
-    return D0 * np.exp(-Q / (kB * T))
+            def test_permutation_invariance():
+                rng = np.random.default_rng(1)
+                pos = rng.random((8, 3)) * 3
+                assert abs(total_energy(pos) - total_energy(pos[::-1])) &lt; 1e-9 * abs(total_energy(pos))
 
-def test_arrhenius_limits():
-    assert np.isclose(arrhenius(1e12, 2.0, 0.9), 2.0, rtol=1e-6)   # very high T gives D0
-    assert arrhenius(300, 2.0, 0.9) &lt; arrhenius(600, 2.0, 0.9)      # rises with temperature</code></pre>
-            <p>Compare floating-point numbers with a tolerance, never with <code>==</code>. Keep a small <em>regression test</em> that reruns a quick case and compares with a stored result, so changes in a library version or a refactor that alter results are flagged.</p>
+            def test_cutoff_reduces_to_full_for_large_cutoff():
+                pos = [[0, 0, 0], [1.1, 0, 0], [0, 1.2, 0]]
+                assert abs(total_energy(pos, cutoff=100.0) - total_energy(pos)) &lt; 1e-12</code></pre>
+            <pre class="out"><code>$ pytest -q
+            ......                                                                   [100%]
+            6 passed in 0.14s</code></pre>
+            <p>Now introduce a bug a beginner would make, finding the pairs with <code>i, j = np.nonzero(d &gt; 0)</code> instead of <code>np.triu_indices</code> (this finds every pair twice, once as $(i,j)$ and once as $(j,i)$). The result:</p>
+            <pre class="out"><code>..F...                                                                   [100%]
+            =================================== FAILURES ===================================
+            __________________________ test_two_atoms_equals_pair __________________________
+                def test_two_atoms_equals_pair():
+                    pos = [[0, 0, 0], [1.3, 0, 0]]
+            &gt;       assert abs(total_energy(pos) - pair_energy(1.3)) &lt; 1e-12
+            E       assert 0.6570169144600471 &lt; 1e-12
+            E        +  where 0.6570169144600471 = abs((-1.3140338289200941 - -0.6570169144600471))
+            E        +    where -1.3140338289200941 = total_energy([[0, 0, 0], [1.3, 0, 0]])
+            E        +    and   -0.6570169144600471 = pair_energy(1.3)
+            FAILED test_bug.py::test_two_atoms_equals_pair - assert 0.6570169144600471 &lt; ...
+            1 failed, 5 passed in 0.15s</code></pre>
+            <p>The energy is twice the pair energy. <strong>Notice that five of the six tests still passed</strong>: translation, rotation and permutation invariance, and the cutoff test all compare the code with itself and are blind to a factor of two. Only the test with an independent, analytic answer caught the error. A test suite needs at least one test with an independently known answer for every quantity that matters, and a bug that gives a consistently wrong factor (a wrong unit conversion, a double-counted pair, a missing factor $\tfrac12$) is the hardest to see in a simulation. A good habit is also to test the limiting case first (two atoms) before a many-atom system.</p>
+            <h3>Debugging</h3>
+            <p>When something is wrong, work systematically: (1) <strong>reproduce</strong> the error with the smallest input that shows it (two atoms, three steps); (2) <strong>read the message</strong> and the line it points to; (3) <strong>print</strong> the intermediate values (<code>print(x.shape, x.dtype, x[:3])</code>) to find the first place where reality departs from your expectation; (4) <strong>change one thing at a time</strong>; (5) use a <em>debugger</em> (<code>python -m pdb script.py</code>, or the one in your editor) to stop at a line and inspect the variables; (6) explain the problem to someone (or to a rubber duck): stating what the code should do line by line usually reveals the discrepancy. The most common sources of errors in scientific code are: off-by-one in index ranges and slices, wrong units (Joules against eV, &Aring; against nm, radians against degrees), an array view modified by accident (Lecture 2), a wrong axis in a sum, uninitialised or reused variables between runs, an integer used where a float is needed, and silent <code>nan</code> values (a $0/0$ or $\infty-\infty$ spreads through all later arithmetic; check with <code>np.isfinite(a).all()</code>).</p>
+            <div class="note thm"><strong>Units</strong>
+            <p>The Mars Climate Orbiter was lost in 1999 because one program gave impulses in pound-force seconds and another read them in newton seconds. In computational materials science the usual systems are: <em>reduced units</em> (LAMMPS <code>units lj</code>: $\sigma=\varepsilon=m=1$), <em>metal units</em> (&Aring;, eV, ps, amu: LAMMPS <code>units metal</code>, ASE) and <em>atomic units</em> (Hartree and Bohr: quantum chemistry codes such as PySCF). Convert at the boundaries of the program, name variables with their units (<code>energy_eV</code>, <code>length_A</code>) and use constants from a library (<code>scipy.constants</code>, <code>ase.units</code>) rather than typing them. A single check on a known number (the density of copper from the lattice constant, the energy of a hydrogen atom $-0.5$ Hartree $=-13.606$ eV) catches most unit errors.</p>
+            </div>
+            <h2 id="data">Lecture 5. Data in and out, and making figures<a class="anchor" href="#data" aria-label="Link to this section">#</a></h2>
+            <p>Simulations produce data that must be stored, shared and plotted. Choose the format by who or what will read it:</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 5. Data in and out, and making figures (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Format</th><th>Good for</th><th>Reading in Python</th><th>Remarks</th></tr></thead>
+            <tbody>
+            <tr><td>Plain text / CSV</td><td>small tables, to be read by people and spreadsheets</td><td><code>np.loadtxt</code>, <code>csv</code>, <code>pandas.read_csv</code></td><td>human-readable; slow and large for big arrays; precision limited by the number of digits written</td></tr>
+            <tr><td>JSON</td><td>parameters, run records, nested metadata</td><td><code>json.load</code></td><td>no comments; numbers as text</td></tr>
+            <tr><td>NumPy <code>.npy</code> / <code>.npz</code></td><td>large arrays between Python programs</td><td><code>np.load</code></td><td>exact binary floats; fast; compact</td></tr>
+            <tr><td>HDF5 / NetCDF</td><td>very large, structured scientific data</td><td><code>h5py</code>, <code>netCDF4</code></td><td>self-describing; partial reads</td></tr>
+            <tr><td>Structure files (CIF, extended XYZ, POSCAR, LAMMPS data)</td><td>atomic structures</td><td><code>ase.io.read</code></td><td>see <a href="lab-structures-ase.html">LAB 201</a></td></tr>
+            </tbody></table></div>
+            <pre data-file="io_demo.py"><code>import numpy as np, csv, json, os
+            r = np.linspace(0.95, 3.0, 8)
+            from lj import pair_energy
+            E = pair_energy(r)
+            # CSV by hand and with numpy
+            with open(&quot;lj.csv&quot;, &quot;w&quot;, newline=&quot;&quot;) as f:
+                w = csv.writer(f); w.writerow([&quot;r&quot;, &quot;E&quot;]); w.writerows(zip(r, E))
+            print(open(&quot;lj.csv&quot;).read())
+            data = np.loadtxt(&quot;lj.csv&quot;, delimiter=&quot;,&quot;, skiprows=1)
+            print(data.shape, data[0], np.allclose(data[:, 1], E))
+            # JSON for parameters and results
+            meta = {&quot;model&quot;: &quot;lennard-jones&quot;, &quot;epsilon&quot;: 1.0, &quot;sigma&quot;: 1.0, &quot;cutoff&quot;: 2.5, &quot;n_points&quot;: len(r), &quot;E_min&quot;: float(E.min())}
+            json.dump(meta, open(&quot;meta.json&quot;, &quot;w&quot;), indent=2); print(open(&quot;meta.json&quot;).read())
+            # binary NumPy file
+            np.save(&quot;lj.npy&quot;, data); print(os.path.getsize(&quot;lj.csv&quot;), &quot;bytes (csv)&quot;, os.path.getsize(&quot;lj.npy&quot;), &quot;bytes (npy)&quot;, np.load(&quot;lj.npy&quot;).dtype)
+            # a structure file (extended xyz written by hand)
+            pos = np.array([[0, 0, 0], [0, 0, 1.12], [0, 1.12, 0]])
+            with open(&quot;trimer.xyz&quot;, &quot;w&quot;) as f:
+                f.write(&quot;%d\n&quot; % len(pos)); f.write(&#x27;Lattice=&quot;10 0 0 0 10 0 0 0 10&quot; Properties=species:S:1:pos:R:3 pbc=&quot;F F F&quot;\n&#x27;)
+                for p in pos: f.write(&quot;Ar %.4f %.4f %.4f\n&quot; % tuple(p))
+            print(open(&quot;trimer.xyz&quot;).read())</code></pre>
+            <pre class="out"><code>r,E
+            0.95,1.9609746568876103
+            1.2428571428571429,-0.7908114480765251
+            1.5357142857142856,-0.2816828123928049
+            1.8285714285714283,-0.10413883106252196
+            2.121428571428571,-0.04340089852191982
+            2.4142857142857137,-0.020096914213978353
+            2.707142857142857,-0.010136503660512565
+            3.0,-0.0054794417442387755
 
-            <h2 id="habits">9. Debugging and habits<a class="anchor" href="#habits" aria-label="Link to this section">#</a></h2>
-            <ul>
-                <li><strong>Read the error message from the bottom up.</strong> The last line says what failed, the lines above say where.</li>
-                <li><strong>Make a minimal example</strong> that reproduces the problem; half the time the bug is found while shrinking it.</li>
-                <li><strong>Print, log or plot intermediate values</strong> and look at them; use a debugger (<code>pdb</code>, or the one in your editor) for harder cases.</li>
-                <li><strong>Change one thing at a time</strong>, and keep the working version in version control.</li>
-                <li><strong>Profile before optimising</strong> (<code>python -m cProfile</code>): the slow part is rarely where you expect.</li>
-                <li><strong>Write for the next reader</strong>: clear names, short functions, a README that says how to run the project and what each file is. The next reader is usually you, six months later.</li>
-                <li><strong>Back up</strong> anything that cannot be regenerated, on more than one machine.</li>
-            </ul>
-            <p>For viewing results, common tools are VESTA and OVITO (structures and defects), ParaView (fields and meshes) and Matplotlib (plots), with VS Code, PyCharm or a terminal editor for writing code.</p>
+            (8, 2) [0.95       1.96097466] True
+            {
+              &quot;model&quot;: &quot;lennard-jones&quot;,
+              &quot;epsilon&quot;: 1.0,
+              &quot;sigma&quot;: 1.0,
+              &quot;cutoff&quot;: 2.5,
+              &quot;n_points&quot;: 8,
+              &quot;E_min&quot;: -0.7908114480765251
+            }
+            302 bytes (csv) 256 bytes (npy) float64
+            3
+            Lattice=&quot;10 0 0 0 10 0 0 0 10&quot; Properties=species:S:1:pos:R:3 pbc=&quot;F F F&quot;
+            Ar 0.0000 0.0000 0.0000
+            Ar 0.0000 0.0000 1.1200
+            Ar 0.0000 1.1200 0.0000</code></pre>
+            <p>The CSV file and its reading by <code>np.loadtxt</code> round-trip exactly here because Python writes the shortest decimal string that represents the float uniquely (<code>np.allclose</code> reports <code>True</code>); a file written with <code>%.4f</code> would not. The binary <code>.npy</code> file is smaller even for eight points and for millions of points it is smaller (no text conversion, no separators) and much faster to load. The last block is the <strong>extended XYZ</strong> format: the number of atoms, a comment line carrying the cell, and one line per atom; it is the format of choice for exchanging structures with OVITO, ASE and machine-learning potential codes (<a href="lab-md-lammps-copper.html">LAB 503</a>).</p>
+            <h3>Plotting</h3>
+            <p>The standard library is <strong>Matplotlib</strong> (<code>import matplotlib.pyplot as plt</code>). The rules of a good scientific figure: label both axes with the quantity <em>and</em> its unit; make the data the largest element and use lines for continuous functions and markers for measured or computed points; choose colours that remain distinguishable in grey scale; add a legend only if there is more than one curve; and mark the key feature (here, the minimum). The figure below was produced by a ten-line script:</p>
+            <figure class="lab-fig"><img src="../assets/labs/comp-101/lj_curve.png" alt="The Lennard-Jones potential with its minimum marked" loading="lazy"><figcaption>The Lennard-Jones potential in reduced units, with the minimum at $r=2^{1/6}\sigma$ where $E=-\varepsilon$.</figcaption></figure>
+            <p>On a server without a screen, select a non-interactive backend before importing pyplot (<code>matplotlib.use("Agg")</code>) and save with <code>fig.savefig("name.png", dpi=150)</code>. Save the <em>data</em> as well as the figure: a figure cannot be re-plotted with a different range or a fit added, a data file can.</p>
+            <h2 id="performance">Lecture 6. Speed: complexity, vectorisation and neighbour lists<a class="anchor" href="#performance" aria-label="Link to this section">#</a></h2>
+            <p>How long will a calculation take for ten times more atoms? The answer comes from the <strong>computational complexity</strong>: how the number of operations scales with the size $N$ of the problem. For the energy of $N$ atoms with pair interactions, the straightforward method computes all $N(N-1)/2$ distances: complexity $O(N^2)$, so ten times more atoms means a hundred times more work. But a pair potential with a cutoff $r_c$ ($2.5\sigma$ in LAB 502) only needs the pairs within $r_c$; each atom has a number of neighbours $\sim\rho\tfrac43\pi r_c^3$ independent of $N$, so only $\sim N$ pairs matter, and a <strong>neighbour list</strong> (a data structure that finds them without testing all pairs) gives $O(N)$. Cell lists divide the box into cells of size $r_c$ and look only at neighbouring cells; the tree used in <code>scipy.spatial.cKDTree</code> works similarly. The measurements below use random points at constant density with $r_c=2.5$:</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 6. Speed: complexity, vectorisation and neighbour lists (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>$N$</th><th>pairs found</th><th>all pairs with NumPy (s)</th><th>cKDTree (s)</th><th>ratio</th></tr></thead>
+            <tbody>
+            <tr><td>500</td><td>5930</td><td>0.0136</td><td>0.0017</td><td>8</td></tr>
+            <tr><td>1000</td><td>13 112</td><td>0.0469</td><td>0.0040</td><td>12</td></tr>
+            <tr><td>2000</td><td>26 477</td><td>0.6752</td><td>0.0133</td><td>51</td></tr>
+            <tr><td>4000</td><td>56 182</td><td>1.4647</td><td>0.0318</td><td>46</td></tr>
+            </tbody></table></div>
+            <p>Both methods find exactly the same number of pairs. The tree time grows roughly in proportion to $N$ ($0.0017\to0.0040\to0.0133\to0.0318$ s for $N$ doubling each time: the ratios $2.4$, $3.3$ and $2.4$ scatter around the ideal $2$ because timings this short are noisy), while the all-pairs time grows much faster and irregularly ($\times3.4$, $\times14$ and $\times2.2$ per doubling; the ideal $O(N^2)$ would give $\times4$ every time, and the irregularity comes from memory effects when the $N\times N\times3$ array stops fitting in the fast memory of the processor). Extrapolated to $10^6$ atoms, the all-pairs method would need $\sim10^{12}$ distances and a distance matrix of $8$ TB; the neighbour list needs seconds. This is the reason that every molecular dynamics code (LAMMPS, GROMACS) uses neighbour lists, updated only when atoms have moved more than a <em>skin</em> distance (the <code>neighbor 0.3 bin</code> command of the lab inputs).</p>
+            <h3>Where does the time go? Profiling</h3>
+            <p>Before optimising, <strong>measure</strong>: the part of the code that is slow is rarely the one you suspect. <code>cProfile</code> counts the calls and times each function:</p>
+            <pre data-file="prof_demo.py"><code>import numpy as np, cProfile, pstats, io
 
+            def energy_loop(pos):
+                E = 0.0
+                for i in range(len(pos)):
+                    for j in range(i + 1, len(pos)):
+                        r = np.linalg.norm(pos[i] - pos[j])
+                        E += 4 * (r**-12 - r**-6)
+                return E
+
+            g = np.arange(8) * 1.12
+            pos = np.array(np.meshgrid(g, g, g)).reshape(3, -1).T          # 512 atoms
+            pr = cProfile.Profile(); pr.enable(); e = energy_loop(pos); pr.disable()
+            s = io.StringIO(); pstats.Stats(pr, stream=s).sort_stats(&quot;cumulative&quot;).print_stats(6); print(&quot;E =&quot;, e)
+            print(&quot;\n&quot;.join(l for l in s.getvalue().splitlines() if l.strip()))</code></pre>
+            <pre class="out"><code>E = -2183.175528261176
+                     1047043 function calls in 0.738 seconds
+               Ordered by: cumulative time
+               List reduced from 10 to 6 due to restriction &lt;6&gt;
+               ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+                    1    0.243    0.243    0.738    0.738 prof_demo.py:3(energy_loop)
+               130816    0.226    0.000    0.474    0.000 numpy/linalg/_linalg.py:2615(norm)
+               130816    0.091    0.000    0.091    0.000 {method &#x27;dot&#x27; of &#x27;numpy.ndarray&#x27; objects}
+               130816    0.047    0.000    0.082    0.000 numpy/linalg/_linalg.py:168(isComplexType)
+               261632    0.052    0.000    0.052    0.000 {built-in method builtins.issubclass}
+               130816    0.039    0.000    0.039    0.000 {method &#x27;ravel&#x27; of &#x27;numpy.ndarray&#x27; objects}</code></pre>
+            <p>The loop calls <code>np.linalg.norm</code> $130\,816=512\cdot511/2$ times (once per pair); that function takes $0.474$ s of the $0.738$ s, mostly in checks of the array type and reshaping, not in the arithmetic. The cost is the <em>overhead per call</em> of $\sim3.6$ &micro;s, which dwarfs the three subtractions and the square root. Vectorising removes the overhead by doing all pairs in one call (Lecture 2), and a compiled language does it at the speed of the hardware: that is the idea behind <code>numba</code> (<code>@njit</code>, used in <a href="lab-ising-monte-carlo.html">LAB 504</a>, which compiles a Python loop to machine code), Cython, and the C++ of LAMMPS. The golden rules of optimisation are: <strong>(1)</strong> make it correct first; <strong>(2)</strong> measure; <strong>(3)</strong> improve the algorithm (complexity) before the implementation (constants); <strong>(4)</strong> keep the test suite and run it after each change, because an optimisation that changes the answer is a bug.</p>
+            <h3>Memory, precision and parallelism</h3>
+            <p>A $10^5\times10^5$ matrix of doubles takes $80$ GB; a dense matrix is the wrong tool for large problems, and sparse matrices (<code>scipy.sparse</code>, the stiffness matrices of <a href="lab-fem-scikit-fem.html">LAB 507</a>) store only the non-zero entries. Using <code>float32</code> halves the memory and, on a GPU, doubles the speed, but with $7$ digits (Lecture 3); machine-learning potentials are often trained in single precision and then evaluated in double. <strong>Parallelism</strong> is of three kinds: <em>vectorised</em> (SIMD instructions in one core; NumPy does it), <em>shared-memory threads</em> on the cores of one computer (NumPy linear algebra, OpenMP), and <em>distributed processes</em> on many nodes (MPI, used by LAMMPS, DFT codes). Amdahl&rsquo;s law limits the gain: if a fraction $s$ of the work is serial, the speed-up on $P$ processors is $1/[s+(1-s)/P]$, which can never exceed $1/s$; a code that is $5\%$ serial gains at most a factor $20$ however many processors are used. Embarrassingly parallel tasks (independent random seeds, parameter scans, the job arrays of <a href="lab-workstation-setup.html">LAB 101</a>) have $s=0$ and are the easiest way to use a cluster.</p>
+            <h2 id="workflow">Lecture 7. Reproducible workflow<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
+            <p>A computational result is science only if someone else (or you in a year) can reproduce it. The practices below are the content of <a href="lab-workstation-setup.html">LAB 101</a>, summarised here with their reasons.</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 7. Reproducible workflow (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Habit</th><th>How</th><th>What it prevents</th></tr></thead>
+            <tbody>
+            <tr><td>One project, one folder, one environment</td><td><code>python -m venv venv</code>; <code>pip freeze &gt; requirements.txt</code></td><td>&ldquo;it worked before I updated NumPy&rdquo;</td></tr>
+            <tr><td>Everything is a script</td><td>no manual steps in notebooks or spreadsheets between input and figure</td><td>results that cannot be regenerated</td></tr>
+            <tr><td>Version control</td><td><code>git init</code>, small commits with messages that say why</td><td>lost working versions; &ldquo;which script made this figure?&rdquo;</td></tr>
+            <tr><td>Fixed seeds, recorded in the output</td><td><code>np.random.default_rng(seed)</code>; <code>run.json</code> with seed, parameters, versions, time</td><td>unrepeatable stochastic results</td></tr>
+            <tr><td>Parameters in one place</td><td>a config file or the top of the script; no magic numbers in the body</td><td>silent inconsistency between runs</td></tr>
+            <tr><td>Tests</td><td><code>pytest</code> after every change</td><td>silent breakage</td></tr>
+            <tr><td>Raw data are read-only</td><td>keep <code>input/</code> untouched; write only to <code>output/</code></td><td>overwriting the only copy</td></tr>
+            <tr><td>Document</td><td>a <code>README.md</code>: what, how to run, what to expect</td><td>code nobody (including you) can use</td></tr>
+            </tbody></table></div>
+            <p>A last piece of professional practice concerns <strong>attribution and validation</strong>. When you use a code or a potential, cite it (the citation is listed in its manual); when you obtain a number, compare it with an experiment or with an independent calculation, as every lab in this curriculum does, and say how large the discrepancy is. A simulation that cannot be tested against anything is a description of the model, not a prediction about the material.</p>
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>A scripting language (Python with NumPy, SciPy and Matplotlib) plus the command line covers most day-to-day computational work.</li>
-<li>Keep inputs, scripts and notes under version control; keep large outputs elsewhere and record how they were made.</li>
-<li>On a cluster, test small, request only the resources you need, use job arrays for parameter sweeps and checkpoint long runs.</li>
-<li>Reproducibility means recorded versions, seeds, units and inputs so that someone else, or you in a year, can rerun the work.</li>
-<li>Test your own code against analytic solutions and simple limits before trusting it on real problems.</li>
+<li>Scientific programming in Python rests on a small stack: the language for control flow and functions, NumPy for arrays (whole-array operations are about 500 times faster than a Python loop: 0.174 s against 0.00034 s for a million-element dot product), SciPy for algorithms and Matplotlib for figures.</li>
+<li>Computers represent real numbers with finite precision: 0.1 + 0.2 is 0.30000000000000004, the spacing of double-precision numbers near 1 is 2.2e-16, subtracting nearly equal numbers loses digits ((1 - cos x)/x^2 returns 0 instead of 0.5 at x = 1e-8) and a naive variance of numbers near 1e9 is 384 instead of 1; the cure is a mathematically equivalent but stable formula.</li>
+<li>Write code as small functions with clear inputs and outputs, test them against cases with known answers (assert, pytest), and learn the usual bugs: mutable default arguments, views against copies in NumPy, integer overflow in fixed-size integers and shape errors in broadcasting.</li>
+<li>Algorithmic complexity decides what is possible: an all-pairs distance calculation grows as N^2 (1.46 s for 4000 particles) while a cell or tree neighbour list grows as N (0.032 s for the same 4000 particles and the same 56 182 pairs), which is the reason molecular-dynamics codes use neighbour lists.</li>
+<li>A result is only science if it can be reproduced: keep scripts and inputs under version control, fix random seeds, pin package versions in a virtual environment, and save a run record next to the output (see LAB 101).</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>What does <code>grep "TOTEN" OUTCAR | tail -1</code> do?</summary>
-                <p><code>grep</code> prints every line of the file <code>OUTCAR</code> containing &ldquo;TOTEN&rdquo;; the pipe passes those lines to <code>tail -1</code>, which keeps only the last one, here the final total energy of a calculation.</p>
-            </details>
-            <details>
-                <summary>A calculation takes about 3 hours when measured. What time limit would you request, and why not 48 hours?</summary>
-                <p>About 4 hours: a margin of 20&ndash;30% protects against variation without wasting the allocation. A 48-hour request would wait much longer in the queue, block resources and can be rejected by queue limits, and it gives no benefit.</p>
-            </details>
-            <details>
-                <summary>Which files belong in a git repository for a simulation project, and which do not?</summary>
-                <p>Track scripts, input files, notes and small reference data, plus instructions to regenerate everything else. Leave out large outputs such as trajectories and wavefunctions, temporary files, binaries and secrets; record in the README how to recreate them.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pc101-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>(a) Write a list comprehension that gives the squares of the even numbers from $0$ to $18$. (b) What are <code>7 // 2</code>, <code>-7 // 2</code>, <code>-7 % 3</code> and <code>7.5 % 3.0</code>? (c) After <code>l = [1, 2, 3]; m = l; m.append(4)</code>, what is <code>l</code>?</p>
+            <details class="hint"><summary>Hint</summary><p>Floor division rounds towards minus infinity; the remainder takes the sign of the divisor.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>[k**2 for k in range(0, 20, 2)]</code> (or with <code>if k % 2 == 0</code>) gives <code>[0, 4, 16, 36, 64, 100, 144, 196, 256, 324]</code>. (b) $3$, $-4$, $2$ and $1.5$. (c) <code>[1, 2, 3, 4]</code>: <code>m</code> is another name for the same list, so the append changes <code>l</code> too; use <code>m = list(l)</code> or <code>l.copy()</code> for an independent list.</p>
+            <p class="answer">(a) <code>[0, 4, 16, ..., 324]</code>  (b) $3$, $-4$, $2$, $1.5$  (c) <code>[1, 2, 3, 4]</code></p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>With <code>a = np.arange(1, 26).reshape(5, 5)</code> (the numbers $1$ to $25$ in a $5\times5$ array), evaluate (a) <code>a[1:4, 1:4].sum()</code>, (b) the sum of the main diagonal, (c) <code>a[::2, ::2]</code>. (d) Which of these are views of <code>a</code>?</p>
+            <details class="hint"><summary>Hint</summary><p>Row $i$, column $j$ holds $5i+j+1$ (counting from $0$).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The inner $3\times3$ block has the entries $7$, $8$, $9;12$, $13$, $14;17$, $18$, $19$, whose sum is $117$. (b) The diagonal is $1, 7, 13, 19, 25$: sum $65$. (c) Rows and columns $0,2,4$: <code>[[1, 3, 5], [11, 13, 15], [21, 23, 25]]</code>. (d) All slices (<code>a[1:4, 1:4]</code>, <code>a[::2, ::2]</code> and <code>a.diagonal()</code> as a read-only view) are views of the same memory; only the sums are new numbers. Modifying <code>a[::2, ::2][0, 0] = 0</code> would change <code>a[0, 0]</code>.</p>
+            <p class="answer">(a) $117$  (b) $65$  (c) <code>[[1, 3, 5], [11, 13, 15], [21, 23, 25]]</code>  (d) all slices</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>Find the machine epsilon of double precision by halving a number until <code>1.0 + eps/2 == 1.0</code>. (a) What value do you get and what does it mean? (b) Is <code>1e16 + 1 == 1e16</code>? Why? (c) How many decimal digits does a double hold?</p>
+            <details class="hint"><summary>Hint</summary><p>The spacing of doubles just above $1$ is $2^{-52}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>eps = 1.0; while 1.0 + eps/2 != 1.0: eps /= 2</code> ends with <code>eps = 2.220446049250313e-16</code> $=2^{-52}$: the smallest number that can be added to $1$ and change it; it is the spacing of the floating-point numbers near $1$, and rounding gives a relative error of at most $\epsilon/2=1.1\times10^{-16}$. (b) Yes (<code>True</code>): near $10^{16}$ the spacing of doubles is $2$ (because $10^{16}\approx2^{53}$), so adding $1$ is rounded away. (c) $53$ bits of mantissa $=\log_{10}2^{53}=15.95$, i.e. $15$&ndash;$16$ significant decimal digits.</p>
+            <p class="answer">(a) $2.22\times10^{-16}=2^{-52}$  (b) yes: spacing $2$  (c) $\approx16$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Write the Lennard-Jones energy of the $216$ atoms of a simple cubic block of spacing $1.12$ with (a) two nested loops and (b) NumPy broadcasting. Compare the results and the times. (c) Why do the energies differ in the last digits?</p>
+            <details class="hint"><summary>Hint</summary><p>Use <code>np.triu_indices(N, 1)</code> to take each pair once; time with <code>time.perf_counter()</code>.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>E = 0.0; for i in range(N): for j in range(i+1, N): r = np.linalg.norm(pos[i] - pos[j]); E += 4*(r**-12 - r**-6)</code>. (b) <code>d = np.linalg.norm(pos[:, None, :] - pos[None, :, :], axis=-1); i, j = np.triu_indices(N, 1); r = d[i, j]; E = np.sum(4*(r**-12 - r**-6))</code>. Result: the loop gives $E=-851.971322$ in $0.090$ s and the vectorised code $-851.971322$ in $0.0040$ s, a factor of $22$; the difference between them is $4\times10^{-11}$. (c) Floating-point addition is not associative: the loop adds the pair energies one by one in the order of $(i,j)$, while <code>np.sum</code> adds them in blocks (pairwise summation); the roundings differ, giving different last digits. A test should therefore compare with a tolerance (<code>np.isclose</code>) and never with <code>==</code>.</p>
+            <p class="answer">(a), (b) $E=-851.971322$; $0.090$ s against $0.0040$ s ($22\times$)  (c) summation order and rounding</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Solve $x^2+10^8x+1=0$ with the formula $x=(-b\pm\sqrt{b^2-4ac})/2a$ in double precision. (a) What do you get for the root of small magnitude? (b) What is the exact value to $10$ digits? (c) Give a stable method.</p>
+            <details class="hint"><summary>Hint</summary><p>The product of the roots is $c/a$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The naive $(-b+\sqrt{b^2-4ac})/2a$ subtracts two almost equal numbers ($10^8$ and $\sqrt{10^{16}-4}=10^8-2\times10^{-8}$), and gives $-7.45\times10^{-9}$ (the printed result is <code>-7.450580596923828e-09</code>), a $25\%$ error. (b) The small root is $x_1\approx-c/b=-1.000000000\times10^{-8}$ (to ten digits, with correction $-10^{-24}$). (c) Compute first the root without cancellation, $q=-\tfrac12[b+\mathrm{sign}(b)\sqrt{b^2-4ac}]$, so $x_2=q/a=-10^8$, then use $x_1x_2=c/a$: $x_1=c/q=-10^{-8}$ (code: <code>q = -0.5*(b + copysign(d, b)); roots = q/a, c/q</code>). The stable result printed is <code>(-100000000.0, -1e-08)</code>. The same strategy (avoid subtracting equal quantities by using an algebraic identity) applies to $1-\cos x$, $e^x-1$ and the variance (Lecture 3).</p>
+            <p class="answer">(a) $-7.45\times10^{-9}$ ($25\%$ wrong)  (b) $-1.000000000\times10^{-8}$  (c) $q=-\tfrac12[b+\mathrm{sign}(b)\sqrt{\cdot}]$, $x_1=c/q$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>Add the three numbers $10^{16}$, $1$ and $-10^{16}$ in double precision in the order given and in other orders. (a) What do you get? (b) Which order gives the exact answer $1$? (c) What does <code>math.fsum</code> do?</p>
+            <details class="hint"><summary>Hint</summary><p>The spacing of doubles near $10^{16}$ is $2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) In the order given, $(10^{16}+1)-10^{16}$: the first sum rounds back to $10^{16}$, so the result is $0.0$ (the same with <code>np.sum</code>). (b) Adding the large numbers first, $(10^{16}+(-10^{16}))+1$, gives $1.0$: the order $[1, 10^{16}, -10^{16}]$ would give $0$ again because $1+10^{16}$ rounds, but $[10^{16}, -10^{16}, 1]$ gives $1$. (c) <code>math.fsum</code> keeps track of the lost low-order bits (it is an exact-summation algorithm based on partial sums) and returns <code>1.0</code> for any order. For energies summed over many pairs of very different size it is worth using (or sorting by magnitude); for most work, NumPy&rsquo;s pairwise summation is accurate enough.</p>
+            <p class="answer">(a) $0.0$  (b) large terms first  (c) exact summation, $1.0$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Using the table of finite-difference errors of Lecture 3, (a) estimate the truncation error coefficient of the forward difference of $\sin$ at $x=1$ from the value at $h=10^{-3}$; (b) estimate the optimal step of the central difference from the competition $h^2f^{(3)}/6$ against $\epsilon|f|/h$; (c) verify with the table.</p>
+            <details class="hint"><summary>Hint</summary><p>The truncation error of the forward difference is $\tfrac12hf^{\prime\prime}(x)$; that of the central difference is $\tfrac16h^2f^{(3)}(x)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) For $f=\sin$: $f^{\prime\prime}(1)=-\sin1=-0.841$, so the error is $\tfrac12(10^{-3})(0.841)=4.2\times10^{-4}$, equal to the entry $4.2\times10^{-4}$ of the table. (b) For the central difference, truncation $\tfrac16h^2|f^{(3)}|=\tfrac16h^2(0.540)=0.09h^2$ and rounding $\approx\epsilon_\mathrm{mach}|f|/h=1.9\times10^{-16}/h$. They are equal at $h^3=1.9\times10^{-16}/0.09$, i.e. $h\approx1.3\times10^{-5}$, with a minimum total error of the order $10^{-11}$. (c) The table shows $1.1\times10^{-11}$ at $h=10^{-5}$ and $2.6\times10^{-9}$ at $10^{-8}$ (rounding dominates by then): the optimum is indeed near $10^{-5}$, and the best accuracy of the central difference is only about $10^{-11}$, not $10^{-16}$. This is why finite-difference forces in codes use steps $\sim0.01$ &Aring; for phonons (<a href="lab-phonons-phonopy.html">LAB 301</a>, where the displacement is large enough that the forces are well above the numerical noise of the potential).</p>
+            <p class="answer">(a) $4.2\times10^{-4}$ &check;  (b) $h_\mathrm{opt}\approx10^{-5}$  (c) the table agrees, best error $\sim10^{-11}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>Write a function <code>wrap(x, L)</code> that maps coordinates into the periodic box $[0,L)$, and the tests you would write. (a) What does <code>(-1e-20) % 10.0</code> return? (b) Is it a valid result for <code>wrap</code>? (c) Fix the function.</p>
+            <details class="hint"><summary>Hint</summary><p>Test the invariant $0\le y&lt;L$ and also that the result differs from $x$ by a multiple of $L$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>(-1e-20) % 10.0</code> returns <code>10.0</code>: mathematically $-10^{-20}+10=9.99999999999999999999$, which cannot be represented and rounds to $10$. (b) No: the result is not in $[0,L)$; it equals $L$, which is the image of $0$. An atom at $x=-10^{-20}$ is placed on the other side of the box, in a position that a cell list indexed by <code>int(x/L*ncell)</code> would map to the cell number $n_\mathrm{cell}$, an out-of-range index (a rare crash after millions of steps). (c) <code>def wrap(x, L): y = np.mod(x, L); return np.where(y &gt;= L, 0.0, y)</code>; the output of <code>wrap(np.array([-1e-20, -0.5, 10.5, 3.0]), 10.0)</code> is <code>[0. 9.5 0.5 3.]</code>. Tests: for random $x$ (including multiples of $L$ and tiny negative numbers), assert <code>0 &lt;= y &lt; L</code>, assert <code>np.allclose(np.mod(y - x + L/2, L) - L/2, 0)</code> (differs from $x$ by a multiple of $L$), and assert idempotence <code>wrap(wrap(x)) == wrap(x)</code>. Edge cases are where the bugs live.</p>
+            <p class="answer">(a) <code>10.0</code>  (b) no: not in $[0,L)$  (c) map $y\ge L$ to $0$; test the invariants</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>The all-pairs distance calculation of Lecture 6 took $1.4647$ s for $N=4000$ and the tree $0.0318$ s. (a) Extrapolate both to $N=10^5$ assuming $O(N^2)$ and $O(N)$. (b) How much memory would the $N\times N\times3$ array of differences need? (c) What do you conclude for a system of $10^6$ atoms?</p>
+            <details class="hint"><summary>Hint</summary><p>Scale by $(N_2/N_1)^2$ or $N_2/N_1$; each double takes $8$ bytes.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $N_2/N_1=25$. All pairs: $1.4647\times25^2=915$ s ($15$ min); tree: $0.0318\times25=0.80$ s. (b) $10^5\times10^5\times3\times8$ bytes $=2.4\times10^{11}$ bytes $=240$ GB, more than the memory of most computers: the all-pairs array cannot even be built. (c) For $10^6$ atoms the all-pairs method would take $\sim10^5$ s ($28$ h) and $24$ TB; the neighbour list takes about $8$ s for the search. Hence large simulations are possible only with algorithms that scale linearly (cell lists, trees) and are parallelised over domains. The extrapolation is only an estimate: the memory behaviour changes with size.</p>
+            <p class="answer">(a) $915$ s; $0.80$ s  (b) $240$ GB  (c) only $O(N)$ methods are possible</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Challenge</span></div>
+            <p>A program is $5\%$ serial. (a) What speed-up does Amdahl&rsquo;s law give on $16$ and on $100$ processors, and what is the limit? (b) What serial fraction is needed for a speed-up of $50$ on $100$ processors? (c) Why are parameter scans easier to parallelise than a single molecular-dynamics run?</p>
+            <details class="hint"><summary>Hint</summary><p>$S(P)=1/[s+(1-s)/P]$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $S(16)=1/(0.05+0.95/16)=9.14$ and $S(100)=1/(0.05+0.0095)=16.8$; the limit is $1/s=20$. Using $100$ processors instead of $16$ gives only $1.8$ times more speed. (b) $50=1/[s+(1-s)/100]$ gives $s=(1/50-1/100)/(1-1/100)=0.0101$: about $1\%$ serial. (c) The runs of a scan (different temperatures, seeds, structures) are completely independent: no communication, $s=0$, linear speed-up on a job array (<a href="lab-workstation-setup.html">LAB 101</a>). A single MD run must exchange the positions of atoms near the boundary of each processor&rsquo;s domain at every step and synchronise: the communication is the serial-like part, which grows relative to the computation as the domains become smaller (strong scaling saturates).</p>
+            <p class="answer">(a) $9.1$, $16.8$, limit $20$  (b) $1\%$  (c) independent runs need no communication</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>Implement Welford&rsquo;s online algorithm for the mean and variance, <code>n += 1; d = x - mean; mean += d/n; M2 += d*(x - mean)</code>, with $\mathrm{var}=M_2/n$. (a) Test it on the $10^5$ numbers of mean $10^9$ and standard deviation $1$ of Lecture 3. (b) Why does it not suffer from cancellation? (c) Why is it useful for simulations?</p>
+            <details class="hint"><summary>Hint</summary><p>It subtracts the <em>running mean</em> before squaring, so the differences are of order one.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The algorithm returns the mean $999\,999\,999.9990933$ and the variance $1.0002570696$, against the two-pass <code>np.var</code> $1.0002570247$ (the difference $4.5\times10^{-8}$ is rounding error in the mean of $10^{9}$-sized numbers) and the naive $384$. (b) The quantities squared, $x-\mathrm{mean}$ and $d$, are of order one (the standard deviation) and not of order $10^9$: the large common offset is removed before squaring, so no digits are lost. (c) It processes one sample at a time with constant memory, so the mean and the variance of an observable (energy, pressure) can be accumulated during a run of $10^9$ steps without storing the series, and with numerical stability; production codes use it (or block averages) for the statistics reported in the log file.</p>
+            <p class="answer">(a) $1.000257$ (naive: $384$)  (b) subtracts the running mean first  (c) streaming statistics with constant memory</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc101-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>You run a stochastic simulation with <code>rng = np.random.default_rng(5)</code>. (a) What does <code>rng.random(3)</code> return in two separate runs? (b) What do you get with seed $6$? (c) List what must be recorded so that a colleague can reproduce the run in a year, and what could still make the result differ.</p>
+            <details class="hint"><summary>Hint</summary><p>Think about software versions, hardware, parallelism and defaults.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Both runs return <code>[0.80500292 0.80794079 0.51532556]</code>: the generator is deterministic given the seed. (b) With seed $6$: <code>[0.53816435 0.34327087 0.36906724]</code>, an independent stream. (c) Record the seed, all parameters and input files (or their hashes), the versions of Python and of every package (<code>pip freeze</code>), the git commit of the code, the command line, the machine and the date, and the outputs of the run in a <code>run.json</code>. Even then the result can differ if: the random-number algorithm changes between library versions (NumPy guarantees the stream of a <code>Generator</code> only within a version policy), the code uses threads or MPI processes whose order of operations is not deterministic, a different CPU or compiler changes floating-point rounding, or a dependency is updated silently. For stochastic quantities, report the statistical error over several seeds so that exact reproducibility of one stream is not needed for the science to be reproducible.</p>
+            <p class="answer">(a) identical numbers  (b) different numbers  (c) seed, versions, commit, command; remaining differences from parallelism and libraries</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qc101-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>Why is <code>0.1 + 0.2 == 0.3</code> false in Python, and how should floating-point numbers be compared?</p>
+            <details class="solution"><summary>Solution</summary><p>$0.1$, $0.2$ and $0.3$ have no finite binary expansion and are stored rounded to $53$ bits; the sum of the two rounded numbers differs from the rounded $0.3$ in the last bit ($0.30000000000000004$). Compare with a tolerance, <code>abs(a-b) &lt; tol</code> or <code>np.isclose</code>, with a tolerance suited to the size of the numbers and the accumulated error.</p></details>
+            </div>
+            <div class="problem" id="qc101-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Basic</span></div>
+            <p>What is the difference between a view and a copy in NumPy and how can the difference lead to a bug?</p>
+            <details class="solution"><summary>Solution</summary><p>A slice such as <code>a[:3]</code> is a <em>view</em>: it shares memory with <code>a</code>, so changing it changes the original. A <em>copy</em> (<code>a[:3].copy()</code>, or fancy indexing with a list or mask) is independent. A bug arises when a function modifies a slice of its argument believing it has a private copy, so that the caller&rsquo;s data are silently altered.</p></details>
+            </div>
+            <div class="problem" id="qc101-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>Explain catastrophic cancellation with the example of $(1-\cos x)/x^2$ for small $x$ and give a stable alternative.</p>
+            <details class="solution"><summary>Solution</summary><p>For small $x$, $\cos x$ is so close to $1$ that $1-\cos x$ keeps few or no correct digits (for $x=10^{-8}$ it is exactly $0$ in double precision) and dividing by $x^2$ amplifies the error: the naive formula returns $0$ where the limit is $1/2$. The identity $1-\cos x=2\sin^2(x/2)$ gives the stable form $2\sin^2(x/2)/x^2$ which gives $0.5$ with full precision.</p></details>
+            </div>
+            <div class="problem" id="qc101-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>A test suite passes but the simulation gives an energy that is twice the correct one. How can this happen and what test would have caught it?</p>
+            <details class="solution"><summary>Solution</summary><p>If all tests compare the code with itself (invariance under translation, rotation or permutation, or a large cutoff reproducing the code without cutoff) a systematic factor such as double counting of pairs passes unseen. A test with an independently known answer, for example two atoms whose energy is the analytic pair energy, or the cohesive energy of a known crystal, would have caught it.</p></details>
+            </div>
+            <div class="problem" id="qc101-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>Why does a neighbour list reduce the cost of a pair-potential calculation from $O(N^2)$ to $O(N)$, and what is the &ldquo;skin&rdquo;?</p>
+            <details class="solution"><summary>Solution</summary><p>With a cutoff $r_c$ each atom interacts only with the $\sim\rho\tfrac43\pi r_c^3$ atoms within $r_c$, a number independent of $N$, so only $\sim N$ pairs contribute; a cell list or tree finds them without testing the other $\sim N^2$ pairs. The list is built with a slightly larger radius $r_c+\text{skin}$ and reused for several steps until some atom has moved more than half the skin, because atoms move little in one time step.</p></details>
+            </div>
+            <div class="problem" id="qc101-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>Describe a minimal set of practices that make a computational result reproducible by someone else, and one thing that can still prevent bit-for-bit reproduction.</p>
+            <details class="solution"><summary>Solution</summary><p>Scripts instead of manual steps; a virtual environment with pinned versions (<code>requirements.txt</code>); version control with the commit recorded; fixed seeds and a run record (parameters, versions, machine, time) saved with the output; inputs kept read-only; tests; a README. Bit-for-bit identity can still be lost through parallel summation order, different hardware or compiler, library updates, and non-deterministic GPU kernels: the scientific conclusion should be robust to these, which is checked by repeating with several seeds and quoting the statistical error.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Wilson, G. et al., Best practices for scientific computing, <em>PLoS Biol.</em> 12, e1001745 (2014).</li>
-                <li>Wilson, G. et al., Good enough practices in scientific computing, <em>PLoS Comput. Biol.</em> 13, e1005510 (2017).</li>
-                <li>Harris, C. R. et al., Array programming with NumPy, <em>Nature</em> 585, 357 (2020).</li>
-                <li>Virtanen, P. et al., SciPy 1.0: fundamental algorithms for scientific computing in Python, <em>Nat. Methods</em> 17, 261 (2020).</li>
-                <li>Hunter, J. D., Matplotlib: a 2D graphics environment, <em>Comput. Sci. Eng.</em> 9, 90 (2007).</li>
-                <li>Larsen, A. H. et al., The Atomic Simulation Environment, <em>J. Phys.: Condens. Matter</em> 29, 273002 (2017).</li>
-                <li>Wilkinson, M. D. et al., The FAIR guiding principles for scientific data management and stewardship, <em>Sci. Data</em> 3, 160018 (2016).</li>
-                <li>Chacon, S. and Straub, B., <em>Pro Git</em> (free online).</li>
-                <li>Shotts, W., <em>The Linux Command Line</em>, No Starch Press.</li>
+                <li>Langtangen, H. P., <em>A Primer on Scientific Programming with Python</em>, Springer: a thorough introduction with mathematical examples; the official Python tutorial (<code>docs.python.org</code>) and the NumPy user guide (<code>numpy.org/doc</code>), especially &ldquo;Broadcasting&rdquo; and &ldquo;Indexing&rdquo;.</li>
+                <li>Goldberg, D., &ldquo;What every computer scientist should know about floating-point arithmetic&rdquo;, <em>ACM Computing Surveys</em> <strong>23</strong>, 5 (1991); Higham, N. J., <em>Accuracy and Stability of Numerical Algorithms</em>, SIAM: the theory behind Lecture 3.</li>
+                <li>Wilson, G. et al., &ldquo;Best practices for scientific computing&rdquo;, <em>PLOS Biology</em> <strong>12</strong>, e1001745 (2014), and &ldquo;Good enough practices in scientific computing&rdquo;, <em>PLOS Computational Biology</em> <strong>13</strong>, e1005510 (2017): the practices of Lectures 4 and 7. The Software Carpentry lessons (<code>software-carpentry.org</code>) are free.</li>
+                <li>Press, W. H. et al., <em>Numerical Recipes</em>, Cambridge University Press, and the documentation of <code>cProfile</code>, <code>pytest</code> (<code>docs.pytest.org</code>) and <code>numba</code> (<code>numba.pydata.org</code>).</li>
+                <li>Code of this unit: <code>labs/comp-101</code> in the repository (<code>lj.py</code>, <code>test_lj.py</code>, <code>io_demo.py</code>, <code>prof_demo.py</code>). Labs: <a href="lab-workstation-setup.html">LAB 101</a> (terminal, environment, git, run records) and <a href="lab-structures-ase.html">LAB 201</a>. Next: <a href="your-first-simulation.html">COMP 102</a>, where you write your first simulations.</li>
             </ul>
 
             <!-- pager:start -->
@@ -285,8 +628,11 @@ def test_arrhenius_limits():
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=8312632e"></script>
-    <script src="../assets/pathdata.js?v=3551f443"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=5023209c"></script>
+    <script src="../assets/pathdata.js?v=35a95910"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
