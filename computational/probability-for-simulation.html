@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Probability and distributions - MiBeM</title>
-    <meta name="description" content="Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.">
+    <meta name="description" content="University-level probability for materials simulation: conditional probability and Bayes' theorem, random variables, expectation and variance, the binomial, Poisson, exponential and Gaussian distributions, the central limit theorem, the Boltzmann distribution and fluctuations, random sampling, and random walks; twelve problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/probability-for-simulation.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Probability and distributions - MiBeM">
-    <meta property="og:description" content="Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.">
+    <meta property="og:description" content="University-level probability for materials simulation: conditional probability and Bayes' theorem, random variables, expectation and variance, the binomial, Poisson, exponential and Gaussian distributions, the central limit theorem, the Boltzmann distribution and fluctuations, random sampling, and random walks; twelve problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/probability-for-simulation.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#check">1. Problems</a></li>
+                <li><a href="#basics">1. Probability basics</a></li>
+                <li><a href="#rv">2. Random variables</a></li>
+                <li><a href="#dists">3. The distributions you need</a></li>
+                <li><a href="#clt">4. Averages: the law of large numbers and the central limit theorem</a></li>
+                <li><a href="#boltz">5. The Boltzmann distribution and fluctuations</a></li>
+                <li><a href="#sampling">6. Generating random numbers</a></li>
+                <li><a href="#rw">7. Random walks and diffusion</a></li>
+                <li><a href="#summary-m10">8. How the pieces fit together</a></li>
+                <li><a href="#check">9. Problems</a></li>
+                <li><a href="#refs">10. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -45,25 +54,274 @@
             <!-- coursenav:start -->
 <nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" class="here" aria-current="page" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
 <!-- coursenav:end -->
-            <p class="lead">Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.</p>
+            <h1>Probability and distributions</h1>
+            <p class="lead">Even a perfectly deterministic simulation of atoms is read out statistically: we average over many configurations, compare against thermal fluctuations, and quote error bars. Monte Carlo methods use random numbers on purpose, kinetic Monte Carlo draws waiting times from an exponential distribution, thermostats add Gaussian noise, and statistical mechanics is probability theory applied to atoms. This module develops the probability needed to read and build such simulations: the key distributions, why averages are Gaussian, how the Boltzmann distribution and fluctuations are connected, how to sample from a distribution, and how randomness produces diffusion.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 5 min</dd></div>
+<div><dt>Reading time</dt><dd>about 22 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="statistics-and-data-fitting.html">M11. Statistics</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
 </dl>
 <!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Compute with conditional probability and Bayes&rsquo; theorem, and with expectation, variance and covariance.</li>
+                    <li>Choose and use the binomial, Poisson, exponential and Gaussian distributions for counting, rare-event and waiting-time problems.</li>
+                    <li>State and apply the law of large numbers and the central limit theorem, and recognise when they fail.</li>
+                    <li>Use the Boltzmann distribution and partition function to compute averages and fluctuations.</li>
+                    <li>Generate random samples from a given distribution, and relate a random walk to diffusion.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> (integrals, Gaussians) and the multiple integrals of <a href="multivariable-calculus.html">M2</a>. A first look at the ideas is on the page <a href="chance-averages-and-error-bars.html">S5. Chance, averages and error bars</a>.
+            </div>
+
+            <h2 id="basics">1. Probability basics<a class="anchor" href="#basics" aria-label="Link to this section">#</a></h2>
+            <h3 id="axioms">Events and rules<a class="anchor" href="#axioms" aria-label="Link to this section">#</a></h3>
+            <p>A random experiment has a <strong>sample space</strong> $\Omega$ of possible outcomes; an <strong>event</strong> $A$ is a set of outcomes, and its probability $P(A)\in[0,1]$ satisfies $P(\Omega)=1$ and, for disjoint events, $P(A\cup B)=P(A)+P(B)$. In general
+            $$P(A\cup B)=P(A)+P(B)-P(A\cap B),\qquad P(\bar A)=1-P(A).$$
+            Two events are <strong>independent</strong> if knowing one tells you nothing about the other: $P(A\cap B)=P(A)P(B)$. The probability that at least one of $n$ independent chances $p$ occurs is $1-(1-p)^n$. This is how a rare event with tiny $p$ per attempt, such as one unit cell nucleating a precipitate, becomes certain over many sites.</p>
+            <h3 id="bayes">Conditional probability and Bayes&rsquo; theorem<a class="anchor" href="#bayes" aria-label="Link to this section">#</a></h3>
+            <p>The probability of $A$ given that $B$ has occurred is $P(A|B)=P(A\cap B)/P(B)$. Rearranging in two ways gives
+            $$P(A|B)=\frac{P(B|A)\,P(A)}{P(B)},\qquad P(B)=P(B|A)P(A)+P(B|\bar A)P(\bar A)\ \text{(total probability)}.$$
+            <strong>Bayes&rsquo; theorem</strong> turns the probability of the evidence given a hypothesis into the probability of the hypothesis given the evidence. It is the logic of diagnostic testing, of inferring which phase is present from a measurement, and of Bayesian model fitting (<a href="statistics-and-data-fitting.html">M11</a>). Its lesson is that the <em>prior</em> $P(A)$ matters: if a condition is rare, most positive results are false alarms (Problem 1).</p>
+
+            <h2 id="rv">2. Random variables<a class="anchor" href="#rv" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>random variable</strong> $X$ assigns a number to each outcome. A <em>discrete</em> variable has a probability mass function $P(X=x_i)=p_i$ with $\sum p_i=1$. A <em>continuous</em> variable has a probability density $p(x)\ge0$ with $\int p(x)\,\mathrm dx=1$ and $P(a&lt;X&lt;b)=\int_a^bp(x)\,\mathrm dx$. The <strong>cumulative distribution function</strong> is $F(x)=P(X\le x)$, rising from $0$ to $1$ (so $p=F'$). Averages are sums or integrals over the distribution:
+            $$\langle X\rangle=\mathbb E[X]=\sum_ix_ip_i\ \text{ or }\ \int xp(x)\,\mathrm dx,\qquad\langle g(X)\rangle=\int g(x)\,p(x)\,\mathrm dx .$$
+            This is the &ldquo;ensemble average&rdquo; of statistical mechanics. Expectation is linear: $\langle aX+bY\rangle=a\langle X\rangle+b\langle Y\rangle$, always, even for dependent variables. The spread is measured by the <strong>variance</strong>
+            $$\mathrm{Var}\,X=\sigma^2=\bigl\langle(X-\langle X\rangle)^2\bigr\rangle=\langle X^2\rangle-\langle X\rangle^2,$$
+            and the standard deviation $\sigma$ has the same units as $X$. Then $\mathrm{Var}(aX+b)=a^2\mathrm{Var}X$. For two variables the <strong>covariance</strong> $\mathrm{Cov}(X,Y)=\langle XY\rangle-\langle X\rangle\langle Y\rangle$ and the correlation $\rho=\mathrm{Cov}/(\sigma_X\sigma_Y)\in[-1,1]$ measure how they vary together. In general
+            $$\mathrm{Var}(X+Y)=\mathrm{Var}X+\mathrm{Var}Y+2\,\mathrm{Cov}(X,Y),$$
+            so <strong>for independent variables variances add</strong>. A sum of $N$ independent copies of $X$ has mean $N\langle X\rangle$ and standard deviation $\sigma\sqrt N$; the <em>average</em> of the $N$ copies has mean $\langle X\rangle$ and standard deviation $\sigma/\sqrt N$: the origin of the standard error. <strong>Chebyshev&rsquo;s inequality</strong>, $P(|X-\mu|\ge n\sigma)\le1/n^2$, holds for any distribution with finite variance, a crude but safe bound. The covariance matrix of several variables is symmetric and positive semi-definite, and its eigenvectors are the principal components (<a href="eigenvalues-and-decompositions.html">M5</a>).</p>
+
+            <h2 id="dists">3. The distributions you need<a class="anchor" href="#dists" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="3. The distributions you need (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Distribution</th><th>Probability</th><th>Mean</th><th>Variance</th><th>Typical use</th></tr></thead>
+                <tbody>
+                    <tr><td>Bernoulli($p$)</td><td>$P(1)=p$, $P(0)=1-p$</td><td>$p$</td><td>$p(1-p)$</td><td>site occupied or empty; Metropolis accept/reject</td></tr>
+                    <tr><td>Binomial($N,p$)</td><td>$\binom Nkp^k(1-p)^{N-k}$</td><td>$Np$</td><td>$Np(1-p)$</td><td>number of solute atoms in $N$ sites</td></tr>
+                    <tr><td>Poisson($\lambda$)</td><td>$\dfrac{\lambda^ke^{-\lambda}}{k!}$</td><td>$\lambda$</td><td>$\lambda$</td><td>rare events: counts, vacancies per volume, nucleation events</td></tr>
+                    <tr><td>Uniform($a,b$)</td><td>$\dfrac1{b-a}$ on $[a,b]$</td><td>$\dfrac{a+b}2$</td><td>$\dfrac{(b-a)^2}{12}$</td><td>random number generators; random orientations</td></tr>
+                    <tr><td>Exponential($k$)</td><td>$ke^{-kt}$, $t\ge0$</td><td>$1/k$</td><td>$1/k^2$</td><td>waiting time between events of rate $k$ (kinetic Monte Carlo)</td></tr>
+                    <tr><td>Gaussian($\mu,\sigma^2$)</td><td>$\dfrac1{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}$</td><td>$\mu$</td><td>$\sigma^2$</td><td>sums of many small effects; thermal velocities; measurement noise</td></tr>
+                    <tr><td>Log-normal</td><td>$\ln X$ Gaussian</td><td>$e^{\mu+\sigma^2/2}$</td><td></td><td>grain and particle sizes, which are positive and skewed</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <h3 id="binpois">Binomial and Poisson<a class="anchor" href="#binpois" aria-label="Link to this section">#</a></h3>
+            <p>If each of $N$ independent sites hosts a solute atom with probability $p$, the number of solute atoms is binomial. For large $N$ and small $p$ with $\lambda=Np$ fixed, $\binom Nkp^k(1-p)^{N-k}\to\dfrac{\lambda^k}{k!}e^{-\lambda}$, using $(1-\lambda/N)^N\to e^{-\lambda}$ (<a href="calculus-single-variable.html">M1</a>): the <strong>Poisson distribution</strong>. Its mean and variance both equal $\lambda$, so counting $\lambda=N_\mathrm{c}$ events has relative uncertainty $\sqrt{N_\mathrm{c}}/N_\mathrm{c}=1/\sqrt{N_\mathrm{c}}$: $10^4$ detector counts are good to $1\%$. In a supercell containing on average $0.5$ vacancies, the actual number is Poisson with $P(0)=0.61$, $P(1)=0.30$, $P(\ge2)=0.09$ (Problem 4): concentration fluctuations in small simulation cells are large and must be controlled by construction.</p>
+            <h3 id="expo">The exponential distribution<a class="anchor" href="#expo" aria-label="Link to this section">#</a></h3>
+            <p>If an event happens at a constant rate $k$ per unit time, with no memory, the probability that nothing has happened by time $t$ obeys $\dot P=-kP$, so $P(T&gt;t)=e^{-kt}$ and the waiting time has density $ke^{-kt}$ and mean $1/k$. The key properties: it is <strong>memoryless</strong> ($P(T&gt;t+s\,|\,T&gt;s)=P(T&gt;t)$: an atom that has not yet jumped is no more &ldquo;due&rdquo;), and if several independent processes with rates $k_1,k_2,\ldots$ compete, the time to the <em>first</em> event is exponential with rate $K=\sum k_i$, and the probability that event $i$ is the one is $k_i/K$. This is the whole algorithm of <strong>kinetic Monte Carlo</strong>: tally the rates of all possible events, advance the clock by an exponential waiting time of rate $K$, and choose an event with probability $k_i/K$ (Problem 5).</p>
+            <h3 id="gauss">The Gaussian<a class="anchor" href="#gauss" aria-label="Link to this section">#</a></h3>
+            <p>The normal distribution is determined by its mean and variance, and any Gaussian variable $X$ is converted to a <em>standard normal</em> $Z=(X-\mu)/\sigma$ with density $\frac1{\sqrt{2\pi}}e^{-z^2/2}$. Its cumulative distribution $\Phi(z)=\tfrac12\bigl[1+\operatorname{erf}(z/\sqrt2)\bigr]$ is tabulated. The probabilities of lying within $1,2,3$ standard deviations of the mean are $68.3\%$, $95.4\%$ and $99.7\%$. The multivariate version for a vector $\mathbf x$ has density $\propto\exp\bigl[-\tfrac12(\mathbf x-\boldsymbol\mu)^TC^{-1}(\mathbf x-\boldsymbol\mu)\bigr]$ with covariance matrix $C$; the level sets are the ellipsoids of <a href="eigenvalues-and-decompositions.html">M5</a>, with axes along the principal components. Important Gaussians in physics: each Cartesian velocity component of an atom of mass $m$ at temperature $T$ has variance $k_\mathrm{B}T/m$ (Problem 8), and the displacement of an atom in a harmonic well has variance $k_\mathrm{B}T/k$ (Problem 1.11 of <a href="calculus-single-variable.html">M1</a>).</p>
+
+            <h2 id="clt">4. Averages: the law of large numbers and the central limit theorem<a class="anchor" href="#clt" aria-label="Link to this section">#</a></h2>
+            <div class="note thm"><strong>Law of large numbers and central limit theorem</strong>
+            <p>Let $X_1,\ldots,X_N$ be independent samples from a distribution with mean $\mu$ and finite variance $\sigma^2$, and $\bar X=\frac1N\sum X_i$. (i) <em>Law of large numbers:</em> $\bar X\to\mu$ as $N\to\infty$. (ii) <em>Central limit theorem:</em> the standardised average $\dfrac{\bar X-\mu}{\sigma/\sqrt N}$ tends to a standard normal distribution, whatever the shape of the original distribution.</p>
+            </div>
+            <p>Why? The <strong>characteristic function</strong> $\varphi_X(k)=\langle e^{ikX}\rangle$ is the Fourier transform of the density (<a href="fourier-analysis.html">M8</a>). The density of a sum of independent variables is the convolution of the densities, which by the convolution theorem means that characteristic functions multiply. For the standardised sum, $\varphi(k)=\bigl[\varphi_{X-\mu}(k/\sigma\sqrt N)\bigr]^N$, and a Taylor expansion $\varphi_{X-\mu}(s)=1-\tfrac12\sigma^2s^2+\cdots$ gives $\bigl[1-\tfrac{k^2}{2N}+\cdots\bigr]^N\to e^{-k^2/2}$, the characteristic function of a standard Gaussian. Gaussian shapes emerge because repeated convolution washes out all features except mean and variance.</p>
+            <p>The practical content: <strong>the standard error of an average is $\sigma/\sqrt N$</strong>, and the error is approximately Gaussian, so a $95\%$ confidence interval is $\bar X\pm1.96\,\sigma/\sqrt N$. To reduce the error by $10$ you need $100$ times more independent samples (Problem 7). The theorem has conditions: the samples must be <em>independent</em> (correlated molecular-dynamics frames carry less information, see <a href="statistics-and-data-fitting.html">M11</a>), the variance must be finite (the Cauchy distribution $\propto1/(1+x^2)$ has none, and the mean of $N$ Cauchy samples has the same distribution as a single sample: averaging does not help), and $N$ must be large enough for skewed distributions, such as rare large events in fracture or avalanche statistics.</p>
+
+            <h2 id="boltz">5. The Boltzmann distribution and fluctuations<a class="anchor" href="#boltz" aria-label="Link to this section">#</a></h2>
+            <p>A system in contact with a heat bath at temperature $T$ occupies state $i$ of energy $E_i$ with the <strong>canonical (Boltzmann) probability</strong> (derived by maximising entropy in <a href="multivariable-calculus.html">M2</a>, Example 6.1)
+            $$p_i=\frac{e^{-\beta E_i}}{Z},\qquad Z=\sum_ie^{-\beta E_i},\qquad\beta=\frac1{k_\mathrm{B}T}.$$
+            The <strong>partition function</strong> $Z$ is a generating function: all averages follow from $\ln Z$ by differentiation. Since $\partial_\beta\ln Z=-\sum E_ie^{-\beta E_i}/Z$,
+            $$\langle E\rangle=-\frac{\partial\ln Z}{\partial\beta},\qquad\mathrm{Var}(E)=\frac{\partial^2\ln Z}{\partial\beta^2}=k_\mathrm{B}T^2C_V,\qquad F=-k_\mathrm{B}T\ln Z,$$
+            the Helmholtz free energy. The second relation is a <strong>fluctuation&ndash;response relation</strong>: the spontaneous energy fluctuations of a system equal its response to a change in temperature, $C_V=\partial\langle E\rangle/\partial T$. This is the basis for computing heat capacities and compressibilities from fluctuations in a molecular dynamics run. Since the energy and $C_V$ are both extensive ($\propto N$), the <strong>relative fluctuation $\sigma_E/\langle E\rangle\propto1/\sqrt N$</strong>: $\sim10^{-12}$ for a macroscopic sample, but of order $1\%$ for a simulation of $10^3$ atoms. Ratios of probabilities are the simplest consequence: $p_i/p_j=e^{-(E_i-E_j)/k_\mathrm{B}T}$ is the origin of the Arrhenius law, the Metropolis acceptance rule $\min(1,e^{-\Delta E/k_\mathrm{B}T})$ (<a href="monte-carlo-methods.html">Monte Carlo methods</a>) and the equilibrium defect concentration $e^{-E_f/k_\mathrm{B}T}$. The two-level and harmonic-oscillator partition functions (<a href="calculus-single-variable.html">M1</a>, Problem 1.10) are the building blocks of the thermodynamics of solids.</p>
+
+            <h2 id="sampling">6. Generating random numbers<a class="anchor" href="#sampling" aria-label="Link to this section">#</a></h2>
+            <p>Computers produce <em>pseudo-random</em> numbers: deterministic sequences passing statistical tests of uniformity and independence; the generator&rsquo;s seed makes runs reproducible. Given uniform random numbers $U\in(0,1)$, other distributions follow by transformation.</p>
+            <ul>
+                <li><strong>Inverse transform sampling.</strong> If $F$ is the cumulative distribution and $U$ is uniform, then $X=F^{-1}(U)$ has distribution $F$ (because $P(X\le x)=P(U\le F(x))=F(x)$). For the exponential distribution, $F(t)=1-e^{-kt}$, so $T=-\ln(1-U)/k$ or equivalently $T=-\ln(U)/k$: the waiting time in kinetic Monte Carlo.</li>
+                <li><strong>Box&ndash;Muller.</strong> Two independent standard normals have joint density $\frac1{2\pi}e^{-(z_1^2+z_2^2)/2}$; in polar coordinates ($\mathrm dz_1\mathrm dz_2=r\,\mathrm dr\,\mathrm d\theta$, <a href="multivariable-calculus.html">M2</a>) the angle is uniform and $r^2/2$ is exponential with rate $1$. Hence $Z_1=\sqrt{-2\ln U_1}\cos2\pi U_2$, $Z_2=\sqrt{-2\ln U_1}\sin2\pi U_2$ are independent standard normals (Problem 11). This is how Gaussian velocities and thermostat noise are generated.</li>
+                <li><strong>Rejection sampling.</strong> To sample from a density $p(x)\le Mq(x)$ where $q$ is easy to sample, draw $x\sim q$ and accept with probability $p(x)/(Mq(x))$. The Metropolis algorithm is the extension to Markov chains, when $p$ is known only up to normalisation, as for the Boltzmann factor.</li>
+            </ul>
+            <div class="note mat"><strong>In materials science: initial velocities</strong>
+            <p>To start a molecular dynamics run at temperature $T$, assign each atom Cartesian velocity components drawn independently from a Gaussian with variance $k_\mathrm{B}T/m$, then remove the centre-of-mass drift and rescale to the exact target temperature. The speeds are then automatically Maxwell-distributed (<a href="multivariable-calculus.html">M2</a>, Example 7.3).</p>
+            </div>
+
+            <h2 id="rw">7. Random walks and diffusion<a class="anchor" href="#rw" aria-label="Link to this section">#</a></h2>
+            <p>An atom hops among lattice sites. Let it make a step $\Delta\mathbf r_i$ of fixed length $d$ in a random direction, independently, $N$ times. Then $\langle\Delta\mathbf r_i\rangle=0$ and the displacement $\mathbf R=\sum\Delta\mathbf r_i$ has $\langle\mathbf R\rangle=0$ and, since the cross terms of independent steps average to zero,
+            $$\langle R^2\rangle=\sum_{i,j}\langle\Delta\mathbf r_i\cdot\Delta\mathbf r_j\rangle=N\,d^2 .$$
+            The rms displacement grows as $\sqrt N$, and by the central limit theorem each Cartesian component of $\mathbf R$ is Gaussian with variance $Nd^2/3$. With a total hop rate $\Gamma$, $N=\Gamma t$, so $\langle R^2\rangle=\Gamma d^2t$. Compare this with the diffusion equation, whose point-source solution is a Gaussian of variance $2Dt$ per coordinate (<a href="vector-calculus.html">M3</a>, Problem 3.9), i.e. $\langle R^2\rangle=6Dt$ in three dimensions. The two descriptions coincide, giving the <strong>Einstein relation</strong> between microscopic jumps and macroscopic diffusion:
+            $$\langle R^2\rangle=2d_\mathrm{dim}\,Dt,\qquad D=\frac{\Gamma d^2}{2\,d_\mathrm{dim}}=\frac{\Gamma d^2}{6}\ \text{(three dimensions)},$$
+            where $d_\mathrm{dim}$ is the dimension. The same formula, with $\langle R^2\rangle$ measured from an MD trajectory of mean-square displacement, is the standard way to compute $D$ in simulation. With a thermally activated hop rate $\Gamma=z\nu_0e^{-E_m/k_\mathrm{B}T}$ ($z$ neighbours, attempt frequency $\nu_0$, migration barrier $E_m$) it explains the Arrhenius temperature dependence of diffusion (Problem 12; <a href="diffusion-and-kinetics.html">Diffusion and kinetics</a>).</p>
+
+            <h2 id="summary-m10">8. How the pieces fit together<a class="anchor" href="#summary-m10" aria-label="Link to this section">#</a></h2>
+            <p>Probability supplies the language: distributions summarised by mean and variance, independence making variances add, and the central limit theorem making averages Gaussian with error $\sigma/\sqrt N$. The key distributions each answer a question about atoms: how many (binomial, Poisson), when (exponential), how large the fluctuation (Gaussian), which state (Boltzmann). Sampling methods turn uniform random numbers into these, and a random walk of hops turns into diffusion. The next module turns this machinery around: given noisy data, how do we estimate parameters, quote honest uncertainties and fit models?</p>
+
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>(to be written)</li>
+<li>Probability assigns numbers to uncertain outcomes; conditional probability and Bayes&#x27; theorem $P(A|B)=P(B|A)P(A)/P(B)$ update beliefs with evidence, and a positive test for a rare condition is far less conclusive than it seems.</li>
+<li>A distribution is summarised by its mean $\langle X\rangle$ and variance $\mathrm{Var}X=\langle X^2\rangle-\langle X\rangle^2$; for independent variables variances add, so the standard deviation of a sum of $N$ terms grows like $\sqrt{N}$ and that of an average shrinks like $1/\sqrt{N}$.</li>
+<li>The binomial describes counting successes, the Poisson rare events (mean equals variance), the exponential the waiting time between random events (the heart of kinetic Monte Carlo), and the Gaussian sums of many small independent contributions.</li>
+<li>The central limit theorem says averages of many independent samples are Gaussian whatever the original distribution, so error bars $\sigma/\sqrt{N}$ are meaningful; it fails for heavy-tailed or strongly correlated samples.</li>
+<li>The canonical (Boltzmann) distribution $p_i=e^{-E_i/k_\mathrm{B}T}/Z$ gives all thermodynamics from $\ln Z$, and fluctuations are tied to response, for instance $\mathrm{Var}(E)=k_\mathrm{B}T^2C_V$, with relative fluctuations falling as $1/\sqrt{N}$.</li>
+<li>Random numbers drawn uniformly can be transformed into any distribution (inverse transform, Box-Muller), and a random walk of $N$ steps spreads as $\sqrt{N}$, which is diffusion with $D=\Gamma d^2/6$ in three dimensions.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">1. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <p>Coming soon.</p>
+            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p10-1">
+            <div class="p-head"><span class="p-num">Problem 10.1</span><span class="p-level">Basic</span></div>
+            <p>In a production batch, $1\%$ of samples contain a harmful secondary phase. An X-ray test flags the phase in $95\%$ of samples that contain it (sensitivity) and falsely flags $5\%$ of clean samples. A sample tests positive. (a) What is the probability it really contains the phase? (b) How would this change if $10\%$ of samples contained the phase? (c) What does a second, independent positive test do (for the $1\%$ case)?</p>
+            <details class="hint"><summary>Hint</summary><p>Bayes: $P(\mathrm{phase}|+)=\dfrac{P(+|\mathrm{phase})P(\mathrm{phase})}{P(+)}$ with $P(+)$ from total probability.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $P(+)=0.95(0.01)+0.05(0.99)=0.0095+0.0495=0.0590$. $P(\mathrm{phase}|+)=0.0095/0.0590=0.161$: only $16\%$, even though the test is &ldquo;95% accurate&rdquo;, because most samples are clean and the $5\%$ false positives swamp the true ones ($0.0495$ against $0.0095$).</p>
+            <p>(b) With a $10\%$ base rate: $P(+)=0.95(0.1)+0.05(0.9)=0.095+0.045=0.140$ and $P=0.095/0.140=0.679$: $68\%$. The prior matters enormously.</p>
+            <p>(c) The posterior $0.161$ becomes the new prior for the second test: $P(+)=0.95(0.161)+0.05(0.839)=0.153+0.042=0.195$, so $P(\mathrm{phase}|{+}{+})=0.153/0.195=0.785$: $79\%$. Repeated independent evidence accumulates; a third positive would give $98\%$.</p>
+            <p class="answer">16%; 68% at a 10% base rate; 79% after two positives</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-2">
+            <div class="p-head"><span class="p-num">Problem 10.2</span><span class="p-level">Basic</span></div>
+            <p>A random variable $X$ takes the values $0,1,2$ with probabilities $0.5,0.3,0.2$. Compute $\langle X\rangle$, $\langle X^2\rangle$, $\mathrm{Var}X$ and $\sigma$. Then find the mean and variance of $Y=3X-2$ and of the sum $S$ of $25$ independent copies of $X$, and the standard deviation of their average.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathrm{Var}X=\langle X^2\rangle-\langle X\rangle^2$. For $Y=aX+b$: $\mathrm{Var}Y=a^2\mathrm{Var}X$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\langle X\rangle=0(0.5)+1(0.3)+2(0.2)=0.7$. $\langle X^2\rangle=0+0.3+4(0.2)=1.1$. $\mathrm{Var}X=1.1-0.49=0.61$, $\sigma=0.781$.</p>
+            <p>$Y=3X-2$: $\langle Y\rangle=3(0.7)-2=0.1$, $\mathrm{Var}Y=9(0.61)=5.49$ (the shift $-2$ does not change the spread).</p>
+            <p>$S=\sum_{i=1}^{25}X_i$: $\langle S\rangle=25(0.7)=17.5$, $\mathrm{Var}S=25(0.61)=15.25$, $\sigma_S=3.91$. The average $\bar X=S/25$ has $\langle\bar X\rangle=0.7$ and $\sigma_{\bar X}=\sigma/\sqrt{25}=0.781/5=0.156$: five times smaller than $\sigma$ with $25$ samples.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-3">
+            <div class="p-head"><span class="p-num">Problem 10.3</span><span class="p-level">Core</span></div>
+            <p>A random alloy contains $2\%$ solute, placed independently on lattice sites. (a) A region of $1000$ sites contains how many solute atoms on average, with what standard deviation? (b) Estimate the probability that a given $1000$-site region contains $30$ or more solute atoms using the Gaussian approximation (with continuity correction), and compare with the exact binomial value $0.0207$. (c) How do the relative fluctuations of local composition change for $10^6$ sites? (d) What does this imply for the choice of simulation cell?</p>
+            <details class="hint"><summary>Hint</summary><p>Binomial $N=1000$, $p=0.02$: $\mu=Np$, $\sigma^2=Np(1-p)$. $P(X\ge30)\approx P(Z&gt;(29.5-\mu)/\sigma)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\mu=1000\times0.02=20$, $\sigma=\sqrt{1000(0.02)(0.98)}=4.43$ ($22\%$ of the mean).</p>
+            <p>(b) $z=(29.5-20)/4.43=2.15$, $P(Z&gt;2.15)=0.016$. The exact binomial value is $0.0207$: the Gaussian underestimates the upper tail because the binomial is skewed for small $p$ (the Poisson approximation, with the same mean and variance $20$, gives a similar $0.022$). So for rare events in the tail one should use the exact distribution.</p>
+            <p>(c) Relative fluctuation $\sqrt{(1-p)/(Np)}$: for $N=10^6$, $\sqrt{0.98/(2\times10^4)}=0.7\%$, versus $22\%$ for $N=10^3$. It falls as $1/\sqrt N$.</p>
+            <p>(d) A small supercell of $10^3$ sites cannot represent a dilute random alloy: its actual composition varies by $\pm22\%$ from cell to cell (and a $50$-atom cell has only $1$ solute atom, so the composition is $0$ or $2$ or $4\%$). One needs special quasirandom structures (designed to reproduce the correlations), or many random cells averaged, or a large cell. The same $1/\sqrt N$ law governs the size at which a sample becomes &ldquo;representative&rdquo;.</p>
+            <p class="answer">$\mu=20$, $\sigma=4.4$; Gaussian $0.016$ (exact $0.021$); $0.7\%$ at $10^6$ sites</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-4">
+            <div class="p-head"><span class="p-num">Problem 10.4</span><span class="p-level">Core</span></div>
+            <p>(a) Show that the binomial probability $P(k=0)=(1-\lambda/N)^N$ tends to $e^{-\lambda}$ as $N\to\infty$ at fixed $\lambda=Np$, and give the Poisson limit for general $k$. (b) A simulation cell contains on average $\lambda=0.5$ vacancies. Find the probabilities of $0$, $1$ and at least $2$ vacancies, and the variance. (c) A detector records an average of $10\,000$ counts in a peak. What is the relative statistical uncertainty, and how many counts are needed for $0.1\%$?</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $\ln(1-\lambda/N)^N=N\ln(1-\lambda/N)\to-\lambda$ (Taylor series of $\ln(1+x)$). (c) Poisson: $\sigma=\sqrt\lambda$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\ln\bigl[(1-\lambda/N)^N\bigr]=N\ln(1-\lambda/N)=N(-\lambda/N-\lambda^2/2N^2-\cdots)\to-\lambda$, so $P(0)\to e^{-\lambda}$. For general $k$, $\binom Nkp^k(1-p)^{N-k}=\dfrac{N(N-1)\cdots(N-k+1)}{k!\,N^k}\lambda^k\bigl(1-\tfrac\lambda N\bigr)^{N-k}\to\dfrac{\lambda^k}{k!}e^{-\lambda}$, because the first fraction tends to $1/k!$.</p>
+            <p>(b) $P(0)=e^{-0.5}=0.607$; $P(1)=0.5e^{-0.5}=0.303$; $P(\ge2)=1-0.607-0.303=0.090$. The variance equals the mean, $0.5$. So $39\%$ of cells would have at least one vacancy and $9\%$ at least two: the average concentration fluctuates strongly from cell to cell.</p>
+            <p>(c) $\sigma=\sqrt{10^4}=100$, relative uncertainty $1\%$. For $0.1\%$ you need $1/\sqrt{N_c}=10^{-3}$, i.e. $N_c=10^6$ counts: a factor of $100$ more counting time for ten times better precision.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-5">
+            <div class="p-head"><span class="p-num">Problem 10.5</span><span class="p-level">Core</span></div>
+            <p>An atom on a surface can make three kinds of hop, with rates $k_1=1000$, $k_2=500$ and $k_3=250$ s$^{-1}$. (a) Find the probability that each is the next event and the mean waiting time. (b) In a kinetic Monte Carlo step, the random numbers $u_1=0.37$ and $u_2=0.60$ are drawn. Find the time increment (using $\Delta t=-\ln u_1/K$) and the event selected (cumulative probability). (c) Show that the waiting time to the first event is exponential with the total rate, using $P(T&gt;t)$ for independent processes.</p>
+            <details class="hint"><summary>Hint</summary><p>$K=\sum k_i$. Cumulative probabilities: $k_1/K$, $(k_1+k_2)/K$, 1. Select the first event whose cumulative probability exceeds $u_2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $K=1750$ s$^{-1}$. Probabilities $k_i/K$: $0.571$, $0.286$, $0.143$. Mean waiting time $1/K=0.571$ ms.</p>
+            <p>(b) $\Delta t=-\ln(0.37)/1750=0.9943/1750=5.68\times10^{-4}$ s. Cumulative probabilities: $0.571$, $0.857$, $1$. $u_2=0.60$ lies between $0.571$ and $0.857$, so <strong>event 2</strong> is executed. After the event the rates are recomputed (the environment has changed), and the loop repeats. Note the clock advances by a random amount even though no &ldquo;unsuccessful&rdquo; attempts are wasted: this is the &ldquo;rejection-free&rdquo; BKL algorithm, and it makes kMC efficient when rates differ by orders of magnitude.</p>
+            <p>(c) Event $i$ has not happened by $t$ with probability $e^{-k_it}$. For independent processes, none has happened with probability $\prod_ie^{-k_it}=e^{-Kt}$, with $K=\sum k_i$: so the first-event time is exponential with rate $K$. The probability that process $i$ is first is $\int_0^\infty k_ie^{-k_it}\prod_{j\ne i}e^{-k_jt}\,\mathrm dt=k_i/K$.</p>
+            <p class="answer">$p=(0.571,0.286,0.143)$; $\Delta t=0.568$ ms; event 2</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-6">
+            <div class="p-head"><span class="p-num">Problem 10.6</span><span class="p-level">Basic</span></div>
+            <p>The yield strength of a steel batch is Gaussian with mean $250$ MPa and standard deviation $15$ MPa. Find: (a) the fraction of samples below $220$ MPa; (b) the fraction between $235$ and $280$ MPa; (c) the value exceeded by $99.9\%$ of samples (a design minimum). $\Phi(-2)=0.0228$, $\Phi(-1)=0.1587$, $\Phi(2)=0.9772$, $\Phi^{-1}(0.001)=-3.09$.</p>
+            <details class="hint"><summary>Hint</summary><p>Standardise $z=(x-250)/15$ and use $\Phi$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $z=(220-250)/15=-2$, $P=\Phi(-2)=0.0228$: $2.3\%$.</p>
+            <p>(b) $z_1=(235-250)/15=-1$, $z_2=(280-250)/15=+2$: $\Phi(2)-\Phi(-1)=0.9772-0.1587=0.8185$: $81.9\%$.</p>
+            <p>(c) We need $P(X&gt;x_\mathrm{min})=0.999$, i.e. $\Phi(z)=0.001$, $z=-3.09$: $x_\mathrm{min}=250-3.09(15)=203.6$ MPa. A design value of about $204$ MPa is therefore exceeded by $99.9\%$ of the material, $46$ MPa ($18\%$) below the mean: this is how characteristic and &ldquo;A-basis&rdquo; design allowables are set, and why quality scatter, not the average, governs safe design.</p>
+            <p class="answer">2.3%; 81.9%; 203.6 MPa</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-7">
+            <div class="p-head"><span class="p-num">Problem 10.7</span><span class="p-level">Core</span></div>
+            <p>(a) A Monte Carlo run produces independent samples of the energy per atom with standard deviation $0.050$ eV. How many samples are needed for a standard error of $0.001$ eV? (b) Show that $S=\sum_{i=1}^{12}U_i-6$, with $U_i$ uniform on $(0,1)$, has mean $0$ and variance $1$, and explain why it is approximately a standard normal (an old method to generate Gaussians). What is the largest value $S$ can take, and what does this say about the tails? (c) A Cauchy-distributed measurement has density $1/[\pi(1+x^2)]$. Explain why averaging many of them does not reduce the error.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $\sigma_{\bar X}=\sigma/\sqrt N$. (b) $\mathrm{Var}\,U=1/12$. (c) The characteristic function of the Cauchy density is $e^{-|k|}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $0.001=0.05/\sqrt N\Rightarrow N=(0.05/0.001)^2=2500$ independent samples. For $0.0001$ eV: $250\,000$. (If successive samples are correlated, the number of <em>independent</em> samples is smaller, see <a href="statistics-and-data-fitting.html">M11</a>.)</p>
+            <p>(b) $\langle U\rangle=\tfrac12$, so $\langle S\rangle=12(\tfrac12)-6=0$. $\mathrm{Var}\,U=\tfrac1{12}$, so $\mathrm{Var}\,S=12\cdot\tfrac1{12}=1$. By the central limit theorem a sum of $12$ independent uniform variables is close to Gaussian. But $S\in[-6,6]$ exactly: the Gaussian tail beyond $6\sigma$ (probability $2\times10^{-9}$) is cut off. Fine for rough sampling, not for studying extreme events; Box&ndash;Muller has no such limit.</p>
+            <p>(c) The characteristic function of the Cauchy density is $e^{-|k|}$. The mean of $N$ independent copies has characteristic function $\bigl[e^{-|k|/N}\bigr]^N=e^{-|k|}$: the same Cauchy distribution. The variance is infinite, so the central limit theorem does not apply, and averaging $10^6$ values is no more precise than one. (Heavy tails appear in resonance line shapes, which are Lorentzians; the sensible estimator there is the median, or a fit of the peak position.)</p>
+            <p class="answer">2500 samples; Var $S=1$ but $|S|\le6$; Cauchy averages do not converge</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-8">
+            <div class="p-head"><span class="p-num">Problem 10.8</span><span class="p-level">Core</span></div>
+            <p>For argon ($m=39.95$ u) at $T=300$ K: (a) What is the standard deviation of each Cartesian velocity component, and the probability that $|v_x|&gt;500$ m/s? (b) Show that the mean kinetic energy per atom is $\tfrac32k_\mathrm{B}T$ if the three components are independent Gaussians with variance $k_\mathrm{B}T/m$. (c) For a cell of $N=1000$ atoms in contact with a thermostat (canonical ensemble), what is the relative fluctuation of the kinetic energy, and hence of the instantaneous kinetic temperature? ($k_\mathrm{B}=1.381\times10^{-23}$ J/K.)</p>
+            <details class="hint"><summary>Hint</summary><p>For a Gaussian, $\langle v^4\rangle=3\sigma^4$. The kinetic energy $\sum\tfrac12mv_{j}^2$ over $3N$ components has variance $\tfrac14m^2\cdot3N\cdot(3\sigma^4-\sigma^4)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sigma_v=\sqrt{k_\mathrm{B}T/m}=\sqrt{4.143\times10^{-21}/6.634\times10^{-26}}=250$ m/s. $|v_x|&gt;500$ m/s is $z=2.0$: $P=2(1-\Phi(2))=0.0455$: $4.5\%$ of atoms have a velocity component beyond $500$ m/s.</p>
+            <p>(b) $\langle\tfrac12m(v_x^2+v_y^2+v_z^2)\rangle=\tfrac12m\cdot3\sigma_v^2=\tfrac32k_\mathrm{B}T$. &check; (Equipartition.)</p>
+            <p>(c) $K=\sum_{j=1}^{3N}\tfrac12mv_j^2$. Each term has mean $\tfrac12k_\mathrm{B}T$ and variance $\tfrac14m^2(\langle v^4\rangle-\sigma^4)=\tfrac14m^2(2\sigma^4)=\tfrac12(k_\mathrm{B}T)^2$. Summing $3N$ independent terms: $\mathrm{Var}K=\tfrac32N(k_\mathrm{B}T)^2$ and $\langle K\rangle=\tfrac32Nk_\mathrm{B}T$, so $\dfrac{\sigma_K}{\langle K\rangle}=\sqrt{\dfrac{2}{3N}}$. For $N=1000$: $2.6\%$, i.e. the instantaneous kinetic temperature of a $1000$-atom cell fluctuates by about $\pm8$ K at $300$ K. (In a strictly isolated NVE run the fluctuation is somewhat smaller, because the total energy is fixed.) For $N=10^6$ it is $0.08\%$. The fluctuations are physical (not a bug) and shrink as $1/\sqrt N$.</p>
+            <p class="answer">$\sigma_v=250$ m/s; $P=4.5\%$; $\sigma_K/K=\sqrt{2/3N}=2.6\%$ for 1000 atoms</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-9">
+            <div class="p-head"><span class="p-num">Problem 10.9</span><span class="p-level">Core</span></div>
+            <p>A defect has two states, with energies $0$ and $\varepsilon=0.10$ eV. (a) Find the probability of the excited state at $300$ K and at $1000$ K. (b) Show that $\mathrm{Var}(E)=\varepsilon^2p(1-p)$ with $p$ the excited-state probability, and that it equals $k_\mathrm{B}T^2C_V$ with $C_V=\mathrm d\langle E\rangle/\mathrm dT$. (c) Evaluate $C_V/k_\mathrm{B}$ at both temperatures and explain why it is small at both extremes.</p>
+            <details class="hint"><summary>Hint</summary><p>$Z=1+e^{-\beta\varepsilon}$, $p=e^{-\beta\varepsilon}/Z=1/(1+e^{\beta\varepsilon})$. $\langle E\rangle=\varepsilon p$. $\mathrm dp/\mathrm dT=p(1-p)\varepsilon/(k_\mathrm{B}T^2)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $300$ K: $k_\mathrm{B}T=0.02585$ eV, $\varepsilon/k_\mathrm{B}T=3.868$, $e^{3.868}=47.9$, $p=1/(1+47.9)=0.0205$. $1000$ K: $k_\mathrm{B}T=0.08617$ eV, ratio $1.160$, $e^{1.160}=3.19$, $p=1/4.19=0.239$.</p>
+            <p>(b) $E$ takes $\varepsilon$ with probability $p$, else $0$: $\langle E\rangle=\varepsilon p$, $\langle E^2\rangle=\varepsilon^2p$, so $\mathrm{Var}E=\varepsilon^2p-\varepsilon^2p^2=\varepsilon^2p(1-p)$. Also $p=1/(1+e^{\varepsilon/k_\mathrm{B}T})$ gives $\dfrac{\mathrm dp}{\mathrm dT}=\dfrac{\varepsilon}{k_\mathrm{B}T^2}\,p(1-p)$, so $C_V=\varepsilon\dfrac{\mathrm dp}{\mathrm dT}=\dfrac{\varepsilon^2p(1-p)}{k_\mathrm{B}T^2}$ and $k_\mathrm{B}T^2C_V=\varepsilon^2p(1-p)=\mathrm{Var}E$. &check;</p>
+            <p>(c) $C_V/k_\mathrm{B}=(\varepsilon/k_\mathrm{B}T)^2p(1-p)$. At $300$ K: $14.96\times0.0205\times0.9795=0.300$; at $1000$ K: $1.347\times0.239\times0.761=0.245$. It vanishes at low $T$ (the excited state is frozen out, $p\to0$) and at high $T$ (the two levels are equally populated, $p\to\tfrac12$, and $\varepsilon/k_\mathrm{B}T\to0$), peaking at an intermediate temperature $T\approx0.42\,\varepsilon/k_\mathrm{B}$ ($\approx490$ K) with $C_V=0.44\,k_\mathrm{B}$: the <em>Schottky anomaly</em>, a bump in heat capacity from any gapped two-level system. A population limited by a gap cannot absorb energy once saturated.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-10">
+            <div class="p-head"><span class="p-num">Problem 10.10</span><span class="p-level">Challenge</span></div>
+            <p>For a classical harmonic oscillator in one dimension, $Z\propto\int e^{-\beta(p^2/2m+\tfrac12kx^2)}\mathrm dp\,\mathrm dx\propto\beta^{-1}$. (a) Show $\langle E\rangle=k_\mathrm{B}T$ and $\mathrm{Var}E=(k_\mathrm{B}T)^2$, and check $\mathrm{Var}E=k_\mathrm{B}T^2C_V$. (b) For a solid of $N$ atoms modelled as $3N$ independent oscillators, find $\langle E\rangle$, $C_V$ (Dulong&ndash;Petit) and the relative energy fluctuation. (c) Evaluate it for $N=10^3$ and for one mole.</p>
+            <details class="hint"><summary>Hint</summary><p>$\ln Z=-\ln\beta+\mathrm{const}$. $\partial_\beta\ln Z=-1/\beta$ and $\partial^2_\beta\ln Z=1/\beta^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\langle E\rangle=-\partial_\beta\ln Z=1/\beta=k_\mathrm{B}T$ and $\mathrm{Var}E=\partial_\beta^2\ln Z=1/\beta^2=(k_\mathrm{B}T)^2$. With $C_V=\mathrm d\langle E\rangle/\mathrm dT=k_\mathrm{B}$: $k_\mathrm{B}T^2C_V=k_\mathrm{B}^2T^2=(k_\mathrm{B}T)^2$. &check; (The two quadratic terms of the energy, $\tfrac12$ each of kinetic and potential, each contribute $\tfrac12k_\mathrm{B}T$.)</p>
+            <p>(b) For $3N$ independent oscillators the cumulants add: $\langle E\rangle=3Nk_\mathrm{B}T$, $\mathrm{Var}E=3N(k_\mathrm{B}T)^2$, $C_V=3Nk_\mathrm{B}$ (the Dulong&ndash;Petit value, $24.9$ J K$^{-1}$mol$^{-1}$ per mole). Relative fluctuation: $\sigma_E/\langle E\rangle=\sqrt{3N}\,k_\mathrm{B}T/(3Nk_\mathrm{B}T)=1/\sqrt{3N}$.</p>
+            <p>(c) $N=10^3$: $1/\sqrt{3000}=1.8\%$. One mole, $N=6\times10^{23}$: $1/\sqrt{1.8\times10^{24}}=7.5\times10^{-13}$: utterly negligible, which is why macroscopic thermodynamics has no randomness. In a small canonical simulation, however, the total energy fluctuates at the percent level and the heat capacity can be read from those fluctuations: $C_V=\mathrm{Var}(E)/(k_\mathrm{B}T^2)$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-11">
+            <div class="p-head"><span class="p-num">Problem 10.11</span><span class="p-level">Challenge</span></div>
+            <p>(a) Show that $T=-\ln(U)/k$ has the exponential density $ke^{-kt}$ when $U$ is uniform on $(0,1)$. (b) Derive the Box&ndash;Muller transformation: starting from the joint Gaussian density of $(Z_1,Z_2)$ in polar coordinates, show that $R^2/2$ is exponential(1) and the angle uniform. (c) Evaluate $Z_1,Z_2$ for $U_1=0.2$, $U_2=0.25$. (d) Show that the sample mean and variance of $Z_1$ are $0$ and $1$ using $\langle R^2\rangle=2$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $P(T&gt;t)=P(-\ln U&gt;kt)=P(U&lt;e^{-kt})$. (b) $\mathrm dz_1\mathrm dz_2=r\,\mathrm dr\,\mathrm d\theta$; with $s=r^2/2$, $\mathrm ds=r\,\mathrm dr$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $P(T&gt;t)=P(-\ln U&gt;kt)=P(U&lt;e^{-kt})=e^{-kt}$ since $U$ is uniform. This is the exponential survival function; its derivative gives the density $ke^{-kt}$. &check;</p>
+            <p>(b) The joint density $\frac1{2\pi}e^{-(z_1^2+z_2^2)/2}\mathrm dz_1\mathrm dz_2=\frac1{2\pi}e^{-r^2/2}\,r\,\mathrm dr\,\mathrm d\theta$. The angle $\theta$ has the constant density $\mathrm d\theta/2\pi$: uniform on $(0,2\pi)$, hence $\theta=2\pi U_2$. With $s=r^2/2$, the radial part is $e^{-s}\,\mathrm ds$: exponential with rate $1$, so by (a) $s=-\ln U_1$ and $r=\sqrt{-2\ln U_1}$. The two factors are independent, and $Z_1=r\cos\theta$, $Z_2=r\sin\theta$.</p>
+            <p>(c) $r=\sqrt{-2\ln0.2}=\sqrt{3.219}=1.794$; $\theta=2\pi(0.25)=\pi/2$: $Z_1=1.794\cos(\pi/2)=0$ and $Z_2=1.794$. (The pair is a single draw; any other pair of uniform numbers gives different values.)</p>
+            <p>(d) $\langle Z_1^2\rangle=\langle R^2\rangle\langle\cos^2\theta\rangle=2\cdot\tfrac12=1$ (using $\langle R^2\rangle=2\langle s\rangle=2$ for exponential(1)), $\langle Z_1\rangle=\langle R\rangle\langle\cos\theta\rangle=0$. So mean $0$, variance $1$, as required.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p10-12">
+            <div class="p-head"><span class="p-num">Problem 10.12</span><span class="p-level">Challenge</span></div>
+            <p>Vacancy diffusion in FCC copper ($a=3.61$ &Aring;). (a) Show for a random walk with $N$ steps of length $d$ that $\langle R^2\rangle=Nd^2$ and derive $D=\Gamma d^2/6$. (b) The nearest-neighbour jump length is $d=a/\sqrt2$. For a vacancy with $z=12$ neighbours, attempt frequency $\nu_0=10^{13}$ s$^{-1}$ and migration energy $E_m=0.70$ eV, compute the total jump rate $\Gamma=z\nu_0e^{-E_m/k_\mathrm{B}T}$ and $D_v$ at $600$ K. (c) Find the rms distance travelled by the vacancy in one second (in one direction, $x_\mathrm{rms}=\sqrt{2Dt}$) and the number of jumps it makes. (d) By what factor does $D_v$ change when $T$ rises to $700$ K?</p>
+            <details class="hint"><summary>Hint</summary><p>$k_\mathrm{B}T=0.0517$ eV at $600$ K. Each jump is a random direction; cross terms average to zero. Compare $\langle R^2\rangle=Nd^2=\Gamma td^2$ with $6Dt$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\mathbf R=\sum_{i=1}^N\Delta\mathbf r_i$; $\langle R^2\rangle=\sum_i\langle\Delta r_i^2\rangle+\sum_{i\ne j}\langle\Delta\mathbf r_i\cdot\Delta\mathbf r_j\rangle=Nd^2+0$, since independent random directions have $\langle\Delta\mathbf r_i\cdot\Delta\mathbf r_j\rangle=0$. With $N=\Gamma t$ and $\langle R^2\rangle=6Dt$ (three dimensions): $D=\Gamma d^2/6$. In general dimension $\langle R^2\rangle=2d_\mathrm{dim}Dt$.</p>
+            <p>(b) $d=3.61/\sqrt2=2.55$ &Aring;. $E_m/k_\mathrm{B}T=0.70/0.05170=13.54$, $e^{-13.54}=1.32\times10^{-6}$. $\Gamma=12\times10^{13}\times1.32\times10^{-6}=1.58\times10^8$ s$^{-1}$: the vacancy hops $1.6\times10^8$ times a second. $D_v=\Gamma d^2/6=\dfrac{1.58\times10^8\times(2.55\times10^{-10})^2}{6}=1.7\times10^{-12}$ m$^2$/s.</p>
+            <p>(c) $x_\mathrm{rms}=\sqrt{2D_vt}=\sqrt{3.4\times10^{-12}}=1.8\ \mu$m in one second. In that time the vacancy makes $1.6\times10^8$ jumps, and the one-dimensional rms displacement of a random walk is $\sqrt{N/3}\,d=7.3\times10^3\times2.55$ &Aring;$=1.9\ \mu$m, consistent with the diffusion result. (This is the vacancy diffusivity; atom self-diffusion is slower by the vacancy concentration factor $e^{-E_f/k_\mathrm{B}T}$.)</p>
+            <p>(d) $D\propto e^{-E_m/k_\mathrm{B}T}$: $\dfrac{D(700)}{D(600)}=\exp\Bigl[\dfrac{E_m}{k_\mathrm{B}}\Bigl(\dfrac1{600}-\dfrac1{700}\Bigr)\Bigr]=\exp\bigl[8123\times2.38\times10^{-4}\bigr]=e^{1.93}=6.9$. A $17\%$ rise in $T$ increases $D$ nearly seven-fold: the same strong Arrhenius sensitivity seen in <a href="calculus-single-variable.html">M1</a>, Problem 1.4.</p>
+            <p class="answer">$D=\Gamma d^2/6$; $D_v=1.7\times10^{-12}$ m²/s; $x_\mathrm{rms}=1.8\ \mu$m/s; ratio 6.9</p>
+            </details>
+            </div>
+
+            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Grinstead, C. M. and Snell, J. L., <em>Introduction to Probability</em>, American Mathematical Society (free online).</li>
+                <li>Ross, S., <em>A First Course in Probability</em>, Pearson.</li>
+                <li>Feller, W., <em>An Introduction to Probability Theory and Its Applications</em>, Wiley.</li>
+                <li>Reif, F., <em>Fundamentals of Statistical and Thermal Physics</em>, McGraw-Hill: random walks, the canonical ensemble, fluctuations.</li>
+                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press: random sampling, Monte Carlo and fluctuation formulas.</li>
+                <li>Bortz, A. B., Kalos, M. H. and Lebowitz, J. L., &ldquo;A new algorithm for Monte Carlo simulation of Ising spin systems&rdquo;, <em>Journal of Computational Physics</em> 17 (1975): the rejection-free kinetic Monte Carlo step.</li>
+                <li>Mehrer, H., <em>Diffusion in Solids</em>, Springer: random-walk theory and atomic jump models.</li>
+            </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
@@ -83,7 +341,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=6b3f9db5"></script>
+    <script src="../assets/topics.js?v=58d29823"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
 </body>

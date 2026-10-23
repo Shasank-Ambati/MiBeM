@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fourier series and transforms - MiBeM</title>
-    <meta name="description" content="Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.">
+    <meta name="description" content="University-level Fourier analysis for materials modelling: complex exponentials, Fourier series and convergence, the Fourier transform and convolution theorem, the discrete transform and sampling, and reciprocal space, diffraction and Bloch waves; twelve problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/fourier-analysis.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
     <meta property="og:title" content="Fourier series and transforms - MiBeM">
-    <meta property="og:description" content="Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.">
+    <meta property="og:description" content="University-level Fourier analysis for materials modelling: complex exponentials, Fourier series and convergence, the Fourier transform and convolution theorem, the discrete transform and sampling, and reciprocal space, diffraction and Bloch waves; twelve problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/fourier-analysis.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,14 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#check">1. Problems</a></li>
+                <li><a href="#complex">1. Complex numbers and exponentials</a></li>
+                <li><a href="#series">2. Fourier series</a></li>
+                <li><a href="#transform">3. The Fourier transform</a></li>
+                <li><a href="#dft">4. The discrete Fourier transform and the FFT</a></li>
+                <li><a href="#recipspace">5. Reciprocal space, diffraction and Bloch waves</a></li>
+                <li><a href="#summary-m8">6. How the pieces fit together</a></li>
+                <li><a href="#check">7. Problems</a></li>
+                <li><a href="#refs">8. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -45,25 +52,331 @@
             <!-- coursenav:start -->
 <nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" class="here" aria-current="page" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
 <!-- coursenav:end -->
-            <p class="lead">Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.</p>
+            <h1>Fourier series and transforms</h1>
+            <p class="lead">Crystals are periodic, vibrations are waves, diffraction patterns are the Fourier transform of a structure, and the diffusion equation turns into independent decay problems once you split a profile into sinusoids. Fourier analysis, the decomposition of functions into waves, is therefore one of the most widely used tools in computational materials science: plane-wave DFT, spectral phase-field solvers, Ewald summation, spectral analysis of molecular dynamics, and the interpretation of X-ray, neutron and electron diffraction. This module develops the theory carefully, from complex numbers to the fast Fourier transform and Bloch&rsquo;s theorem.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 5 min</dd></div>
+<div><dt>Reading time</dt><dd>about 24 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a><br><a href="linear-algebra-foundations.html">M4. Linear algebra I</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="partial-differential-equations.html">M9. PDEs</a></dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
 </dl>
 <!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Manipulate complex numbers and exponentials, and use Euler&rsquo;s formula to simplify trigonometric expressions.</li>
+                    <li>Compute Fourier series and relate their convergence rate to the smoothness of a function; use Parseval&rsquo;s theorem.</li>
+                    <li>Use the Fourier transform, its main properties and standard pairs, and the convolution theorem; solve the diffusion equation in Fourier space.</li>
+                    <li>Compute a discrete Fourier transform, and explain sampling, the Nyquist limit and aliasing.</li>
+                    <li>Explain diffraction, the structure factor, peak broadening and Bloch&rsquo;s theorem as Fourier ideas.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a> (integrals, series) and <a href="linear-algebra-foundations.html">M4. Linear algebra I</a> (orthogonality, reciprocal lattice).
+            </div>
+
+            <h2 id="complex">1. Complex numbers and exponentials<a class="anchor" href="#complex" aria-label="Link to this section">#</a></h2>
+            <p>A complex number is $z=x+iy$ with $i^2=-1$; $x=\operatorname{Re}z$, $y=\operatorname{Im}z$. Its <strong>conjugate</strong> is $\bar z=x-iy$ and its <strong>modulus</strong> is $|z|=\sqrt{z\bar z}=\sqrt{x^2+y^2}$. In the complex plane it has a polar form $z=re^{i\theta}$, with $r=|z|$ and $\theta=\arg z$. The key link is
+            $$e^{i\theta}=\cos\theta+i\sin\theta\qquad\text{(Euler&rsquo;s formula),}$$
+            which can be checked by comparing the Taylor series of $e^{i\theta}$, $\cos\theta$ and $\sin\theta$ (<a href="calculus-single-variable.html">M1</a>). Consequences:</p>
+            <ul>
+                <li>$|e^{i\theta}|=1$: the point moves around the unit circle; $e^{i\pi}=-1$ and $e^{2\pi i}=1$.</li>
+                <li>Multiplication adds angles and multiplies moduli, $re^{i\theta}\cdot se^{i\phi}=rs\,e^{i(\theta+\phi)}$: multiplying by $e^{i\phi}$ is a rotation by $\phi$. De Moivre: $(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta$.</li>
+                <li>$\cos\theta=\dfrac{e^{i\theta}+e^{-i\theta}}2$, $\sin\theta=\dfrac{e^{i\theta}-e^{-i\theta}}{2i}$. Product and power identities for trigonometric functions follow by multiplying exponentials (Problem 1).</li>
+                <li>The <strong>$N$-th roots of unity</strong> $\omega_m=e^{2\pi im/N}$ ($m=0,\ldots,N-1$) are equally spaced on the unit circle. Their key property is $\displaystyle\sum_{m=0}^{N-1}e^{2\pi imn/N}=\begin{cases}N&amp;n\text{ a multiple of }N\\0&amp;\text{otherwise,}\end{cases}$ a geometric series that underlies the discrete Fourier transform.</li>
+            </ul>
+            <p>The function $e^{ikx}=\cos kx+i\sin kx$ is a <strong>plane wave</strong>: with time dependence, $e^{i(kx-\omega t)}$ travels to the right at speed $\omega/k$. A real oscillation $A\cos(\omega t+\varphi)$ is the real part of the <strong>phasor</strong> $\hat Ae^{i\omega t}$ with complex amplitude $\hat A=Ae^{i\varphi}$ carrying both size and phase; the driven oscillator of <a href="ordinary-differential-equations.html">M7</a> is solved in two lines this way.</p>
+
+            <h2 id="series">2. Fourier series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
+            <h3 id="orth">Orthogonality<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h3>
+            <p>Let $f(x)$ have period $L$ and define $k_n=2\pi n/L$. The functions $e^{ik_nx}$ are <strong>orthogonal</strong> over one period:
+            $$\frac1L\int_0^Le^{i(k_n-k_m)x}\,\mathrm dx=\delta_{nm},$$
+            because for $n\ne m$ the integral of a full number of oscillations vanishes. This is the continuous analogue of the orthonormal basis vectors of <a href="linear-algebra-foundations.html">M4</a>, with the integral of $f\bar g$ playing the role of the dot product.</p>
+            <div class="note thm"><strong>Fourier series</strong>
+            <p>A function of period $L$ that is piecewise smooth can be written
+            $$f(x)=\sum_{n=-\infty}^{\infty}c_n\,e^{ik_nx},\qquad c_n=\frac1L\int_0^Lf(x)\,e^{-ik_nx}\,\mathrm dx .$$
+            $c_0$ is the mean of $f$. If $f$ is real, $c_{-n}=\bar c_n$, and the equivalent real form is $f=\tfrac12a_0+\sum_{n\ge1}\bigl(a_n\cos k_nx+b_n\sin k_nx\bigr)$ with $a_n=\tfrac2L\int f\cos k_nx\,\mathrm dx$ and $b_n=\tfrac2L\int f\sin k_nx\,\mathrm dx$.</p>
+            </div>
+            <p>The coefficient formula follows by multiplying the series by $e^{-ik_mx}$ and integrating: orthogonality kills every term except $n=m$. <strong>Parseval&rsquo;s theorem</strong> says the mean square of $f$ equals the sum of squared coefficients:
+            $$\frac1L\int_0^L|f|^2\,\mathrm dx=\sum_n|c_n|^2,$$
+            so the &ldquo;power&rdquo; of a signal is the sum of the powers of its harmonics. For even functions only cosines appear, for odd functions only sines (saving half the work).</p>
+            <div class="example">
+                <strong>Worked example 2.1: the sawtooth and the Basel sum</strong>
+                <p class="given">Find the Fourier series of $f(x)=x$ on $(-\pi,\pi)$, extended periodically ($L=2\pi$), and use Parseval&rsquo;s theorem to sum $\sum1/n^2$.</p>
+                <p>$f$ is odd, so only sines: $b_n=\dfrac1\pi\displaystyle\int_{-\pi}^{\pi}x\sin nx\,\mathrm dx=\dfrac2\pi\int_0^\pi x\sin nx\,\mathrm dx$. By parts, $\int_0^\pi x\sin nx\,\mathrm dx=\Bigl[-\dfrac{x\cos nx}{n}\Bigr]_0^\pi+\int_0^\pi\dfrac{\cos nx}{n}\mathrm dx=-\dfrac{\pi(-1)^n}{n}+0$. Hence $b_n=\dfrac{2(-1)^{n+1}}{n}$ and
+                $$x=2\Bigl(\sin x-\frac{\sin2x}{2}+\frac{\sin3x}{3}-\cdots\Bigr).$$
+                Parseval (real form): mean square $\dfrac1{2\pi}\displaystyle\int_{-\pi}^\pi x^2\mathrm dx=\dfrac{\pi^2}{3}$ equals $\tfrac12\sum b_n^2=\tfrac12\sum\dfrac4{n^2}$. Therefore $\displaystyle\sum_{n=1}^\infty\frac1{n^2}=\frac{\pi^2}6$. The coefficients decay only like $1/n$ because the periodic extension has jumps at $x=\pm\pi$.</p>
+            </div>
+            <h3 id="conv">Convergence, smoothness and the Gibbs phenomenon<a class="anchor" href="#conv" aria-label="Link to this section">#</a></h3>
+            <p>How many harmonics do you need? The answer depends on smoothness, and it matters every time a spectral method is used:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Convergence, smoothness and the Gibbs phenomenon (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Function (periodic)</th><th>Coefficients $|c_n|$ decay as</th><th>Example</th></tr></thead>
+                <tbody>
+                    <tr><td>Jump discontinuity</td><td>$1/n$</td><td>square wave, sawtooth</td></tr>
+                    <tr><td>Continuous, derivative has jumps</td><td>$1/n^2$</td><td>triangle wave</td></tr>
+                    <tr><td>$p-1$ continuous derivatives, $p$-th jumps</td><td>$1/n^{p+1}$</td><td></td></tr>
+                    <tr><td>Infinitely smooth (analytic)</td><td>faster than any power, typically $e^{-\alpha n}$</td><td>$e^{\cos x}$, Gaussians, smooth densities</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>Each derivative multiplies $c_n$ by $ik_n$, which explains the pattern: differentiating a function $p$ times until it has a jump gives $n^p|c_n|\sim1/n$. Near a jump, partial sums <strong>overshoot</strong> by about $9\%$ of the jump height no matter how many terms are kept: the <strong>Gibbs phenomenon</strong> (the peak narrows but does not shrink). It appears whenever a sharp interface is represented in a truncated Fourier basis, for instance a sharp composition profile in a spectral phase-field simulation or a truncated density in plane-wave DFT, and is controlled by smoothing the interface over several grid points.</p>
+            <div class="example">
+                <strong>Worked example 2.2: the square wave</strong>
+                <p class="given">Expand $f(x)=+1$ on $(0,\pi)$, $-1$ on $(-\pi,0)$ (period $2\pi$).</p>
+                <p>$f$ is odd, so $b_n=\dfrac2\pi\displaystyle\int_0^\pi\sin nx\,\mathrm dx=\dfrac2{\pi n}\bigl(1-(-1)^n\bigr)$, which is $\dfrac4{\pi n}$ for odd $n$ and $0$ for even $n$:
+                $$f(x)=\frac4\pi\Bigl(\sin x+\frac{\sin3x}{3}+\frac{\sin5x}{5}+\cdots\Bigr).$$
+                At $x=\pi/2$, $f=1$ and $\sin(n\pi/2)$ alternates $1,-1,\ldots$ for odd $n$, giving the Leibniz series $1-\tfrac13+\tfrac15-\cdots=\tfrac\pi4$. The partial sums peak at $1.179$ near the jump however many terms are used ($1.182$ with $5$ terms, $1.179$ with $100$): the Gibbs overshoot of $0.179$, or $8.95\%$ of the jump of $2$.</p>
+            </div>
+
+            <h2 id="transform">3. The Fourier transform<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
+            <p>Let the period $L\to\infty$: the spacing of the wavenumbers $k_n$ goes to zero, the sum becomes an integral, and a non-periodic function can be written as a continuous superposition of plane waves. With the convention used here,
+            $$F(k)=\int_{-\infty}^{\infty}f(x)\,e^{-ikx}\,\mathrm dx,\qquad f(x)=\frac1{2\pi}\int_{-\infty}^{\infty}F(k)\,e^{ikx}\,\mathrm dk .$$
+            $F(k)$ is the amplitude of the plane wave of wavenumber $k$ in $f$. (Other books move the $2\pi$ or use $e^{2\pi i\nu x}$; always check which convention a code or paper uses.) The properties that make the transform so useful:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="3. The Fourier transform (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Property</th><th>Real space</th><th>Fourier space</th></tr></thead>
+                <tbody>
+                    <tr><td>Linearity</td><td>$af+bg$</td><td>$aF+bG$</td></tr>
+                    <tr><td>Shift</td><td>$f(x-x_0)$</td><td>$e^{-ikx_0}F(k)$ (only a phase)</td></tr>
+                    <tr><td>Scaling</td><td>$f(ax)$</td><td>$\dfrac1{|a|}F(k/a)$: narrow in $x$ means broad in $k$</td></tr>
+                    <tr><td>Derivative</td><td>$f'(x)$</td><td>$ik\,F(k)$; so $\nabla^2\to-k^2$</td></tr>
+                    <tr><td>Convolution</td><td>$(f*g)(x)=\int f(x')g(x-x')\,\mathrm dx'$</td><td>$F(k)\,G(k)$</td></tr>
+                    <tr><td>Parseval</td><td>$\int|f|^2\mathrm dx$</td><td>$\dfrac1{2\pi}\int|F|^2\mathrm dk$</td></tr>
+                    <tr><td>Real $f$</td><td>$f(x)$ real</td><td>$F(-k)=\overline{F(k)}$</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <h3 id="pairs">Standard transform pairs<a class="anchor" href="#pairs" aria-label="Link to this section">#</a></h3>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Standard transform pairs (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>$f(x)$</th><th>$F(k)$</th><th>Where it appears</th></tr></thead>
+                <tbody>
+                    <tr><td>$\delta(x)$</td><td>$1$</td><td>a point source contains all wavenumbers equally</td></tr>
+                    <tr><td>$1$</td><td>$2\pi\,\delta(k)$</td><td>a uniform field has only $k=0$</td></tr>
+                    <tr><td>$e^{ik_0x}$</td><td>$2\pi\,\delta(k-k_0)$</td><td>one plane wave, one line</td></tr>
+                    <tr><td>Gaussian $e^{-x^2/(2\sigma^2)}$</td><td>$\sigma\sqrt{2\pi}\,e^{-\sigma^2k^2/2}$</td><td>diffusion kernel; instrument resolution; the only self-transforming shape</td></tr>
+                    <tr><td>Box: $1$ for $|x|&lt;a/2$, else $0$</td><td>$\dfrac{2\sin(ka/2)}{k}$</td><td>a finite crystal or slit; the sinc function</td></tr>
+                    <tr><td>Exponential $e^{-|x|/\xi}$</td><td>$\dfrac{2\xi}{1+\xi^2k^2}$</td><td>Lorentzian line shape; correlation length $\xi$</td></tr>
+                    <tr><td>Comb $\sum_n\delta(x-na)$</td><td>$\dfrac{2\pi}{a}\sum_m\delta\bigl(k-\tfrac{2\pi m}a\bigr)$</td><td>a lattice transforms into a reciprocal lattice</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>The scaling rule has a famous consequence. Let $\sigma_x$ and $\sigma_k$ be the root-mean-square widths of $|f|^2$ and $|F|^2$; then
+            $$\sigma_x\,\sigma_k\ge\tfrac12,$$
+            with equality only for Gaussians. A function cannot be sharply localised in both position and wavenumber; this is the mathematics behind the Heisenberg uncertainty principle ($p=\hbar k$), and the reason that a short pulse has a broad spectrum, a small crystal broad diffraction peaks, and a localised wave packet a spread of momenta.</p>
+
+            <h3 id="diff">Solving diffusion with Fourier transforms<a class="anchor" href="#diff" aria-label="Link to this section">#</a></h3>
+            <p>The diffusion equation $\partial_tc=D\partial_x^2c$ becomes, after transforming in $x$ (the derivative rule gives $\partial_x^2\to-k^2$),
+            $$\frac{\partial\hat c(k,t)}{\partial t}=-Dk^2\,\hat c(k,t)\quad\Longrightarrow\quad\hat c(k,t)=\hat c(k,0)\,e^{-Dk^2t}.$$
+            A partial differential equation has become an independent decay law for every wavenumber. Short wavelengths (large $k$) decay fastest, rate $Dk^2$, so diffusion <em>smooths</em>: it removes fine structure first. To get back to real space, note that multiplying by $e^{-Dk^2t}$ corresponds, by the convolution theorem, to convolving with the inverse transform of $e^{-Dk^2t}$. Comparing with the Gaussian pair (with $\sigma^2/2=Dt$) that inverse transform is the <strong>diffusion kernel</strong>
+            $$G(x,t)=\frac{1}{\sqrt{4\pi Dt}}\,e^{-x^2/(4Dt)},\qquad c(x,t)=\int G(x-x',t)\,c(x',0)\,\mathrm dx' .$$
+            The profile from an initial delta is a Gaussian of variance $\sigma^2=2Dt$ (verified directly in <a href="vector-calculus.html">M3</a>), and a general initial profile is smeared by this Gaussian. Because variances add under convolution of Gaussians ($\hat G$ multiplies), diffusing for $t_1$ and then $t_2$ equals diffusing for $t_1+t_2$ (Problem 6).</p>
+            <div class="note mat"><strong>In materials science: homogenisation of a segregated profile</strong>
+            <p>A cast alloy has composition varying sinusoidally with the dendrite spacing $\lambda$, $c=\bar c+A\cos(2\pi x/\lambda)$. In Fourier space only one mode is present, $k=2\pi/\lambda$, so $c=\bar c+Ae^{-t/\tau}\cos kx$ with $\tau=1/(Dk^2)=\lambda^2/(4\pi^2D)$: the time for a homogenising heat treatment grows as the <em>square</em> of the segregation wavelength (Problem 7). Real microsegregation contains many wavelengths, each decaying at its own rate: the longest persists longest.</p>
+            </div>
+
+            <h2 id="dft">4. The discrete Fourier transform and the FFT<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h2>
+            <p>Computers handle a function only as $N$ samples $f_n=f(n\Delta)$, $n=0,\ldots,N-1$, at spacing $\Delta$ over a length $L=N\Delta$ (treated as periodic). The <strong>discrete Fourier transform</strong> (DFT) is
+            $$X_k=\sum_{n=0}^{N-1}f_n\,e^{-2\pi ikn/N},\qquad f_n=\frac1N\sum_{k=0}^{N-1}X_k\,e^{2\pi ikn/N},$$
+            the exact finite analogue of the Fourier series, and the inversion works because of the roots-of-unity sum of section 1. Parseval becomes $\sum|f_n|^2=\tfrac1N\sum|X_k|^2$. The index $k$ corresponds to the wavenumber $2\pi k/L$ (frequencies above $N/2$ are the negative ones, $k\to k-N$). The direct sum costs $O(N^2)$ operations; the <strong>fast Fourier transform</strong> (FFT) of Cooley and Tukey exploits the symmetry of the roots of unity (splitting even and odd samples recursively) to compute it in $O(N\log N)$, which turns a $10^6$-point transform from $10^{12}$ operations into $2\times10^7$. In three dimensions a grid of $n^3$ points is transformed in $O(n^3\log n)$ by one-dimensional FFTs along each axis.</p>
+            <h3 id="sampling">Sampling, resolution and aliasing<a class="anchor" href="#sampling" aria-label="Link to this section">#</a></h3>
+            <ul>
+                <li><strong>Resolution:</strong> the spacing of wavenumbers is $\Delta k=2\pi/L$. To resolve closely spaced peaks you need a long record or a large cell, which is why long molecular dynamics runs give sharper vibrational spectra.</li>
+                <li><strong>Range and the Nyquist limit:</strong> the highest representable wavenumber is $k_\mathrm{Nyq}=\pi/\Delta$ (two samples per wavelength). For a time series sampled every $\Delta t$, the highest representable frequency is $1/(2\Delta t)$.</li>
+                <li><strong>Aliasing:</strong> a wave faster than Nyquist is not lost; it is <em>misread as a slower one</em>. Samples of $\cos(2\pi\nu t)$ at rate $\nu_s$ are identical to those of a wave at the aliased frequency $|\nu-m\nu_s|$ for any integer $m$. A $9$ Hz signal sampled at $10$ Hz looks like $1$ Hz.</li>
+            </ul>
+            <div class="note warn"><strong>Aliasing in simulation data</strong>
+            <p>If you save an MD trajectory every $20$ fs (sampling rate $50$ THz, Nyquist $25$ THz, $\approx833$ cm$^{-1}$) and compute a vibrational spectrum, a C&ndash;H stretch at $3000$ cm$^{-1}$ ($89.9$ THz) is aliased into a spurious peak at $|89.9-100|=10.1$ THz, about $336$ cm$^{-1}$, in the middle of the low-frequency lattice region (Problem 9). Save velocities at least twice as often as the fastest vibration, or low-pass filter first. The same logic limits the real-space grid of a plane-wave or spectral calculation: features smaller than twice the grid spacing are invisible or aliased.</p>
+            </div>
+            <h3 id="spectral">Spectral differentiation<a class="anchor" href="#spectral" aria-label="Link to this section">#</a></h3>
+            <p>Derivatives are exact and trivial in Fourier space, so a periodic derivative is computed as: transform, multiply by $ik$, transform back. For smooth periodic functions the error decreases faster than any power of $\Delta$ (&ldquo;spectral accuracy&rdquo;), whereas a finite difference has $O(\Delta^2)$ error. The effect of finite differences is visible in Fourier space: the three-point stencil $(f_{j+1}-2f_j+f_{j-1})/\Delta^2$ acting on $e^{ikx}$ returns $-\tfrac{4}{\Delta^2}\sin^2\tfrac{k\Delta}2\,e^{ikx}$ instead of $-k^2e^{ikx}$: the effective wavenumber is $k_\mathrm{eff}^2=\tfrac4{\Delta^2}\sin^2(k\Delta/2)$, correct only for $k\Delta\ll1$ (Problem 10). Spectral phase-field codes exploit this exactness and the speed of the FFT.</p>
+
+            <h2 id="recipspace">5. Reciprocal space, diffraction and Bloch waves<a class="anchor" href="#recipspace" aria-label="Link to this section">#</a></h2>
+            <h3 id="diffraction">Diffraction is a Fourier transform<a class="anchor" href="#diffraction" aria-label="Link to this section">#</a></h3>
+            <p>When radiation of wavevector $\mathbf k_0$ scatters weakly from a distribution of scatterers with density $\rho(\mathbf r)$, the scattered amplitude into wavevector $\mathbf k$ is proportional to the Fourier transform of $\rho$ at the <em>scattering vector</em> $\mathbf q=\mathbf k-\mathbf k_0$:
+            $$A(\mathbf q)\propto\int\rho(\mathbf r)\,e^{-i\mathbf q\cdot\mathbf r}\,\mathrm d^3r,\qquad I(\mathbf q)=|A(\mathbf q)|^2 .$$
+            Now use the table of pairs. A crystal is a lattice (a comb) convolved with a unit-cell motif, so its transform is the reciprocal lattice (a comb) multiplied by the transform of the motif: sharp peaks only at reciprocal lattice vectors $\mathbf G$ (the Laue condition $\mathbf q=\mathbf G$, equivalent to Bragg&rsquo;s law of <a href="linear-algebra-foundations.html">M4</a>), with intensity set by the <strong>structure factor</strong>
+            $$F_{hkl}=\sum_jf_j\,e^{-2\pi i(hx_j+ky_j+lz_j)},$$
+            the sum over the atoms $j$ of the motif at fractional positions $(x_j,y_j,z_j)$, weighted by atomic scattering factors $f_j$. When the sum vanishes for symmetry reasons, the reflection is absent: this is the origin of the selection rules distinguishing FCC, BCC and diamond structures. A <em>finite</em> crystal of length $L$ is the infinite one times a box of width $L$, so each peak is convolved with a sinc of width $\sim2\pi/L$: peak width is inverse to crystallite size. The <strong>Scherrer equation</strong> is the result, $\Delta(2\theta)=K\lambda/(L\cos\theta)$ with $K\approx0.9$ (Problem 5). Disordered materials (liquids, glasses) have no sharp peaks, but the transform of the pair-correlation function gives the structure factor $S(q)$, the main experimental link to simulation.</p>
+            <h3 id="bloch">Bloch&rsquo;s theorem and plane waves<a class="anchor" href="#bloch" aria-label="Link to this section">#</a></h3>
+            <p>In a crystal the potential is periodic, $V(\mathbf r+\mathbf R)=V(\mathbf r)$, so its Fourier series contains only reciprocal lattice vectors: $V(\mathbf r)=\sum_{\mathbf G}V_{\mathbf G}e^{i\mathbf G\cdot\mathbf r}$. <strong>Bloch&rsquo;s theorem</strong> states that the electron wavefunctions can be chosen in the form
+            $$\psi_{\mathbf k}(\mathbf r)=e^{i\mathbf k\cdot\mathbf r}\,u_{\mathbf k}(\mathbf r),\qquad u_{\mathbf k}(\mathbf r+\mathbf R)=u_{\mathbf k}(\mathbf r),$$
+            a plane wave times a function with the periodicity of the lattice. Expanding $u_{\mathbf k}$ in its own Fourier series gives $\psi_{\mathbf k}=\sum_{\mathbf G}c_{\mathbf k+\mathbf G}\,e^{i(\mathbf k+\mathbf G)\cdot\mathbf r}$: a <strong>plane-wave basis</strong>, the basis of most DFT codes for solids. It is truncated at a <em>cutoff energy</em> $E_\mathrm{cut}$, $\hbar^2|\mathbf k+\mathbf G|^2/2m\le E_\mathrm{cut}$, and the number of plane waves grows as $E_\mathrm{cut}^{3/2}V$. The wavevector $\mathbf k$ is only defined modulo $\mathbf G$ (<em>aliasing</em> again: $\mathbf k$ and $\mathbf k+\mathbf G$ label the same Bloch state), so it can be restricted to one cell of reciprocal space, the first <strong>Brillouin zone</strong>; integrals over it are done by sampling a grid of $\mathbf k$-points. Where the free-electron energies of $\mathbf k$ and $\mathbf k-\mathbf G$ coincide ($\mathbf k=\mathbf G/2$, the zone boundary), the potential component $V_{\mathbf G}$ couples them and opens an <strong>energy gap</strong> of $2|V_{\mathbf G}|$ (Problem 11): the origin of band gaps.</p>
+
+            <h2 id="summary-m8">6. How the pieces fit together<a class="anchor" href="#summary-m8" aria-label="Link to this section">#</a></h2>
+            <p>Complex exponentials are the natural waves; Fourier series and transforms express any function in terms of them, and the dictionary &ldquo;derivative $\leftrightarrow\;ik$, convolution $\leftrightarrow$ product, width $\leftrightarrow$ inverse width&rdquo; turns hard operations into easy ones. The diffusion equation is solved mode by mode; sampled data are handled by the DFT and FFT with the limits of resolution and Nyquist; and in a crystal, Fourier space is reciprocal space, where diffraction peaks, Brillouin zones and plane-wave bases live. These tools return in the next module, where Fourier methods and separation of variables solve the classic partial differential equations.</p>
+
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>(to be written)</li>
+<li>Euler&#x27;s formula $e^{i\theta}=\cos\theta+i\sin\theta$ turns trigonometry into algebra; $e^{ikx}$ is a plane wave, and sines and cosines are combinations of $e^{\pm ikx}$.</li>
+<li>Any reasonable periodic function is a sum of plane waves, $f(x)=\sum_nc_ne^{ik_nx}$, because the exponentials are orthogonal; the smoother the function, the faster the coefficients $c_n$ decay, and Parseval&#x27;s theorem says total power is the same in real and Fourier space.</li>
+<li>The Fourier transform extends this to non-periodic functions; differentiation becomes multiplication by $ik$, convolution becomes multiplication, and width in $x$ is inverse to width in $k$ (the uncertainty relation, with Gaussians the minimum).</li>
+<li>The diffusion equation decouples in Fourier space, each mode decaying as $e^{-Dk^2t}$, so short wavelengths homogenise fastest and the solution from a point source is a Gaussian of variance $2Dt$.</li>
+<li>The discrete Fourier transform computed by the FFT in $O(N\log N)$ underlies spectral solvers, plane-wave DFT and Ewald summation; sampling at spacing $\Delta$ resolves wavenumbers only up to $\pi/\Delta$, and faster oscillations alias to false lower frequencies.</li>
+<li>Diffraction is the Fourier transform of the scattering density: a lattice transforms into a reciprocal lattice, a finite crystal gives peaks of width $\propto1/L$ (Scherrer), and Bloch&#x27;s theorem expands electron states in plane waves $e^{i(\mathbf{k}+\mathbf{G})\cdot\mathbf{r}}$.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">1. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <p>Coming soon.</p>
+            <h2 id="check">7. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p8-1">
+            <div class="p-head"><span class="p-num">Problem 8.1</span><span class="p-level">Basic</span></div>
+            <p>(a) Write $z=\dfrac{2+2i}{1-i}$ in the form $x+iy$ and in polar form. (b) Use $(1+i)^8$ and De Moivre to evaluate it. (c) Prove $\cos^3\theta=\tfrac14(3\cos\theta+\cos3\theta)$ with Euler&rsquo;s formula. (d) Show that $\sum_{m=0}^{N-1}e^{2\pi imn/N}=0$ for $n=1,\ldots,N-1$, and evaluate it for $N=4$, $n=1$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Multiply numerator and denominator by the conjugate $1+i$. (c) $\cos\theta=\tfrac12(e^{i\theta}+e^{-i\theta})$ and expand the cube. (d) Geometric series with ratio $r=e^{2\pi in/N}\neq1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $z=\dfrac{(2+2i)(1+i)}{(1-i)(1+i)}=\dfrac{2+2i+2i+2i^2}{2}=\dfrac{4i}{2}=2i$. Polar form: $r=2$, $\theta=\pi/2$, $z=2e^{i\pi/2}$. (Check by moduli: $|2+2i|/|1-i|=2\sqrt2/\sqrt2=2$.)</p>
+            <p>(b) $1+i=\sqrt2\,e^{i\pi/4}$, so $(1+i)^8=2^4e^{2\pi i}=16$.</p>
+            <p>(c) $\cos^3\theta=\tfrac18\bigl(e^{i\theta}+e^{-i\theta}\bigr)^3=\tfrac18\bigl(e^{3i\theta}+3e^{i\theta}+3e^{-i\theta}+e^{-3i\theta}\bigr)=\tfrac18\bigl(2\cos3\theta+6\cos\theta\bigr)=\tfrac14\bigl(\cos3\theta+3\cos\theta\bigr)$. &check;</p>
+            <p>(d) With $r=e^{2\pi in/N}\neq1$ and $r^N=e^{2\pi in}=1$: $\sum_{m=0}^{N-1}r^m=\dfrac{1-r^N}{1-r}=0$. For $N=4$, $n=1$: $1+i-1-i=0$. &check; This is the orthogonality relation that makes the DFT invertible.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-2">
+            <div class="p-head"><span class="p-num">Problem 8.2</span><span class="p-level">Basic</span></div>
+            <p>Find the complex Fourier coefficients $c_n$ of $f(x)=\cos^2x$ (period $\pi$ or $2\pi$) using Euler&rsquo;s formula, and verify Parseval&rsquo;s theorem. Which harmonics are present?</p>
+            <details class="hint"><summary>Hint</summary><p>$\cos^2x=\tfrac12(1+\cos2x)$ and $\cos2x=\tfrac12(e^{2ix}+e^{-2ix})$. Take period $2\pi$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\cos^2x=\tfrac12+\tfrac14e^{2ix}+\tfrac14e^{-2ix}$. With period $2\pi$ ($k_n=n$): $c_0=\tfrac12$, $c_{\pm2}=\tfrac14$, all other $c_n=0$. Only the mean and the second harmonic are present, as expected, since the squaring doubles the frequency.</p>
+            <p>Parseval: left side $\dfrac1{2\pi}\displaystyle\int_0^{2\pi}\cos^4x\,\mathrm dx=\tfrac38$ (using $\cos^4x=\tfrac38+\tfrac12\cos2x+\tfrac18\cos4x$, whose mean is $\tfrac38$). Right side $\sum|c_n|^2=\tfrac14+\tfrac1{16}+\tfrac1{16}=\tfrac38$. &check;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-3">
+            <div class="p-head"><span class="p-num">Problem 8.3</span><span class="p-level">Core</span></div>
+            <p>(a) Derive the Fourier series of the square wave (Example 2.2) and verify the amplitude of the third harmonic. (b) Use it at $x=\pi/2$ to obtain $\pi/4=1-\tfrac13+\tfrac15-\cdots$. (c) Use Parseval&rsquo;s theorem to find $\sum_{n\ \mathrm{odd}}1/n^2$. (d) What fraction of the signal power is in the fundamental harmonic?</p>
+            <details class="hint"><summary>Hint</summary><p>For the square wave the mean square is $1$. Parseval (real form): mean square $=\tfrac12\sum b_n^2$ for a sine series.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $b_n=\dfrac2\pi\int_0^\pi\sin nx\,\mathrm dx=\dfrac2{\pi}\cdot\dfrac{1-\cos n\pi}{n}=\dfrac{2(1-(-1)^n)}{\pi n}$, so $b_1=\dfrac4\pi=1.273$, $b_3=\dfrac4{3\pi}=0.424$, $b_2=b_4=0$.</p>
+            <p>(b) $x=\pi/2$: $1=\dfrac4\pi\Bigl(1-\tfrac13+\tfrac15-\cdots\Bigr)$, so $\tfrac\pi4=1-\tfrac13+\tfrac15-\cdots$ (the Leibniz series).</p>
+            <p>(c) Mean square of $f$ is $1$ ($f^2=1$). Parseval: $1=\tfrac12\sum_{n\,\mathrm{odd}}\dfrac{16}{\pi^2n^2}$, so $\sum_{n\,\mathrm{odd}}\dfrac1{n^2}=\dfrac{\pi^2}8=1.2337$. (Consistent with $\sum1/n^2=\pi^2/6$: odd terms are $3/4$ of the total, $\tfrac34\cdot\tfrac{\pi^2}6=\tfrac{\pi^2}8$. &check;)</p>
+            <p>(d) The fundamental carries $\tfrac12b_1^2=\tfrac12\cdot\dfrac{16}{\pi^2}=0.8106$: $81\%$ of the power. The third harmonic adds $\tfrac12(0.424)^2=0.090$ ($9\%$); the first two together carry $90\%$, and the slow $1/n^2$ fall-off of the power reflects the discontinuities.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-4">
+            <div class="p-head"><span class="p-num">Problem 8.4</span><span class="p-level">Core</span></div>
+            <p>Expand $f(x)=x$ on $[0,\pi]$ in a <em>cosine</em> series (even extension to $[-\pi,\pi]$). (a) Find the coefficients. (b) How do they decay, and why is that faster than the sine series of the same function on $[0,\pi]$? (c) Evaluate at $x=0$ to obtain $\sum_{n\,\mathrm{odd}}1/n^2$. (d) Which boundary conditions suit a cosine series?</p>
+            <details class="hint"><summary>Hint</summary><p>$a_n=\dfrac2\pi\displaystyle\int_0^\pi x\cos nx\,\mathrm dx$; integrate by parts. The mean is $a_0/2=\pi/2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $a_0=\dfrac2\pi\int_0^\pi x\,\mathrm dx=\pi$ (mean $\pi/2$). For $n\ge1$: $\int_0^\pi x\cos nx\,\mathrm dx=\Bigl[\dfrac{x\sin nx}n\Bigr]_0^\pi-\int_0^\pi\dfrac{\sin nx}{n}\mathrm dx=0+\Bigl[\dfrac{\cos nx}{n^2}\Bigr]_0^\pi=\dfrac{(-1)^n-1}{n^2}$. So $a_n=\dfrac{2((-1)^n-1)}{\pi n^2}=-\dfrac4{\pi n^2}$ for odd $n$, $0$ for even $n$:
+            $$x=\frac\pi2-\frac4\pi\sum_{n\ \mathrm{odd}}\frac{\cos nx}{n^2}.$$</p>
+            <p>(b) The coefficients decay as $1/n^2$. The even extension of $x$ is the triangle wave $|x|$, which is continuous (only its slope jumps), so the series converges faster than the sine series of Example 2.1 ($1/n$), whose odd extension has a jump at $\pm\pi$. A good extension is smooth: choose the series whose implied boundary behaviour matches the problem.</p>
+            <p>(c) At $x=0$: $0=\dfrac\pi2-\dfrac4\pi\sum_{n\,\mathrm{odd}}\dfrac1{n^2}\Rightarrow\sum_{n\,\mathrm{odd}}\dfrac{1}{n^2}=\dfrac{\pi^2}8$. &check;</p>
+            <p>(d) A cosine series has zero slope at the ends ($\mathrm d/\mathrm dx\cos nx=0$ at $0,\pi$): it suits <em>insulating (no-flux) boundaries</em>, $\partial_xc=0$, in diffusion or heat problems. A sine series vanishes at the ends and suits fixed-value boundaries $c=0$ (see <a href="partial-differential-equations.html">M9</a>).</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-5">
+            <div class="p-head"><span class="p-num">Problem 8.5</span><span class="p-level">Core</span></div>
+            <p>(a) Compute the Fourier transform of the box function ($1$ for $|x|&lt;a/2$, $0$ otherwise) and find its first zero. (b) Use this to explain why a crystal of $N$ planes spaced by $d$ (length $L=Nd$) gives a diffraction peak of width $\Delta q\approx2\pi/L$, and derive the Scherrer width $\Delta(2\theta)=K\lambda/(L\cos\theta)$ with $K=0.89$ from $\Delta q\approx0.89\cdot2\pi/L$. (c) Compute the width for crystallites of $20$ nm with Cu K$\alpha$ ($\lambda=1.5406$ &Aring;) at $2\theta=38.5^\circ$ ($\theta=19.25^\circ$). Use $K=0.9$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Integrate: $\int e^{-ikx}\mathrm dx=e^{-ikx}/(-ik)$, evaluated between $-a/2$ and $a/2$. (b) $q=4\pi\sin\theta/\lambda$, so $\mathrm dq=\dfrac{2\pi\cos\theta}{\lambda}\,\mathrm d(2\theta)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $F(k)=\displaystyle\int_{-a/2}^{a/2}e^{-ikx}\,\mathrm dx=\dfrac{e^{ika/2}-e^{-ika/2}}{ik}=\dfrac{2\sin(ka/2)}{k}=a\,\mathrm{sinc}(ka/2)$. It is zero first at $ka/2=\pi$, i.e. $k=2\pi/a$; the central peak has height $a$ and half-width of order $2\pi/a$. Narrow $a$ gives a broad $F$.</p>
+            <p>(b) A finite crystal is an infinite lattice times a box of length $L$: its transform is the reciprocal-lattice comb convolved with the sinc function, so each Bragg peak has the sinc$^2$ shape of width $\Delta q\approx0.89\cdot2\pi/L$ (the full width at half maximum of $\mathrm{sinc}^2(qL/2)$). Because $q=4\pi\sin\theta/\lambda$, $\mathrm dq=(2\pi\cos\theta/\lambda)\,\mathrm d(2\theta)$, hence $\Delta(2\theta)=\dfrac{\lambda}{2\pi\cos\theta}\Delta q=\dfrac{0.89\,\lambda}{L\cos\theta}$: the Scherrer equation.</p>
+            <p>(c) $L=200$ &Aring;, $\cos19.25^\circ=0.944$: $\Delta(2\theta)=\dfrac{0.9(1.5406)}{200(0.944)}=7.34\times10^{-3}$ rad $=0.42^\circ$. Peaks wider than the instrument resolution ($\sim0.05^\circ$) signal nanocrystals; for $2$ nm the width would be $\approx4^\circ$. Strain and defects add broadening of their own, so the Scherrer size is a lower bound.</p>
+            <p class="answer">$F=2\sin(ka/2)/k$; $\Delta(2\theta)=0.42^\circ$ for 20 nm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-6">
+            <div class="p-head"><span class="p-num">Problem 8.6</span><span class="p-level">Core</span></div>
+            <p>(a) Using the Gaussian transform pair and the convolution theorem, show that convolving two Gaussians of variances $\sigma_1^2$ and $\sigma_2^2$ gives a Gaussian of variance $\sigma_1^2+\sigma_2^2$. (b) A diffusion anneal of duration $t_1$ followed by one of duration $t_2$ (same $D$) acts on a delta-function source as a single anneal: show the combined variance is $2D(t_1+t_2)$. (c) An X-ray peak has a measured width (FWHM) of $0.30^\circ$ with instrumental broadening $0.10^\circ$, both Gaussian. Find the sample contribution.</p>
+            <details class="hint"><summary>Hint</summary><p>$\hat g_j(k)=e^{-\sigma_j^2k^2/2}$ (times normalisation). Widths of Gaussians add in quadrature. FWHM $=2.355\sigma$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The (normalised) transform of a Gaussian of variance $\sigma^2$ is $\hat g(k)=e^{-\sigma^2k^2/2}$. The transform of the convolution is the product: $e^{-\sigma_1^2k^2/2}e^{-\sigma_2^2k^2/2}=e^{-(\sigma_1^2+\sigma_2^2)k^2/2}$, the transform of a Gaussian of variance $\sigma_1^2+\sigma_2^2$.</p>
+            <p>(b) The first anneal broadens the delta into $\sigma_1^2=2Dt_1$; the second convolves with the kernel of variance $2Dt_2$; the result has $\sigma^2=2D(t_1+t_2)$. In Fourier space: $e^{-Dk^2t_1}e^{-Dk^2t_2}=e^{-Dk^2(t_1+t_2)}$, the semigroup property. <em>Independent random contributions add in variance</em>; this is also why independent errors combine in quadrature (<a href="statistics-and-data-fitting.html">M11</a>).</p>
+            <p>(c) The measured profile is the sample profile convolved with the instrument profile, so $w_\mathrm{meas}^2=w_\mathrm{samp}^2+w_\mathrm{inst}^2$ (same ratio FWHM/$\sigma$ for both): $w_\mathrm{samp}=\sqrt{0.30^2-0.10^2}=\sqrt{0.08}=0.283^\circ$. The correction is small ($6\%$) here, but if the instrument width were $0.25^\circ$ it would be essential: $\sqrt{0.09-0.0625}=0.166^\circ$. (For Lorentzian profiles the widths add linearly instead.)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-7">
+            <div class="p-head"><span class="p-num">Problem 8.7</span><span class="p-level">Core</span></div>
+            <p>An as-cast alloy has a composition profile $c(x,0)=\bar c+A\cos(2\pi x/\lambda)$ with dendrite arm spacing $\lambda=50\ \mu$m. The solute diffusion coefficient in the solid is $D=1\times10^{-14}$ m$^2$/s at the homogenisation temperature. (a) Solve $\partial_tc=D\partial_x^2c$ in Fourier space. (b) Find the relaxation time. (c) How long until the amplitude falls to $1\%$ of its initial value? (d) What happens to a profile with half the spacing?</p>
+            <details class="hint"><summary>Hint</summary><p>A single mode: $c=\bar c+Ae^{-Dk^2t}\cos kx$ with $k=2\pi/\lambda$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Insert $c=\bar c+a(t)\cos kx$: $\dot a\cos kx=-Dk^2a\cos kx$, so $a=Ae^{-Dk^2t}$ and $c(x,t)=\bar c+A\,e^{-Dk^2t}\cos kx$, $k=2\pi/\lambda$. The shape never changes, only the amplitude.</p>
+            <p>(b) $\tau=\dfrac1{Dk^2}=\dfrac{\lambda^2}{4\pi^2D}=\dfrac{(5\times10^{-5})^2}{39.48\times10^{-14}}=\dfrac{2.5\times10^{-9}}{3.948\times10^{-13}}=6.3\times10^3$ s $=1.76$ h.</p>
+            <p>(c) $e^{-t/\tau}=0.01\Rightarrow t=\tau\ln100=4.605\times6330=2.9\times10^4$ s $=8.1$ h.</p>
+            <p>(d) Halving $\lambda$ quadruples $k^2$ and so divides the time by $4$: $\tau=1.6$ ks (0.44 h), $8.1/4=2.0$ h to $1\%$. Fine segregation (rapid solidification, small arm spacing) homogenises quickly; coarse segregation takes a very long anneal. It also means that a heat treatment removes small-scale compositional fluctuations first, leaving the large-scale ones.</p>
+            <p class="answer">$\tau=\lambda^2/(4\pi^2D)=1.76$ h; $8.1$ h to reach 1%</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-8">
+            <div class="p-head"><span class="p-num">Problem 8.8</span><span class="p-level">Core</span></div>
+            <p>(a) Compute the DFT of $f=(1,2,3,4)$ by hand ($N=4$, so $e^{-2\pi i/4}=-i$). (b) Verify Parseval&rsquo;s theorem. (c) Compute the DFT of $(1,0,-1,0)$ and interpret it. (d) Count the multiplications for a direct DFT and for an FFT with $N=2^{20}$.</p>
+            <details class="hint"><summary>Hint</summary><p>$X_k=\sum_nf_n(-i)^{kn}$ with $(-i)^0=1$, $(-i)^1=-i$, $(-i)^2=-1$, $(-i)^3=i$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $X_0=1+2+3+4=10$. $X_1=1+2(-i)+3(-1)+4(i)=-2+2i$. $X_2=1+2(-1)+3(1)+4(-1)=-2$. $X_3=1+2(i)+3(-1)+4(-i)=-2-2i$. So $X=(10,\ -2+2i,\ -2,\ -2-2i)$. The value $X_0$ is the sum (the mean times $N$); the conjugate pair $X_1,X_3=\bar X_1$ is a consequence of real input.</p>
+            <p>(b) $\sum|f_n|^2=1+4+9+16=30$. $\tfrac1N\sum|X_k|^2=\tfrac14\bigl(100+8+4+8\bigr)=30$. &check;</p>
+            <p>(c) $f=\cos(2\pi n/4)$ sampled at $n=0,1,2,3$ is a pure oscillation at wavenumber index $1$: $X=(0,2,0,2)$, i.e. energy in $k=1$ and $k=3\equiv-1$, each with amplitude $N/2=2$. A real cosine at index $k_0$ always shows up as two peaks, at $\pm k_0$.</p>
+            <p>(d) Direct DFT: $N^2=2^{40}\approx1.1\times10^{12}$ complex multiplications. FFT: about $\tfrac N2\log_2N=2^{19}\times20\approx1.0\times10^7$. A speed-up of about $10^5$: the reason $10^6$-point transforms take milliseconds.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-9">
+            <div class="p-head"><span class="p-num">Problem 8.9</span><span class="p-level">Core</span></div>
+            <p>(a) A $9$ Hz sine wave is sampled at $10$ Hz. At what frequency does it appear? (b) You store an MD trajectory every $20$ fs and compute its velocity-autocorrelation spectrum. What are the sampling rate and the Nyquist frequency (THz and cm$^{-1}$)? (c) A C&ndash;H stretch at $3000$ cm$^{-1}$ appears at what spurious frequency? (d) What output interval would have avoided it?</p>
+            <details class="hint"><summary>Hint</summary><p>Alias frequency $=|\nu-m\nu_s|$ with $m$ the nearest integer to $\nu/\nu_s$. Conversion: $1$ cm$^{-1}$ $=2.998\times10^{10}$ Hz.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $|9-10|=1$ Hz (with a phase flip: $\sin(2\pi\cdot9t_n)=-\sin(2\pi\cdot1t_n)$ at the sample times). The samples cannot distinguish them.</p>
+            <p>(b) Sampling rate $1/(20\,\mathrm{fs})=50$ THz; Nyquist frequency $25$ THz $=25\times10^{12}/(2.998\times10^{10})=834$ cm$^{-1}$. Anything above $834$ cm$^{-1}$ is folded back.</p>
+            <p>(c) $3000$ cm$^{-1}=89.94$ THz. Nearest multiple of $50$ THz: $100$ THz, so the alias is $|89.94-100|=10.06$ THz $=336$ cm$^{-1}$, a spurious &ldquo;lattice mode&rdquo; peak. (Further, a bending mode at $1600$ cm$^{-1}$ ($48$ THz) would appear at $2$ THz $=67$ cm$^{-1}$; the folded spectrum is a mess.)</p>
+            <p>(d) The highest frequency in the system, say $4000$ cm$^{-1}$ ($120$ THz, O&ndash;H stretch), requires a sampling rate above $240$ THz, i.e. output every $\le4$ fs; in practice every $1$&ndash;$2$ fs (every step or every second step). Saving less often is only safe if a low-pass filter is applied first or the high-frequency modes are constrained.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-10">
+            <div class="p-head"><span class="p-num">Problem 8.10</span><span class="p-level">Challenge</span></div>
+            <p>(a) Show that the three-point second-difference stencil acting on $e^{ikx}$ gives $-k_\mathrm{eff}^2e^{ikx}$ with $k_\mathrm{eff}^2=\dfrac4{\Delta^2}\sin^2\dfrac{k\Delta}2$. (b) Compute $k_\mathrm{eff}^2/k^2$ for $20$, $10$, $4$ and $2$ points per wavelength. (c) Use the largest value of $k_\mathrm{eff}^2$ to derive the stability limit of explicit Euler for $\partial_tc=D\partial_x^2c$ on this grid. (d) Compare with spectral differentiation.</p>
+            <details class="hint"><summary>Hint</summary><p>$e^{ik\Delta}+e^{-ik\Delta}-2=2\cos k\Delta-2=-4\sin^2(k\Delta/2)$. Points per wavelength $=2\pi/(k\Delta)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac{e^{ik(x+\Delta)}-2e^{ikx}+e^{ik(x-\Delta)}}{\Delta^2}=\dfrac{e^{ik\Delta}+e^{-ik\Delta}-2}{\Delta^2}e^{ikx}=\dfrac{2\cos k\Delta-2}{\Delta^2}e^{ikx}=-\dfrac{4\sin^2(k\Delta/2)}{\Delta^2}e^{ikx}$.</p>
+            <p>(b) $k_\mathrm{eff}^2/k^2=\Bigl[\dfrac{\sin(k\Delta/2)}{k\Delta/2}\Bigr]^2$. $20$ points: $k\Delta=0.314$, ratio $0.992$ ($0.8\%$ error). $10$ points: $k\Delta=0.628$, ratio $0.968$ ($3.2\%$). $4$ points: $k\Delta=\pi/2$, ratio $0.811$ ($19\%$). $2$ points (Nyquist): $k\Delta=\pi$, ratio $0.405$ ($60\%$ too small).  The small-$k\Delta$ expansion is $1-\tfrac{(k\Delta)^2}{12}$, matching the $\tfrac1{12}h^2f^{(4)}$ error of <a href="calculus-single-variable.html">M1</a> (Problem 1.8).</p>
+            <p>(c) The mode with the fastest decay is $k\Delta=\pi$: $k_\mathrm{eff}^2=4/\Delta^2$, so $\dot{\hat c}=-\tfrac{4D}{\Delta^2}\hat c$. Explicit Euler is stable for $h\lambda&lt;2$ (<a href="ordinary-differential-equations.html">M7</a>), i.e. $\delta t\cdot4D/\Delta^2&lt;2$, so $\delta t&lt;\dfrac{\Delta^2}{2D}$: the one-dimensional stability limit (in two dimensions $\Delta^2/4D$, in three $\Delta^2/6D$). Halving the grid spacing forces a four-fold smaller time step: the cost of fine meshes in explicit phase-field and diffusion codes.</p>
+            <p>(d) Spectral differentiation uses $-k^2$ exactly for every resolved $k$ (error only from truncation of the function itself), so there is no modification factor; its largest eigenvalue is $(\pi/\Delta)^2$ (a factor $\pi^2/4$ larger than the finite difference), a slightly stricter stability limit but vastly better accuracy: a handful of points per wavelength suffice for a smooth field, against $20$ or more for a second-order stencil.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-11">
+            <div class="p-head"><span class="p-num">Problem 8.11</span><span class="p-level">Challenge</span></div>
+            <p>A one-dimensional crystal with period $a=4.0$ &Aring; has potential $V(x)=2V_1\cos(2\pi x/a)$ with $V_1=0.5$ eV. (a) Identify the Fourier components $V_G$. (b) At the zone boundary $k=\pi/a$ the free-electron states $e^{i\pi x/a}$ and $e^{-i\pi x/a}$ are degenerate. Write the $2\times2$ Hamiltonian in this subspace, find the eigenvalues and eigenstates, and the band gap. (c) Evaluate the free-electron energy at the zone boundary ($\hbar^2/2m=3.81$ eV&Aring;$^2$). (d) Describe the two standing waves.</p>
+            <details class="hint"><summary>Hint</summary><p>$2V_1\cos(Gx)=V_1\bigl(e^{iGx}+e^{-iGx}\bigr)$ with $G=2\pi/a$. The matrix element between $e^{i\pi x/a}$ and $e^{-i\pi x/a}$ is $V_{G}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $V(x)=V_1e^{iGx}+V_1e^{-iGx}$ with $G=2\pi/a$: $V_{\pm G}=V_1=0.5$ eV, all other components zero.</p>
+            <p>(b) Basis $|{+}\rangle=e^{i\pi x/a}$, $|{-}\rangle=e^{-i\pi x/a}$ (normalised over the cell). Diagonal elements: the free-electron energy $\varepsilon=\hbar^2(\pi/a)^2/2m$ for both. Off-diagonal: $\langle{+}|V|{-}\rangle=$ the Fourier component of $V$ that carries $e^{-i\pi x/a}$ to $e^{+i\pi x/a}$, i.e. $V_{+G}=V_1$ (since $e^{iGx}e^{-i\pi x/a}=e^{i\pi x/a}$). So $H=\begin{pmatrix}\varepsilon&amp;V_1\\V_1&amp;\varepsilon\end{pmatrix}$ with eigenvalues $\varepsilon\pm V_1$ (the matrix of Example 1.1 in <a href="eigenvalues-and-decompositions.html">M5</a>) and eigenvectors $\tfrac1{\sqrt2}(1,\pm1)$. The gap is $E_+-E_-=2V_1=1.0$ eV.</p>
+            <p>(c) $\varepsilon=3.81\times\pi^2/a^2=3.81\times9.870/16=2.35$ eV. The two bands at the zone boundary are $2.35\pm0.5$ eV: $1.85$ and $2.85$ eV.</p>
+            <p>(d) $\tfrac1{\sqrt2}(|{+}\rangle+|{-}\rangle)=\sqrt2\cos(\pi x/a)$ has density $\propto\cos^2(\pi x/a)$, piling up at the atoms-like potential <em>minima</em> if $V_1&lt;0$ (or at maxima for $V_1&gt;0$), and $\sqrt2\,i\sin(\pi x/a)$ has density $\propto\sin^2(\pi x/a)$, shifted half a period. The two standing waves sample the potential differently, so their energies differ by $2V_1$: a forbidden band forms. This is the origin of band gaps in semiconductors and the reason a larger potential Fourier component gives a wider gap.</p>
+            <p class="answer">$H=\begin{pmatrix}\varepsilon&amp;V_1\\V_1&amp;\varepsilon\end{pmatrix}$; gap $=2V_1=1.0$ eV at $\varepsilon=2.35$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p8-12">
+            <div class="p-head"><span class="p-num">Problem 8.12</span><span class="p-level">Challenge</span></div>
+            <p>(a) A one-dimensional chain of $N$ identical scatterers with spacing $a$ has amplitude $A(q)=\sum_{n=0}^{N-1}e^{-iqna}$. Sum the geometric series and show that $I=|A|^2=\dfrac{\sin^2(Nqa/2)}{\sin^2(qa/2)}$. (b) Find the peak positions, peak heights, and the position of the first zero beside a peak. (c) For the BCC lattice described by a simple-cubic cell of side $a$ with atoms at $(0,0,0)$ and $(\tfrac12,\tfrac12,\tfrac12)$, find the structure factor and the absent reflections. (d) Do the same for the NaCl structure ($4$ Na at FCC positions, $4$ Cl displaced by $(\tfrac12,0,0)$) and show the strongest reflections for $h,k,l$ all odd depend on $f_\mathrm{Na}-f_\mathrm{Cl}$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $|1-e^{-iNqa}|^2=2-2\cos Nqa=4\sin^2(Nqa/2)$. (c) $F=1+e^{-i\pi(h+k+l)}$. (d) Write $F=F_\mathrm{FCC}\,\bigl(f_\mathrm{Na}+f_\mathrm{Cl}e^{-i\pi h}\bigr)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $A=\dfrac{1-e^{-iNqa}}{1-e^{-iqa}}$, so $|A|^2=\dfrac{2-2\cos Nqa}{2-2\cos qa}=\dfrac{4\sin^2(Nqa/2)}{4\sin^2(qa/2)}=\dfrac{\sin^2(Nqa/2)}{\sin^2(qa/2)}$.</p>
+            <p>(b) Peaks where $\sin(qa/2)=0$, i.e. $q=2\pi m/a=G_m$, the reciprocal lattice: there each term of the sum is $1$ and $A=N$, so $I=N^2$ (the intensity grows as the <em>square</em> of the number of scatterers: coherent addition). The numerator first vanishes next to a peak when $Nqa/2$ moves by $\pi$: $\delta q=2\pi/(Na)=2\pi/L$. So the peak width is $\propto1/L$, in agreement with Problem 8.5. Between the peaks there are $N-2$ weak subsidiary maxima.</p>
+            <p>(c) Positions $\mathbf r_1=(0,0,0)$ and $\mathbf r_2=(\tfrac12,\tfrac12,\tfrac12)$: $F=f\bigl[1+e^{-i\pi(h+k+l)}\bigr]=f\bigl[1+(-1)^{h+k+l}\bigr]$. For $h+k+l$ odd, $F=0$: reflections $(100),(111),(210),\ldots$ are absent; for $h+k+l$ even, $F=2f$. So the observed BCC reflections are $(110),(200),(211),(220),\ldots$ Together with Problem 4.10 (FCC: all odd or all even) this identifies a cubic metal&rsquo;s lattice type from its powder pattern.</p>
+            <p>(d) NaCl: $F=\bigl[1+e^{-i\pi(h+k)}+e^{-i\pi(h+l)}+e^{-i\pi(k+l)}\bigr]\bigl(f_\mathrm{Na}+f_\mathrm{Cl}e^{-i\pi h}\bigr)$. The first bracket is $4$ for $h,k,l$ all odd or all even and $0$ otherwise. For all even, $e^{-i\pi h}=1$ and $F=4(f_\mathrm{Na}+f_\mathrm{Cl})$: strong. For all odd, $e^{-i\pi h}=-1$ and $F=4(f_\mathrm{Na}-f_\mathrm{Cl})$: weak (the (111) reflection of NaCl is weak, and in KCl, where K$^+$ and Cl$^-$ have nearly equal electron counts, it nearly vanishes: $f_\mathrm{K^+}\approx f_\mathrm{Cl^-}$).</p>
+            </details>
+            </div>
+
+            <h2 id="refs">8. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Boas, M. L., <em>Mathematical Methods in the Physical Sciences</em>, Wiley: chapters on complex numbers, Fourier series and integrals.</li>
+                <li>Bracewell, R. N., <em>The Fourier Transform and Its Applications</em>, McGraw-Hill: a thorough reference on transform pairs.</li>
+                <li>Brigham, E. O., <em>The Fast Fourier Transform and Its Applications</em>, Prentice Hall.</li>
+                <li>Trefethen, L. N., <em>Spectral Methods in MATLAB</em>, SIAM: spectral differentiation and accuracy.</li>
+                <li>Warren, B. E., <em>X-Ray Diffraction</em>, Dover: structure factors and peak broadening.</li>
+                <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Saunders: Bloch&rsquo;s theorem and the nearly free electron model.</li>
+            </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next topic">
@@ -83,7 +396,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=6b3f9db5"></script>
+    <script src="../assets/topics.js?v=58d29823"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
 </body>

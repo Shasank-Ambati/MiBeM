@@ -358,7 +358,7 @@ window.MIBEM_TOPICS = [
     "short": "Fourier analysis",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 5,
+    "minutes": 24,
     "title": "Fourier series and transforms",
     "blurb": "Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.",
     "builds": [
@@ -370,7 +370,12 @@ window.MIBEM_TOPICS = [
       5
     ],
     "takeaways": [
-      "(to be written)"
+      "Euler's formula $e^{i\\theta}=\\cos\\theta+i\\sin\\theta$ turns trigonometry into algebra; $e^{ikx}$ is a plane wave, and sines and cosines are combinations of $e^{\\pm ikx}$.",
+      "Any reasonable periodic function is a sum of plane waves, $f(x)=\\sum_nc_ne^{ik_nx}$, because the exponentials are orthogonal; the smoother the function, the faster the coefficients $c_n$ decay, and Parseval's theorem says total power is the same in real and Fourier space.",
+      "The Fourier transform extends this to non-periodic functions; differentiation becomes multiplication by $ik$, convolution becomes multiplication, and width in $x$ is inverse to width in $k$ (the uncertainty relation, with Gaussians the minimum).",
+      "The diffusion equation decouples in Fourier space, each mode decaying as $e^{-Dk^2t}$, so short wavelengths homogenise fastest and the solution from a point source is a Gaussian of variance $2Dt$.",
+      "The discrete Fourier transform computed by the FFT in $O(N\\log N)$ underlies spectral solvers, plane-wave DFT and Ewald summation; sampling at spacing $\\Delta$ resolves wavenumbers only up to $\\pi/\\Delta$, and faster oscillations alias to false lower frequencies.",
+      "Diffraction is the Fourier transform of the scattering density: a lattice transforms into a reciprocal lattice, a finite crystal gives peaks of width $\\propto1/L$ (Scherrer), and Bloch's theorem expands electron states in plane waves $e^{i(\\mathbf{k}+\\mathbf{G})\\cdot\\mathbf{r}}$."
     ]
   },
   {
@@ -381,7 +386,7 @@ window.MIBEM_TOPICS = [
     "short": "PDEs",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 5,
+    "minutes": 26,
     "title": "Partial differential equations",
     "blurb": "The diffusion, wave and Laplace equations: classification, boundary conditions, separation of variables, similarity solutions and Fourier methods.",
     "builds": [
@@ -395,7 +400,12 @@ window.MIBEM_TOPICS = [
       10
     ],
     "takeaways": [
-      "(to be written)"
+      "Second-order linear PDEs are elliptic (Laplace, Poisson: steady states, no time), parabolic (diffusion: smoothing, irreversible) or hyperbolic (wave: finite-speed propagation); the type decides which conditions are needed and which numerical method is stable.",
+      "A well-posed problem needs boundary conditions of the right kind: Dirichlet (fixed value), Neumann (fixed flux, e.g. insulated), Robin (convective exchange, with the Biot number $hL/\\kappa$ saying which resistance dominates).",
+      "Diffusion into a semi-infinite solid has the similarity solution $c=c_s-(c_s-c_0)\\,\\mathrm{erf}\\!\\big(x/2\\sqrt{Dt}\\big)$, so depths scale as $\\sqrt{Dt}$; a finite slab is solved by separation of variables, a Fourier series whose slowest mode has time constant $L^2/\\pi^2D$.",
+      "The wave equation has solutions $f(x\\mp ct)$ and standing modes at frequencies $nc/2L$, the basis of ultrasonic measurement of elastic constants; the Laplace equation has no interior maxima, so steady-state fields are smooth and extremes sit on boundaries.",
+      "Explicit finite differences for diffusion are stable only if $D\\,\\Delta t/\\Delta x^2\\le\\tfrac12$ (von Neumann analysis); implicit schemes remove the limit at the cost of solving a tridiagonal system.",
+      "Linear stability analysis in Fourier space of the Cahn-Hilliard equation, $\\sigma(k)=-Mk^2(f''+\\kappa k^2)$, predicts spinodal decomposition and its characteristic wavelength $2\\pi\\sqrt{2\\kappa/|f''|}$."
     ]
   },
   {
@@ -406,7 +416,7 @@ window.MIBEM_TOPICS = [
     "short": "Probability",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 5,
+    "minutes": 22,
     "title": "Probability and distributions",
     "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
     "builds": [
@@ -417,7 +427,12 @@ window.MIBEM_TOPICS = [
       7
     ],
     "takeaways": [
-      "(to be written)"
+      "Probability assigns numbers to uncertain outcomes; conditional probability and Bayes' theorem $P(A|B)=P(B|A)P(A)/P(B)$ update beliefs with evidence, and a positive test for a rare condition is far less conclusive than it seems.",
+      "A distribution is summarised by its mean $\\langle X\\rangle$ and variance $\\mathrm{Var}X=\\langle X^2\\rangle-\\langle X\\rangle^2$; for independent variables variances add, so the standard deviation of a sum of $N$ terms grows like $\\sqrt{N}$ and that of an average shrinks like $1/\\sqrt{N}$.",
+      "The binomial describes counting successes, the Poisson rare events (mean equals variance), the exponential the waiting time between random events (the heart of kinetic Monte Carlo), and the Gaussian sums of many small independent contributions.",
+      "The central limit theorem says averages of many independent samples are Gaussian whatever the original distribution, so error bars $\\sigma/\\sqrt{N}$ are meaningful; it fails for heavy-tailed or strongly correlated samples.",
+      "The canonical (Boltzmann) distribution $p_i=e^{-E_i/k_\\mathrm{B}T}/Z$ gives all thermodynamics from $\\ln Z$, and fluctuations are tied to response, for instance $\\mathrm{Var}(E)=k_\\mathrm{B}T^2C_V$, with relative fluctuations falling as $1/\\sqrt{N}$.",
+      "Random numbers drawn uniformly can be transformed into any distribution (inverse transform, Box-Muller), and a random walk of $N$ steps spreads as $\\sqrt{N}$, which is diffusion with $D=\\Gamma d^2/6$ in three dimensions."
     ]
   },
   {
