@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numerical Methods Essentials - MiBeM</title>
-    <meta name="description" content="Floating point, error and stability, differentiation and integration, root finding and optimisation, linear algebra, ODE and PDE solvers, random numbers and parallel scaling.">
+    <title>Numerical methods I: errors, equations and linear algebra - MiBeM</title>
+    <meta name="description" content="Numerical methods for materials simulation, part I: floating-point arithmetic and conditioning, root finding (bisection, Newton, secant), dense and sparse linear systems, least squares by QR and SVD, iterative solvers, interpolation, numerical differentiation and quadrature, with real program output and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Numerical Methods Essentials - MiBeM">
-    <meta property="og:description" content="Floating point, error and stability, differentiation and integration, root finding and optimisation, linear algebra, ODE and PDE solvers, random numbers and parallel scaling.">
+    <meta property="og:title" content="Numerical methods I: errors, equations and linear algebra - MiBeM">
+    <meta property="og:description" content="Numerical methods for materials simulation, part I: floating-point arithmetic and conditioning, root finding (bisection, Newton, secant), dense and sparse linear systems, least squares by QR and SVD, iterative solvers, interpolation, numerical differentiation and quadrature, with real program output and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-essentials.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="15">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,180 +36,809 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#floating">1. Finite-precision arithmetic</a></li>
-                <li><a href="#errors">2. Errors, order, stability</a></li>
-                <li><a href="#calculus">3. Differentiation and integration</a></li>
-                <li><a href="#roots">4. Roots and optimisation</a></li>
-                <li><a href="#linear">5. Linear algebra in practice</a></li>
-                <li><a href="#ode">6. Integrating ODEs</a></li>
-                <li><a href="#pde">7. Discretising PDEs</a></li>
-                <li><a href="#random">8. Random numbers</a></li>
-                <li><a href="#performance">9. Cost, parallelism, scaling</a></li>
-                <li><a href="#check">10. Check your understanding</a></li>
-                <li><a href="#refs">11. References</a></li>
+                <li><a href="#float">Lecture 1. Floating-point arithmetic, error and conditioning</a></li>
+                <li><a href="#roots">Lecture 2. Solving nonlinear equations</a></li>
+                <li><a href="#lu">Lecture 3. Dense linear systems: elimination, pivoting and conditioning</a></li>
+                <li><a href="#lsq">Lecture 4. Least squares: QR, SVD and why the normal equations are dangerous</a></li>
+                <li><a href="#sparse">Lecture 5. Sparse matrices and iterative solvers</a></li>
+                <li><a href="#interp">Lecture 6. Interpolation and splines</a></li>
+                <li><a href="#calc">Lecture 7. Numerical differentiation and integration</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
         <article id="main">
             <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computing</span><span>COMP 201</span></p>
             <!-- coursenav:start -->
-<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" class="here" aria-current="page" title="COMP 201: Numerical methods essentials">201</a></nav>
+<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" class="here" aria-current="page" title="COMP 201: Numerical methods I: errors, equations and linear algebra">201</a><a href="numerical-methods-differential-equations.html" title="COMP 202: Numerical methods II: differential equations, optimisation and Fourier methods">202</a></nav>
 <!-- coursenav:end -->
-            <h1>Numerical methods essentials</h1>
-            <p class="lead">Every simulation is a numerical approximation to a mathematical model. This page covers the ideas that decide whether the numbers a program prints can be trusted: how computers do arithmetic, how errors arise and grow, how to choose steps and grids, and what scales badly.</p>
+            <h1>Numerical methods I: errors, equations and linear algebra</h1>
+            <p class="lead">Every simulation code in this curriculum is, at bottom, a collection of numerical algorithms: it solves equations, factorises matrices, integrates functions and differentiates data. Before you use LAMMPS, FiPy or PySCF you should know what these algorithms promise and where they fail, because the failures do not announce themselves: a code that returns a number returns it with all digits printed, whether the digits mean anything or not. This course (Part I of two) covers the numerical tools that do not involve time or space: how computers represent numbers; how to solve a nonlinear equation; how to solve linear systems, dense and sparse, direct and iterative; how to fit and interpolate data; and how to differentiate and integrate numerically. <a href="numerical-methods-differential-equations.html">COMP 202</a> (Part II) builds on it with differential equations, optimisation, eigenvalue problems and the Fourier transform. All programs are in <code>labs/comp-201</code> and every number on this page was produced by them.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Reading time</dt><dd>about 65 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="programming-and-workflow.html">COMP 101: Programming and workflow</a><br><a href="calculus-single-variable.html">MATH 101: Calculus I</a><br><a href="linear-algebra-foundations.html">MATH 103: Linear algebra I</a></dd></div>
-<div><dt>Leads to</dt><dd><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a><br><a href="monte-carlo-methods.html">CMS 503: Monte Carlo and kMC</a><br><a href="diffusion-and-kinetics.html">CMS 504: Diffusion and kinetics</a><br><a href="finite-element-method.html">CMS 506: Finite elements</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="numerical-methods-differential-equations.html">COMP 202: Numerical methods II</a><br><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a><br><a href="monte-carlo-methods.html">CMS 503: Monte Carlo and kMC</a><br><a href="diffusion-and-kinetics.html">CMS 504: Diffusion and kinetics</a><br><a href="finite-element-method.html">CMS 506: Finite elements</a></dd></div>
 <div><dt>Level</dt><dd>Year 2: core tools</dd></div>
 </dl>
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Explain machine precision, round-off and cancellation, and when they matter.</li>
-                    <li>Distinguish discretisation, round-off and iteration error, and measure the order of convergence of a method.</li>
-                    <li>Choose among root-finding, optimisation, linear-solver and time-integration methods for a given problem.</li>
-                    <li>Estimate cost and parallel speed-up before launching a large run.</li>
+                    <li>Explain floating-point numbers, rounding error, cancellation and the condition number, and estimate how many digits a calculation can be trusted to.</li>
+                    <li>Solve $f(x)=0$ with bisection, Newton and secant iterations, state their convergence orders and recognise their failure modes.</li>
+                    <li>Solve linear systems by LU factorisation with pivoting, explain why pivoting is needed, and relate the error of the solution to the condition number.</li>
+                    <li>Solve least-squares problems with QR and SVD and explain why the normal equations are dangerous.</li>
+                    <li>Choose between dense, banded, sparse and iterative solvers, and explain the behaviour of Jacobi, Gauss&ndash;Seidel and conjugate-gradient iterations.</li>
+                    <li>Interpolate with polynomials and splines, avoid the Runge phenomenon, and use finite differences and quadrature rules with known error behaviour.</li>
                 </ul>
+                <strong>You need:</strong> <a href="programming-and-workflow.html">COMP 101</a> (Python, NumPy, floating-point basics, tests), <a href="calculus-single-variable.html">MATH 101</a> (Taylor series), <a href="linear-algebra-foundations.html">MATH 103</a> (matrices, norms) and <a href="your-first-simulation.html">COMP 102</a> (first programs). Matrix decompositions are developed in <a href="eigenvalues-and-decompositions.html">MATH 202</a>; the formal treatment of errors and convergence is in <a href="partial-differential-equations.html">MATH 301</a>.
             </div>
 
-            <p><strong>Starting point:</strong> This page assumes the basic idea of a simulation and some calculus. If you have not met them, read <a href="your-first-simulation.html">Your first simulation</a> and <a href="calculus-single-variable.html">Calculus I</a> first. </p>
+            <div class="note"><strong>How this course is organised</strong>
+            <p>Seven <strong>lectures</strong> with programs to type and run; a <strong>problem set</strong> of twelve problems with hints and full solutions; a <strong>unit quiz</strong>. Timings come from a four-core laptop-class machine running Python 3.13, NumPy 2.5 and SciPy 1.18; your timings will differ but the conclusions will not. Where a result depends on the random seed or on the machine (timings), the page says so.</p>
+            </div>
 
-            <h2 id="floating">1. Finite-precision arithmetic<a class="anchor" href="#floating" aria-label="Link to this section">#</a></h2>
-            <p>Computers store real numbers as <strong>floating-point</strong> values: a sign, an exponent and a fixed number of significant bits. Most scientific code uses IEEE 754 double precision: 64 bits, of which 52 are the stored fraction (53 significant bits with the implicit leading one), giving about 16 decimal digits and a range of roughly 10<sup>&minus;308</sup> to 10<sup>308</sup>. The spacing of numbers near 1 is the <em>machine epsilon</em>, &epsilon;<sub>mach</sub> = 2<sup>&minus;52</sup> &asymp; 2.2 &times; 10<sup>&minus;16</sup>; single precision has about 7 digits (&epsilon; &asymp; 1.2 &times; 10<sup>&minus;7</sup>), which is much faster on GPUs but needs care.</p>
-            <p>Three consequences appear constantly:</p>
+            <h2 id="float">Lecture 1. Floating-point arithmetic, error and conditioning<a class="anchor" href="#float" aria-label="Link to this section">#</a></h2>
+            <h3>How numbers are stored</h3>
+            <p>A real number is stored in a computer as a <strong>floating-point number</strong>: a sign, an exponent and a fixed number of significant bits (the <em>mantissa</em>), $x=\pm m\times2^{e}$ with the mantissa $m=(1.b_1b_2\ldots b_{52})_2$ in the IEEE 754 double-precision format used by Python&rsquo;s <code>float</code> and NumPy&rsquo;s <code>float64</code>: $1$ sign bit, $11$ bits for the exponent and $52$ for the mantissa. Three consequences are all you need.</p>
+            <ol>
+            <li><strong>Most real numbers are not stored exactly.</strong> $0.1=(0.000110011\ldots)_2$ has an infinite binary expansion, so the stored value is the nearest representable number. The spacing between neighbouring numbers is proportional to their size: the relative spacing is the <strong>machine epsilon</strong> $\varepsilon_\mathrm{mach}=2^{-52}=2.2\times10^{-16}$, and a number is rounded with relative error at most $u=\varepsilon_\mathrm{mach}/2=1.1\times10^{-16}$. Every arithmetic operation returns the correctly rounded exact result: $\mathrm{fl}(a\circ b)=(a\circ b)(1+\delta)$ with $|\delta|\le u$ (the <em>standard model</em> of floating-point arithmetic).</li>
+            <li><strong>The range is finite.</strong> The largest number is $1.8\times10^{308}$; beyond that the result is <code>inf</code> (overflow). The smallest normal number is $2.2\times10^{-308}$; below that precision is lost gradually (underflow). Products of many probabilities underflow (use logarithms); exponentials of large arguments overflow (use the log-sum-exp trick).</li>
+            <li><strong>Single precision</strong> (<code>float32</code>, used by GPUs and by some machine-learning potentials) has $\varepsilon_\mathrm{mach}=1.2\times10^{-7}$: about seven decimal digits instead of sixteen.</li>
+            </ol>
+            <pre data-file="floating.py (first part)"><code>&quot;&quot;&quot;Floating-point arithmetic and error: machine epsilon, cancellation, stable formulas, summation.&quot;&quot;&quot;
+            import numpy as np, math
+
+            print(&quot;machine epsilon (float64):&quot;, np.finfo(float).eps, &quot;  float32:&quot;, np.finfo(np.float32).eps)
+            print(&quot;0.1 + 0.2 =&quot;, repr(0.1 + 0.2), &quot;  == 0.3 ?&quot;, 0.1 + 0.2 == 0.3)
+            print(&quot;largest float64:&quot;, np.finfo(float).max, &quot;  smallest normal:&quot;, np.finfo(float).tiny)</code></pre>
+            <pre class="out"><code>machine epsilon (float64): 2.220446049250313e-16   float32: 1.1920929e-07
+            0.1 + 0.2 = 0.30000000000000004   == 0.3 ? False
+            largest float64: 1.7976931348623157e+308   smallest normal: 2.2250738585072014e-308</code></pre>
+            <p>The sum $0.1+0.2$ is $0.30000000000000004$, not $0.3$: the three numbers $0.1$, $0.2$, $0.3$ are each rounded, and the roundings do not cancel. <strong>Never test floating-point numbers for equality</strong>; use a tolerance, <code>abs(a - b) &lt;= rtol*abs(b) + atol</code> or <code>numpy.isclose</code>. Rounding errors of $10^{-16}$ would be harmless if they stayed that size; the rest of this lecture is about when they do not.</p>
+            <h3>Absolute and relative error, and condition</h3>
+            <p>If $\hat x$ approximates $x$, the <strong>absolute error</strong> is $|\hat x-x|$ and the <strong>relative error</strong> is $|\hat x-x|/|x|$; the relative error is what matters for physical quantities that span many orders of magnitude (a force of $10^{-12}$ N known to $10^{-14}$ N is excellent; a length of $1$ m known to $10^{-14}$ m too). The number of correct significant digits is about $-\log_{10}$ of the relative error.</p>
+            <p>Two different things can make a computed answer inaccurate, and they must be kept apart. The first belongs to the <em>problem</em>: how strongly the exact answer $f(x)$ changes when the input $x$ is perturbed. For a differentiable function the <strong>relative condition number</strong> is
+            $$\kappa_f(x)=\left|\frac{x\,f^{\prime}(x)}{f(x)}\right|,$$
+            so that a relative perturbation $\delta$ of the input changes the output by a relative amount $\kappa\delta$. A problem with $\kappa\gg1$ is <strong>ill-conditioned</strong>: no algorithm can do better, because even the rounding of the input to $10^{-16}$ already changes the answer by $\kappa\times10^{-16}$. The second belongs to the <em>algorithm</em>: an algorithm is <strong>backward stable</strong> if the computed result is the exact answer to a slightly perturbed input (relative perturbation of the order of $\varepsilon_\mathrm{mach}$). A backward-stable algorithm applied to a well-conditioned problem gives an accurate answer; applied to an ill-conditioned one it gives an answer whose error is about $\kappa\,\varepsilon_\mathrm{mach}$, and one loses about $\log_{10}\kappa$ digits.</p>
+            <div class="example">
+                <strong>Example: the condition of subtraction</strong>
+                <p class="given">$f(x)=x-1$ near $x=1$. What is its condition number, and how many digits are lost at $x=1.000001$?</p>
+                <p>$f^{\prime}=1$, so $\kappa=|x\cdot1/(x-1)|=x/|x-1|$. At $x=2$ this is $2$; at $x=1.1$ it is $11$; at $x=1.001$ it is $1001$; at $x=1.000001$ it is $10^6$ (the table above, item 4 of <code>floating.py</code>). The subtraction itself is exact (a result of the Sterbenz lemma when the numbers are close), but its input is not: if $x$ carries a relative error of $10^{-16}$ from an earlier operation, the difference $x-1\approx10^{-6}$ carries a relative error of $10^{-10}$, so six digits are lost. This is <strong>cancellation</strong>: subtracting two nearly equal numbers cancels the leading digits that were correct and promotes the rounding errors of the trailing ones to leading positions.</p>
+            </div>
+            <pre data-file="floating.py (part 4)"><code>print(&quot;\n4. condition number of a function: f(x) = x - 1 near x = 1  (relative condition |x f&#x27;/f|)&quot;)
+            for x in [2.0, 1.1, 1.001, 1.000001]:
+                print(f&quot;   x = {x:&lt;9}  kappa = {abs(x * 1 / (x - 1)):.3e}&quot;)</code></pre>
+            <pre class="out"><code>4. condition number of a function: f(x) = x - 1 near x = 1  (relative condition |x f&#x27;/f|)
+               x = 2.0        kappa = 2.000e+00
+               x = 1.1        kappa = 1.100e+01
+               x = 1.001      kappa = 1.001e+03
+               x = 1.000001   kappa = 1.000e+06</code></pre>
+            <h3>Cancellation in practice, and how to avoid it</h3>
+            <p>Cancellation is the only way in which rounding errors become large in ordinary code, and it can almost always be removed by rewriting the formula. The function $f(x)=(1-\cos x)/x^2$ has the limit $1/2$ at $x\to0$. The naive evaluation subtracts two numbers that agree in all leading digits; the identity $1-\cos x=2\sin^2(x/2)$ gives an algebraically equal but numerically stable formula:</p>
+            <pre class="out"><code>1. cancellation: f(x) = (1 - cos x)/x^2  (exact limit 1/2 as x -&gt; 0)
+                  x          naive             stable (2 sin^2(x/2)/x^2)
+                  1e-01   0.4995834722     0.4995834722
+                  1e-03   0.4999999583     0.4999999583
+                  1e-05   0.5000000414     0.5000000000
+                  1e-07   0.4996003611     0.5000000000
+                  1e-08   0.0000000000     0.5000000000
+                  1e-09   0.0000000000     0.5000000000</code></pre>
+            <p>At $x=10^{-5}$ the naive formula has already lost eight digits ($0.5000000414$); at $10^{-8}$ the cosine is rounded to exactly $1$ and the result is $0$ instead of $1/2$: a <strong>relative error of $100\%$</strong> from an operation that is exact in real arithmetic. The stable formula is accurate everywhere. The same happens in a very common formula, the roots of a quadratic equation. For $x^2-2bx+c=0$ with $b=10^8$ and $c=1$, the roots are $b\pm\sqrt{b^2-c}$; the smaller one, $b-\sqrt{b^2-c}$, is a subtraction of two numbers of size $10^8$ that agree to sixteen digits:</p>
+            <pre class="out"><code>2. quadratic x^2 - 2bx + c = 0 with b = 1e8, c = 1: the small root is c/(2b) ~ 5e-9
+               naive  b - sqrt(b^2-c) = 0.000000e+00
+               stable c/(b + sqrt(b^2-c)) = 5.000000e-09
+               relative error of the naive root = 1.00e+00</code></pre>
+            <p>The naive root is exactly $0$ (relative error $100\%$); using the product of the roots $x_1x_2=c$, so that the small root is $c/(b+\sqrt{b^2-c})=5\times10^{-9}$, avoids the subtraction altogether. This is the general recipe: <strong>find a mathematically equivalent formula in which no two nearly equal numbers are subtracted</strong> (rationalise, use an identity, use a series for small arguments, use <code>numpy.expm1</code> and <code>log1p</code> for $e^x-1$ and $\ln(1+x)$ at small $x$). In simulations the typical victims are: energy differences between two large total energies (the cohesive energy as a small difference of total energies of order $10^3$ eV); small differences between positions of atoms in a large cell; and the Debye integrand at small $x$ (Lecture 7).</p>
+            <h3>Summation</h3>
+            <p>Adding $N$ numbers with a simple loop accumulates rounding errors that grow like $N\varepsilon_\mathrm{mach}$ in the worst case, because the running sum becomes large and each new small term loses its trailing digits. Three better ways exist: <strong>pairwise summation</strong> (what <code>numpy.sum</code> does: errors grow like $\log N$), <strong>compensated (Kahan) summation</strong>, and exact summation of rounded partial results (<code>math.fsum</code>). Results for adding $10^7$ copies of $0.1$:</p>
+            <pre class="out"><code>3. summation of 10^7 terms 0.1: exact sum 1 000 000
+               plain loop over the first 10^6 terms: 100000.0000013329   (exact 100000)
+               np.sum (pairwise)           : 1000000.0000000000
+               math.fsum (exact rounding)  : 1000000.0000000000
+               float32 loop, first 10^6 terms: 100958.3438   (exact 100000)</code></pre>
+            <p>The simple double-precision loop has an error of only $1.3\times10^{-9}$ in $10^5$ here, but in single precision the loop over $10^6$ terms gives $100\,958.3$ instead of $100\,000$: a <strong>$1\%$ error</strong>, because once the accumulator exceeds about $10^5$ its spacing is $0.0078$ and adding $0.1$ is rounded to the nearest multiple of that spacing. The moral for molecular dynamics: accumulate energies, forces and averages in double precision even if the particle positions are stored in single precision (this is what mixed-precision GPU codes do), and accumulate long time averages with a running mean rather than the sum of a billion terms.</p>
+            <div class="note warn"><strong>Rules to take away</strong>
             <ul>
-                <li><strong>Most decimals are not exact.</strong> 0.1 has no finite binary expansion, so 0.1 + 0.2 evaluates to 0.30000000000000004 and equality tests between floating-point numbers should use a tolerance (for example <code>numpy.isclose</code>).</li>
-                <li><strong>Catastrophic cancellation.</strong> Subtracting nearly equal numbers loses leading digits: (1 + 10<sup>&minus;16</sup>) &minus; 1 evaluates to 0. Formulas that subtract close quantities (small energy differences, variances computed as &lang;<em>x</em>&sup2;&rang; &minus; &lang;<em>x</em>&rang;&sup2;) should be rearranged.</li>
-                <li><strong>Order of summation matters.</strong> Adding a tiny number to a large one drops it; summing millions of terms accumulates error, so parallel and serial runs can differ in the last digits. Algorithms such as pairwise or compensated (Kahan) summation reduce the error.</li>
-            </ul>
-            <p>A result should therefore never be trusted beyond about 16 digits, and usually far fewer after many operations. Overflow and underflow (exponents leaving the representable range) are rare in physical units but common in exponentials such as exp(&minus;<em>E</em>/<em>k</em><sub>B</sub><em>T</em>) at large arguments, where working with logarithms avoids them.</p>
+            <li>Never compare floating-point numbers for equality; compare with a tolerance appropriate to the quantity.</li>
+            <li>Rounding is harmless; <em>cancellation</em> is not. Look for subtractions of nearly equal numbers and rewrite them.</li>
+            <li>Know the condition number of your problem: a result is trustworthy to about $16-\log_{10}\kappa$ digits <em>at best</em>.</li>
+            <li>Do not report more digits than the least accurate input, the method and the statistics justify.</li>
+            <li>Small residual does not mean small error (Lecture 3): a small residual only shows backward stability.</li>
+            </ul></div>
+            <h2 id="roots">Lecture 2. Solving nonlinear equations<a class="anchor" href="#roots" aria-label="Link to this section">#</a></h2>
+            <p>Most equations that arise in materials modelling have no closed-form solution: the equilibrium compositions of a regular solution, the Fermi level for a given electron count, the lattice constant at which the pressure vanishes, the temperature at which the Gibbs energies of two phases are equal. All are of the form $f(x)=0$ and are solved by <strong>iteration</strong>: a sequence $x_0,x_1,x_2,\ldots$ that converges to a root $x^\ast$. The quality of an iteration is measured by its <strong>order of convergence</strong>: the method has order $p$ if the errors $e_k=|x_k-x^\ast|$ satisfy $e_{k+1}\approx C\,e_k^{\,p}$. Order $p=1$ (<em>linear</em>) means the error is multiplied by a constant factor $C&lt;1$ each step (one more correct digit every few steps); $p=2$ (<em>quadratic</em>) means the number of correct digits doubles each step. Our test equation is Wallis&rsquo;s cubic $f(x)=x^3-2x-5$, whose only real root is $x^\ast=2.094551481542327$ (calculated here with the robust routine <code>scipy.optimize.brentq</code> and used as the reference).</p>
+            <h3>Bisection</h3>
+            <p>If $f$ is continuous and $f(a)f(b)&lt;0$, then the intermediate-value theorem guarantees a root in $[a,b]$. <strong>Bisection</strong> evaluates $f$ at the midpoint $m$ and keeps the half in which the sign changes, so the interval is halved at every step: the error after $k$ steps is at most $(b-a)/2^{k+1}$, a linear convergence with $C=1/2$, one binary digit per iteration. It cannot fail (provided the initial bracket is valid), needs no derivative, and uses only the <em>sign</em> of $f$, so it is not affected by rounding in $f$ except at the very last digits. To reduce the interval $[2,3]$ below $10^{-12}$ one needs $\lceil\log_2(10^{12})\rceil=40$ halvings. It is slow, but you should always keep it in mind as the method that works when the others do not.</p>
+            <h3>Newton&rsquo;s method</h3>
+            <p>Replace $f$ near the current guess by its tangent line, $f(x)\approx f(x_k)+f^{\prime}(x_k)(x-x_k)$, and take the zero of the tangent as the next guess:
+            $$x_{k+1}=x_k-\frac{f(x_k)}{f^{\prime}(x_k)}.$$
+            If $x^\ast$ is a simple root ($f^{\prime}(x^\ast)\ne0$), a Taylor expansion about $x^\ast$ gives $e_{k+1}\approx\dfrac{f^{\prime\prime}(x^\ast)}{2f^{\prime}(x^\ast)}\,e_k^{\,2}$: the convergence is <strong>quadratic</strong>. It is a local result: the method converges if $x_0$ is close enough, and may do anything otherwise. In more variables, $\mathbf x_{k+1}=\mathbf x_k-J^{-1}\mathbf f(\mathbf x_k)$ with $J$ the Jacobian matrix, which requires the solution of a linear system at every step (Lecture 3); this is how nonlinear finite-element and implicit time-stepping problems are solved.</p>
+            <h3>The secant method</h3>
+            <p>When $f^{\prime}$ is not available or costly, replace it by the slope of the line through the last two points: $x_{k+1}=x_k-f(x_k)\dfrac{x_k-x_{k-1}}{f(x_k)-f(x_{k-1})}$. The convergence order is the golden ratio $p=(1+\sqrt5)/2=1.618$ (superlinear), but each step costs only one function evaluation, so in terms of cost per digit it is as good as Newton when $f^{\prime}$ costs as much as $f$. <strong>Brent&rsquo;s method</strong> combines bisection (safety), secant and inverse quadratic interpolation (speed): it keeps a bracket so it cannot fail, and converges superlinearly when the function is smooth. It is what <code>scipy.optimize.brentq</code> (bracketed) and <code>scipy.optimize.root_scalar</code> use, and it is the right default for a scalar equation. The program below implements the first three methods and prints the iterations:</p>
+            <pre data-file="roots.py"><code>&quot;&quot;&quot;Root finding: bisection, Newton, secant, fixed point, Brent; and a materials example.&quot;&quot;&quot;
+            import numpy as np
+            from scipy.optimize import brentq, newton
 
-            <h2 id="errors">2. Errors, order and stability<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
-            <p>Four kinds of error separate the model from the number on the screen:</p>
-            <div class="table-scroll" role="region" aria-label="2. Errors, order and stability (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Error</th><th>Source</th><th>How to reduce or test it</th></tr></thead>
-                <tbody>
-                    <tr><td>Modelling error</td><td>The equations or potential do not describe reality exactly</td><td>Validation against experiment</td></tr>
-                    <tr><td>Discretisation (truncation) error</td><td>Replacing derivatives, integrals and continuous fields by finite steps and grids</td><td>Refine the step or mesh and watch the result converge</td></tr>
-                    <tr><td>Round-off error</td><td>Finite-precision arithmetic</td><td>Reformulate; use higher precision; check sensitivity</td></tr>
-                    <tr><td>Iteration error</td><td>Stopping an iterative solver before it has converged</td><td>Tighten tolerances; monitor residuals</td></tr>
-                </tbody>
-            </table></div>
-            <p>A method has <strong>order of accuracy</strong> <em>p</em> if its discretisation error scales as <em>h</em><sup><em>p</em></sup> with the step <em>h</em>. Halving <em>h</em> then cuts the error by 2<sup><em>p</em></sup>, and the order can be measured from two runs: <em>p</em> &asymp; log(<em>e</em><sub>h</sub>/<em>e</em><sub>h/2</sub>)/log 2. If the measured order is lower than the theory says, there is usually a bug or a non-smooth feature. <strong>Richardson extrapolation</strong> combines runs at two step sizes to estimate the converged value and the remaining error.</p>
-            <p>Accuracy is not enough: two further properties matter. <strong>Stability</strong> means errors do not grow without bound as the calculation proceeds (an explicit scheme with too large a time step does not converge to anything). <strong>Conditioning</strong> is a property of the problem itself: a problem is ill-conditioned if small changes in the input cause large changes in the answer. For a linear system <strong>A</strong><em>x</em> = <em>b</em>, the condition number &kappa;(<strong>A</strong>) = &Vert;<strong>A</strong>&Vert;&Vert;<strong>A</strong><sup>&minus;1</sup>&Vert; bounds the amplification of relative errors, and one loses roughly log<sub>10</sub>&kappa; digits. A well-posed problem needs a solution that exists, is unique and depends continuously on the data.</p>
+            def bisect(f, a, b, tol=1e-12):
+                fa = f(a); n = 0; hist = []
+                while b - a &gt; tol:
+                    m = 0.5 * (a + b); fm = f(m); n += 1
+                    if fa * fm &lt;= 0: b = m
+                    else: a, fa = m, fm
+                    hist.append(m)
+                return 0.5 * (a + b), n, hist
 
-            <h2 id="calculus">3. Differentiation and integration<a class="anchor" href="#calculus" aria-label="Link to this section">#</a></h2>
-            <h3 id="diff">Finite differences<a class="anchor" href="#diff" aria-label="Link to this section">#</a></h3>
-            <p>Taylor series (see <a href="calculus-single-variable.html#taylor">Calculus I</a>) give difference formulas for derivatives with known error:</p>
-            <span class="eq">forward: f&prime;(x) &asymp; [f(x+h) &minus; f(x)]/h, error &asymp; &frac12; h f&Prime; (first order)<br>central: f&prime;(x) &asymp; [f(x+h) &minus; f(x&minus;h)]/2h, error &asymp; &#8537; h&sup2; f&prime;&prime;&prime; (second order)</span>
-            <p>Reducing <em>h</em> shrinks this truncation error, but the numerator involves subtracting nearly equal numbers, so round-off error grows as &epsilon;<sub>mach</sub>/<em>h</em>. The total error therefore has a minimum at an intermediate step: about &radic;&epsilon;<sub>mach</sub> &asymp; 10<sup>&minus;8</sup> for forward differences and &epsilon;<sub>mach</sub><sup>1/3</sup> &asymp; 6 &times; 10<sup>&minus;6</sup> for central differences in double precision. The plot shows the characteristic V shape; switch to single precision to see the whole curve shift.</p>
-            <div class="demo" data-demo="fdstep"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
-            <h3 id="quad">Integration<a class="anchor" href="#quad" aria-label="Link to this section">#</a></h3>
-            <p>Numerical quadrature replaces an integral by a weighted sum. The trapezoid rule is second order, Simpson&rsquo;s rule fourth order, and Gauss&ndash;Legendre quadrature with <em>n</em> points integrates polynomials up to degree 2<em>n</em> &minus; 1 exactly; the latter is what finite-element codes use inside each element. For high-dimensional integrals (such as ensemble averages over 3<em>N</em> coordinates) grids fail, but Monte Carlo integration converges as &sigma;/&radic;<em>N</em> regardless of dimension (see <a href="monte-carlo-methods.html">Monte Carlo methods</a>).</p>
+            def newton_it(f, df, x, tol=1e-14, maxit=50):
+                hist = [x]
+                for _ in range(maxit):
+                    dx = f(x) / df(x); x -= dx; hist.append(x)
+                    if abs(dx) &lt; tol: break
+                return x, hist
 
-            <h2 id="roots">4. Roots and optimisation<a class="anchor" href="#roots" aria-label="Link to this section">#</a></h2>
-            <h3 id="rootfind">Solving f(x) = 0<a class="anchor" href="#rootfind" aria-label="Link to this section">#</a></h3>
+            def secant(f, x0, x1, tol=1e-14, maxit=50):
+                hist = [x0, x1]
+                for _ in range(maxit):
+                    f0, f1 = f(x0), f(x1)
+                    if f1 == f0: break
+                    x0, x1 = x1, x1 - f1 * (x1 - x0) / (f1 - f0); hist.append(x1)
+                    if abs(x1 - x0) &lt; tol: break
+                return x1, hist
+
+            f = lambda x: x**3 - 2 * x - 5          # Wallis&#x27;s classic cubic
+            df = lambda x: 3 * x**2 - 2
+            root = brentq(f, 2, 3, xtol=1e-15)
+            print(f&quot;f(x) = x^3 - 2x - 5, reference root (Brent) = {root:.15f}\n&quot;)
+
+            r, n, h = bisect(f, 2.0, 3.0)
+            print(f&quot;bisection: {n} halvings of [2,3] to reach an interval of 1e-12 ; root {r:.12f}&quot;)
+            print(&quot;  error after k halvings:&quot;, &quot;  &quot;.join(f&quot;{k}:{abs(h[k-1]-root):.1e}&quot; for k in (1, 5, 10, 20, 30, 39)))
+
+            r, h = newton_it(f, df, 3.0)
+            print(&quot;\nNewton from x0 = 3:&quot;)
+            errs = [abs(x - root) for x in h]
+            for k, (x, e) in enumerate(zip(h, errs)):
+                print(f&quot;  k={k}  x={x:.15f}  error={e:.3e}&quot;)
+            print(&quot;  error_{k+1}/error_k^2 :&quot;, &quot;  &quot;.join(f&quot;{errs[k+1]/errs[k]**2:.3f}&quot; for k in range(3)),
+                  &quot;  (theory f&#x27;&#x27;/(2f&#x27;) =&quot;, f&quot;{(6*root)/(2*df(root)):.3f})&quot;)
+
+            r, h = secant(f, 2.0, 3.0)
+            errs = [abs(x - root) for x in h]
+            print(&quot;\nsecant from x0 = 2, x1 = 3:&quot;)
+            for k, (x, e) in enumerate(zip(h, errs)):
+                print(f&quot;  k={k}  x={x:.15f}  error={e:.3e}&quot;)
+            ee = errs[2:7]                     # the iterates after the start-up phase, before rounding takes over
+            p = [np.log(ee[k+1]/ee[k]) / np.log(ee[k]/ee[k-1]) for k in range(1, len(ee)-1)]
+            print(&quot;  estimated order p = ln(e_{k+1}/e_k)/ln(e_k/e_{k-1}):&quot;, &quot; &quot;.join(f&quot;{q:.2f}&quot; for q in p), &quot; (theory 1.618)&quot;)
+
+            print(&quot;\nNewton can fail:&quot;)
+            g = lambda x: np.cbrt(x)
+            x = 1.0
+            print(&quot;  f = cbrt(x) from x0 = 1 :&quot;, end=&quot; &quot;)
+            for _ in range(6):
+                x = x - g(x) / (1 / (3 * np.cbrt(x)**2)); print(f&quot;{x:.1f}&quot;, end=&quot; &quot;)
+            print(&quot;(diverges: |x| doubles every step)&quot;)
+            h2 = lambda x: (x - 1)**2 * (x + 2)    # double root at 1
+            r, h = newton_it(h2, lambda x: 2*(x-1)*(x+2) + (x-1)**2, 3.0, tol=1e-15, maxit=60)
+            e = [abs(x - 1) for x in h]
+            print(f&quot;  double root: error ratio e_(k+1)/e_k = {e[5]/e[4]:.3f}, {e[8]/e[7]:.3f} -&gt; linear (1/2), not quadratic; {len(h)-1} iterations&quot;)
+            print(&quot;  Newton from x0 = 0 on x^3 - 2x - 5 :&quot;, end=&quot; &quot;)
+            r, h = newton_it(f, df, 0.0, maxit=12); print(&quot; &quot;.join(f&quot;{x:.3g}&quot; for x in h[:9]), &quot;...&quot;)
+
+            print(&quot;\nMaterials example: the miscibility gap of a regular solution&quot;)
+            print(&quot;  chemical-potential difference  ln(x/(1-x)) + 2.5 (1 - 2x) = 0   (Omega/kT = 2.5)&quot;)
+            phi = lambda x, w=2.5: np.log(x / (1 - x)) + w * (1 - 2 * x)
+            xs = np.linspace(1e-6, 1 - 1e-6, 200001)
+            s = np.sign(phi(xs)); idx = np.where(s[:-1] != s[1:])[0]
+            roots = [brentq(phi, xs[i], xs[i+1], xtol=1e-14) for i in idx]
+            print(&quot;  roots of mu(x) = 0:&quot;, &quot;, &quot;.join(f&quot;{r:.8f}&quot; for r in roots))
+            print(&quot;  x = 0.5 is always a root (the symmetric state); the other two are the two phases in equilibrium (the binodal) because the model is symmetric&quot;)
+            # spinodal: d mu/dx = 0 -&gt; 1/(x(1-x)) = 2 w -&gt; x(1-x) = 1/(2w)
+            w = 2.5; xsp = 0.5 * (1 - np.sqrt(1 - 2 / w)); print(f&quot;  spinodal points x(1-x) = 1/(2 Omega/kT): x = {xsp:.6f} and {1-xsp:.6f}&quot;)
+            print(&quot;  Tc: 1/(x(1-x)) = 2 w at x = 1/2 -&gt; Omega/kT = 2 ; here Omega/kT = 2.5 so T/Tc =&quot;, 2/2.5)
+
+            print(&quot;\n  Newton&#x27;s method on the same equation (derivative 1/(x(1-x)) - 2 Omega/kT) from different starts:&quot;)
+            dphi = lambda x, w=2.5: 1 / (x * (1 - x)) - 2 * w
+            for x0 in (0.05, 0.1, 0.2, 0.3, 0.4):
+                x = x0; h = [x]
+                for _ in range(7):
+                    x = x - phi(x) / dphi(x); h.append(x)
+                print(f&quot;   x0 = {x0:4.2f}  -&gt;&quot;, &quot; &quot;.join(f&quot;{v:.5f}&quot; for v in h), f&quot;   limit {h[-1]:.5f}&quot;)</code></pre>
+            <pre class="out"><code>f(x) = x^3 - 2x - 5, reference root (Brent) = 2.094551481542327
+
+            bisection: 40 halvings of [2,3] to reach an interval of 1e-12 ; root 2.094551481543
+              error after k halvings: 1:4.1e-01  5:8.0e-04  10:1.8e-04  20:5.6e-07  30:7.0e-10  39:1.1e-12
+
+            Newton from x0 = 3:
+              k=0  x=3.000000000000000  error=9.054e-01
+              k=1  x=2.360000000000000  error=2.654e-01
+              k=2  x=2.127196780158816  error=3.265e-02
+              k=3  x=2.095136036933634  error=5.846e-04
+              k=4  x=2.094551673824268  error=1.923e-07
+              k=5  x=2.094551481542347  error=2.043e-14
+              k=6  x=2.094551481542327  error=4.441e-16
+              k=7  x=2.094551481542327  error=4.441e-16
+              error_{k+1}/error_k^2 : 0.324  0.463  0.549   (theory f&#x27;&#x27;/(2f&#x27;) = 0.563)
+
+            secant from x0 = 2, x1 = 3:
+              k=0  x=2.000000000000000  error=9.455e-02
+              k=1  x=3.000000000000000  error=9.054e-01
+              k=2  x=2.058823529411764  error=3.573e-02
+              k=3  x=2.081263659845023  error=1.329e-02
+              k=4  x=2.094824146094052  error=2.727e-04
+              k=5  x=2.094549431035247  error=2.051e-06
+              k=6  x=2.094551481227599  error=3.147e-10
+              k=7  x=2.094551481542327  error=0.000e+00
+              k=8  x=2.094551481542327  error=4.441e-16
+              estimated order p = ln(e_{k+1}/e_k)/ln(e_k/e_{k-1}): 3.93 1.26 1.80  (theory 1.618)</code></pre>
+            <p><strong>Reading the output.</strong> Bisection needs $40$ steps; the error bound halves each time, while the error of the midpoint itself is not monotone (it can be accidentally small at step $10$). Newton from $x_0=3$ has errors $0.905\to0.265\to0.0327\to5.8\times10^{-4}\to1.9\times10^{-7}\to2.0\times10^{-14}$: the number of correct digits goes $0, 0, 1, 3, 6, 13$, doubling once the iteration is near the root. The ratio $e_{k+1}/e_k^2$ tends to $0.549$ and the theoretical constant $f^{\prime\prime}(x^\ast)/(2f^{\prime}(x^\ast))=6x^\ast/(2(3x^{\ast2}-2))=0.563$ is already within $3\%$ at the third step. The secant method needs one or two more iterations than Newton, but no derivative. The order estimates printed, $3.93,1.26,1.80$, scatter around $1.62$ because only three ratios are available before rounding stops the iteration; the scatter is a warning that orders of convergence are asymptotic notions that need many digits to measure (use a high-precision arithmetic library such as <code>mpmath</code> when you need a clean estimate).</p>
+            <h3>When Newton fails</h3>
+            <pre class="out"><code>Newton can fail:
+              f = cbrt(x) from x0 = 1 : -2.0 4.0 -8.0 16.0 -32.0 64.0 (diverges: |x| doubles every step)
+              double root: error ratio e_(k+1)/e_k = 0.514, 0.502 -&gt; linear (1/2), not quadratic; 52 iterations
+              Newton from x0 = 0 on x^3 - 2x - 5 : 0 -2.5 -1.57 -0.503 -3.82 -2.55 -1.61 -0.576 -4.6 ...</code></pre>
+            <p>Three ways to fail, all of which occur in real simulations.</p>
+            <ol>
+            <li><strong>A bad start.</strong> For $f(x)=\sqrt[3]{x}$ the Newton step is $x_{k+1}=x_k-3x_k=-2x_k$: each iteration doubles the distance from the root and changes the sign. A smooth function can send the iteration far away when $f^{\prime}$ is small.</li>
+            <li><strong>A multiple root.</strong> For $f(x)=(x-1)^2(x+2)$ the root $x=1$ has $f^{\prime}=0$: the convergence is only linear with the ratio $e_{k+1}/e_k=1/2$ (measured $0.514$, $0.502$) and $52$ iterations are needed for double precision. A root of multiplicity $m$ has ratio $(m-1)/m$; a remedy is $x_{k+1}=x_k-mf/f^{\prime}$ if $m$ is known. Multiple roots are also very ill-conditioned: a perturbation of size $\delta$ of $f$ moves a double root by $\sqrt\delta$, so a root known to $10^{-8}$ is the best one can expect from double precision.</li>
+            <li><strong>Wandering.</strong> From $x_0=0$ on Wallis&rsquo;s cubic (where $f^{\prime}(0)=-2$ points away from the root) the iterates jump around ($0$, $-2.5$, $-1.57$, $-0.50$, $-3.82$, $\ldots$) before they may or may not find the root: the basin of attraction of a root of Newton&rsquo;s method can have a fractal boundary.</li>
+            </ol>
+            <p>The standard robust strategy is therefore: bracket the root, use bisection steps or a hybrid method like Brent&rsquo;s to get close, and let the fast local method finish; and stop on <em>both</em> a small step $|x_{k+1}-x_k|$ and a small residual $|f(x_k)|$, with tolerances chosen from the scale of the problem.</p>
+            <div class="example">
+                <strong>Example: the miscibility gap of a regular solution</strong>
+                <p class="given">In the regular-solution model the chemical-potential difference between the two components is $\Delta\mu/kT=\ln\dfrac{x}{1-x}+\dfrac{\Omega}{kT}(1-2x)$. Find the compositions at which $\Delta\mu=0$ when $\Omega/kT=2.5$.</p>
+                <p>The condition $\Delta\mu(x)=0$ is a transcendental equation in $x$; its roots are the equilibrium compositions between which the system separates (<a href="thermodynamics-and-calphad.html">MSE 301</a> derives the model, <a href="lab-calphad-pycalphad.html">LAB 505</a> computes phase diagrams from it). The scalar function has the obvious root $x=1/2$ by symmetry and two more roots that must be located. Scanning the function on a fine grid for sign changes and refining each bracket with Brent&rsquo;s method (the last part of <code>roots.py</code>) gives:</p>
+            <pre class="out"><code>Materials example: the miscibility gap of a regular solution
+              chemical-potential difference  ln(x/(1-x)) + 2.5 (1 - 2x) = 0   (Omega/kT = 2.5)
+              roots of mu(x) = 0: 0.14479411, 0.50000000, 0.85520589
+              x = 0.5 is always a root (the symmetric state); the other two are the two phases in equilibrium (the binodal) because the model is symmetric
+              spinodal points x(1-x) = 1/(2 Omega/kT): x = 0.276393 and 0.723607
+              Tc: 1/(x(1-x)) = 2 w at x = 1/2 -&gt; Omega/kT = 2 ; here Omega/kT = 2.5 so T/Tc = 0.8
+
+              Newton&#x27;s method on the same equation (derivative 1/(x(1-x)) - 2 Omega/kT) from different starts:
+               x0 = 0.05  -&gt; 0.05000 0.09326 0.12853 0.14296 0.14477 0.14479 0.14479 0.14479    limit 0.14479
+               x0 = 0.10  -&gt; 0.10000 0.13227 0.14369 0.14478 0.14479 0.14479 0.14479 0.14479    limit 0.14479
+               x0 = 0.20  -&gt; 0.20000 0.10904 0.13658 0.14431 0.14479 0.14479 0.14479 0.14479    limit 0.14479
+               x0 = 0.30  -&gt; 0.30000 0.94135 0.89796 0.86668 0.85614 0.85521 0.85521 0.85521    limit 0.85521
+               x0 = 0.40  -&gt; 0.40000 0.51344 0.49997 0.50000 0.50000 0.50000 0.50000 0.50000    limit 0.50000</code></pre>
+            <p>The solutions are $x=0.14479$ and $x=0.85521$: the two phases that coexist at $T/T_c=0.8$ (for the symmetric model $\Delta\mu=0$ is exactly the common-tangent condition; for an asymmetric model the equations are two coupled equations in two unknowns, solved by Newton&rsquo;s method in two dimensions). The point $x=1/2$ is the unstable composition at the top of the free-energy hump. The spinodal compositions $0.2764$ and $0.7236$ (where $\mathrm d\Delta\mu/\mathrm dx=0$, inside the gap) are found analytically here, but they illustrate a general fact: the <em>derivative</em> of the function in this equation is $\dfrac{1}{x(1-x)}-2\dfrac{\Omega}{kT}$, which is exactly what Newton&rsquo;s method needs, and is positive outside the spinodal and negative inside it. Newton&rsquo;s method on this equation shows the behaviour of Lecture 2 clearly. Started at $x_0=0.05$ or $0.1$ it converges to $0.14479$ in four or five steps; started at $x_0=0.2$ it also finds $0.14479$ after a first step that overshoots to $0.109$. Started at $x_0=0.3$, just inside the spinodal where the derivative has changed sign, the first step jumps to $0.941$ on the other side of the gap and the iteration then converges to the <em>other</em> root, $0.85521$; started at $x_0=0.4$ it converges to the unstable root $0.5$. Which root Newton finds is decided by where it starts relative to the spinodal points, which is why a bracketing solver is the safe tool when the number of roots is not known in advance.</p>
+            <h2 id="lu">Lecture 3. Dense linear systems: elimination, pivoting and conditioning<a class="anchor" href="#lu" aria-label="Link to this section">#</a></h2>
+            <p>The linear system $A\mathbf x=\mathbf b$ is the workhorse of numerical simulation: every implicit time step, every Newton iteration, every finite-element or finite-difference solve, every fit of data to a linear model leads to it. For a general (dense) $n\times n$ matrix the standard method is <strong>Gaussian elimination</strong>, organised as the <strong>LU factorisation</strong> $A=LU$ with $L$ unit lower triangular and $U$ upper triangular. Elimination subtracts multiples of row $k$ from the rows below it to create zeros below the diagonal; the multipliers are collected in $L$. Once $A=LU$ is known, $A\mathbf x=\mathbf b$ is solved in two cheap triangular steps: <strong>forward substitution</strong> $L\mathbf y=\mathbf b$ and <strong>back substitution</strong> $U\mathbf x=\mathbf y$, each costing $n^2$ operations. The factorisation itself costs $\tfrac23n^3$ operations, so it is worth keeping when several right-hand sides share the same matrix (the usual situation in time stepping).</p>
+            <div class="example">
+                <strong>Example: LU by hand</strong>
+                <p class="given">$A=\begin{pmatrix}2&amp;1&amp;1\\4&amp;3&amp;3\\8&amp;7&amp;9\end{pmatrix}$, $\mathbf b=(4,10,24)^T$.</p>
+                <p>Eliminate column 1: the multipliers are $4/2=2$ and $8/2=4$; the rows become $(0,1,1)$ and $(0,3,5)$. Eliminate column 2: the multiplier is $3/1=3$; the last row becomes $(0,0,2)$. Hence $L=\begin{pmatrix}1&amp;0&amp;0\\2&amp;1&amp;0\\4&amp;3&amp;1\end{pmatrix}$, $U=\begin{pmatrix}2&amp;1&amp;1\\0&amp;1&amp;1\\0&amp;0&amp;2\end{pmatrix}$, and one checks $LU=A$. Forward substitution: $y_1=4$, $y_2=10-2\cdot4=2$, $y_3=24-4\cdot4-3\cdot2=2$. Back substitution: $x_3=2/2=1$, $x_2=2-1=1$, $x_1=(4-1-1)/2=1$. The solution is $\mathbf x=(1,1,1)^T$ (indeed $\mathbf b=A(1,1,1)^T$). The factorisation took $\tfrac23\cdot27=18$ operations in this order of counting; for $n=10^4$ it takes $6.7\times10^{11}$, about a minute on one core and a few seconds on a multicore BLAS.</p>
+            </div>
+            <h3>Pivoting</h3>
+            <p>The elimination divides by the <em>pivot</em> $a_{kk}$. If a pivot is zero the method breaks down; if it is merely small, the multipliers are huge and rounding errors are amplified catastrophically. The cure is <strong>partial pivoting</strong>: at step $k$ exchange rows so that the entry of largest magnitude in column $k$ (on or below the diagonal) becomes the pivot. The result is $PA=LU$ with a permutation matrix $P$, all multipliers have magnitude $\le1$, and the algorithm is, in practice, backward stable (the theoretical worst-case growth factor $2^{n-1}$ is never seen in applications). This is what LAPACK&rsquo;s <code>gesv</code> does, hence <code>numpy.linalg.solve</code> and <code>scipy.linalg.solve</code>. The program below implements elimination without pivoting and compares:</p>
+            <pre data-file="linsolve.py (part 1)"><code>&quot;&quot;&quot;Dense linear systems: LU with pivoting, conditioning, residual vs error, least squares.&quot;&quot;&quot;
+            import numpy as np, scipy.linalg as sla, time
+
+            def lu_nopivot(A):
+                A = A.astype(float).copy(); n = len(A)
+                for k in range(n - 1):
+                    A[k+1:, k] /= A[k, k]
+                    A[k+1:, k+1:] -= np.outer(A[k+1:, k], A[k, k+1:])
+                return A                            # L (unit lower) and U packed together
+
+            def solve_packed(LU, b):
+                n = len(b); y = b.astype(float).copy()
+                for i in range(n): y[i] -= LU[i, :i] @ y[:i]
+                for i in range(n - 1, -1, -1): y[i] = (y[i] - LU[i, i+1:] @ y[i+1:]) / LU[i, i]
+                return y
+
+            print(&quot;1. the need for pivoting: A = [[eps, 1], [1, 1]], b = [1, 2], exact solution ~ (1, 1)&quot;)
+            for eps in (1e-3, 1e-12, 1e-17):
+                A = np.array([[eps, 1.0], [1.0, 1.0]]); b = np.array([1.0, 2.0])
+                x_np = solve_packed(lu_nopivot(A), b)
+                x_pv = np.linalg.solve(A, b)
+                print(f&quot;   eps={eps:7.0e}   no pivoting x = ({x_np[0]:.6f}, {x_np[1]:.6f})   with pivoting x = ({x_pv[0]:.6f}, {x_pv[1]:.6f})&quot;)</code></pre>
+            <pre class="out"><code>1. the need for pivoting: A = [[eps, 1], [1, 1]], b = [1, 2], exact solution ~ (1, 1)
+               eps=  1e-03   no pivoting x = (1.001001, 0.998999)   with pivoting x = (1.001001, 0.998999)
+               eps=  1e-12   no pivoting x = (0.999978, 1.000000)   with pivoting x = (1.000000, 1.000000)
+               eps=  1e-17   no pivoting x = (0.000000, 1.000000)   with pivoting x = (1.000000, 1.000000)</code></pre>
+            <p>For the matrix $\begin{pmatrix}\epsilon&amp;1\\1&amp;1\end{pmatrix}$ the exact solution is $x_1=1/(1-\epsilon)\approx1$, $x_2=(1-2\epsilon)/(1-\epsilon)\approx1$ (both $\approx1$). Eliminating without pivoting divides by $\epsilon$: the multiplier $1/\epsilon$ is huge, the second pivot is $1-1/\epsilon$, and the information about the number $1$ in the second row is lost in rounding. With $\epsilon=10^{-12}$ the first component is already wrong in the fifth digit ($0.999978$), and with $\epsilon=10^{-17}$ it is $0$ instead of $1$. With row exchange both are exact. The matrix is perfectly well conditioned ($\kappa\approx2.6$): the failure is due to the algorithm, not to the problem. On a random $200\times200$ matrix ($\kappa=231$) even the unpivoted LU is poor: relative error $3\times10^{-12}$ against $1.4\times10^{-14}$ for LAPACK, two orders of magnitude worse.</p>
+            <h3>Residual versus error: what the condition number does</h3>
+            <p>How accurate is the computed solution $\hat{\mathbf x}$? Two quantities measure it: the <strong>residual</strong> $\mathbf r=\mathbf b-A\hat{\mathbf x}$, which can be computed, and the <strong>error</strong> $\hat{\mathbf x}-\mathbf x$, which cannot. A backward-stable solver makes the relative residual $\|\mathbf r\|/(\|A\|\|\hat{\mathbf x}\|)\sim10^{-16}$ <em>always</em>, but the error is bounded only by
+            $$\frac{\|\hat{\mathbf x}-\mathbf x\|}{\|\mathbf x\|}\le\kappa(A)\,\frac{\|\mathbf r\|}{\|\mathbf b\|},\qquad\kappa(A)=\|A\|\,\|A^{-1}\|=\frac{\sigma_{\max}}{\sigma_{\min}},$$
+            with $\sigma$ the singular values (<a href="eigenvalues-and-decompositions.html">MATH 202</a>). A tiny residual therefore says nothing about the accuracy when $\kappa$ is large. The classical test case is the <strong>Hilbert matrix</strong> $H_{ij}=1/(i+j-1)$, the normal-equations matrix of polynomial fitting on $[0,1]$. We solve $H\mathbf x=H\mathbf 1$, so that the exact answer is a vector of ones:</p>
+            <pre class="out"><code>3. the Hilbert matrix H_ij = 1/(i+j-1): error vs condition number
+                 n        cond(H)       relative error     residual ||Hx-b||/||b||
+                 4      1.551e+04      3.366e-14        0.00e+00
+                 8      1.526e+10      6.744e-08        1.58e-16
+                10      1.602e+13      1.249e-05        1.56e-16
+                12      1.620e+16      1.289e-01        1.15e-16
+                14      2.515e+17      2.205e+00        1.22e-16</code></pre>
+            <p>The residual is $10^{-16}$ in every row: the solver is backward stable. But the error grows with the condition number: $3\times10^{-14}$ at $\kappa=1.6\times10^4$, $1.2\times10^{-5}$ at $\kappa=1.6\times10^{13}$, and for $n=12$ ($\kappa=1.6\times10^{16}$, the inverse of machine epsilon) the relative error is $13\%$; at $n=14$ the relative error is $220\%$ while the residual is still at rounding level. The bound is respected, and is not far from the truth: for $n=8$, $\kappa\,u=1.5\times10^{10}\cdot1.1\times10^{-16}=1.7\times10^{-6}$ against a measured error of $6.7\times10^{-8}$, so the rule of thumb <em>digits lost $\le\log_{10}\kappa$</em> overestimates the loss a little. In practice a condition number above $10^{12}$ means the matrix is numerically singular, and the cure is to change the problem (a better basis, scaling, regularisation), not the solver.</p>
+            <div class="note"><strong>Where large condition numbers come from in simulations</strong>
+            <p>(i) Fitting with a polynomial basis of high degree or with a poorly chosen set of descriptors that are nearly collinear (Lecture 4). (ii) Discretised differential operators: the matrix of the second derivative on a grid with spacing $h$ has $\kappa\sim h^{-2}$, so refining the mesh always worsens the conditioning (Lecture 5). (iii) Basis sets that are nearly linearly dependent (diffuse Gaussians in quantum chemistry give an overlap matrix with $\kappa&gt;10^{10}$). (iv) Materials with very different stiffness or conductivity in different regions (a composite). (v) Mixing units: variables of size $10^{-10}$ (metres) and $10^{10}$ (Pa) in the same matrix; scaling the variables to order one is free and often the best remedy.</p></div>
+            <h3>Cost</h3>
+            <pre data-file="linsolve.py (part 4)"><code>print(&quot;\n4. cost: solve dense A x = b for growing n (seconds, one core)&quot;)
+            print(&quot;      n      time (s)     time/n^3 (ns)&quot;)
+            for n in (250, 500, 1000, 2000, 4000):
+                A = rng.standard_normal((n, n)); b = rng.standard_normal(n)
+                t0 = time.perf_counter(); np.linalg.solve(A, b); t = time.perf_counter() - t0
+                print(f&quot;   {n:5d}   {t:9.4f}     {t / n**3 * 1e9:8.3f}&quot;)</code></pre>
+            <pre class="out"><code>4. cost: solve dense A x = b for growing n (seconds, one core)
+                  n      time (s)     time/n^3 (ns)
+                 250      0.0033        0.210
+                 500      0.0158        0.126
+                1000      0.0495        0.050
+                2000      0.1905        0.024
+                4000      0.9999        0.016</code></pre>
+            <p>The time grows as $n^3$ asymptotically: from $n=2000$ to $4000$ it increases by a factor of $5.2$ (less than the factor $8$ of the formula, because larger matrices use the multicore library more efficiently; the column showing time$/n^3$ falls from $0.21$ to $0.016$ ns before it levels out). At $n=4000$ the speed is $\tfrac23(4000)^3/1.0\text{ s}\approx43$ GFlop/s on this four-core machine. A dense matrix of $n=10^5$ needs $80$ GB of memory and $6.7\times10^{14}$ operations (a few hours on this machine): the practical limit of dense methods in simulation is $n\sim10^4$&ndash;$10^5$. Almost every matrix in a larger simulation is sparse, which is Lecture 5.</p>
+            <h2 id="lsq">Lecture 4. Least squares: QR, SVD and why the normal equations are dangerous<a class="anchor" href="#lsq" aria-label="Link to this section">#</a></h2>
+            <p>Data fitting leads to <strong>overdetermined</strong> systems: $m$ equations for $n&lt;m$ unknowns, $V\mathbf c\approx\mathbf y$ with $V$ an $m\times n$ matrix (for a polynomial fit, the Vandermonde matrix $V_{ij}=x_i^{\,j}$). There is in general no exact solution; the <strong>least-squares solution</strong> minimises $\|V\mathbf c-\mathbf y\|_2^2$. Setting the gradient to zero gives the <strong>normal equations</strong> $V^TV\mathbf c=V^T\mathbf y$, an $n\times n$ linear system that can be solved by the methods of Lecture 3. They are the formulas you meet in statistics (<a href="statistics-and-data-fitting.html">MATH 205</a>) and they are numerically dangerous, for a simple reason: $\kappa(V^TV)=\kappa(V)^2$, so a fit that loses $8$ digits in $V$ loses $16$ in $V^TV$.</p>
+            <p>The stable alternatives use orthogonal transformations, which do not amplify errors:</p>
             <ul>
-                <li><strong>Bisection</strong> halves a bracketing interval each step; slow (linear convergence) but guaranteed if the function changes sign.</li>
-                <li><strong>Newton&rsquo;s method</strong>, <em>x</em><sub><em>n</em>+1</sub> = <em>x</em><sub><em>n</em></sub> &minus; <em>f</em>(<em>x</em><sub><em>n</em></sub>)/<em>f</em>&prime;(<em>x</em><sub><em>n</em></sub>), roughly squares the error at each step near a simple root (quadratic convergence: 3 digits, then 6, then 12), but needs a good starting guess and fails where <em>f</em>&prime; is near zero. In many dimensions the derivative becomes the Jacobian matrix and each step solves a linear system; this is the Newton&ndash;Raphson iteration of nonlinear finite elements.</li>
-                <li><strong>Secant</strong> and <strong>Brent</strong> methods avoid derivatives; Brent combines bisection&rsquo;s safety with fast convergence and is the usual library choice.</li>
+            <li><strong>QR factorisation.</strong> Write $V=QR$ with $Q$ having orthonormal columns ($Q^TQ=I$) and $R$ upper triangular (computed by Householder reflections, the same cost order as LU, $2mn^2$). Then $\|V\mathbf c-\mathbf y\|=\|R\mathbf c-Q^T\mathbf y\|$ plus a constant, and the solution is obtained by back substitution $R\mathbf c=Q^T\mathbf y$. The condition number involved is $\kappa(R)=\kappa(V)$, not its square.</li>
+            <li><strong>Singular value decomposition.</strong> $V=U\Sigma W^T$ (<a href="eigenvalues-and-decompositions.html">MATH 202</a>); the solution is $\mathbf c=W\Sigma^{-1}U^T\mathbf y$ (the pseudo-inverse). It costs more (a factor of a few) but it exposes the rank: singular values below a threshold are set to zero, which gives the minimum-norm solution of rank-deficient or nearly rank-deficient problems and is the tool for regularisation. <code>numpy.linalg.lstsq</code> uses the SVD.</li>
             </ul>
-            <h3 id="optimise">Minimising a function<a class="anchor" href="#optimise" aria-label="Link to this section">#</a></h3>
-            <p>Finding structures (relaxation to a minimum of the energy), fitting parameters and training models are all optimisation. Gradient descent steps along &minus;&nabla;<em>f</em>; for an ill-conditioned landscape (a long narrow valley) it zigzags and converges slowly at a rate set by the condition number. <strong>Conjugate gradients</strong> and quasi-Newton methods (BFGS, and its limited-memory form L-BFGS) use information from previous steps and converge much faster; for atomic relaxation, the damped-dynamics method FIRE is popular because it is robust and cheap. All of them find a <em>local</em> minimum. Global searches (basin hopping, simulated annealing, evolutionary algorithms, random structure search) run many local optimisations from different starting points.</p>
-
-            <h2 id="linear">5. Linear algebra in practice<a class="anchor" href="#linear" aria-label="Link to this section">#</a></h2>
-            <p>Most numerical methods eventually reduce to a linear system or an eigenvalue problem, so the cost of linear algebra decides what is feasible.</p>
-            <div class="table-scroll" role="region" aria-label="5. Linear algebra in practice (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Task</th><th>Method</th><th>Cost for <em>n</em> unknowns</th><th>Notes</th></tr></thead>
-                <tbody>
-                    <tr><td>Solve <strong>A</strong><em>x</em> = <em>b</em>, dense</td><td>LU factorisation (Cholesky if symmetric positive definite)</td><td>about (2/3)<em>n</em><sup>3</sup> operations (half for Cholesky)</td><td>Use library routines (LAPACK), never invert a matrix explicitly</td></tr>
-                    <tr><td>Solve, sparse</td><td>Sparse direct solvers</td><td>Depends on structure; much less than <em>n</em><sup>3</sup></td><td>Finite-element and finite-difference matrices are sparse</td></tr>
-                    <tr><td>Solve, large sparse</td><td>Conjugate gradients (symmetric positive definite), GMRES (general), with preconditioning, or multigrid</td><td>Per iteration, about the cost of one matrix&ndash;vector product</td><td>Convergence depends on the condition number; a good preconditioner is crucial</td></tr>
-                    <tr><td>All eigenpairs, dense</td><td>QR algorithm</td><td>order <em>n</em><sup>3</sup></td><td>Limits dense diagonalisation to a few thousand dimensions</td></tr>
-                    <tr><td>A few eigenpairs, large</td><td>Lanczos, Davidson, LOBPCG</td><td>Many matrix&ndash;vector products</td><td>What plane-wave DFT codes use for the lowest bands</td></tr>
-                </tbody>
-            </table></div>
-            <p>The <em>n</em><sup>3</sup> growth of dense algorithms is why conventional <a href="density-functional-theory.html">DFT</a> is limited to hundreds or a few thousand atoms: doubling the system multiplies the cost of the dense steps by eight.</p>
-
-            <h2 id="ode">6. Integrating ODEs<a class="anchor" href="#ode" aria-label="Link to this section">#</a></h2>
-            <p>To advance d<em>y</em>/d<em>t</em> = <em>f</em>(<em>y</em>, <em>t</em>) in time:</p>
+            <p>The test: fit a polynomial of degree $d$ to $200$ points of $\mathrm e^x$ on $[0,1]$ by the three methods, and print the maximum difference between the fit and the function:</p>
+            <pre data-file="linsolve.py (part 5)"><code>print(&quot;\n5. least squares: fit a degree-d polynomial to 200 points of exp(x) on [0,1]&quot;)
+            x = np.linspace(0, 1, 200); y = np.exp(x)
+            print(&quot;   d    cond(V)      normal equations   QR (lstsq)      SVD(pinv)       [max |fit - exp|]&quot;)
+            for d in (4, 8, 12, 16):
+                V = np.vander(x, d + 1, increasing=True)
+                c1 = np.linalg.solve(V.T @ V, V.T @ y)
+                c2, *_ = np.linalg.lstsq(V, y, rcond=None)
+                Q, R = np.linalg.qr(V); c3 = sla.solve_triangular(R, Q.T @ y)
+                e = lambda c: np.max(np.abs(V @ c - y))
+                print(f&quot;   {d:2d}  {np.linalg.cond(V):10.2e}   {e(c1):14.2e}   {e(c3):14.2e}   {e(c2):14.2e}&quot;)</code></pre>
+            <pre class="out"><code>5. least squares: fit a degree-d polynomial to 200 points of exp(x) on [0,1]
+               d    cond(V)      normal equations   QR (lstsq)      SVD(pinv)       [max |fit - exp|]
+                4    6.77e+02         5.47e-05         5.47e-05         5.47e-05
+                8    6.77e+05         1.14e-10         8.03e-11         8.03e-11
+               12    7.13e+08         1.14e-07         8.88e-16         2.44e-15
+               16    7.71e+11         3.07e-07         1.33e-15         6.22e-15</code></pre>
+            <p>For $d=4$ all methods agree ($5.5\times10^{-5}$): the error is the <em>model</em> error of a quartic fit to $\mathrm e^x$, much larger than rounding. For $d=8$ the model error has dropped to $10^{-10}$ and the normal equations ($1.1\times10^{-10}$) are already slightly worse than QR ($8.0\times10^{-11}$): the condition number of $V$ is $6.8\times10^{5}$ so that of $V^TV$ is $4.6\times10^{11}$. For $d=12$ the true fit should be good to about $10^{-15}$, and QR indeed gives $8.9\times10^{-16}$, but the normal equations give $1.1\times10^{-7}$: eight orders of magnitude <em>worse</em> than the stable method, and increasing the degree makes it worse ($3.1\times10^{-7}$ at $d=16$) instead of better. A code that fits with the normal equations and increases the model complexity to improve the fit will see the quality saturate and then degrade for numerical reasons alone, which can be mistaken for overfitting.</p>
+            <div class="note thm"><strong>Practical rules for fitting</strong>
             <ul>
-                <li><strong>Explicit Euler</strong>, <em>y</em><sub><em>n</em>+1</sub> = <em>y</em><sub><em>n</em></sub> + <em>h f</em>(<em>y</em><sub><em>n</em></sub>), is first order and unstable for oscillations (it adds energy to a harmonic oscillator at every step), so it is a teaching tool, not a production one.</li>
-                <li><strong>Runge&ndash;Kutta methods</strong>, in particular the classic fourth-order RK4 and adaptive embedded pairs (such as Dormand&ndash;Prince, used by <code>scipy.integrate.solve_ivp</code>), give high accuracy for smooth problems.</li>
-                <li><strong>Verlet and leapfrog</strong> integrators are second order and <em>symplectic</em>: they preserve the structure of Hamiltonian dynamics, so the energy error stays bounded over very long runs. They are the standard for <a href="molecular-dynamics.html">molecular dynamics</a>.</li>
-                <li><strong>Implicit methods</strong> (backward Euler, BDF) solve an equation at every step but are stable for much larger steps, which is essential for <em>stiff</em> problems with widely separated time scales, such as carbon diffusing millions of times faster than manganese.</li>
-            </ul>
-            <p>For the test equation d<em>y</em>/d<em>t</em> = &minus;&lambda;<em>y</em>, explicit Euler is stable only if <em>h</em>&lambda; &le; 2, so the largest stable step is set by the fastest process in the system, however little that process matters to the answer.</p>
+            <li>Use <code>numpy.linalg.lstsq</code>, <code>scipy.linalg.lstsq</code> or <code>numpy.polynomial</code> classes (which use scaled bases), not <code>inv(A.T @ A)</code>.</li>
+            <li>Shift and scale $x$ to $[-1,1]$ and use orthogonal polynomials (Chebyshev, Legendre) rather than monomials when the degree exceeds about $5$.</li>
+            <li>Look at the singular values of the design matrix: a gap or a continuous decay to $10^{-12}$ of the largest means that some combinations of parameters are not determined by the data.</li>
+            <li>With noisy data, add <strong>regularisation</strong> (ridge regression: minimise $\|V\mathbf c-\mathbf y\|^2+\lambda\|\mathbf c\|^2$), which damps the small singular values and is the basis of the regression methods in <a href="machine-learning-for-materials.html">CMS 507</a>.</li>
+            </ul></div>
+            <h2 id="sparse">Lecture 5. Sparse matrices and iterative solvers<a class="anchor" href="#sparse" aria-label="Link to this section">#</a></h2>
+            <p>The matrices of simulation are rarely dense. Discretise a differential equation on a grid and each equation involves only the neighbours of a grid point; model a crystal with a short-range potential and each atom interacts with a few dozen others; the matrix of the finite-element method has a few tens of non-zero entries per row. Such a matrix is <strong>sparse</strong>: it stores and processes only the non-zero entries. The prototype is the one-dimensional model of steady diffusion, $-u^{\prime\prime}=f$ on a grid of $n$ points with spacing $h$ (the second derivative is replaced by $(u_{i-1}-2u_i+u_{i+1})/h^2$, derived in Lecture 7): the matrix has $2$ on the diagonal and $-1$ on the two neighbouring diagonals (<strong>tridiagonal</strong>), and all other entries are zero. Its condition number grows as $\kappa\approx4n^2/\pi^2$ ($178$ for $n=20$, $10\,505$ for $n=160$): the finer the mesh, the worse the conditioning.</p>
+            <h3>Direct methods that exploit sparsity</h3>
+            <p>The cost and memory of a dense solver, $O(n^3)$ and $O(n^2)$, are wasted on zeros. A <strong>banded</strong> solver (bandwidth $b$) needs $O(nb^2)$ operations; for a tridiagonal matrix, $O(n)$. General <strong>sparse LU</strong> (SuperLU, UMFPACK, PARDISO, used by <code>scipy.sparse.linalg.spsolve</code> and <code>splu</code>) permutes rows and columns first to limit <strong>fill-in</strong>, the new non-zeros created during elimination. Times for the one-dimensional matrix:</p>
+            <pre data-file="sparse_iter.py (part 1)"><code>&quot;&quot;&quot;Sparse and iterative solvers for the Poisson (steady diffusion) matrix.&quot;&quot;&quot;
+            import numpy as np, scipy.sparse as sp, scipy.sparse.linalg as spl, scipy.linalg as sla, time
 
-            <h2 id="pde">7. Discretising PDEs<a class="anchor" href="#pde" aria-label="Link to this section">#</a></h2>
-            <p>A PDE is turned into algebra by sampling space on a grid or mesh (see <a href="diffusion-and-kinetics.html#numerics">diffusion</a> and <a href="finite-element-method.html">finite elements</a>). The main families:</p>
-            <ul>
-                <li><strong>Finite differences</strong> replace derivatives by differences on a regular grid: simple and fast, best for simple geometry.</li>
-                <li><strong>Finite volumes</strong> balance fluxes across the faces of cells, so conserved quantities are conserved exactly; the standard for fluid flow and transport.</li>
-                <li><strong>Finite elements</strong> use a weak form and piecewise polynomial functions on unstructured meshes; the standard for solid mechanics and complex geometry.</li>
-                <li><strong>Spectral methods</strong> expand in Fourier or polynomial modes; extremely accurate for smooth periodic problems (see <a href="fourier-analysis.html">Fourier analysis</a>).</li>
-            </ul>
-            <p>Time stepping adds stability limits. For explicit diffusion the dimensionless number <em>r</em> = <em>D</em>&Delta;<em>t</em>/&Delta;<em>x</em>&sup2; must not exceed 1/2 in one dimension (1/4 in two, 1/6 in three); for wave and advection problems the <strong>Courant&ndash;Friedrichs&ndash;Lewy (CFL)</strong> condition requires that the numerical domain of dependence contains the physical one, <em>c</em>&Delta;<em>t</em>/&Delta;<em>x</em> &le; 1 with <em>c</em> the wave speed. Implicit schemes remove these limits at the price of solving a linear system each step, and the Crank&ndash;Nicolson scheme is second order in time. Always run a <strong>mesh-convergence</strong> and a <strong>time-step convergence</strong> study; and test against a problem with a known analytic solution (the <em>method of manufactured solutions</em> constructs one for any equation).</p>
+            def lap1d(n):
+                return sp.diags([-1, 2, -1], [-1, 0, 1], shape=(n, n), format=&quot;csr&quot;, dtype=float)
+            def lap2d(m):
+                T = lap1d(m); I = sp.identity(m)
+                return (sp.kron(I, T) + sp.kron(T, I)).tocsr()
 
-            <h2 id="random">8. Random numbers<a class="anchor" href="#random" aria-label="Link to this section">#</a></h2>
-            <p>Computers produce <em>pseudo</em>-random numbers with deterministic algorithms: the Mersenne Twister (period 2<sup>19937</sup> &minus; 1) and the PCG family (NumPy&rsquo;s default) are good for scientific use. Fixing the <strong>seed</strong> makes a run reproducible, which is essential for debugging and for reporting results; different seeds provide the independent replicas used for error bars. For parallel runs, give each process its own independent stream (for example with NumPy&rsquo;s <code>SeedSequence.spawn</code>), never the same seed.</p>
-            <p>Other distributions come from uniform numbers. The <em>inverse-transform</em> method maps a uniform value <em>u</em> through the inverse of the cumulative distribution (an exponential waiting time is &minus;ln(<em>u</em>)/<em>R</em>, the step of kinetic Monte Carlo); the <em>Box&ndash;Muller</em> transform produces Gaussian pairs from two uniform values; <em>rejection</em> sampling draws from a simple envelope and keeps points under the target curve.</p>
+            _ab = np.zeros((2, 5)); _ab[0, 1:] = -1; _ab[1] = 2; sla.solveh_banded(_ab, np.ones(5))     # warm up LAPACK
+            print(&quot;1. one-dimensional problem  -u&#x27;&#x27; = f : tridiagonal matrix, n unknowns&quot;)
+            print(&quot;      n     dense LAPACK   banded (solveh_banded)   sparse (spsolve)   [seconds]&quot;)
+            for n in (500, 2000, 4000, 8000):
+                A = lap1d(n); b = np.ones(n)
+                Ad = A.toarray()
+                t0 = time.perf_counter(); np.linalg.solve(Ad, b); td = time.perf_counter() - t0
+                ab = np.zeros((2, n)); ab[0, 1:] = -1; ab[1, :] = 2
+                t0 = time.perf_counter(); sla.solveh_banded(ab, b); tb = time.perf_counter() - t0
+                t0 = time.perf_counter(); spl.spsolve(A.tocsc(), b); ts = time.perf_counter() - t0
+                print(f&quot;   {n:5d}   {td:12.4f}   {tb:18.6f}        {ts:14.6f}&quot;)</code></pre>
+            <pre class="out"><code>1. one-dimensional problem  -u&#x27;&#x27; = f : tridiagonal matrix, n unknowns
+                  n     dense LAPACK   banded (solveh_banded)   sparse (spsolve)   [seconds]
+                 500         0.0042             0.000226              0.000770
+                2000         0.0797             0.000193              0.001119
+                4000         0.4742             0.000325              0.003012
+                8000         3.9256             0.000323              0.003943</code></pre>
+            <p>At $n=8000$ the dense solver needs $3.9$ s and $512$ MB; the banded and sparse solvers need $0.3$ ms and $4$ ms, a factor of $10^4$ and $10^3$ faster. The time grows linearly with $n$ for the banded one, and the dense one grows like $n^3$ ($0.0797\to0.474\to3.93$ s for $2000\to4000\to8000$ is a factor of $6$ and $8$: the cubic law, once the overheads are small). In one dimension a direct solver is always the right choice.</p>
+            <p>In two and three dimensions fill-in matters. The Poisson matrix on an $m\times m$ grid has $n=m^2$ unknowns and $5$ non-zeros per row:</p>
+            <pre class="out"><code>3. two-dimensional Poisson problem on an m x m grid (n = m^2 unknowns, 5 non-zeros per row)
+                  m        n     non-zeros   non-zeros in L+U   spsolve (s)   CG iterations   CG (s)
+                 50     2500       12300           116504        0.006           93      0.005
+                100    10000       49600           645750        0.029          187      0.018
+                200    40000      199200          3472176        0.173          369      0.202
+                400   160000      798400         17537956        2.266          734      1.455</code></pre>
+            <p>The sparse LU is spectacularly faster than a dense solver (which for $n=160\,000$ would need $205$ GB of memory) but the factors $L$ and $U$ together have $17.5$ million non-zeros, $22$ times more than the matrix, and the factorisation time grows faster than $n$ ($0.168$ s for $m=200$ to $2.386$ s for $m=400$, a factor of $14$ for a $4\times$ larger system). In three dimensions the fill-in and the cost are much worse (the cost of nested-dissection LU scales as $n^2$ in 3D) and direct solvers stop being usable for systems beyond a few million unknowns. The alternative is to avoid the factorisation altogether.</p>
+            <h3>Iterative methods: Jacobi, Gauss&ndash;Seidel and conjugate gradients</h3>
+            <p>An iterative method starts from a guess and improves it using only <strong>matrix&ndash;vector products</strong> $A\mathbf v$, which for a sparse matrix cost $O(n)$. Split $A=D+L+U$ into diagonal, strictly lower and strictly upper parts. The <strong>Jacobi</strong> iteration solves the equations using the old values of all neighbours, $\mathbf x^{(k+1)}=D^{-1}(\mathbf b-(L+U)\mathbf x^{(k)})$; <strong>Gauss&ndash;Seidel</strong> uses the new values as soon as they are available, $\mathbf x^{(k+1)}=(D+L)^{-1}(\mathbf b-U\mathbf x^{(k)})$. Both are of the form $\mathbf x^{(k+1)}=G\mathbf x^{(k)}+\mathbf c$ and converge for any start if and only if the spectral radius $\rho(G)&lt;1$; the error is reduced by a factor $\rho$ per iteration. For the Poisson matrix, $\rho_\mathrm{Jacobi}=\cos(\pi/(n+1))\approx1-\pi^2/(2n^2)$ and $\rho_\mathrm{GS}=\rho_\mathrm{Jacobi}^2$: the iteration needs $O(n^2)$ steps and, in the simple form, Gauss&ndash;Seidel needs half as many as Jacobi.</p>
+            <p>The <strong>conjugate-gradient method</strong> (CG, Hestenes and Stiefel 1952) is for symmetric positive-definite $A$. It is based on the observation that solving $A\mathbf x=\mathbf b$ is equivalent to minimising the energy $\tfrac12\mathbf x^TA\mathbf x-\mathbf b^T\mathbf x$, and it chooses at each step the best vector in the Krylov subspace $\mathrm{span}\{\mathbf r_0,A\mathbf r_0,\dots,A^{k-1}\mathbf r_0\}$. In exact arithmetic it terminates in at most $n$ steps; in practice it is used as an iterative method, stopped when the residual is small, with an error reduction of about $(\sqrt\kappa-1)/(\sqrt\kappa+1)$ per step: the number of iterations grows as $\sqrt\kappa$ rather than $\kappa$. Iteration counts to reduce the relative residual to $10^{-8}$ for the one-dimensional matrix:</p>
+            <pre data-file="sparse_iter.py (part 2)"><code>print(&quot;\n2. iterative methods for the 1D problem (tolerance: relative residual 1e-8)&quot;)
+            def jacobi(A, b, tol=1e-8, maxit=200000):
+                d = A.diagonal(); R = A - sp.diags(d); x = np.zeros_like(b)
+                for k in range(maxit):
+                    x = (b - R @ x) / d
+                    if np.linalg.norm(A @ x - b) &lt; tol * np.linalg.norm(b): return x, k + 1
+                return x, maxit
+            def gauss_seidel(A, b, tol=1e-8, maxit=200000):
+                L = sp.tril(A, format=&quot;csr&quot;); U = sp.triu(A, 1, format=&quot;csr&quot;); x = np.zeros_like(b)
+                for k in range(maxit):
+                    x = spl.spsolve_triangular(L, b - U @ x, lower=True)
+                    if np.linalg.norm(A @ x - b) &lt; tol * np.linalg.norm(b): return x, k + 1
+                return x, maxit
+            def cg_count(A, b, M=None):
+                it = [0]
+                def cb(xk): it[0] += 1
+                x, info = spl.cg(A, b, rtol=1e-8, maxiter=100000, M=M, callback=cb)
+                return x, it[0]
+            print(&quot;      n    cond(A)   Jacobi iterations   Gauss-Seidel   conjugate gradients&quot;)
+            for n in (20, 40, 80, 160):
+                A = lap1d(n); b = np.ones(n)
+                c = np.linalg.cond(A.toarray())
+                _, kj = jacobi(A, b); _, kg = gauss_seidel(A, b); _, kc = cg_count(A, b)
+                print(f&quot;   {n:4d}   {c:8.0f}   {kj:12d}     {kg:12d}   {kc:12d}&quot;)</code></pre>
+            <pre class="out"><code>2. iterative methods for the 1D problem (tolerance: relative residual 1e-8)
+                  n    cond(A)   Jacobi iterations   Gauss-Seidel   conjugate gradients
+                 20        178           1633              818             10
+                 40        681           6238             3120             20
+                 80       2658          24354            12178             40
+                160      10505          96217            48110             80</code></pre>
+            <p>Each doubling of $n$ multiplies the Jacobi count by four ($1633\to6238\to24\,354\to96\,217$): the $n^2$ law. Gauss&ndash;Seidel needs half as many ($48\,110$ for $n=160$). Conjugate gradients need $10, 20, 40, 80$: exactly $n/2$, proportional to $\sqrt\kappa$ since $\kappa\propto n^2$, and for $n=160$ they need $1200$ times fewer iterations than Jacobi. (The count $n/2$, rather than $n$, comes from the symmetry of the right-hand side we chose, a constant vector; for a generic right-hand side CG needs a number of iterations of the order of $\sqrt\kappa$, still $\propto n$.) For the two-dimensional problem the table above shows $93, 187, 369, 734$ iterations for $m=50,\dots,400$, again proportional to $m=\sqrt n$, with every iteration costing $O(n)$. At $m=400$ the CG solution takes $1.27$ s against $2.39$ s for the sparse LU and needs no extra memory beyond a few vectors: in three dimensions the advantage is a factor of hundreds, which is why large simulations always use iterative solvers.</p>
+            <div class="note warn"><strong>Preconditioning, and a pitfall</strong>
+            <p>The count of CG iterations can be reduced greatly by solving the transformed system $M^{-1}A\mathbf x=M^{-1}\mathbf b$, where the <strong>preconditioner</strong> $M\approx A$ is cheap to invert and makes the condition number of $M^{-1}A$ small: incomplete factorisations (ILU, incomplete Cholesky), algebraic multigrid, domain decomposition. A method matched to the problem (multigrid for Poisson-type problems) needs a number of iterations independent of $n$ and gives total cost $O(n)$, the theoretical optimum. There is a trap: CG requires a symmetric positive-definite <em>preconditioner</em>. When we used the non-symmetric incomplete LU factorisation of SciPy (<code>spilu</code>) as the preconditioner for CG on the $50\times50$ problem above, the iteration did not converge in $100\,000$ steps, while plain CG needed $93$. For non-symmetric preconditioners use a method for non-symmetric systems such as GMRES or BiCGSTAB (<code>scipy.sparse.linalg.gmres</code>, <code>bicgstab</code>), and for non-symmetric matrices in general. We have not benchmarked preconditioned solvers in this course.</p></div>
+            <h2 id="interp">Lecture 6. Interpolation and splines<a class="anchor" href="#interp" aria-label="Link to this section">#</a></h2>
+            <p>Given values $y_i=f(x_i)$ at the points $x_0&lt;\dots&lt;x_n$, <strong>interpolation</strong> constructs a function that passes through all points, and uses it to estimate values in between. In simulation it appears when a potential is tabulated (EAM potentials in LAMMPS are distributed as tables of $\phi(r)$, $\rho(r)$ and $F(\rho)$ at a few thousand points, and the code interpolates between them with cubic splines), when data from different runs must be put on the same grid, when an equation-of-state curve is drawn through energies at a few volumes, and inside most numerical algorithms. The unique polynomial of degree $\le n$ through $n+1$ points is the Lagrange interpolant $p(x)=\sum_jy_j\ell_j(x)$ with $\ell_j(x)=\prod_{m\ne j}(x-x_m)/(x_j-x_m)$, and its error is
+            $$f(x)-p(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}\prod_{i=0}^n(x-x_i)$$
+            for some $\xi$ in the interval. There are two ways to make the error small: make $f^{(n+1)}$ small (a property of the function, which we cannot choose), or choose the nodes $x_i$ to make the polynomial $\prod(x-x_i)$ small. The first is not under our control; the second is, and it turns out to matter enormously.</p>
+            <h3>The Runge phenomenon</h3>
+            <p>It seems natural to take equally spaced nodes and a high degree. For many functions this fails badly. The test function $f(x)=1/(1+25x^2)$ on $[-1,1]$ is smooth (analytic), yet:</p>
+            <pre data-file="interp.py"><code>&quot;&quot;&quot;Polynomial interpolation: Runge phenomenon, Chebyshev nodes, splines.&quot;&quot;&quot;
+            import numpy as np
+            from scipy.interpolate import CubicSpline, BarycentricInterpolator
 
-            <h2 id="performance">9. Cost, parallelism and scaling<a class="anchor" href="#performance" aria-label="Link to this section">#</a></h2>
-            <p>Before a large calculation, estimate its cost from how it scales with size: a pair-force loop without neighbour lists scales as <em>N</em><sup>2</sup>, with cell lists as <em>N</em>; the FFT as <em>N</em> log <em>N</em>; dense diagonalisation as <em>N</em><sup>3</sup>. A code may be limited by arithmetic (compute-bound) or by moving data from memory (memory-bound, typical of sparse and grid-based codes), and optimising the wrong one wastes effort. Vectorised library calls (NumPy, BLAS and LAPACK) are far faster than explicit loops in interpreted languages.</p>
-            <p>Parallel machines combine threads within a node (OpenMP), message passing between nodes (MPI) and GPUs. Two scaling tests describe how well a code uses them: <em>strong scaling</em> (fixed problem, more processors) and <em>weak scaling</em> (problem grows with the processor count). <strong>Amdahl&rsquo;s law</strong> limits strong scaling: if a fraction <em>p</em> of the work parallelises perfectly,</p>
-            <span class="eq">S(N) = 1 / [ (1 &minus; p) + p/N ] &nbsp;&nbsp; &rarr; &nbsp; 1/(1 &minus; p) as N &rarr; &infin;</span>
-            <p>so a code that is 95% parallel can never run more than 20 times faster, however many processors are used. Measure with a profiler before optimising, test on a small case first, and note that communication and input/output often dominate at large processor counts.</p>
+            f = lambda x: 1 / (1 + 25 * x**2)
+            xf = np.linspace(-1, 1, 4001)
+            print(&quot;interpolating f(x) = 1/(1 + 25 x^2) on [-1, 1]: maximum error over 4001 points&quot;)
+            print(&quot;   n (nodes)   equispaced poly   Chebyshev nodes poly   cubic spline (equispaced)&quot;)
+            for n in (5, 9, 13, 17, 21, 41):
+                xe = np.linspace(-1, 1, n)
+                xc = np.cos((2 * np.arange(n) + 1) * np.pi / (2 * n))
+                pe = BarycentricInterpolator(xe, f(xe))(xf); pc = BarycentricInterpolator(xc, f(xc))(xf)
+                cs = CubicSpline(xe, f(xe))(xf)
+                print(f&quot;   {n:5d}   {np.max(np.abs(pe - f(xf))):15.3e}   {np.max(np.abs(pc - f(xf))):18.3e}   {np.max(np.abs(cs - f(xf))):18.3e}&quot;)
 
+            print(&quot;\nthe Lebesgue constant (worst-case amplification of errors in the data) for n nodes&quot;)
+            for n in (5, 11, 21, 41):
+                for name, nodes in ((&quot;equispaced&quot;, np.linspace(-1, 1, n)),
+                                     (&quot;Chebyshev &quot;, np.cos((2 * np.arange(n) + 1) * np.pi / (2 * n)))):
+                    xx = np.linspace(-1, 1, 20001); lam = np.zeros_like(xx)
+                    for j in range(n):
+                        lj = np.ones_like(xx)
+                        for m in range(n):
+                            if m != j: lj *= (xx - nodes[m]) / (nodes[j] - nodes[m])
+                        lam += np.abs(lj)
+                    print(f&quot;   n = {n:3d}  {name}  Lebesgue constant = {lam.max():.4g}&quot;)
+
+            print(&quot;\ncubic spline convergence for f = sin(2 pi x) on [0, 1]: error vs number of intervals&quot;)
+            g = lambda x: np.sin(2 * np.pi * x); xg = np.linspace(0, 1, 5001)
+            prev = None
+            for n in (4, 8, 16, 32, 64, 128):
+                xn = np.linspace(0, 1, n + 1)
+                e = np.max(np.abs(CubicSpline(xn, g(xn), bc_type=&quot;periodic&quot;)(xg) - g(xg)))
+                print(f&quot;   n = {n:4d}   max error = {e:.3e}&quot; + (f&quot;   ratio {prev / e:5.2f}&quot; if prev else &quot;&quot;))
+                prev = e
+
+            print(&quot;\ndata with noise: interpolation vs fit (n = 15 points of sin(2 pi x) + noise of size 0.1)&quot;)
+            rng = np.random.default_rng(1)
+            xd = np.linspace(0, 1, 15); yd = g(xd) + 0.1 * rng.standard_normal(15)
+            pi = BarycentricInterpolator(xd, yd)(xg); pf = np.polyval(np.polyfit(xd, yd, 5), xg)
+            print(f&quot;   max |interpolating polynomial - truth| = {np.max(np.abs(pi - g(xg))):.3f}   max |degree-5 least-squares fit - truth| = {np.max(np.abs(pf - g(xg))):.3f}&quot;)</code></pre>
+            <pre class="out"><code>interpolating f(x) = 1/(1 + 25 x^2) on [-1, 1]: maximum error over 4001 points
+               n (nodes)   equispaced poly   Chebyshev nodes poly   cubic spline (equispaced)
+                   5         4.384e-01            4.020e-01            3.171e-01
+                   9         1.045e+00            1.708e-01            5.615e-02
+                  13         3.663e+00            6.922e-02            6.909e-03
+                  17         1.439e+01            3.261e-02            3.745e-03
+                  21         5.982e+01            1.533e-02            3.183e-03
+                  41         1.046e+05            2.895e-04            2.780e-04</code></pre>
+            <p>With equispaced nodes the maximum error <em>grows</em> with the degree: $0.44$ (5 nodes), $1.0$ (9), $3.7$ (13), $14$ (17), $60$ (21), and $1.0\times10^5$ for 41 nodes. The polynomial matches the data at the nodes but oscillates wildly near the ends. The reason is in the error formula: the node polynomial $\prod(x-x_i)$ for equispaced points is much larger near the endpoints than in the middle, and the derivatives of $f$ grow factorially (the function has poles at $x=\pm\mathrm i/5$ in the complex plane). With <strong>Chebyshev nodes</strong> $x_i=\cos\big((2i+1)\pi/(2n)\big)$, which cluster near the ends, the error decreases steadily ($0.40$, $0.17$, $0.069$, $0.033$, $0.015$, and $2.9\times10^{-4}$ for 41 nodes). The amplification of errors in the data is measured by the Lebesgue constant (the maximum of $\sum_j|\ell_j(x)|$):</p>
+            <pre class="out"><code>the Lebesgue constant (worst-case amplification of errors in the data) for n nodes
+               n =   5  equispaced  Lebesgue constant = 2.208
+               n =   5  Chebyshev   Lebesgue constant = 1.989
+               n =  11  equispaced  Lebesgue constant = 29.9
+               n =  11  Chebyshev   Lebesgue constant = 2.489
+               n =  21  equispaced  Lebesgue constant = 1.099e+04
+               n =  21  Chebyshev   Lebesgue constant = 2.901
+               n =  41  equispaced  Lebesgue constant = 4.692e+09
+               n =  41  Chebyshev   Lebesgue constant = 3.327</code></pre>
+            <p>For equispaced nodes the Lebesgue constant is $30$ at $n=11$, $1.1\times10^4$ at $21$ and $4.7\times10^9$ at $41$: any noise in the data is amplified by that factor, and a polynomial through $41$ equally spaced noisy points is useless. For Chebyshev nodes it grows only logarithmically ($2.0, 2.5, 2.9, 3.3$). <strong>Rule:</strong> do not interpolate with a single high-degree polynomial on equispaced data. If you control the sample points (a convergence study, a quadrature), choose Chebyshev-type nodes; if you do not, use piecewise polynomials.</p>
+            <h3>Splines</h3>
+            <p>A <strong>cubic spline</strong> is a function that is a cubic polynomial on each interval $[x_i,x_{i+1}]$ and has continuous first and second derivatives at the nodes. The $4n$ coefficients on $n$ intervals are fixed by the $2n$ interpolation conditions, the $2(n-1)$ continuity conditions on $s^{\prime}$ and $s^{\prime\prime}$, and two boundary conditions (natural, $s^{\prime\prime}=0$; or &ldquo;not-a-knot&rdquo;; or periodic). Finding the coefficients requires solving a <em>tridiagonal</em> linear system (Lecture 5), so the cost is $O(n)$. The interpolation error is $O(h^4)$ where $h$ is the spacing, for any set of equispaced nodes, with no instability: the table above shows that the spline through the Runge function converges ($0.32$, $0.056$, $0.0069$, $\dots$, $2.8\times10^{-4}$ for $41$ nodes) steadily instead of diverging. For the smooth function $\sin2\pi x$ with periodic conditions:</p>
+            <pre class="out"><code>cubic spline convergence for f = sin(2 pi x) on [0, 1]: error vs number of intervals
+               n =    4   max error = 2.002e-02
+               n =    8   max error = 1.066e-03   ratio 18.78
+               n =   16   max error = 6.312e-05   ratio 16.89
+               n =   32   max error = 3.889e-06   ratio 16.23
+               n =   64   max error = 2.422e-07   ratio 16.06
+               n =  128   max error = 1.511e-08   ratio 16.03</code></pre>
+            <p>Halving the spacing divides the error by $16.0$: fourth order, as predicted ($1.5\times10^{-8}$ with $128$ intervals). Splines can overshoot between the nodes if the data change abruptly; monotone interpolants (<code>scipy.interpolate.PchipInterpolator</code>) avoid that at the price of lower smoothness, and are the right choice for quantities that must stay positive or monotone, such as a tabulated density.</p>
+            <div class="note warn"><strong>Interpolation is not fitting</strong>
+            <p>An interpolant passes exactly through the data; if the data have noise, it reproduces the noise. Fifteen points of $\sin2\pi x$ with random errors of $0.1$ (<code>interp.py</code>, last part) were fitted by the degree-14 interpolating polynomial and by a degree-5 least-squares fit:</p></div>
+            <pre class="out"><code>data with noise: interpolation vs fit (n = 15 points of sin(2 pi x) + noise of size 0.1)
+               max |interpolating polynomial - truth| = 5.258   max |degree-5 least-squares fit - truth| = 0.055</code></pre>
+            <p>The interpolating polynomial is wrong by up to $5.3$ somewhere in the interval (more than five times the amplitude of the signal) while the least-squares fit is wrong by at most $0.055$, below the noise level. When the data are noisy, fit a model with fewer parameters than data (Lecture 4); when they are exact (a table, a function you can evaluate) interpolate. <strong>Extrapolation</strong>, evaluating outside the data range, is a different and more dangerous matter: polynomials and splines diverge quickly outside the range, so never extrapolate beyond what the physical model justifies.</p>
+            <h2 id="calc">Lecture 7. Numerical differentiation and integration<a class="anchor" href="#calc" aria-label="Link to this section">#</a></h2>
+            <h3>Finite differences and the two kinds of error</h3>
+            <p>The derivative is a limit, $f^{\prime}(x)=\lim_{h\to0}[f(x+h)-f(x)]/h$, and the obvious numerical approximation is to use a small but finite $h$. A Taylor expansion shows the error. The <strong>forward difference</strong> $[f(x+h)-f(x)]/h=f^{\prime}+\tfrac12hf^{\prime\prime}+\dots$ has a <em>truncation error</em> proportional to $h$ (first order). The <strong>central difference</strong> $[f(x+h)-f(x-h)]/(2h)=f^{\prime}+\tfrac16h^2f^{\prime\prime\prime}+\dots$ is second order, and the five-point formula $[-f(x+2h)+8f(x+h)-8f(x-h)+f(x-2h)]/(12h)$ is fourth order, with the error $\tfrac1{30}h^4f^{(5)}$. Making $h$ smaller reduces the truncation error, but the numerator is a <em>difference of nearly equal numbers</em> (Lecture 1) and each function value carries a rounding error of size $\varepsilon\,|f|$: the rounding error of the difference quotient is about $\varepsilon|f|/h$ and <em>grows</em> as $h$ decreases. The total error $E(h)\approx Ch^p+\varepsilon|f|/h$ is smallest at $h_\mathrm{opt}\sim\varepsilon^{1/(p+1)}$, giving a best error $\sim\varepsilon^{p/(p+1)}$: $\varepsilon^{1/2}=1.5\times10^{-8}$ for the forward difference, $\varepsilon^{2/3}=3.7\times10^{-11}$ for the central difference and $\varepsilon^{4/5}=3.0\times10^{-13}$ for the fourth-order formula. Higher order allows a larger $h$ and a smaller final error, but never an error as small as $\varepsilon$. The experiment, for $f=\mathrm e^x$ at $x=1$:</p>
+            <pre data-file="diffquad.py (part 1)"><code>&quot;&quot;&quot;Numerical differentiation and quadrature.&quot;&quot;&quot;
+            import numpy as np, math
+            from scipy import integrate
+            from scipy.special import roots_legendre
+
+            print(&quot;1. forward, central and 4th-order differences for f = exp(x) at x = 1 (exact f&#x27; = e):&quot;)
+            print(&quot;        h         forward err     central err     4th-order err&quot;)
+            x0 = 1.0; ex = math.exp(1.0)
+            for k in range(1, 17, 1):
+                h = 10.0**(-k)
+                fw = (math.exp(x0 + h) - math.exp(x0)) / h - ex
+                ce = (math.exp(x0 + h) - math.exp(x0 - h)) / (2 * h) - ex
+                f4 = (-math.exp(x0 + 2*h) + 8*math.exp(x0 + h) - 8*math.exp(x0 - h) + math.exp(x0 - 2*h)) / (12 * h) - ex
+                print(f&quot;   1e-{k:02d}   {abs(fw):13.3e}  {abs(ce):13.3e}  {abs(f4):13.3e}&quot;)
+            eps = np.finfo(float).eps
+            print(f&quot;   theory for the optimal h: forward ~ sqrt(eps) = {math.sqrt(eps):.1e}, central ~ eps^(1/3) = {eps**(1/3):.1e}, 4th order ~ eps^(1/5) = {eps**0.2:.1e}&quot;)</code></pre>
+            <pre class="out"><code>1. forward, central and 4th-order differences for f = exp(x) at x = 1 (exact f&#x27; = e):
+                    h         forward err     central err     4th-order err
+               1e-01       1.406e-01      4.533e-03      9.072e-06
+               1e-02       1.364e-02      4.530e-05      9.061e-10
+               1e-03       1.360e-03      4.530e-07      4.396e-13
+               1e-04       1.359e-04      4.531e-09      1.226e-12
+               1e-05       1.359e-05      5.859e-11      1.788e-11
+               1e-06       1.359e-06      1.635e-10      1.635e-10
+               1e-07       1.399e-07      5.859e-11      1.169e-09
+               1e-08       6.603e-09      6.603e-09      2.141e-08
+               1e-09       2.154e-07      6.603e-09      8.062e-08
+               1e-10       1.548e-06      6.727e-07      1.413e-06
+               1e-11       3.263e-05      1.043e-05      6.729e-06
+               1e-12       4.323e-04      2.103e-04      4.323e-04
+               1e-13       4.559e-04      4.559e-04      8.579e-05
+               1e-14       9.338e-03      9.338e-03      1.765e-03
+               1e-15       3.903e-01      1.683e-01      1.313e-01
+               1e-16       2.718e+00      2.718e+00      2.718e+00
+               theory for the optimal h: forward ~ sqrt(eps) = 1.5e-08, central ~ eps^(1/3) = 6.1e-06, 4th order ~ eps^(1/5) = 7.4e-04</code></pre>
+            <p>The table is the picture of the two competing errors. The forward difference falls linearly with $h$ ($0.141$, $0.0136$, $0.00136$, $\dots$) down to $h=10^{-8}$, where its error is $6.6\times10^{-9}$, and then <em>rises</em> as $h$ shrinks further, reaching $2.7$ (a $100\%$ error) at $h=10^{-16}$, where $x+h=x$ in floating point. The central difference falls quadratically down to its best value $5.9\times10^{-11}$ at $h=10^{-5}$ and rises after that; the fourth-order formula reaches $4.4\times10^{-13}$ at $h=10^{-3}$, with an optimal $h$ a hundred times larger. The measured optima agree with the scaling $h_\mathrm{opt}\sim\varepsilon^{1/(p+1)}$ and the best errors $\sim\varepsilon^{p/(p+1)}$ within a factor of two.</p>
+            <p><strong>Two ways to beat the trade-off.</strong> (i) <em>Richardson extrapolation</em>: if the error is $Ch^2+O(h^4)$, then $[4D(h/2)-D(h)]/3$ cancels the leading term. From the central differences at $h=0.1$ and $0.05$ (errors $4.5\times10^{-3}$ and $1.1\times10^{-3}$) one obtains an error of $5.7\times10^{-7}$, a thousand times better from two cheap evaluations. (ii) The <em>complex-step derivative</em>: for a function that is analytic and real on the real axis, $f^{\prime}(x)\approx\mathrm{Im}\,f(x+\mathrm ih)/h$ involves no subtraction at all, so $h$ can be absurdly small:</p>
+            <pre class="out"><code>2. complex-step derivative f&#x27;(x) ~ Im f(x + i h)/h (no subtraction, so h can be tiny):
+               h =   1e-04   error = 4.530e-09
+               h =   1e-08   error = 0.000e+00
+               h =   1e-20   error = 0.000e+00
+               h =  1e-100   error = 0.000e+00
+
+            3. Richardson extrapolation of the central difference (h = 0.1, 0.05):
+               D(0.1) error 4.533e-03   D(0.05) error 1.133e-03   Richardson error 5.665e-07</code></pre>
+            <p>With $h=10^{-20}$ or even $10^{-100}$ the error is exactly zero in double precision (to the digits printed): the method is exact to rounding. It requires a code that works with complex numbers and analytic operations only (no <code>abs</code>), but it is a very useful way of checking an analytic gradient. The general solution to the problem of derivatives in simulation codes is <strong>automatic differentiation</strong> (AD), which propagates exact derivatives through the program by the chain rule; it is the engine behind the force calculation of machine-learning potentials (<a href="machine-learning-for-materials.html">CMS 507</a>), where the forces are the gradient of a neural network with respect to the atomic positions.</p>
+            <p><strong>Noisy data.</strong> Differentiating <em>measured or simulated</em> data amplifies noise by a factor $\sim1/h$: a noise $\sigma$ on each value becomes $\sigma\sqrt2/h$ on the difference quotient. Smooth first (fit a spline or a local polynomial: the Savitzky&ndash;Golay filter <code>scipy.signal.savgol_filter</code> with <code>deriv=1</code>), or avoid differentiation (integrate by parts, use the integral form of the equation).</p>
+            <h3>Numerical integration (quadrature)</h3>
+            <p>Quadrature approximates $\int_a^bf(x)\,\mathrm dx\approx\sum_iw_if(x_i)$. The idea of the composite rules is to replace $f$ on each subinterval by a polynomial and integrate the polynomial exactly. The <strong>trapezoidal rule</strong> (linear pieces) has error $O(h^2)$; <strong>Simpson&rsquo;s rule</strong> (quadratic pieces, weights $\tfrac h3(1, 4, 2, 4,\dots,4, 1)$) has error $O(h^4)$. <strong>Gauss&ndash;Legendre quadrature</strong> chooses the nodes as well as the weights ($m$ nodes, the roots of the Legendre polynomial $P_m$) to integrate exactly all polynomials of degree up to $2m-1$: for a smooth integrand the error decreases <em>exponentially</em> with $m$. For $\int_0^1\mathrm e^x\,\mathrm dx=\mathrm e-1$:</p>
+            <pre data-file="diffquad.py (part 4)"><code>print(&quot;\n4. quadrature of the integral of exp(x) on [0,1] (exact e - 1): error vs number of points&quot;)
+            exact = math.e - 1
+            def trap(f, a, b, n):
+                x = np.linspace(a, b, n + 1); y = f(x); return (b - a) / n * (y.sum() - 0.5 * (y[0] + y[-1]))
+            def simpson(f, a, b, n):
+                x = np.linspace(a, b, n + 1); y = f(x); h = (b - a) / n
+                return h / 3 * (y[0] + y[-1] + 4 * y[1:-1:2].sum() + 2 * y[2:-1:2].sum())
+            print(&quot;      n      trapezoid     Simpson      Gauss-Legendre (fewer points)&quot;)
+            for n in (2, 4, 8, 16, 32):
+                xg, wg = roots_legendre(n // 2 + 1)                       # about the same cost as n+1 points
+                gl = 0.5 * np.sum(wg * np.exp(0.5 * (xg + 1)))
+                print(f&quot;   {n:4d}   {abs(trap(np.exp, 0, 1, n) - exact):10.2e}   {abs(simpson(np.exp, 0, 1, n) - exact):10.2e}   {abs(gl - exact):10.2e}  ({n//2+1} points)&quot;)</code></pre>
+            <pre class="out"><code>4. quadrature of the integral of exp(x) on [0,1] (exact e - 1): error vs number of points
+                  n      trapezoid     Simpson      Gauss-Legendre (fewer points)
+                  2     3.56e-02     5.79e-04     3.85e-04  (2 points)
+                  4     8.94e-03     3.70e-05     8.24e-07  (3 points)
+                  8     2.24e-03     2.33e-06     6.54e-13  (5 points)
+                 16     5.59e-04     1.46e-07     0.00e+00  (9 points)
+                 32     1.40e-04     9.10e-09     0.00e+00  (17 points)</code></pre>
+            <p>The errors of the trapezoidal rule fall by a factor of $4.0$ per doubling ($3.6\times10^{-2}$, $8.9\times10^{-3}$, $2.2\times10^{-3}$, $\dots$), those of Simpson&rsquo;s rule by $15.7$ and $15.9$ ($5.8\times10^{-4}$, $3.7\times10^{-5}$, $2.3\times10^{-6}$, $\dots$). Gauss&ndash;Legendre with only $5$ points has an error of $6.5\times10^{-13}$ and with $9$ points it reaches the rounding level (printed as zero): three or four orders of magnitude fewer function evaluations than Simpson for the same accuracy. The price is that the nodes are irregular and the rule applies to <em>smooth</em> integrands: a kink or a singularity ruins it.</p>
+            <h3>Singularities, and what to use in practice</h3>
+            <pre class="out"><code>5. a singular integrand: integral of 1/sqrt(x) on [0,1] = 2 (trapezoid cannot even start at x = 0)
+               midpoint rule, n =     10   error = 1.911e-01
+               midpoint rule, n =    100   error = 6.049e-02
+               midpoint rule, n =   1000   error = 1.913e-02
+               midpoint rule, n =  10000   error = 6.049e-03
+               scipy.integrate.quad: 2.000000000000 with estimated error 5.8e-15
+               with the substitution x = t^2 the integrand becomes 2 (smooth) and any rule is exact</code></pre>
+            <p>The integral $\int_0^1x^{-1/2}\,\mathrm dx=2$ has an integrable singularity at the origin. The midpoint rule is the only simple rule that works (it never evaluates at $x=0$), and it converges as $h^{1/2}$: the errors $0.191$, $0.0605$, $0.0191$, $0.00605$ fall by $\sqrt{10}$ per factor of $10$ in $n$, and to reach $10^{-6}$ one would need $n\approx(0.605/10^{-6})^2=3.7\times10^{11}$ points. The remedy is to change variables. With $x=t^2$, $\mathrm dx=2t\,\mathrm dt$ the integrand becomes the constant $2$ and every rule is exact; adaptive library routines such as <code>scipy.integrate.quad</code> (QUADPACK, adaptive Gauss&ndash;Kronrod with extrapolation) find the answer $2.000000000000$ with an error estimate of $5.8\times10^{-15}$ unaided. <strong>In practice use <code>scipy.integrate.quad</code> for one-dimensional integrals of a function you can evaluate</strong> (and look at the error estimate it returns), the composite Simpson rule or the trapezoidal rule (<code>scipy.integrate.simpson</code>, <code>numpy.trapezoid</code>) for tabulated data, and Monte Carlo (<a href="monte-carlo-methods.html">CMS 503</a>) when the dimension is more than about five, since grid rules need $m^d$ points in $d$ dimensions while the Monte Carlo error falls as $N^{-1/2}$ independently of $d$. One special case deserves a remark: for a <em>periodic</em> smooth integrand the trapezoidal rule is exponentially accurate (it is the discrete Fourier transform, Lecture 7 of COMP 202) and is the best rule; this is why the Brillouin-zone integrals of DFT use uniform k-point meshes (<a href="lab-dft-pyscf.html">LAB 501</a>).</p>
+            <div class="example">
+                <strong>Example: the Debye heat capacity</strong>
+                <p class="given">The Debye model gives the lattice heat capacity of a solid, $C_V/(3Nk_B)=3(T/\theta_D)^3\int_0^{\theta_D/T}\dfrac{x^4\mathrm e^x}{(\mathrm e^x-1)^2}\,\mathrm dx$, where $\theta_D$ is the Debye temperature. Evaluate it numerically for $T/\theta_D$ from $0.05$ to $2$ and check the limits.</p>
+                <p>The integrand has the form $x^4\mathrm e^x/(\mathrm e^x-1)^2$, which near $x=0$ is a ratio of two small numbers and suffers from cancellation (Lecture 1): for $x&lt;10^{-8}$ the program uses its limit $x^2$ and elsewhere writes the denominator as <code>numpy.expm1(x)**2</code>, which is accurate for small $x$. The upper limit $\theta_D/T$ is as large as $20$; the integrand is smooth and <code>quad</code> handles it:</p>
+            </div>
+            <pre class="out"><code>6. materials example: the Debye heat capacity. C_V/(3 N k) = 3 (T/theta)^3 * int_0^{theta/T} x^4 e^x/(e^x-1)^2 dx
+                T/theta     integral        C_V/(3Nk)
+                  0.05      25.975351     0.009741
+                  0.10      25.273668     0.075821
+                  0.20      15.359784     0.368635
+                  0.50       2.201088     0.825408
+                  1.00       0.317244     0.951732
+                  2.00       0.041150     0.987611
+               low T: C_V/(3Nk) -&gt; (4 pi^4/5)(T/theta)^3 = 77.9273 (T/theta)^3 ;  at T/theta = 0.05: 0.009741</code></pre>
+            <p>The heat capacity rises from $0.0097$ at $T=0.05\theta_D$ to $0.83$ at $0.5\theta_D$ and $0.988$ at $2\theta_D$, approaching the classical Dulong&ndash;Petit value $3Nk_B$ (the table value $1$). The low-temperature limit, $C_V/(3Nk_B)\to\tfrac45\pi^4(T/\theta_D)^3=77.93\,(T/\theta_D)^3$, evaluates to $0.009741$ at $T/\theta_D=0.05$, which agrees with the numerical value to all digits printed: a check that the integration is right and that the integral for large upper limit tends to $\int_0^\infty=4\pi^4/15=25.98$ (the numerical $25.975$). Comparing a numerical result with an analytic limit, as here, is the cheapest and most powerful verification there is.</p>
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>Computers use finite-precision arithmetic: double precision keeps about 16 digits, and subtracting nearly equal numbers destroys most of them.</li>
-<li>Every numerical answer has modelling, discretisation, round-off and iteration error; convergence tests separate them.</li>
-<li>Stability and conditioning matter as much as accuracy: an explicit scheme can blow up, and an ill-conditioned problem amplifies small errors.</li>
-<li>Newton&#x27;s method converges quadratically near a root; optimisers find local, not global, minima.</li>
-<li>Cost scaling decides what is feasible: dense linear algebra grows as N cubed, and Amdahl&#x27;s law limits parallel speed-up.</li>
+<li>Computers store real numbers as floating-point numbers with a relative rounding error of at most 1.1e-16 (machine epsilon 2.2e-16 in double precision); the damage comes from cancellation and from ill-conditioned problems, not from the individual roundings: (1 - cos x)/x^2 gives 0.5000000414 at x = 1e-5 and exactly 0 at x = 1e-8 where the true value is 0.5, and a stable rewriting 2 sin^2(x/2)/x^2 is right to ten digits.</li>
+<li>A problem has a condition number kappa and an algorithm loses about log10(kappa) digits; for the function x - 1 near x = 1 the relative condition number is 1/(x - 1), which reaches 1e6 at x = 1.000001, and the same idea applies to linear systems, where the Hilbert matrix of size 12 has condition number 1.6e16 and the solution has an error of 13 percent although the residual is 1e-16.</li>
+<li>Root finding: bisection gains one bit per step (40 halvings for 1e-12), Newton doubles the number of correct digits (errors 5.8e-4, 1.9e-7, 2.0e-14 for x^3 - 2x - 5 from x0 = 3) but needs a good start and a derivative, and the secant method has order 1.618; Brent&#x27;s method combines them and is the default in practice.</li>
+<li>Dense linear systems are solved by LU factorisation with partial pivoting at a cost of (2/3)n^3 operations; without pivoting a matrix with a small leading entry gives x = (0, 1) instead of (1, 1), and least-squares problems should be solved by QR or SVD, not by the normal equations, which square the condition number (the degree-12 fit of exp(x) has an error of 1.1e-7 by the normal equations and 8.9e-16 by QR).</li>
+<li>Matrices from discretised physics are sparse: a banded or sparse solver needs 0.0003 s for n = 8000 where a dense solver needs 3.9 s; Jacobi and Gauss-Seidel need a number of iterations proportional to n^2 (96 217 and 48 110 for n = 160) whereas conjugate gradients need about n/2 (80), and for the 2D Poisson problem the sparse LU factors have 17.5 million non-zeros for 160 000 unknowns while CG needs 734 iterations.</li>
+<li>Interpolating with a single high-degree polynomial on equally spaced points diverges (maximum error 1.0e5 with 41 points for 1/(1 + 25 x^2)); Chebyshev nodes (error 2.9e-4) or piecewise cubic splines (error decreasing 16-fold when the spacing is halved) are stable. Differences lose accuracy by rounding for small h (best central-difference error 4.5e-11 at h = 1e-5), whereas Gauss-Legendre quadrature with 5 points integrates exp(x) on [0,1] to 6.5e-13 and the Debye heat capacity is obtained with scipy.integrate.quad.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>Why does making the step <em>h</em> ever smaller eventually make a finite-difference derivative worse?</summary>
-                <p>The truncation error falls as a power of <em>h</em>, but the numerator subtracts nearly equal values, so round-off error grows like &epsilon;<sub>mach</sub>/<em>h</em>. Their sum has a minimum at an intermediate <em>h</em>, and shrinking <em>h</em> beyond it increases the total error.</p>
-            </details>
-            <details>
-                <summary>A solver gives an error of 10<sup>&minus;3</sup> at <em>h</em> = 0.1 and 2.5 &times; 10<sup>&minus;4</sup> at <em>h</em> = 0.05. What is its order?</summary>
-                <p>The error fell by a factor of 4 when <em>h</em> halved, so <em>p</em> = log<sub>2</sub>4 = 2: second order.</p>
-            </details>
-            <details>
-                <summary>A code is 95% parallelisable. What is the best possible speed-up, and what speed-up on 64 processors?</summary>
-                <p>The limit is 1/(1 &minus; 0.95) = 20. On 64 processors, <em>S</em> = 1/(0.05 + 0.95/64) &asymp; 15.4.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pc201-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>(a) What is the largest relative rounding error $u$ of a double-precision number and of a single-precision number? (b) How many correct decimal digits does that correspond to? (c) A simulation accumulates $10^9$ energies of size $\sim1$ into a single-precision sum: why is the result unreliable?</p>
+            <details class="hint"><summary>Hint</summary><p>$u=\varepsilon_\mathrm{mach}/2$ with $\varepsilon_\mathrm{mach}=2^{-52}$ and $2^{-23}$; digits $=-\log_{10}u$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Double: $u=2^{-53}=1.1\times10^{-16}$; single: $u=2^{-24}=6.0\times10^{-8}$. (b) $-\log_{10}u=15.95$ and $7.22$: about $16$ and $7$ digits. (c) A single-precision accumulator of size $S$ has a spacing of about $S\times1.2\times10^{-7}$. At $S=2^{24}=1.68\times10^7$ the spacing is $2$, so adding $1$ is a tie that is rounded back to $S$: the sum stops growing at $1.68\times10^7$ although the exact value is $10^9$. Even before that the relative error grows steadily (we saw $1\%$ after $10^6$ terms of $0.1$). Accumulate in double precision (or use pairwise or compensated summation).</p>
+            <p class="answer">(a) $1.1\times10^{-16}$, $6.0\times10^{-8}$  (b) $16$, $7$ digits  (c) the accumulator saturates</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>Evaluate $f(x)=\sqrt{x^2+1}-1$ for $x=10^{-8}$ (a) naively in double precision, (b) with the algebraically equivalent form $x^2/(\sqrt{x^2+1}+1)$. (c) What is the relative error of the naive result?</p>
+            <details class="hint"><summary>Hint</summary><p>Multiply and divide by the conjugate $\sqrt{x^2+1}+1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $x^2=10^{-16}$ and $1+10^{-16}$ rounds to $1$ in double precision (it is below $u$), so $\sqrt{x^2+1}=1$ and $f=0$. (b) $f=(x^2+1-1)/(\sqrt{x^2+1}+1)=x^2/(\sqrt{x^2+1}+1)=10^{-16}/2=5\times10^{-17}$. (c) The naive result is $0$, so the relative error is $100\%$: all significant digits are lost, although the intermediate quantities were accurate to $16$ digits. Cancellation occurs whenever a small difference of two large numbers is computed; the conjugate trick is the standard remedy for square roots.</p>
+            <p class="answer">(a) $0$  (b) $5\times10^{-17}$  (c) $100\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>(a) How many bisection steps reduce the interval $[1,2]$ to a width below $10^{-6}$, and below $10^{-15}$? (b) For $f(x)=\cos x-x$ on $[0,1]$ list the first three midpoints and the interval after each step. (c) How many Newton steps would you expect for the same tolerance?</p>
+            <details class="hint"><summary>Hint</summary><p>The width after $k$ steps is $(b-a)/2^k$. The root of $\cos x=x$ is $0.7390851$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $2^{-k}&lt;10^{-6}$ needs $k\ge19.9$, so $20$ steps; $2^{-k}&lt;10^{-15}$ needs $k\ge49.8$, so $50$. (b) $f(0)=1&gt;0$, $f(1)=-0.459&lt;0$. Midpoint $0.5$: $f=0.378&gt;0$, new interval $[0.5,1]$. Midpoint $0.75$: $f=-0.0183&lt;0$, interval $[0.5,0.75]$. Midpoint $0.625$: $f=0.186&gt;0$, interval $[0.625,0.75]$, which contains the root $0.7390851$. (c) Newton doubles the digits each step: starting with error $\sim0.1$ about $4$ to $5$ steps reach $10^{-15}$ (errors $10^{-1}\to10^{-2}\to10^{-4}\to10^{-8}\to10^{-16}$).</p>
+            <p class="answer">(a) $20$ and $50$  (b) $0.5$, $0.75$, $0.625$  (c) about $5$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Apply Newton&rsquo;s method to $f(x)=x^2-2$ from $x_0=1$. (a) Compute $x_1,x_2,x_3$. (b) Compute the errors against $\sqrt2=1.41421356$ and the ratios $e_{k+1}/e_k^2$. (c) Compare with the theoretical constant $f^{\prime\prime}/(2f^{\prime})$ at the root.</p>
+            <details class="hint"><summary>Hint</summary><p>$x_{k+1}=x_k-(x_k^2-2)/(2x_k)=\tfrac12(x_k+2/x_k)$ (Heron&rsquo;s method).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $x_1=\tfrac12(1+2)=1.5$, $x_2=\tfrac12(1.5+1.3333)=1.4166667$, $x_3=\tfrac12(1.4166667+1.4117647)=1.4142157$. (b) Errors: $e_0=0.41421$, $e_1=0.085786$, $e_2=0.0024531$, $e_3=2.124\times10^{-6}$. Ratios: $e_1/e_0^2=0.500$, $e_2/e_1^2=0.333$, $e_3/e_2^2=0.353$. (c) $f^{\prime\prime}/(2f^{\prime})=2/(2\cdot2\sqrt2)=1/(2\sqrt2)=0.3536$: the ratios converge to it, and the number of correct digits goes $0, 1, 2, 5, 11$: it roughly doubles each step.</p>
+            <p class="answer">(a) $1.5$, $1.4166667$, $1.4142157$  (b) $0.500$, $0.333$, $0.353$  (c) $0.3536$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>Consider $A=\begin{pmatrix}1&amp;1\\1&amp;1.0001\end{pmatrix}$. (a) Compute $\kappa(A)$ (use $\kappa\approx4\times10^4$ and check by the solutions). (b) Solve $A\mathbf x=(2,\,2.0001)^T$. (c) Change the second component of the right-hand side to $2.0002$ (a relative change of $3.5\times10^{-5}$) and solve again: how big is the relative change in the solution? Compare with $\kappa$.</p>
+            <details class="hint"><summary>Hint</summary><p>Subtract the first equation from the second.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The singular values are $2.0001$ and $5.0\times10^{-5}$, so $\kappa=40\,002$. (b) The second equation minus the first gives $0.0001\,x_2=0.0001$, so $x_2=1$ and $x_1=1$. (c) Now $0.0001\,x_2=0.0002$, so $x_2=2$ and $x_1=0$. The relative change of the right-hand side is $10^{-4}/2.83=3.5\times10^{-5}$; that of the solution is $\|(-1,1)\|/\|(1,1)\|=1.00$, i.e. $100\%$. The amplification is $2.8\times10^4$, below (but of the order of) the condition number $4\times10^4$, which is the largest possible amplification. A perturbation of the data in the fifth significant figure destroyed the solution: the matrix is nearly singular (the two rows are nearly parallel), and such a system should never be solved without asking where the data come from.</p>
+            <p class="answer">(a) $\kappa=4.0\times10^4$  (b) $(1,1)$  (c) $(0,2)$: change of $100\%$, amplification $2.8\times10^4$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>Solve $\begin{pmatrix}1&amp;2\\3&amp;4\end{pmatrix}\mathbf x=\begin{pmatrix}5\\6\end{pmatrix}$ by LU factorisation with partial pivoting: (a) find $P$, $L$, $U$; (b) solve with forward and back substitution; (c) compute $\det A$ from $U$.</p>
+            <details class="hint"><summary>Hint</summary><p>The largest entry of the first column is $3$ (second row): exchange the rows first.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Exchanging the rows: $PA=\begin{pmatrix}3&amp;4\\1&amp;2\end{pmatrix}$. The multiplier is $1/3$; the second row becomes $(0,\;2-4/3)=(0,\;2/3)$. So $L=\begin{pmatrix}1&amp;0\\1/3&amp;1\end{pmatrix}$, $U=\begin{pmatrix}3&amp;4\\0&amp;2/3\end{pmatrix}$. (b) $P\mathbf b=(6,5)^T$. Forward: $y_1=6$, $y_2=5-6/3=3$. Back: $x_2=3/(2/3)=4.5$, $x_1=(6-4\cdot4.5)/3=-4$. Check: $-4+2(4.5)=5$ ✓ and $3(-4)+4(4.5)=6$ ✓. (c) $\det A=(-1)^{\#\mathrm{swaps}}\prod U_{ii}=-(3)(2/3)=-2$; directly, $1\cdot4-2\cdot3=-2$ ✓.</p>
+            <p class="answer">(a) as above  (b) $\mathbf x=(-4,\,4.5)$  (c) $-2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Using the measured $43$ GFlop/s for the dense solver ($\tfrac23n^3$ operations, $8$ bytes per matrix entry): (a) the time and memory for $n=10^4$; (b) the same for $n=10^5$; (c) the memory needed for the LU factors of the $400\times400$ two-dimensional Poisson problem ($n=160\,000$) if they were stored densely and as sparse factors ($17.5$ million non-zeros, $12$ bytes each for value and index).</p>
+            <details class="hint"><summary>Hint</summary><p>Memory $=8n^2$ bytes for dense. Time $=\tfrac23n^3/(4.3\times10^{10})$ s.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tfrac23\cdot10^{12}=6.7\times10^{11}$ operations, so $15.5$ s; memory $8\times10^8=0.8$ GB. (b) $6.7\times10^{14}$ operations, $1.55\times10^4$ s $=4.3$ h; memory $8\times10^{10}=80$ GB: beyond the memory of a laptop and the limit for most single nodes. (c) Dense: $8\times(1.6\times10^5)^2=2.05\times10^{11}$ bytes $=205$ GB. Sparse: $17.5\times10^6\times12=210$ MB, a thousand times less (and the factorisation took $2.4$ s). The saving comes entirely from the zeros; this is why the representation of the matrix is as important as the algorithm.</p>
+            <p class="answer">(a) $15.5$ s, $0.8$ GB  (b) $4.3$ h, $80$ GB  (c) $205$ GB dense, $210$ MB sparse</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>The Jacobi iteration for the one-dimensional Poisson matrix of size $n$ has spectral radius $\rho=\cos(\pi/(n+1))$. (a) Estimate the number of iterations to reduce the error by $10^{-8}$ for $n=20, 40, 80, 160$ and compare with the measured $1633$, $6238$, $24\,354$, $96\,217$. (b) Predict the count for $n=320$. (c) Why does conjugate gradients need so much fewer?</p>
+            <details class="hint"><summary>Hint</summary><p>The error shrinks by $\rho$ per iteration: $k=\ln(10^{-8})/\ln\rho$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\ln(10^{-8})=-18.42$. $n=20$: $\rho=\cos(\pi/21)=0.98883$, $\ln\rho=-0.011232$, $k=1640$. $n=40$: $k=6269$; $n=80$: $k=24\,485$; $n=160$: $\rho=0.9998096$, $k=96\,752$. These are within $0.6\%$ of the measured counts. (b) $\ln\rho\approx-\pi^2/(2(n+1)^2)$ so $k\propto n^2$; $n=320$ gives about $4\times96\,217\approx3.85\times10^5$. (c) Jacobi reduces the error by a fixed factor per step, which depends on $\kappa$ as $1-O(1/\kappa)$, so it needs $O(\kappa)=O(n^2)$ steps. CG builds the best polynomial approximation of $A^{-1}$ of degree $k$ (Chebyshev-like) and reduces the error by $(\sqrt\kappa-1)/(\sqrt\kappa+1)$ per step, needing $O(\sqrt\kappa)=O(n)$ steps: $80$ instead of $96\,217$ for $n=160$.</p>
+            <p class="answer">(a) $1640$, $6269$, $24\,485$, $96\,752$  (b) $\approx3.9\times10^5$  (c) $\sqrt\kappa$ versus $\kappa$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>Fit a straight line to the points $(0,1)$, $(1,3)$, $(2,4)$. (a) Write the design matrix $V$ and solve the normal equations. (b) Check by the QR/lstsq result $(1.1667,\,1.5)$. (c) The condition numbers are $\kappa(V)=2.92$ and $\kappa(V^TV)=8.55$: confirm the relation and explain why it matters for a high-degree fit.</p>
+            <details class="hint"><summary>Hint</summary><p>$V=\begin{pmatrix}1&amp;0\\1&amp;1\\1&amp;2\end{pmatrix}$; $V^TV=\begin{pmatrix}3&amp;3\\3&amp;5\end{pmatrix}$, $V^T\mathbf y=(8,\,11)^T$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\begin{pmatrix}3&amp;3\\3&amp;5\end{pmatrix}\mathbf c=\begin{pmatrix}8\\11\end{pmatrix}$. Determinant $=6$. $c_0=(5\cdot8-3\cdot11)/6=7/6=1.1667$, $c_1=(3\cdot11-3\cdot8)/6=1.5$. The line is $y=1.1667+1.5x$. (b) <code>numpy.linalg.lstsq</code> returns $(1.16667,\,1.5)$: the same. (c) $\kappa(V)^2=2.92^2=8.55=\kappa(V^TV)$ ✓. For a $2$-parameter fit the squaring is harmless; for a polynomial of degree $12$ on $[0,1]$ $\kappa(V)=7\times10^8$ and $\kappa(V^TV)=5\times10^{17}$, so the normal equations have no accurate digits (the fit in Lecture 4 had an error of $1.1\times10^{-7}$ against $8.9\times10^{-16}$ with QR). Use QR or SVD.</p>
+            <p class="answer">(a) $y=1.1667+1.5x$  (c) $\kappa(V^TV)=\kappa(V)^2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Data on 41 equally spaced points are known to $10^{-3}$. (a) By how much can the error of the degree-40 interpolating polynomial exceed this noise, using the Lebesgue constants of Lecture 6? (b) And with Chebyshev nodes? (c) What would you do instead with the equispaced data?</p>
+            <details class="hint"><summary>Hint</summary><p>The error due to the data is at most $\Lambda\times$ (data error).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Lambda=4.7\times10^9$ for equispaced nodes, so the polynomial can be wrong by up to $4.7\times10^9\times10^{-3}=4.7\times10^6$ somewhere in the interval: the interpolant is worthless. (b) $\Lambda=3.3$, so at most $3.3\times10^{-3}$: three times the noise, acceptable. (c) If the nodes cannot be chosen: a cubic spline through the data ($O(h^4)$ accuracy, a modest stable amplification) or a least-squares fit of a low-degree polynomial or spline with fewer parameters (smoothing); in the noisy example of Lecture 6 the degree-5 fit had an error of $0.055$ against $5.3$ for the interpolating polynomial.</p>
+            <p class="answer">(a) up to $4.7\times10^6$  (b) $3.3\times10^{-3}$  (c) splines or low-degree fits</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>You differentiate $f(x)=\sin x$ at $x=1$ numerically. (a) Estimate the optimal step and the best achievable error of the forward difference, using $E(h)\approx\tfrac12h|f^{\prime\prime}|+\varepsilon|f|/h$ with $\varepsilon=1.1\times10^{-16}$. (b) The same for the central difference with $E(h)\approx\tfrac16h^2|f^{\prime\prime\prime}|+\varepsilon|f|/h$. (c) Why does the measured table for $\mathrm e^x$ show a smaller error than the worst-case estimate?</p>
+            <details class="hint"><summary>Hint</summary><p>Minimise $E(h)=ah^p+b/h$: $h_\mathrm{opt}=(b/(pa))^{1/(p+1)}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $|f|=0.841$, $|f^{\prime\prime}|=0.841$: $a=0.4207$, $b=\varepsilon|f|=9.3\times10^{-17}$. $h_\mathrm{opt}=\sqrt{b/a}=1.5\times10^{-8}$, $E=2\sqrt{ab}=2\sqrt{3.9\times10^{-17}}=1.2\times10^{-8}$. (b) $|f^{\prime\prime\prime}|=\cos1=0.540$: $a=0.0900$, $p=2$: $h_\mathrm{opt}=(b/(2a))^{1/3}=(5.2\times10^{-16})^{1/3}=8.0\times10^{-6}$ and $E=ah^2+b/h=5.8\times10^{-12}+1.2\times10^{-11}=1.7\times10^{-11}$. (c) The estimate assumes the worst-case rounding error in each function value; the actual errors are random with a typical size smaller than $\varepsilon|f|$, and often they partly cancel in the difference. In the experiment the forward difference gave $6.6\times10^{-9}$ (the same estimate for $\mathrm e^x$ at $x=1$ gives $4\times10^{-8}$) and the central difference $5.9\times10^{-11}$ (estimate $6.5\times10^{-11}$). The estimate is an upper bound on the scale, good to a small factor.</p>
+            <p class="answer">(a) $h\approx1.5\times10^{-8}$, $E\approx1.2\times10^{-8}$  (b) $h\approx8\times10^{-6}$, $E\approx1.7\times10^{-11}$  (c) worst case</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc201-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>(a) From the Simpson column of the table of Lecture 7, how many intervals does Simpson&rsquo;s rule need for $\int_0^1\mathrm e^x\mathrm dx$ to reach $10^{-12}$? (b) Gauss&ndash;Legendre did it with $5$ points: how many evaluations does that save? (c) Show that the substitution $x=t^2$ turns $\int_0^1x^{-1/2}\mathrm dx$ into a trivial integral and say what Simpson&rsquo;s rule gives then.</p>
+            <details class="hint"><summary>Hint</summary><p>The Simpson error scales as $n^{-4}$: $E(n)=E(8)\,(8/n)^4$ with $E(8)=2.33\times10^{-6}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $(8/n)^4=10^{-12}/2.33\times10^{-6}=4.3\times10^{-7}$, so $n=8\times(2.33\times10^{6})^{1/4}=8\times39.1=313$; Simpson needs an even number, so $314$ intervals ($315$ evaluations). (b) $315$ against $5$: a factor of $63$. (c) $x=t^2$, $\mathrm dx=2t\,\mathrm dt$ and $x^{-1/2}=1/t$, so the integrand is $2t/t=2$ on $t\in[0,1]$ and the integral is $2$. Any rule that is exact for a constant (all of them) returns $2$ to rounding error with two points. A change of variables that removes a singularity is almost always better than a better rule.</p>
+            <p class="answer">(a) $314$ intervals  (b) $63\times$ fewer  (c) integrand $=2$, exact</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qc201-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>Explain why $0.1+0.2\ne0.3$ in floating-point arithmetic and give the correct way to test equality of two computed numbers.</p>
+            <details class="solution"><summary>Solution</summary><p>$0.1$, $0.2$ and $0.3$ have infinite binary expansions and are each stored as the nearest double; the roundings do not cancel, and $0.1+0.2=0.30000000000000004$. Compare with a tolerance: <code>abs(a-b)&lt;=rtol*max(abs(a),abs(b))+atol</code> or <code>numpy.isclose</code>, choosing rtol from the accuracy of the computation (a few times $10^{-16}\kappa$) and atol from the scale of the quantity.</p></details>
+            </div>
+            <div class="problem" id="qc201-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Core</span></div>
+            <p>The cohesive energy of a crystal is computed as $E_\mathrm{coh}=E_\mathrm{atom}-E_\mathrm{crystal}/N$, where the total energies are of order $10^3$ eV and $E_\mathrm{coh}\sim4$ eV. If each total energy has a relative error of $10^{-8}$, what is the error of $E_\mathrm{coh}$ and which numerical effect does this illustrate?</p>
+            <details class="solution"><summary>Solution</summary><p>The absolute error of a total energy is $10^3\times10^{-8}=10^{-5}$ eV; the difference has an absolute error of about $10^{-5}$ eV (they add) and a relative error of $10^{-5}/4=2.5\times10^{-6}$, i.e. the condition number of the subtraction is $\sim10^3/4=250$ and about $2.4$ digits are lost. This is cancellation: energy <em>differences</em> of large numbers amplify the relative error of the inputs by the ratio of the sizes. It is the reason total energies must be converged much tighter than the energy differences one wants.</p></details>
+            </div>
+            <div class="problem" id="qc201-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>Newton&rsquo;s method for $f(x)=(x-2)^3$ from $x_0=3$: what is the sequence and what is the order of convergence? How would you accelerate it?</p>
+            <details class="solution"><summary>Solution</summary><p>$f^{\prime}=3(x-2)^2$ so $x_{k+1}=x_k-(x_k-2)/3$: the error $e_k=x_k-2$ is multiplied by $2/3$ each step ($1,0.667,0.444,\dots$): linear convergence, ratio $(m-1)/m=2/3$ for a triple root. With the multiplicity $m=3$ known, $x_{k+1}=x_k-mf/f^{\prime}$ gives the root in one step. Without it, apply Newton to $f/f^{\prime}$ (which has a simple root) or use the Aitken extrapolation of the sequence.</p></details>
+            </div>
+            <div class="problem" id="qc201-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>A solver returns a solution with a relative residual of $10^{-15}$ for a matrix with $\kappa=10^{12}$. What do you know about the accuracy of the solution? What would you do next?</p>
+            <details class="solution"><summary>Solution</summary><p>Only that the solver is backward stable. The relative error can be as large as $\kappa\times10^{-15}=10^{-3}$, i.e. only about three digits are certain. Check by perturbing the right-hand side or the matrix slightly and watching the change in the solution; look at the singular values to find the poorly determined combinations; rescale variables; reformulate (a better basis, regularisation) or use higher precision (quad precision, or iterative refinement with a residual computed in higher precision).</p></details>
+            </div>
+            <div class="problem" id="qc201-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>You must solve a Poisson problem on a $300^3$ grid ($2.7\times10^7$ unknowns). Compare dense, sparse direct and iterative solvers.</p>
+            <details class="solution"><summary>Solution</summary><p>Dense: $8n^2=5.8\times10^{15}$ bytes ($5.8$ PB): impossible. Sparse direct: fill-in in 3D is severe (the cost scales as $n^2=7\times10^{14}$ operations and the memory as $n^{4/3}$): not feasible on one node. Iterative: each matrix&ndash;vector product costs $7n=2\times10^8$ operations; plain CG needs $O(\sqrt\kappa)=O(300)$ iterations, so about $6\times10^{10}$ operations and a few vectors of memory ($\sim1$ GB): feasible in minutes; with a multigrid preconditioner the iteration count is independent of the size. Only the iterative method is practical, and it is what every large-scale PDE and DFT code uses.</p></details>
+            </div>
+            <div class="problem" id="qc201-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>A colleague interpolates experimental heat-capacity data at 25 temperatures with a degree-24 polynomial and uses the derivative to obtain the entropy. List what is likely to go wrong and what you would recommend.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) Equispaced temperatures give a Lebesgue constant of order $10^6$, so noise of $0.5\%$ becomes errors of order $10^4$ times the data, with oscillations near the ends of the range. (2) Differentiating or integrating an oscillating interpolant is unreliable: the derivative amplifies the oscillations. (3) Extrapolation beyond the data diverges. Recommendation: fit a smooth model with few parameters (the Debye or Einstein form plus electronic terms, or a low-order spline with smoothing), integrate $C_p/T$ with a stable quadrature rule on the data (trapezoid or Simpson) and extrapolate to $0$ K with the physical $T^3$ law; report the error of each step.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Heath, M. T., <em>Scientific Computing: An Introductory Survey</em>, SIAM.</li>
-                <li>Press, W. H., Teukolsky, S. A., Vetterling, W. T. and Flannery, B. P., <em>Numerical Recipes</em>, Cambridge University Press.</li>
-                <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM.</li>
-                <li>Golub, G. H. and Van Loan, C. F., <em>Matrix Computations</em>, Johns Hopkins University Press.</li>
-                <li>Higham, N. J., <em>Accuracy and Stability of Numerical Algorithms</em>, SIAM.</li>
-                <li>LeVeque, R. J., <em>Finite Difference Methods for Ordinary and Partial Differential Equations</em>, SIAM.</li>
-                <li>Hairer, E., Lubich, C. and Wanner, G., <em>Geometric Numerical Integration</em>, Springer.</li>
-                <li>Nocedal, J. and Wright, S. J., <em>Numerical Optimization</em>, Springer.</li>
-                <li>Goldberg, D., What every computer scientist should know about floating-point arithmetic, <em>ACM Comput. Surv.</em> 23, 5 (1991).</li>
-                <li>Bitzek, E. et al., Structural relaxation made simple, <em>Phys. Rev. Lett.</em> 97, 170201 (2006).</li>
-                <li>Matsumoto, M. and Nishimura, T., Mersenne Twister, <em>ACM Trans. Model. Comput. Simul.</em> 8, 3 (1998).</li>
+                <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM: the clearest treatment of conditioning, stability, QR, SVD and iterative methods (Lectures 12&ndash;18 for stability and conditioning, 38&ndash;40 for Krylov methods). Heath, M. T., <em>Scientific Computing: An Introductory Survey</em>, SIAM: a complete first course, with the same topics in this order.</li>
+                <li>Higham, N. J., <em>Accuracy and Stability of Numerical Algorithms</em>, SIAM: the reference on rounding errors; Goldberg, D., &ldquo;What every computer scientist should know about floating-point arithmetic&rdquo;, <em>ACM Computing Surveys</em> <strong>23</strong>, 5 (1991).</li>
+                <li>Press, W. H. et al., <em>Numerical Recipes</em>, Cambridge University Press: practical algorithms with discussion (use the library implementations, not the book&rsquo;s code). Burden, R. L. and Faires, J. D., <em>Numerical Analysis</em>, Cengage: root finding, interpolation and quadrature with error analysis.</li>
+                <li>Trefethen, L. N., <em>Approximation Theory and Approximation Practice</em>, SIAM: Chebyshev interpolation and quadrature, the Runge phenomenon; Saad, Y., <em>Iterative Methods for Sparse Linear Systems</em>, SIAM (free online): Krylov methods and preconditioning.</li>
+                <li>MIT OpenCourseWare 18.335J <em>Introduction to Numerical Methods</em> and 18.06 <em>Linear Algebra</em>, and Stanford CME 302 <em>Numerical Linear Algebra</em> for the same material in lecture form; SciPy documentation (<code>scipy.linalg</code>, <code>scipy.sparse.linalg</code>, <code>scipy.integrate</code>, <code>scipy.interpolate</code>).</li>
+                <li>The programs of this course are in <code>labs/comp-201</code> of the repository. Next: <a href="numerical-methods-differential-equations.html">COMP 202</a> (differential equations, optimisation, eigenvalues, Fourier transform). Applications: <a href="lab-diffusion-fipy.html">LAB 506</a> (sparse linear algebra inside FiPy), <a href="lab-fem-scikit-fem.html">LAB 507</a> (sparse direct solves in finite elements), <a href="lab-dft-pyscf.html">LAB 501</a> (conditioning of basis sets, k-point integration).</li>
             </ul>
 
             <!-- pager:start -->
 <nav class="pager" aria-label="Previous and next course in this subject">
 <a class="prev" href="your-first-simulation.html"><span class="dir">Previous course</span>Your first simulation</a>
-<span class="spacer"></span>
+<a class="next" href="numerical-methods-differential-equations.html"><span class="dir">Next course</span>Numerical methods II: differential equations, optimisation and Fourier methods</a>
 </nav>
 <!-- pager:end -->
         </article>
@@ -220,11 +850,13 @@
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=a68fe7e8"></script>
-    <script src="../assets/pathdata.js?v=49a96c62"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=d98cf114"></script>
+    <script src="../assets/pathdata.js?v=bb1778c0"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
-    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>

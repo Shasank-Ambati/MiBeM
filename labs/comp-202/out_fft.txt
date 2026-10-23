@@ -1,0 +1,28 @@
+1. cost: the direct DFT (matrix-vector product, N^2) against the FFT (N log N); times in seconds
+        N      direct DFT        FFT      ratio     max |difference|
+      256        0.00418     0.000052        81     1.7e-12
+     1024        0.20807     0.000121      1725     1.5e-11
+     4096        3.74623     0.000188     19880     1.5e-10
+     8192       12.45186     0.000368     33801     4.3e-10
+   N =  1048576: FFT time 0.0545 s   (a power of two)
+   N =  1048577: FFT time 0.3785 s   (17 x 61681)
+   N =  1048583: FFT time 0.3478 s   (a prime number)
+
+2. spectral differentiation of a periodic function f = exp(sin x) on [0, 2 pi): error of f' against exact; finite differences for comparison
+      N     central difference (2nd order)   4th-order difference      FFT (spectral)
+      8            3.402e-01                   1.384e-01             4.318e-03
+     16            9.359e-02                   1.575e-02             1.762e-07
+     32            2.583e-02                   1.132e-03             2.887e-15
+     64            6.512e-03                   7.590e-05             1.066e-14
+
+3. spectral solution of the heat equation u_t = D u_xx with periodic conditions: each Fourier mode decays as exp(-D k^2 t)
+   spectral (one step, any t) vs explicit finite differences with 410 steps: max difference 1.88e-04; mass conserved: 0.088623 vs 0.088623
+
+4. aliasing: a signal sin(2 pi f t) with f = 70 Hz sampled at 100 Hz (Nyquist frequency 50 Hz)
+   the largest peak appears at 30.0 Hz (= |70 - 100|), amplitude 1.000
+   a true 30 Hz signal sampled the same way gives a peak at 30.0 Hz: the two cannot be distinguished from the samples
+
+5. leakage and windows: a sine of frequency 10.5 cycles per record (not an integer) sampled over N = 256 points
+   rectangular window: spectrum 30 bins from the peak is 7.43e-03 of the peak, main-lobe width (bins above 0.1 of peak): 12
+   Hann        window: spectrum 30 bins from the peak is 1.15e-05 of the peak, main-lobe width (bins above 0.1 of peak): 4
+   for an integer 10 cycles per record the spectrum is a single line: other bins are below 5.4e-16

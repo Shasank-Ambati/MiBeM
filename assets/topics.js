@@ -498,12 +498,12 @@ window.MIBEM_TOPICS = [
     "dept": "COMP",
     "level": 2,
     "slug": "numerical-methods-essentials",
-    "short": "Numerical methods",
+    "short": "Numerical methods I",
     "part": "Computing",
     "tone": "a",
-    "minutes": 12,
-    "title": "Numerical methods essentials",
-    "blurb": "Floating point, error and stability, root finding and optimisation, linear algebra, integrators, discretisation and parallel scaling.",
+    "minutes": 65,
+    "title": "Numerical methods I: errors, equations and linear algebra",
+    "blurb": "Floating point and conditioning, root finding, dense and sparse linear systems, least squares, iterative solvers, interpolation, differentiation and quadrature, with real program output.",
     "builds": [
       16,
       24,
@@ -514,12 +514,45 @@ window.MIBEM_TOPICS = [
       9
     ],
     "takeaways": [
-      "Computers use finite-precision arithmetic: double precision keeps about 16 digits, and subtracting nearly equal numbers destroys most of them.",
-      "Every numerical answer has modelling, discretisation, round-off and iteration error; convergence tests separate them.",
-      "Stability and conditioning matter as much as accuracy: an explicit scheme can blow up, and an ill-conditioned problem amplifies small errors.",
-      "Newton's method converges quadratically near a root; optimisers find local, not global, minima.",
-      "Cost scaling decides what is feasible: dense linear algebra grows as N cubed, and Amdahl's law limits parallel speed-up."
-    ]
+      "Computers store real numbers as floating-point numbers with a relative rounding error of at most 1.1e-16 (machine epsilon 2.2e-16 in double precision); the damage comes from cancellation and from ill-conditioned problems, not from the individual roundings: (1 - cos x)/x^2 gives 0.5000000414 at x = 1e-5 and exactly 0 at x = 1e-8 where the true value is 0.5, and a stable rewriting 2 sin^2(x/2)/x^2 is right to ten digits.",
+      "A problem has a condition number kappa and an algorithm loses about log10(kappa) digits; for the function x - 1 near x = 1 the relative condition number is 1/(x - 1), which reaches 1e6 at x = 1.000001, and the same idea applies to linear systems, where the Hilbert matrix of size 12 has condition number 1.6e16 and the solution has an error of 13 percent although the residual is 1e-16.",
+      "Root finding: bisection gains one bit per step (40 halvings for 1e-12), Newton doubles the number of correct digits (errors 5.8e-4, 1.9e-7, 2.0e-14 for x^3 - 2x - 5 from x0 = 3) but needs a good start and a derivative, and the secant method has order 1.618; Brent's method combines them and is the default in practice.",
+      "Dense linear systems are solved by LU factorisation with partial pivoting at a cost of (2/3)n^3 operations; without pivoting a matrix with a small leading entry gives x = (0, 1) instead of (1, 1), and least-squares problems should be solved by QR or SVD, not by the normal equations, which square the condition number (the degree-12 fit of exp(x) has an error of 1.1e-7 by the normal equations and 8.9e-16 by QR).",
+      "Matrices from discretised physics are sparse: a banded or sparse solver needs 0.0003 s for n = 8000 where a dense solver needs 3.9 s; Jacobi and Gauss-Seidel need a number of iterations proportional to n^2 (96 217 and 48 110 for n = 160) whereas conjugate gradients need about n/2 (80), and for the 2D Poisson problem the sparse LU factors have 17.5 million non-zeros for 160 000 unknowns while CG needs 734 iterations.",
+      "Interpolating with a single high-degree polynomial on equally spaced points diverges (maximum error 1.0e5 with 41 points for 1/(1 + 25 x^2)); Chebyshev nodes (error 2.9e-4) or piecewise cubic splines (error decreasing 16-fold when the spacing is halved) are stable. Differences lose accuracy by rounding for small h (best central-difference error 4.5e-11 at h = 1e-5), whereas Gauss-Legendre quadrature with 5 points integrates exp(x) on [0,1] to 6.5e-13 and the Debye heat capacity is obtained with scipy.integrate.quad."
+    ],
+    "katex": true
+  },
+  {
+    "id": 53,
+    "label": "COMP 202",
+    "code": "COMP 202",
+    "dept": "COMP",
+    "level": 2,
+    "slug": "numerical-methods-differential-equations",
+    "short": "Numerical methods II",
+    "part": "Computing",
+    "tone": "a",
+    "minutes": 77,
+    "title": "Numerical methods II: differential equations, optimisation and Fourier methods",
+    "blurb": "Runge-Kutta and stiff solvers, finite differences for diffusion, Poisson and advection with stability analysis, optimisation, eigenvalue algorithms, the FFT and spectral methods, performance and random streams, with real program output.",
+    "builds": [
+      15,
+      30,
+      28
+    ],
+    "related": [],
+    "takeaways": [
+      "Runge-Kutta methods of order p have a global error proportional to h^p: for y' = -2y + sin t the errors at t = 5 fall by factors 2.0, 4.1 and 16.4 per halving of h for Euler, midpoint and RK4 (2.6e-3, 3.5e-5 and 1.4e-8 at h = 0.031), and adaptive embedded pairs such as RK45 choose the step to meet a tolerance (9 steps for 1e-3, 241 steps for 1e-11).",
+      "A system is stiff when stability, not accuracy, limits the step of an explicit method: for y' = -50 y explicit Euler is stable only for h < 0.04 (h = 0.05 gives 3.3e3 instead of 1.9e-22), while implicit Euler is stable for every h; on Robertson's chemical kinetics RK45 needs 1.7 million steps and 103 s to reach t = 1000 where the implicit Radau method needs 116 steps and 0.08 s.",
+      "For the heat equation the explicit scheme is stable only if r = D dt/dx^2 <= 1/2 (max|u| = 0.373 for r <= 0.51 and 4e18 for r = 0.55), backward Euler and Crank-Nicolson are stable for all r with errors proportional to dt (ratio 1.98) and dt^2 (ratio about 4), and the second-order central scheme for Poisson's equation reduces the error by 3.97 per halving of h.",
+      "Advection exposes the other errors of a discretisation: with CFL 0.8 the first-order upwind scheme smears a pulse of height 1 to 0.745 (numerical diffusion), Lax-Wendroff keeps 0.988 but produces negative values (dispersion), and the unstable central scheme grows to 3e10.",
+      "Optimisation: steepest descent needs a number of iterations proportional to the condition number (81, 922, 10 362 and 115 130 for k = 10 to 10 000) while conjugate gradients solve a two-variable quadratic in 2 steps; on the Rosenbrock function BFGS needs 34 iterations and plain gradient descent 32 076, and random-start BFGS finds the global minimum of a 7-atom Lennard-Jones cluster from 25 percent of 200 starts, of a 13-atom cluster from 5.5 percent and of a 19-atom cluster from 1 start in 200.",
+      "Eigenvalues: power iteration converges at the rate (lambda2/lambda1)^2 per step (7932 iterations for a ratio of 0.999), shifted QR with deflation finds all eigenvalues of a 6 x 6 matrix in 17 sweeps against 205 unshifted, Lanczos (eigsh) finds the lowest six eigenvalues of a 14 400-unknown Laplacian in 0.2 s, and the chain and ring tight-binding eigenvalues -2 cos(k pi/(N+1)) and the benzene levels (-2, -1, -1, 1, 1, 2) are reproduced to 1e-15.",
+      "The FFT turns an O(N^2) transform into O(N log N) (a speed-up of 33 800 at N = 8192), makes derivatives of smooth periodic functions exponentially accurate (error 2.9e-15 with 32 points against 2.6e-2 for second-order differences), solves diffusion exactly mode by mode, and requires care with aliasing (a 70 Hz signal sampled at 100 Hz appears at 30 Hz) and windowing.",
+      "Performance: for a sum over 4.5 million atom pairs compiled loops (Numba) are 80 times faster than pure Python and 34 times faster than a vectorised NumPy version (0.013 s against 1.02 s and 0.44 s), a memory-bound kernel runs at 0.27 GFlop/s while a matrix product reaches 180 GFlop/s on the same machine, Amdahl's law limits a code with 1 percent serial work to a speed-up of 100, and independent random streams for parallel runs must come from SeedSequence.spawn."
+    ],
+    "katex": true
   },
   {
     "id": 45,
@@ -1278,7 +1311,8 @@ window.MIBEM_PATHPLAN = [
       "PHYS 201",
       "MSE 201",
       "LAB 201",
-      "COMP 201"
+      "COMP 201",
+      "COMP 202"
     ]
   },
   {

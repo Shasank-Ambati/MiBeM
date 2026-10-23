@@ -1,0 +1,30 @@
+1. the need for pivoting: A = [[eps, 1], [1, 1]], b = [1, 2], exact solution ~ (1, 1)
+   eps=  1e-03   no pivoting x = (1.001001, 0.998999)   with pivoting x = (1.001001, 0.998999)
+   eps=  1e-12   no pivoting x = (0.999978, 1.000000)   with pivoting x = (1.000000, 1.000000)
+   eps=  1e-17   no pivoting x = (0.000000, 1.000000)   with pivoting x = (1.000000, 1.000000)
+
+2. random matrices: our LU against numpy, n = 200
+   cond(A) = 230.9   rel. error without pivoting 2.95e-12   LAPACK 1.41e-14
+
+3. the Hilbert matrix H_ij = 1/(i+j-1): error vs condition number
+     n        cond(H)       relative error     residual ||Hx-b||/||b||
+     4      1.551e+04      3.366e-14        0.00e+00
+     8      1.526e+10      6.744e-08        1.58e-16
+    10      1.602e+13      1.249e-05        1.56e-16
+    12      1.620e+16      1.289e-01        1.15e-16
+    14      2.515e+17      2.205e+00        1.22e-16
+
+4. cost: solve dense A x = b for growing n (seconds, one core)
+      n      time (s)     time/n^3 (ns)
+     250      0.0033        0.210
+     500      0.0158        0.126
+    1000      0.0495        0.050
+    2000      0.1905        0.024
+    4000      0.9999        0.016
+
+5. least squares: fit a degree-d polynomial to 200 points of exp(x) on [0,1]
+   d    cond(V)      normal equations   QR (lstsq)      SVD(pinv)       [max |fit - exp|]
+    4    6.77e+02         5.47e-05         5.47e-05         5.47e-05
+    8    6.77e+05         1.14e-10         8.03e-11         8.03e-11
+   12    7.13e+08         1.14e-07         8.88e-16         2.44e-15
+   16    7.71e+11         3.07e-07         1.33e-15         6.22e-15

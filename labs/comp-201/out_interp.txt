@@ -1,0 +1,29 @@
+interpolating f(x) = 1/(1 + 25 x^2) on [-1, 1]: maximum error over 4001 points
+   n (nodes)   equispaced poly   Chebyshev nodes poly   cubic spline (equispaced)
+       5         4.384e-01            4.020e-01            3.171e-01
+       9         1.045e+00            1.708e-01            5.615e-02
+      13         3.663e+00            6.922e-02            6.909e-03
+      17         1.439e+01            3.261e-02            3.745e-03
+      21         5.982e+01            1.533e-02            3.183e-03
+      41         1.046e+05            2.895e-04            2.780e-04
+
+the Lebesgue constant (worst-case amplification of errors in the data) for n nodes
+   n =   5  equispaced  Lebesgue constant = 2.208
+   n =   5  Chebyshev   Lebesgue constant = 1.989
+   n =  11  equispaced  Lebesgue constant = 29.9
+   n =  11  Chebyshev   Lebesgue constant = 2.489
+   n =  21  equispaced  Lebesgue constant = 1.099e+04
+   n =  21  Chebyshev   Lebesgue constant = 2.901
+   n =  41  equispaced  Lebesgue constant = 4.692e+09
+   n =  41  Chebyshev   Lebesgue constant = 3.327
+
+cubic spline convergence for f = sin(2 pi x) on [0, 1]: error vs number of intervals
+   n =    4   max error = 2.002e-02
+   n =    8   max error = 1.066e-03   ratio 18.78
+   n =   16   max error = 6.312e-05   ratio 16.89
+   n =   32   max error = 3.889e-06   ratio 16.23
+   n =   64   max error = 2.422e-07   ratio 16.06
+   n =  128   max error = 1.511e-08   ratio 16.03
+
+data with noise: interpolation vs fit (n = 15 points of sin(2 pi x) + noise of size 0.1)
+   max |interpolating polynomial - truth| = 5.258   max |degree-5 least-squares fit - truth| = 0.055

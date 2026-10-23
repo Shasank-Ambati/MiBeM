@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical methods II: differential equations, optimisation and Fourier methods - MiBeM</title>
+    <meta name="description" content="Numerical methods for materials simulation, part II: Runge-Kutta and adaptive integrators, stiffness and implicit methods, finite differences for diffusion, Poisson and advection problems with stability analysis, optimisation, eigenvalue algorithms, the fast Fourier transform and spectral methods, performance and random-number streams, with real output and problems with full solutions.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-differential-equations.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Numerical methods II: differential equations, optimisation and Fourier methods - MiBeM">
+    <meta property="og:description" content="Numerical methods for materials simulation, part II: Runge-Kutta and adaptive integrators, stiffness and implicit methods, finite differences for diffusion, Poisson and advection problems with stability analysis, optimisation, eigenvalue algorithms, the fast Fourier transform and spectral methods, performance and random-number streams, with real output and problems with full solutions.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/numerical-methods-differential-equations.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="53">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#ode">Lecture 1. Ordinary differential equations: Runge&ndash;Kutta methods</a></li>
+                <li><a href="#stiff">Lecture 2. Stiffness and implicit methods</a></li>
+                <li><a href="#heat">Lecture 3. Finite differences for diffusion: consistency, stability, convergence</a></li>
+                <li><a href="#poisson">Lecture 4. Boundary-value problems and advection</a></li>
+                <li><a href="#optim">Lecture 5. Optimisation</a></li>
+                <li><a href="#eigen">Lecture 6. Eigenvalue problems</a></li>
+                <li><a href="#fft">Lecture 7. The fast Fourier transform</a></li>
+                <li><a href="#perf">Lecture 8. Performance, parallelism and random numbers</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computing</span><span>COMP 202</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computing courses"><span class="cn-dept">COMP</span><a href="programming-and-workflow.html" title="COMP 101: Programming and workflow">101</a><a href="your-first-simulation.html" title="COMP 102: Your first simulation">102</a><a href="numerical-methods-essentials.html" title="COMP 201: Numerical methods I: errors, equations and linear algebra">201</a><a href="numerical-methods-differential-equations.html" class="here" aria-current="page" title="COMP 202: Numerical methods II: differential equations, optimisation and Fourier methods">202</a></nav>
+<!-- coursenav:end -->
+            <h1>Numerical methods II: differential equations, optimisation and Fourier methods</h1>
+            <p class="lead">Part I (<a href="numerical-methods-essentials.html">COMP 201</a>) treated problems that have no time or space in them: arithmetic, equations, linear systems, interpolation and integrals. The simulations of this curriculum are about change in time and variation in space, and this second part supplies the corresponding numerical tools: integrators for ordinary differential equations (reaction kinetics, particle motion), finite-difference discretisations of partial differential equations (diffusion, heat conduction, advection, electrostatics), optimisation (relaxing a structure, fitting a model), eigenvalue algorithms (vibrations, electronic structure), the fast Fourier transform, and the practicalities of making a program fast. The thread running through all of them is the same as in Part I: every method has an order of accuracy, a stability condition and a cost, and the three must be understood together. Everything on this page was run; the programs are in <code>labs/comp-202</code>.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 77 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="numerical-methods-essentials.html">COMP 201: Numerical methods I</a><br><a href="ordinary-differential-equations.html">MATH 203: ODEs</a><br><a href="eigenvalues-and-decompositions.html">MATH 202: Linear algebra II</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 2: core tools</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Implement and test Runge&ndash;Kutta methods, measure their order, and explain adaptive step-size control.</li>
+                    <li>Recognise stiffness, explain why explicit methods fail for it and choose an implicit solver.</li>
+                    <li>Discretise diffusion, Poisson and advection problems with finite differences and analyse stability, consistency and convergence.</li>
+                    <li>Choose between gradient descent, conjugate gradients, Newton and quasi-Newton methods, and understand why local optimisers find local minima.</li>
+                    <li>Compute eigenvalues with power iteration, the QR algorithm and Lanczos, and build tight-binding Hamiltonians.</li>
+                    <li>Use the FFT for derivatives, convolutions and diffusion, and avoid aliasing and leakage.</li>
+                    <li>Profile and speed up a program, read an Amdahl-law estimate and set up independent random streams.</li>
+                </ul>
+                <strong>You need:</strong> <a href="numerical-methods-essentials.html">COMP 201</a> (floating point, linear solvers, quadrature), <a href="ordinary-differential-equations.html">MATH 203</a> (differential equations), <a href="partial-differential-equations.html">MATH 301</a> (the equations being discretised; Fourier series), <a href="eigenvalues-and-decompositions.html">MATH 202</a> (eigenvalues) and <a href="your-first-simulation.html">COMP 102</a> (first integrators). It leads to <a href="diffusion-and-kinetics.html">CMS 504</a>, <a href="phase-field-modelling.html">CMS 505</a> and <a href="finite-element-method.html">CMS 506</a>, and the labs <a href="lab-diffusion-fipy.html">LAB 506</a>, <a href="lab-fem-scikit-fem.html">LAB 507</a> and <a href="lab-phonons-phonopy.html">LAB 301</a>.
+            </div>
+
+            <div class="note"><strong>How this course is organised</strong>
+            <p>Eight <strong>lectures</strong> with programs to run, a <strong>problem set</strong> of twelve problems with hints and full solutions, and a <strong>unit quiz</strong>. Timings are from a four-core laptop-class machine with Python 3.13, NumPy 2.5 and SciPy 1.18 and will differ on yours; results that depend on timing are marked. One result of the page (the Numba timings) used Numba 0.68.</p>
+            </div>
+
+            <h2 id="ode">Lecture 1. Ordinary differential equations: Runge&ndash;Kutta methods<a class="anchor" href="#ode" aria-label="Link to this section">#</a></h2>
+            <p>An initial-value problem asks for the function $\mathbf y(t)$ that satisfies $\dot{\mathbf y}=\mathbf f(t,\mathbf y)$ with $\mathbf y(0)=\mathbf y_0$. Chemical kinetics ($\mathbf y$ = concentrations), the motion of atoms (positions and velocities) and the method of lines for partial differential equations (Lecture 3) all take this form. A numerical method advances $\mathbf y$ from $t_n$ to $t_{n+1}=t_n+h$. Its <strong>local error</strong> is the error made in one step, $O(h^{p+1})$ for a method of <strong>order</strong> $p$; after $T/h$ steps the <strong>global error</strong> is $O(h^p)$. The explicit Euler method of <a href="your-first-simulation.html">COMP 102</a>, $y_{n+1}=y_n+hf(t_n,y_n)$, has $p=1$ and is almost never accurate enough: to gain one digit one must take ten times more steps.</p>
+            <p><strong>Runge&ndash;Kutta methods</strong> reach higher order by evaluating $\mathbf f$ several times per step, at intermediate points, and combining the results so that the Taylor expansion of the numerical solution matches the exact one to higher order. The second-order <em>midpoint</em> method takes a half Euler step, evaluates the slope there and uses it for the full step:
+            $$k_1=f(t_n,y_n),\quad y_{n+1}=y_n+h\,f\!\left(t_n+\tfrac h2,\,y_n+\tfrac h2k_1\right).$$
+            The classical fourth-order method (<strong>RK4</strong>) uses four evaluations,
+            $$k_1=f(t_n,y_n),\;k_2=f\!\left(t_n+\tfrac h2,y_n+\tfrac h2k_1\right),\;k_3=f\!\left(t_n+\tfrac h2,y_n+\tfrac h2k_2\right),\;k_4=f(t_n+h,y_n+hk_3),$$
+            $$y_{n+1}=y_n+\tfrac h6\,(k_1+2k_2+2k_3+k_4),$$
+            a weighted average of slopes at the start, twice in the middle and at the end of the step (Simpson&rsquo;s rule for the integral of the slope). The cost of a step is the number of evaluations of $\mathbf f$ (one for Euler, two for the midpoint method, four for RK4), which usually dominates. The right comparison is therefore accuracy per evaluation. The test problem has the exact solution $y=\tfrac65\mathrm e^{-2t}+\tfrac15(2\sin t-\cos t)$ for $y^{\prime}=-2y+\sin t$, $y(0)=1$:</p>
+            <pre data-file="ode.py (part 1)"><code>&quot;&quot;&quot;Ordinary differential equations: order of Euler/RK2/RK4, stability, stiffness, adaptive solvers.&quot;&quot;&quot;
+            import numpy as np, time
+            from scipy.integrate import solve_ivp
+
+            def euler(f, y, t, h): return y + h * f(t, y)
+            def rk2(f, y, t, h):                      # midpoint method
+                k1 = f(t, y); return y + h * f(t + h / 2, y + h / 2 * k1)
+            def rk4(f, y, t, h):
+                k1 = f(t, y); k2 = f(t + h / 2, y + h / 2 * k1); k3 = f(t + h / 2, y + h / 2 * k2); k4 = f(t + h, y + h * k3)
+                return y + h / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+            def integrate(step, f, y0, T, n):
+                y = np.array(y0, float); h = T / n; t = 0.0
+                for _ in range(n): y = step(f, y, t, h); t += h
+                return y
+
+            print(&quot;1. order of convergence: y&#x27; = -2y + sin t, y(0) = 1, error at t = 5 against the exact solution&quot;)
+            f = lambda t, y: -2 * y + np.sin(t)
+            exact = lambda t: (1 + 1 / 5) * np.exp(-2 * t) + (2 * np.sin(t) - np.cos(t)) / 5
+            print(&quot;      h       Euler err    ratio    RK2 err      ratio    RK4 err       ratio&quot;)
+            prev = [None] * 3
+            for n in (10, 20, 40, 80, 160):
+                h = 5 / n; row = f&quot;   {h:6.4f}&quot;
+                for i, st in enumerate((euler, rk2, rk4)):
+                    e = abs(integrate(st, f, [1.0], 5.0, n)[0] - exact(5.0))
+                    row += f&quot;  {e:10.3e}&quot; + (f&quot;  {prev[i] / e:6.2f}&quot; if prev[i] else &quot;        &quot;)
+                    prev[i] = e
+                print(row)
+            print(&quot;   (ratio of successive errors = 2^p: 2 for Euler, 4 for RK2, 16 for RK4)&quot;)</code></pre>
+            <pre class="out"><code>1. order of convergence: y&#x27; = -2y + sin t, y(0) = 1, error at t = 5 against the exact solution
+                  h       Euler err    ratio    RK2 err      ratio    RK4 err       ratio
+               0.5000   4.852e-02           1.071e-02           1.257e-03        
+               0.2500   2.209e-02    2.20   2.609e-03    4.10   6.817e-05   18.44
+               0.1250   1.055e-02    2.09   6.055e-04    4.31   3.903e-06   17.47
+               0.0625   5.160e-03    2.05   1.450e-04    4.18   2.326e-07   16.78
+               0.0312   2.552e-03    2.02   3.546e-05    4.09   1.418e-08   16.40
+               (ratio of successive errors = 2^p: 2 for Euler, 4 for RK2, 16 for RK4)</code></pre>
+            <p>The ratios of successive errors tend to $2^p$: $2.20, 2.09, 2.05, 2.02$ for Euler ($p=1$), $4.10, 4.31, 4.18, 4.09$ for the midpoint method ($p=2$) and $18.4, 17.5, 16.8, 16.4$ for RK4 ($p=4$), approaching $16$ from above as $h\to0$. At $h=0.031$ the errors are $2.6\times10^{-3}$, $3.5\times10^{-5}$ and $1.4\times10^{-8}$: for the cost of four evaluations per step, RK4 gains five orders of magnitude over Euler at $h=0.031$. To reach $10^{-8}$ Euler (error $\propto h$) would need about $4\times10^{7}$ steps; RK4 needs $160$ steps ($640$ evaluations). <strong>Measuring the order</strong> of a code in this way, with a problem whose answer is known, is the standard test that a time integrator has been implemented correctly: a method that should be fourth order but shows ratios of $2$ has a bug.</p>
+            <h3>Long-time behaviour: accuracy is not enough</h3>
+            <p>For a conservative system such as the harmonic oscillator $\ddot x=-x$ the exact solution conserves the energy $E=\tfrac12(x^2+v^2)$. A high-order Runge&ndash;Kutta method is far more accurate over a short time than velocity Verlet (the integrator of molecular dynamics, <a href="your-first-simulation.html">COMP 102</a>) but its error is of a different kind:</p>
+            <pre class="out"><code>2. long-time energy of the harmonic oscillator x&#x27;&#x27; = -x (E = 1/2 at t = 0), h = 0.1, T = 1000
+               RK4          E at t = 200, 400, ..., 1000: 0.499986 0.499972 0.499958 0.499945 0.499931
+               velocity Verlet E at the same times: 0.499140 0.498927 0.499948 0.499391 0.498790
+               RK4 loses energy steadily (artificial damping); Verlet oscillates around the exact value but does not drift</code></pre>
+            <p>Over $1000$ time units ($160$ periods) with $h=0.1$ the energy of the RK4 solution decreases monotonically, by $6.9\times10^{-8}$ per time unit; the energy of the Verlet solution fluctuates between $0.4988$ and $0.4999$ (a deviation of up to $1.2\times10^{-3}$) but has no trend. Over this short run RK4 is better, but the RK4 drift is a <em>secular</em> error: it grows with time, and if the linear trend continued, after $7\times10^{6}$ time units, a typical length of an MD run measured in oscillation periods, half the energy would be gone, while Verlet is still at $0.4988\pm0.001$. Verlet is <strong>symplectic</strong>: it exactly conserves a nearby Hamiltonian (the shadow Hamiltonian), so the energy cannot drift (<a href="classical-mechanics.html">PHYS 101</a> and <a href="molecular-dynamics.html">CMS 502</a>). The lesson is a general one: <em>choose the integrator for the property that matters over the time you simulate</em>. For a short dissipative problem (reaction kinetics, relaxation) use a high-order method with step control; for a long Hamiltonian problem use a symplectic one.</p>
+            <h3>Adaptive step-size control</h3>
+            <p>The right step is not the same everywhere: small where the solution changes quickly, large where it is smooth. <strong>Embedded Runge&ndash;Kutta pairs</strong> compute two estimates of different order from the same evaluations (the Dormand&ndash;Prince pair of <code>scipy.integrate.RK45</code> has orders $5$ and $4$ with $6$ new evaluations per step). Their difference estimates the local error $\mathrm{err}$; the step is accepted if $\mathrm{err}\le\mathrm{tol}$ (with an absolute tolerance <code>atol</code> and a relative one <code>rtol</code> combined as $\mathrm{atol}+\mathrm{rtol}\,|y|$) and the next step is chosen as $h_\mathrm{new}=0.9\,h\,(\mathrm{tol}/\mathrm{err})^{1/5}$. For the same equation as above:</p>
+            <pre class="out"><code>5. adaptive control: the same equation as part 1, RK45 with rtol = atol = tolerance, T = 5
+               tolerance    steps   f evals   max error against exact
+                  1e-03        9        56   9.902e-04
+                  1e-05       18       122   6.350e-06
+                  1e-07       41       260   7.750e-08
+                  1e-09       98       608   1.088e-09
+                  1e-11      241      1460   3.217e-11</code></pre>
+            <p>The maximum error against the exact solution follows the tolerance closely ($9.9\times10^{-4}$ for $10^{-3}$, $6.4\times10^{-6}$ for $10^{-5}$, down to $3.2\times10^{-11}$ for $10^{-11}$), and the work grows slowly: the number of steps increases by a factor of $27$ ($9\to241$) when the tolerance falls by $10^8$, i.e. as $\mathrm{tol}^{-0.18}\approx\mathrm{tol}^{-1/5}$, as expected for a fifth-order method. Two warnings. The tolerance controls the <em>local</em> error per step, not the global error: the agreement here is a property of this easy problem, and for an unstable problem the global error can be much larger than <code>rtol</code>. And the tolerances are relative to the scale of the variables: with concentrations of order $10^{-10}$ and the default <code>atol</code> of $10^{-6}$ the solver treats them as zero. Always set <code>atol</code> consistently with the units, and always confirm that halving the tolerance does not change the result you care about.</p>
+            <h2 id="stiff">Lecture 2. Stiffness and implicit methods<a class="anchor" href="#stiff" aria-label="Link to this section">#</a></h2>
+            <p>Consider the simplest decaying problem $y^{\prime}=-\lambda y$, $\lambda&gt;0$, whose solution decays to zero monotonically. Explicit Euler gives $y_{n+1}=(1-\lambda h)y_n$: the numerical solution decays only if $|1-\lambda h|&lt;1$, i.e. $h&lt;2/\lambda$. For larger steps the solution oscillates with growing amplitude, though the exact solution is smooth and tiny: <em>stability</em>, not accuracy, limits the step. The <strong>implicit</strong> (backward) Euler method uses the slope at the <em>end</em> of the step, $y_{n+1}=y_n+hf(t_{n+1},y_{n+1})$, which for this problem gives $y_{n+1}=y_n/(1+\lambda h)$, with magnification factor below $1$ for every $h&gt;0$: the method is <strong>unconditionally (A-)stable</strong>. The price is that each step requires solving an equation for $y_{n+1}$: a nonlinear system in general, handled by Newton&rsquo;s method (COMP 201, Lecture 2) with the Jacobian $\partial f/\partial y$ and a linear solve (COMP 201, Lecture 3) at each iteration.</p>
+            <pre data-file="ode.py (part 3)"><code>print(&quot;\n3. stability: y&#x27; = -lambda y, lambda = 50, y(0) = 1, integrated to t = 1&quot;)
+            lam = 50
+            for h in (0.05, 0.04, 0.021, 0.019):
+                n = int(round(1 / h)); yE = (1 - lam * h)**n; yI = (1 / (1 + lam * h))**n
+                print(f&quot;   h = {h:5.3f}  (lambda h = {lam*h:4.2f}):  explicit Euler y(1) = {yE: .3e}   implicit Euler y(1) = {yI:.3e}   exact {np.exp(-lam):.3e}&quot;)
+            print(&quot;   explicit Euler is stable only for lambda h &lt; 2 (here h &lt; 0.04); implicit Euler for every h&quot;)</code></pre>
+            <pre class="out"><code>3. stability: y&#x27; = -lambda y, lambda = 50, y(0) = 1, integrated to t = 1
+               h = 0.050  (lambda h = 2.50):  explicit Euler y(1) =  3.325e+03   implicit Euler y(1) = 1.314e-11   exact 1.929e-22
+               h = 0.040  (lambda h = 2.00):  explicit Euler y(1) = -1.000e+00   implicit Euler y(1) = 1.180e-12   exact 1.929e-22
+               h = 0.021  (lambda h = 1.05):  explicit Euler y(1) =  3.553e-63   implicit Euler y(1) = 1.086e-15   exact 1.929e-22
+               h = 0.019  (lambda h = 0.95):  explicit Euler y(1) =  1.110e-69   implicit Euler y(1) = 4.248e-16   exact 1.929e-22
+               explicit Euler is stable only for lambda h &lt; 2 (here h &lt; 0.04); implicit Euler for every h</code></pre>
+            <p>With $\lambda=50$ the explicit stability limit is $h=0.04$. At $h=0.05$ ($\lambda h=2.5$) explicit Euler produces $y(1)=3.3\times10^3$ instead of $1.9\times10^{-22}$; at exactly $h=0.04$ it oscillates between $\pm1$ forever ($y(1)=-1$); below the limit it decays (in the right direction, but note it is not accurate: $3.6\times10^{-63}$ at $h=0.021$ against $1.9\times10^{-22}$: it does not need to be, when the solution is already negligible). Implicit Euler gives a decaying result for every step.</p>
+            <h3>What is stiffness?</h3>
+            <p>A problem is <strong>stiff</strong> when it contains components that decay or oscillate on a time scale much shorter than the time scale on which the solution of interest evolves. The fast components are present in the equations, so an explicit method must resolve them for stability ($h&lt;2/\lambda_\mathrm{max}$) even though they are long dead in the solution. For a system $\dot{\mathbf y}=J\mathbf y$ the ratio of the largest to smallest decay rate of $J$ is the <em>stiffness ratio</em>. Stiffness is very common in materials simulation: reaction networks with rate constants that differ by many orders of magnitude (point defects, precipitation, oxidation); diffusion on a fine mesh (the fastest mode of the discretised operator decays at rate $4D/h^2$, which grows as the mesh is refined); and the Cahn&ndash;Hilliard equation of phase-field models, whose fourth-order operator gives rates proportional to $h^{-4}$ (the reason why the spinodal simulation of <a href="lab-diffusion-fipy.html">LAB 506</a> takes several minutes with a time step controller). The standard test problem is the system of Robertson (1966), a model of three-species chemical kinetics:
+            $$\dot A=-0.04\,A+10^4BC,\qquad\dot B=0.04\,A-10^4BC-3\times10^7B^2,\qquad\dot C=3\times10^7B^2,$$
+            with rate constants that differ by nine orders of magnitude. The program integrates it with the explicit RK45 and with the implicit methods of SciPy (Radau, a fifth-order implicit Runge&ndash;Kutta method; BDF, backward differentiation formulas; LSODA, which switches automatically between a stiff and a non-stiff method), supplying the Jacobian to the first two:</p>
+            <pre data-file="ode.py (part 4)"><code>print(&quot;\n4. stiffness: Robertson&#x27;s chemical-kinetics problem, t from 0 to 1e5 (rate constants differ by 9 orders of magnitude; RK45 is only run to t = 1e3, where it already needs about two minutes)&quot;)
+            def rob(t, y):
+                return [-0.04 * y[0] + 1e4 * y[1] * y[2], 0.04 * y[0] - 1e4 * y[1] * y[2] - 3e7 * y[1]**2, 3e7 * y[1]**2]
+            def rob_jac(t, y):
+                return [[-0.04, 1e4 * y[2], 1e4 * y[1]], [0.04, -1e4 * y[2] - 6e7 * y[1], -1e4 * y[1]], [0, 6e7 * y[1], 0]]
+            print(&quot;   method    steps   f evals   Jacobians   time (s)    y(1e5) = (A, B, C)&quot;)
+            for meth, T in ((&quot;RK45&quot;, 1e2), (&quot;Radau&quot;, 1e2), (&quot;RK45&quot;, 1e3), (&quot;Radau&quot;, 1e3), (&quot;Radau&quot;, 1e5), (&quot;BDF&quot;, 1e5), (&quot;LSODA&quot;, 1e5)):
+                t0 = time.perf_counter()
+                kw = dict(jac=rob_jac) if meth in (&quot;Radau&quot;, &quot;BDF&quot;) else {}
+                s = solve_ivp(rob, [0, T], [1, 0, 0], method=meth, rtol=1e-6, atol=1e-10, **kw)
+                dt = time.perf_counter() - t0
+                print(f&quot;   {meth:6s} T={T:6.0e} {len(s.t):6d}   {s.nfev:8d}   {getattr(s, &#x27;njev&#x27;, 0):6d}   {dt:8.3f}    ({s.y[0,-1]:.5f}, {s.y[1,-1]:.3e}, {s.y[2,-1]:.5f})&quot;)</code></pre>
+            <pre class="out"><code>4. stiffness: Robertson&#x27;s chemical-kinetics problem, t from 0 to 1e5 (rate constants differ by 9 orders of magnitude; RK45 is only run to t = 1e3, where it already needs about two minutes)
+               method    steps   f evals   Jacobians   time (s)    y(1e5) = (A, B, C)
+               RK45   T= 1e+02 104143     729668        0      6.256    (0.61723, 6.153e-06, 0.38276)
+               Radau  T= 1e+02     89        726       22      0.312    (0.61723, 6.154e-06, 0.38276)
+               RK45   T= 1e+03 1707109   11955446        0    102.894    (0.33687, 2.014e-06, 0.66312)
+               Radau  T= 1e+03    116        945       31      0.080    (0.33687, 2.014e-06, 0.66312)
+               Radau  T= 1e+05    189       1483       41      0.062    (0.01787, 7.275e-08, 0.98213)
+               BDF    T= 1e+05    328        895        9      0.062    (0.01787, 7.275e-08, 0.98213)
+               LSODA  T= 1e+05    509       1008       82      0.006    (0.01787, 7.275e-08, 0.98213)</code></pre>
+            <p>To reach $t=100$ the explicit RK45 needs $104\,143$ steps and $730\,000$ evaluations of $\mathbf f$ ($6.3$ s); Radau needs $89$ steps and $726$ evaluations ($0.3$ s). To reach $t=1000$ the explicit method needs $1.7$ million steps ($1.2\times10^{7}$ evaluations, $103$ s) and Radau $116$ steps ($945$ evaluations, $0.08$ s): <strong>15 000 times fewer steps and about 1300 times less time</strong>. The explicit step is stuck at about $10^{-3}$, the stability limit of the fastest mode, although the solution is smooth. For $t=10^5$ the implicit solvers need $189$ steps (Radau), $328$ (BDF) and $509$ (LSODA) in about $0.06$ s or less, the explicit method would need about $1.7\times10^{8}$ steps (by extrapolation, about three hours). All of them agree on the result at $10^5$: $A=0.01787$, $B=7.3\times10^{-8}$, $C=0.98213$ (and the three components sum to $1$, the conservation law of the system). The signature of stiffness in practice: <strong>an adaptive explicit solver takes an enormous number of tiny steps in a region where the solution looks smooth</strong>. Then change the method, not the tolerance.</p>
+            <div class="note warn"><strong>Practical advice</strong>
+            <ul>
+            <li>Non-stiff problems and moderate accuracy: <code>RK45</code> (default of <code>solve_ivp</code>); higher accuracy: <code>DOP853</code>.</li>
+            <li>Stiff problems: <code>Radau</code> or <code>BDF</code> (with a Jacobian if you can supply it), or <code>LSODA</code> when you do not know. For very large sparse systems from PDEs, supply the sparsity pattern (<code>jac_sparsity</code>).</li>
+            <li>Hamiltonian systems integrated for a long time: symplectic methods (velocity Verlet and its relatives), with a fixed time step.</li>
+            <li>If an explicit method has to use a step far below what accuracy requires, you are paying for stability; implicit methods are the way to stop paying.</li>
+            </ul></div>
+            <h2 id="heat">Lecture 3. Finite differences for diffusion: consistency, stability, convergence<a class="anchor" href="#heat" aria-label="Link to this section">#</a></h2>
+            <p>The diffusion (heat) equation $\partial_tu=D\,\partial_x^2u$ describes the spreading of heat, of solute atoms in a solid (Fick&rsquo;s second law, <a href="diffusion-and-kinetics.html">CMS 504</a>) and of many other fields. The finite-difference method replaces the continuous variables by values on a grid, $u_j^n\approx u(x_j,t_n)$ with $x_j=jh$ ($h$ the grid spacing) and $t_n=n\tau$ ($\tau$ the time step), and the derivatives by differences. A Taylor expansion shows that
+            $$\frac{u_{j-1}-2u_j+u_{j+1}}{h^2}=\partial_x^2u+\frac{h^2}{12}\partial_x^4u+O(h^4),$$
+            a second-order approximation, and replacing $\partial_tu$ by the forward difference $(u_j^{n+1}-u_j^n)/\tau$ gives the <strong>explicit (FTCS: forward time, centred space) scheme</strong>
+            $$u_j^{n+1}=u_j^n+r\left(u_{j+1}^n-2u_j^n+u_{j-1}^n\right),\qquad r=\frac{D\tau}{h^2}.$$
+            It is trivial to program (a vectorised line of NumPy), needs no linear solve, and has an accuracy $O(\tau+h^2)$. Three properties decide whether a scheme is useful. It is <strong>consistent</strong> if the difference equation tends to the differential equation as $h,\tau\to0$ (checked with Taylor series); it is <strong>stable</strong> if rounding and truncation errors do not grow without bound; it is <strong>convergent</strong> if the numerical solution tends to the true solution. The <strong>Lax equivalence theorem</strong> says that for a well-posed linear problem and a consistent scheme, stability is necessary and sufficient for convergence: so everything reduces to checking stability.</p>
+            <h3>Von Neumann stability analysis</h3>
+            <p>For a linear scheme on a uniform grid, errors can be decomposed into Fourier modes $u_j^n=g^n\mathrm e^{\mathrm ikjh}$; each mode is multiplied by an <strong>amplification factor</strong> $g(k)$ per step, and the scheme is stable if $|g(k)|\le1$ for all wave numbers $k$. Inserting the mode in FTCS: $g=1+r(\mathrm e^{\mathrm ikh}-2+\mathrm e^{-\mathrm ikh})=1-4r\sin^2(kh/2)$. The worst case is the shortest wavelength, $kh=\pi$ (the grid mode that alternates in sign, wavelength $2h$): $g=1-4r$, and $|1-4r|\le1$ needs
+            $$r=\frac{D\tau}{h^2}\le\frac12\qquad\Longleftrightarrow\qquad\tau\le\frac{h^2}{2D}.$$
+            This condition makes physical sense: in one step, information moves by $\sqrt{2D\tau}$, which must not exceed one grid spacing. The cost is severe: halving $h$ to improve the spatial resolution divides the allowed time step by four, so the total cost of a computation to a fixed time rises by a factor of eight in one dimension and $2^{d+2}$ in $d$ dimensions. We solve $u_t=u_{xx}$ ($D=1$) on $[0,1]$ with $u=0$ at both ends and $u(x,0)=\sin\pi x$, whose exact solution is $\mathrm e^{-\pi^2t}\sin\pi x$, with $50$ intervals:</p>
+            <pre data-file="fd_pde.py (part 1)"><code>&quot;&quot;&quot;Finite differences for the heat equation, Poisson&#x27;s equation and advection.&quot;&quot;&quot;
+            import numpy as np, scipy.sparse as sp, scipy.sparse.linalg as spl, time
+
+            D = 1.0
+            def exact(x, t): return np.exp(-D * np.pi**2 * t) * np.sin(np.pi * x)
+
+            def ftcs(N, r, T):
+                x = np.linspace(0, 1, N + 1); dx = 1 / N; dt = r * dx**2 / D; n = int(round(T / dt)); u = np.sin(np.pi * x)
+                for _ in range(n):
+                    u[1:-1] += r * (u[2:] - 2 * u[1:-1] + u[:-2])
+                return x, u, n * dt
+
+            print(&quot;1. explicit (FTCS) scheme for u_t = D u_xx on [0,1], u(0) = u(1) = 0, u(x,0) = sin(pi x), N = 50 intervals, to t = 0.1&quot;)
+            print(&quot;   r = D dt/dx^2   steps   max|u|        max error vs exact&quot;)
+            for r in (0.25, 0.4, 0.5, 0.51, 0.55):
+                x, u, t = ftcs(50, r, 0.1)
+                print(f&quot;   {r:6.2f}       {int(round(t / (r / 2500))):6d}   {np.max(np.abs(u)):.3e}   {np.max(np.abs(u - exact(x, t))):.3e}&quot;)
+            print(&quot;   the scheme is stable for r &lt;= 1/2: the amplification factor of the grid mode with wavelength 2 dx is 1 - 4r, and |1 - 4r| &gt; 1 for r &gt; 1/2&quot;)</code></pre>
+            <pre class="out"><code>1. explicit (FTCS) scheme for u_t = D u_xx on [0,1], u(0) = u(1) = 0, u(x,0) = sin(pi x), N = 50 intervals, to t = 0.1
+               r = D dt/dx^2   steps   max|u|        max error vs exact
+                 0.25         1000   3.726e-01   6.052e-05
+                 0.40          625   3.725e-01   1.695e-04
+                 0.50          500   3.725e-01   2.422e-04
+                 0.51          490   3.726e-01   2.495e-04
+                 0.55          455   4.126e+18   4.126e+18
+               the scheme is stable for r &lt;= 1/2: the amplification factor of the grid mode with wavelength 2 dx is 1 - 4r, and |1 - 4r| &gt; 1 for r &gt; 1/2</code></pre>
+            <p>For $r\le0.5$ the solution is the correct decaying sine wave: $\max|u|=0.3725$ against the exact $\mathrm e^{-0.1\pi^2}=0.3727$, with errors of $6\times10^{-5}$ to $2.4\times10^{-4}$ (the error grows with $r$ here because the time-stepping error dominates the spatial one; for $r=1/6$ the two leading error terms cancel). At $r=0.55$ the maximum is $4\times10^{18}$: the solution has blown up. Note that $r=0.51$ looks fine at $t=0.1$: the amplification of the unstable mode is $|1-4r|=1.04$ per step, which is only $1.04^{490}\approx2\times10^{8}$ after $490$ steps, applied to a rounding error of $10^{-16}$, and would show up if the run were three times longer. <strong>An instability that has not yet appeared is the most dangerous kind</strong>: always check a scheme&rsquo;s stability condition analytically rather than by running it for a short time.</p>
+            <h3>Implicit schemes and the &theta;-method</h3>
+            <p>The remedy is to evaluate the spatial difference at the new time level (backward Euler) or at the average of the two levels (Crank&ndash;Nicolson). Both are special cases of the $\theta$-scheme,
+            $$\frac{u^{n+1}-u^n}{\tau}=D\,\mathcal L\left[\theta u^{n+1}+(1-\theta)u^n\right],$$
+            with $\mathcal L$ the matrix of the second difference; $\theta=0$ is FTCS, $\theta=1$ backward Euler, $\theta=\tfrac12$ Crank&ndash;Nicolson. Each step requires solving the tridiagonal (in 1D) or sparse (in 2D, 3D) system $(I-\theta\tau D\mathcal L)u^{n+1}=(I+(1-\theta)\tau D\mathcal L)u^n$, the kind of problem treated in COMP 201 Lecture 5; the matrix is the same at every step, so one factorisation is computed and reused. The amplification factor is $g=[1-4(1-\theta)r\sin^2(kh/2)]/[1+4\theta r\sin^2(kh/2)]$: for $\theta\ge\tfrac12$ it satisfies $|g|\le1$ for <em>every</em> $r$, so there is no stability restriction. Crank&ndash;Nicolson is second order in time, backward Euler first order, and the accuracy is then the only limit on $\tau$. The convergence in time at fixed fine spacing ($h=1/400$) is:</p>
+            <pre data-file="fd_pde.py (part 2)"><code>print(&quot;\n2. accuracy in time at fixed dx = 1/400: error at t = 0.1 versus the time step&quot;)
+            N = 400; dx = 1 / N; x = np.linspace(0, 1, N + 1)
+            m = N - 1
+            Lap = sp.diags([1, -2, 1], [-1, 0, 1], shape=(m, m), format=&quot;csc&quot;, dtype=float) / dx**2
+            I = sp.identity(m, format=&quot;csc&quot;, dtype=float)
+            def theta_scheme(dt, theta, T=0.1):
+                n = int(round(T / dt)); u = np.sin(np.pi * x[1:-1])
+                lu = spl.splu((I - theta * dt * D * Lap).tocsc()); B = (I + (1 - theta) * dt * D * Lap).tocsc()
+                for _ in range(n): u = lu.solve(B @ u)
+                return np.max(np.abs(u - exact(x[1:-1], n * dt)))
+            print(&quot;       dt        backward Euler (theta=1)  ratio   Crank-Nicolson (theta=1/2)  ratio&quot;)
+            pb = pc = None
+            for dt in (0.04, 0.02, 0.01, 0.005, 0.0025):
+                eb, ec = theta_scheme(dt, 1.0), theta_scheme(dt, 0.5)
+                print(f&quot;   {dt:8.5f}      {eb:10.3e}   {(pb / eb if pb else float(&#x27;nan&#x27;)):7.2f}      {ec:10.3e}          {(pc / ec if pc else float(&#x27;nan&#x27;)):7.2f}&quot;)
+                pb, pc = eb, ec
+            print(&quot;   implicit methods are stable for any dt: backward Euler is first order in time, Crank-Nicolson second order&quot;)</code></pre>
+            <pre class="out"><code>2. accuracy in time at fixed dx = 1/400: error at t = 0.1 versus the time step
+                   dt        backward Euler (theta=1)  ratio   Crank-Nicolson (theta=1/2)  ratio
+                0.04000       5.999e-02       nan       4.741e-03              nan
+                0.02000       3.357e-02      1.79       1.198e-03             3.96
+                0.01000       1.744e-02      1.92       2.970e-04             4.03
+                0.00500       8.895e-03      1.96       7.278e-05             4.08
+                0.00250       4.494e-03      1.98       1.677e-05             4.34
+               implicit methods are stable for any dt: backward Euler is first order in time, Crank-Nicolson second order</code></pre>
+            <p>Halving $\tau$ halves the error of backward Euler ($1.79, 1.92, 1.96, 1.98$ for the ratios: first order) and divides that of Crank&ndash;Nicolson by four ($3.96,4.03,4.08$: second order; the last ratio $4.3$ shows the error approaching the floor set by the spatial error $\sim10^{-5}$). To reach an error of $2\times10^{-5}$ backward Euler would need $\tau\approx10^{-5}$ ($10^4$ steps) while Crank&ndash;Nicolson needs $\tau=0.0025$ ($40$ steps), a factor of more than $200$: and the explicit scheme would need $r\le\tfrac12$, i.e. $\tau\le3\times10^{-6}$, $3\times10^{4}$ steps. This is the kind of arithmetic that decides which scheme a code uses. A caution about Crank&ndash;Nicolson: for very large $r$ its amplification factor of the shortest modes tends to $-1$, so sharp initial data or discontinuous boundary conditions produce <em>non-decaying oscillations</em> from the highest modes; backward Euler damps them. For rough data use backward Euler or the BDF2 scheme; for smooth data use Crank&ndash;Nicolson.</p>
+            <div class="note thm"><strong>Method of lines</strong>
+            <p>Discretising space only gives the ordinary differential system $\dot{\mathbf u}=D\mathcal L\mathbf u$ of Lecture 1, which any integrator can solve. The eigenvalues of $D\mathcal L$ lie between $-\pi^2D$ (the slowest mode) and about $-4D/h^2$ (the grid mode), so the stiffness ratio is $\approx(2/\pi h)^2$, which is $6.5\times10^4$ for $h=1/400$: <em>the heat equation on a fine grid is a stiff problem</em>, and the stability limit $r\le\tfrac12$ is the explicit-method stability limit $h_t&lt;2/|\lambda_\mathrm{max}|$ of Lecture 2. The FiPy calculations in <a href="lab-diffusion-fipy.html">LAB 506</a> do exactly this with backward Euler and sparse linear solvers, and the error-function comparison that lab makes for carburising steel is the same test as the one above.</p></div>
+            <h2 id="poisson">Lecture 4. Boundary-value problems and advection<a class="anchor" href="#poisson" aria-label="Link to this section">#</a></h2>
+            <h3>The Poisson equation</h3>
+            <p>Steady heat conduction, electrostatics, the pressure in a flow, the stress function in elasticity and the long-range part of the electrostatic energy of a crystal all lead to Poisson&rsquo;s equation $-\nabla^2u=f$. In two dimensions on a square with spacing $h$ the second differences in $x$ and $y$ are added, giving the <strong>five-point stencil</strong>
+            $$\frac{4u_{i,j}-u_{i+1,j}-u_{i-1,j}-u_{i,j+1}-u_{i,j-1}}{h^2}=f_{i,j},$$
+            one equation for each interior grid point, with the known boundary values moved to the right-hand side. The matrix is the Kronecker sum of two one-dimensional matrices, $A=(I\otimes T+T\otimes I)/h^2$ with $T=\mathrm{tridiag}(-1,2,-1)$; it is sparse (five entries per row), symmetric and positive definite, and exactly the matrix whose solution by sparse LU and by conjugate gradients was compared in COMP 201 Lecture 5. The manufactured solution $u=\sin\pi x\sin\pi y$ (for which $f=2\pi^2\sin\pi x\sin\pi y$) tests the discretisation:</p>
+            <pre data-file="fd_pde.py (part 3)"><code>print(&quot;\n3. Poisson&#x27;s equation  -Laplacian u = 2 pi^2 sin(pi x) sin(pi y)  on the unit square, exact solution sin(pi x) sin(pi y)&quot;)
+            print(&quot;      m        unknowns   max error       ratio   solve time (s)&quot;)
+            prev = None
+            for m in (10, 20, 40, 80, 160, 320):
+                h = 1 / (m + 1); xs = np.linspace(h, 1 - h, m); X, Y = np.meshgrid(xs, xs, indexing=&quot;ij&quot;)
+                T1 = sp.diags([-1, 2, -1], [-1, 0, 1], shape=(m, m), dtype=float); Id = sp.identity(m)
+                A = ((sp.kron(Id, T1) + sp.kron(T1, Id)) / h**2).tocsc()
+                b = (2 * np.pi**2 * np.sin(np.pi * X) * np.sin(np.pi * Y)).ravel()
+                t0 = time.perf_counter(); u = spl.spsolve(A, b); ts = time.perf_counter() - t0
+                err = np.max(np.abs(u - (np.sin(np.pi * X) * np.sin(np.pi * Y)).ravel()))
+                print(f&quot;   {m:4d}   {m * m:9d}   {err:.4e}   {(prev / err if prev else float(&#x27;nan&#x27;)):6.2f}   {ts:8.3f}&quot;)
+                prev = err
+            print(&quot;   halving h divides the error by 4 (second order)&quot;)</code></pre>
+            <pre class="out"><code>3. Poisson&#x27;s equation  -Laplacian u = 2 pi^2 sin(pi x) sin(pi y)  on the unit square, exact solution sin(pi x) sin(pi y)
+                  m        unknowns   max error       ratio   solve time (s)
+                 10         100   6.6868e-03      nan      0.000
+                 20         400   1.8567e-03     3.60      0.001
+                 40        1600   4.8870e-04     3.80      0.004
+                 80        6400   1.2532e-04     3.90      0.021
+                160       25600   3.1727e-05     3.95      0.133
+                320      102400   7.9818e-06     3.97      1.295
+               halving h divides the error by 4 (second order)</code></pre>
+            <p>The error decreases by $3.60$, $3.80$, $3.90$, $3.95$, $3.97$ per halving of $h$, tending to $4$: second order, as the Taylor expansion predicts, while the number of unknowns grows by four and the solve time by a factor of $4$ to $10$ ($0.021$ s for $6400$ unknowns, $1.3$ s for $10^5$ on a machine busy with other work: the timings vary from run to run). The <strong>manufactured-solution method</strong> used here is the standard way to verify a PDE code: choose a smooth function, compute by differentiation the source term that makes it an exact solution, and measure the convergence rate. If the observed order is lower than the formal order, there is a bug in the stencil, in the treatment of the boundary or in the source term. Non-uniform grids, Neumann (flux) boundary conditions, material coefficients that jump (a composite) and complex geometries are handled by the finite-volume and finite-element methods (<a href="finite-element-method.html">CMS 506</a>, <a href="lab-fem-scikit-fem.html">LAB 507</a>) that generalise the stencil.</p>
+            <h3>Advection: a different kind of error</h3>
+            <p>The advection equation $\partial_tu+a\,\partial_xu=0$ moves a profile with speed $a$ without changing its shape, and is the model for transport by a flow (convection of solute in a melt, of heat in a moving medium). Its discretisation shows errors that diffusion does not have. Let $\nu=a\tau/h$ be the <strong>Courant number</strong> and consider three schemes on a periodic domain with $N=200$ points:</p>
+            <ul>
+            <li><strong>Upwind</strong> (backward space difference for $a&gt;0$): $u_j^{n+1}=u_j^n-\nu(u_j^n-u_{j-1}^n)$; first order, stable for $0\le\nu\le1$.</li>
+            <li><strong>Central</strong> (FTCS): $u_j^{n+1}=u_j^n-\tfrac\nu2(u_{j+1}^n-u_{j-1}^n)$; second order in space but with $g=1-\mathrm i\nu\sin kh$, $|g|&gt;1$ for every $\nu&gt;0$: <em>unconditionally unstable</em> (the intuitive centred scheme is useless with forward Euler).</li>
+            <li><strong>Lax&ndash;Wendroff</strong>: adds a second-difference term, $u_j^{n+1}=u_j^n-\tfrac\nu2(u_{j+1}^n-u_{j-1}^n)+\tfrac{\nu^2}2(u_{j+1}^n-2u_j^n+u_{j-1}^n)$; second order in space and time, stable for $\nu\le1$.</li>
+            </ul>
+            <p>The condition $\nu\le1$ is the <strong>Courant&ndash;Friedrichs&ndash;Lewy (CFL) condition</strong>: the numerical domain of dependence of a point must include the physical one, i.e. the signal must not travel more than one grid cell per step. A Gaussian pulse of height $1$ and width $0.05$ is moved once around the domain ($200/0.8=250$ steps):</p>
+            <pre data-file="fd_pde.py (part 4)"><code>print(&quot;\n4. advection u_t + a u_x = 0, periodic, a Gaussian pulse of height 1 moved once around the domain (N = 200, CFL = a dt/dx = 0.8)&quot;)
+            N = 200; L = 1.0; dx = L / N; a = 1.0; nu = 0.8; dt = nu * dx / a; steps = int(round(L / (a * dt)))
+            x = np.arange(N) * dx
+            u0 = np.exp(-((x - 0.5) / 0.05)**2)
+            def run(scheme):
+                u = u0.copy()
+                for _ in range(steps):
+                    up, um = np.roll(u, -1), np.roll(u, 1)
+                    if scheme == &quot;upwind&quot;: u = u - nu * (u - um)
+                    elif scheme == &quot;lax-wendroff&quot;: u = u - 0.5 * nu * (up - um) + 0.5 * nu**2 * (up - 2 * u + um)
+                    elif scheme == &quot;central (FTCS)&quot;: u = u - 0.5 * nu * (up - um)
+                return u
+            print(&quot;   scheme            peak after one period   minimum   L2 error&quot;)
+            for sc in (&quot;upwind&quot;, &quot;lax-wendroff&quot;, &quot;central (FTCS)&quot;):
+                u = run(sc)
+                print(f&quot;   {sc:15s}   {np.max(u):12.4f}          {np.min(u): .4f}     {np.sqrt(dx * np.sum((u - u0)**2)):.4f}&quot;)
+            print(&quot;   upwind is monotone but smears the pulse (numerical diffusion); Lax-Wendroff keeps the height but creates oscillations (negative values); the central scheme is unstable&quot;)</code></pre>
+            <pre class="out"><code>4. advection u_t + a u_x = 0, periodic, a Gaussian pulse of height 1 moved once around the domain (N = 200, CFL = a dt/dx = 0.8)
+               scheme            peak after one period   minimum   L2 error
+               upwind                  0.7453           0.0000     0.0588
+               lax-wendroff            0.9882          -0.0008     0.0113
+               central (FTCS)    31232792416.4666          -31069539142.5543     9659706811.4613
+               upwind is monotone but smears the pulse (numerical diffusion); Lax-Wendroff keeps the height but creates oscillations (negative values); the central scheme is unstable</code></pre>
+            <p>The upwind scheme is monotone (no negative values) but the peak has decreased from $1$ to $0.745$ and the pulse has widened. A Taylor expansion shows why: the scheme actually solves $\partial_tu+a\partial_xu=\tfrac12ah(1-\nu)\,\partial_x^2u+\dots$, the advection equation <em>plus a diffusion term</em> with the <strong>numerical diffusion coefficient</strong> $D_\mathrm{num}=\tfrac12ah(1-\nu)=\tfrac12(0.005)(0.2)=5\times10^{-4}$. A Gaussian of width $w$ that diffuses for $T=1$ has the new peak $w/\sqrt{w^2+4D_\mathrm{num}T}=0.05/\sqrt{0.0025+0.002}=0.745$, in agreement with the simulation ($0.7453$). The scheme introduces a diffusivity that no one asked for; this is why first-order upwind schemes smear fronts and why the apparent diffusion coefficient in a transport simulation must be compared with the numerical one. Lax&ndash;Wendroff has a much smaller error ($L^2$ error $0.011$ against $0.059$ and peak $0.988$) but creates a small <em>dispersive</em> error: different wavelengths travel at different numerical speeds and trailing oscillations appear (the minimum $-0.0008$ is negative although the true solution is not). The central scheme explodes to $3\times10^{10}$. Modern schemes (flux limiters, WENO) combine the accuracy of the second order scheme in smooth regions with the monotonicity of the upwind scheme at steep fronts.</p>
+            <div class="note"><strong>The four words to keep in mind</strong>
+            <p><em>Consistency</em> (the scheme approximates the equation), <em>stability</em> (errors do not grow), <em>order</em> (the rate at which the error falls when the grid is refined) and <em>cost</em> (how the work grows with refinement). Good numerical practice is to establish the first three with a manufactured or known exact solution before computing anything whose answer is not known. The error of a PDE solution has two parts, spatial and temporal, which must be refined together; a refinement study in which only one is changed levels off at the other&rsquo;s error (as the Crank&ndash;Nicolson column did).</p></div>
+            <h2 id="optim">Lecture 5. Optimisation<a class="anchor" href="#optim" aria-label="Link to this section">#</a></h2>
+            <p>To <strong>optimise</strong> is to find the point $\mathbf x$ that minimises a function $f(\mathbf x)$ (a maximum of $f$ is a minimum of $-f$). In computational materials science $f$ is the total energy as a function of the atomic positions (<em>geometry optimisation</em>, finding the equilibrium structure and the cell), the misfit between a model and data (<em>fitting</em>, as in <a href="statistics-and-data-fitting.html">MATH 205</a> and the potentials of <a href="machine-learning-for-materials.html">CMS 507</a>), or a free energy as a function of composition and structure. A point $\mathbf x^\ast$ is a <strong>local minimum</strong> if the gradient vanishes, $\nabla f(\mathbf x^\ast)=0$, and the Hessian matrix $H_{ij}=\partial^2f/\partial x_i\partial x_j$ is positive definite there. All the practical methods below find local minima; whether the minimum found is the global one is a separate and much harder question (end of this lecture).</p>
+            <h3>Steepest descent and the role of the condition number</h3>
+            <p>The negative gradient is the direction of fastest decrease, so the simplest method is <strong>steepest descent</strong>, $\mathbf x_{k+1}=\mathbf x_k-\alpha_k\nabla f(\mathbf x_k)$, with the step length $\alpha_k$ chosen by a one-dimensional minimisation (<em>line search</em>). Its speed is governed by the Hessian. For the quadratic $f=\tfrac12(x^2+\kappa y^2)$ (a valley whose curvatures differ by the factor $\kappa$, the condition number of $H$), the error of steepest descent with exact line search is multiplied by $(\kappa-1)/(\kappa+1)$ per step: when $\kappa=10^4$ it zigzags across the narrow valley, making progress only $0.02\%$ per step. The <strong>conjugate-gradient method</strong> (the same algorithm as in COMP 201 Lecture 5, here used for optimisation) chooses each new direction conjugate to the previous ones, and minimises an $n$-variable quadratic in at most $n$ steps. The experiment, with $f=\tfrac12(x^2+\kappa y^2)$ started at $(\kappa,1)$:</p>
+            <pre data-file="optim.py (part 1)"><code>&quot;&quot;&quot;Optimisation: gradient descent, conjugate gradients, Newton, BFGS; and Lennard-Jones clusters.&quot;&quot;&quot;
+            import numpy as np
+            from scipy.optimize import minimize
+
+            print(&quot;1. steepest descent on the quadratic f = (x^2 + k y^2)/2 : iterations to reach |x| &lt; 1e-6 with an exact line search&quot;)
+            print(&quot;   condition number k   steepest descent   conjugate gradients   (exact line search for both)&quot;)
+            def sd_iterations(k):
+                x = np.array([k, 1.0]); n = 0
+                while np.linalg.norm(x) &gt; 1e-6 and n &lt; 10**6:
+                    g = np.array([x[0], k * x[1]]); alpha = (g @ g) / (g[0]**2 + k * g[1]**2)      # exact line search
+                    x = x - alpha * g; n += 1
+                return n
+            def cg_iterations(k):
+                A = np.diag([1.0, k]); x = np.array([k, 1.0]); r = -A @ x; p = r.copy(); n = 0
+                while np.linalg.norm(x) &gt; 1e-6 and n &lt; 100:
+                    Ap = A @ p; alpha = (r @ r) / (p @ Ap); x = x + alpha * p; rn = r - alpha * Ap
+                    p = rn + (rn @ rn) / (r @ r) * p; r = rn; n += 1
+                return n
+            for k in (1, 10, 100, 1000, 10000):
+                print(f&quot;   {k:12d}        {sd_iterations(k):10d}            {cg_iterations(k):6d}&quot;)</code></pre>
+            <pre class="out"><code>1. steepest descent on the quadratic f = (x^2 + k y^2)/2 : iterations to reach |x| &lt; 1e-6 with an exact line search
+               condition number k   steepest descent   conjugate gradients   (exact line search for both)
+                          1                 1                 1
+                         10                81                 2
+                        100               922                 2
+                       1000             10362                 2
+                      10000            115130                 2</code></pre>
+            <p>Steepest descent needs $81$, $922$, $10\,362$ and $115\,130$ iterations for $\kappa=10$, $100$, $10^3$, $10^4$: the count is proportional to $\kappa$. Conjugate gradients need two for every $\kappa$ (the dimension of the problem). The geometry of an actual material is the analogue: a crystal that has soft modes (low-frequency phonons or rotations of molecular groups) and stiff modes (bond stretching) has a Hessian with $\kappa$ of $10^3$ to $10^4$, and a steepest-descent relaxation takes tens of thousands of steps, which is why codes use conjugate gradients, quasi-Newton methods or damped-dynamics methods like FIRE for relaxation (LAMMPS <code>minimize</code>, ASE optimisers, VASP <code>IBRION</code> $=1,2$).</p>
+            <h3>Newton and quasi-Newton methods</h3>
+            <p>Near a minimum, $f$ is approximately quadratic, $f(\mathbf x+\mathbf p)\approx f+\mathbf g^T\mathbf p+\tfrac12\mathbf p^TH\mathbf p$, and the minimum of this model is at the <strong>Newton step</strong> $\mathbf p=-H^{-1}\mathbf g$: Newton&rsquo;s method for $\nabla f=0$ (COMP 201 Lecture 2), with quadratic convergence but at the cost of the Hessian ($n^2$ entries) and a linear solve ($n^3$). <strong>Quasi-Newton</strong> methods avoid the Hessian: the <strong>BFGS</strong> method builds an approximation of $H^{-1}$ from the changes in position and gradient during the iteration, at a cost of $O(n^2)$ per step, and converges superlinearly; the <strong>limited-memory L-BFGS</strong> keeps only the last $m\approx10$ pairs of vectors, at $O(mn)$ cost and memory, and is the standard choice for large $n$. Comparison on the Rosenbrock function, the classic curved valley $f=(1-x)^2+100(y-x^2)^2$ with the minimum at $(1,1)$, started at $(-1.2,1)$:</p>
+            <pre class="out"><code>2. the Rosenbrock function f = (1-x)^2 + 100 (y - x^2)^2, minimum (1, 1), started from (-1.2, 1)
+               method                 iterations   f evals   grad evals   final f        distance from (1,1)
+               Nelder-Mead (no gradient)     132        249          0    5.833e-22      5.40e-11
+               conjugate gradient            37         80         79    3.101e-21      1.25e-10
+               BFGS                          34         41         41    4.351e-25      1.24e-12
+               BFGS, numerical gradient      34        123         41    2.006e-11      1.00e-05
+               Newton-CG (Hessian)           86        107        107    1.317e-19      8.12e-10
+               plain gradient descent, fixed step 1e-3: 32076 iterations to reach |grad f| &lt; 1e-6, f = 1.252e-12</code></pre>
+            <p>BFGS reaches the minimum in $34$ iterations and $41$ function and gradient evaluations (final error $10^{-12}$). The nonlinear conjugate gradient needs $37$ iterations and $80$ evaluations, and the truncated Newton method with the exact Hessian (<code>Newton-CG</code>) needs $86$ iterations and $107$ evaluations: its inexact inner solves and line search make it slower than BFGS on this tiny problem, although it would win on a large one where the Hessian is available as a sparse matrix. The derivative-free Nelder&ndash;Mead simplex method needs $249$ function evaluations but no gradient. <strong>Plain gradient descent</strong> with a fixed small step needs $32\,076$ iterations to reach $|\nabla f|&lt;10^{-6}$. When the gradient has to be estimated numerically (the fourth BFGS line) the number of function evaluations triples ($123$) and the final accuracy drops from $10^{-12}$ to $10^{-5}$: the rounding-versus-truncation trade-off of COMP 201 Lecture 7 now limits the optimiser. Analytic forces, which are available in every atomistic code, are what make geometry optimisation practical.</p>
+            <h3>Local minima: the Lennard-Jones clusters</h3>
+            <p>A function with many minima poses a different problem: a local method finds a minimum near the start, not the best one. The standard example in materials and chemistry is the cluster of $N$ atoms interacting by the Lennard-Jones potential $4(r^{-12}-r^{-6})$. Starting BFGS from $200$ random arrangements (<code>optim.py</code>, part 3) gives:</p>
+            <pre class="out"><code>3. Lennard-Jones clusters (epsilon = sigma = 1): local minima found from 200 random starts with BFGS
+                N   global minimum (literature)   best found   bound clusters   distinct minima among them   runs ending in the best
+                 7     -16.505384              -16.505384         200                  4                           51
+                13     -44.326801              -44.326801         200                105                           11
+                19     -72.659782              -72.659782         200                172                            1</code></pre>
+            <p>The random starting positions are at least $0.8\sigma$ apart; all $200$ runs ended as bound clusters. For $N=7$ the four minima that exist are all found, and the global one ($-16.505$, the pentagonal bipyramid) is reached from $51$ of the $200$ starts ($25\%$). For $N=13$ the runs end in $105$ different local minima and the global minimum, the icosahedron ($-44.327$), is reached in $11$ runs ($5.5\%$). For $N=19$ there are $172$ different final energies among $200$ runs and the global minimum, the double icosahedron ($-72.66$), is found <em>once</em>: a success rate of $0.5\%$ with this seed. (A different random seed or a harder cluster would give a different count; what matters is the trend.) The number of local minima of a Lennard-Jones cluster grows roughly exponentially with $N$, so the chance that a random start lands in the global basin collapses, and exhaustive sampling is hopeless beyond a few dozen atoms. A final warning from an earlier version of this experiment: when the starting atoms were allowed to overlap, the huge repulsion expelled atoms to distances of $10^3$ and between a fifth and two fifths of the runs ended with an evaporated atom, with an energy that looked like a new minimum; always look at the structure and not only the energy. <strong>Global optimisation</strong> methods combine local optimisation with moves that escape from the basin of attraction: <em>basin hopping</em> (random displacements followed by local minimisation, accepted by a Metropolis criterion), <em>simulated annealing</em> and <em>parallel tempering</em> (Monte Carlo at decreasing temperature, <a href="monte-carlo-methods.html">CMS 503</a>), <em>genetic algorithms</em> and <em>particle-swarm</em> methods (the basis of crystal-structure-prediction programs such as USPEX and CALYPSO), and <em>random structure searching</em> (AIRSS). None guarantees the global minimum; each should be repeated from different seeds and the lowest structures compared.</p>
+            <div class="note warn"><strong>Practical rules for optimisation</strong>
+            <ul>
+            <li>Use gradients: analytic if possible, automatic differentiation otherwise; check them against finite differences once (COMP 201 Lecture 7).</li>
+            <li>Scale the variables so that their effects on $f$ are comparable (a poorly scaled problem has a huge Hessian condition number).</li>
+            <li>Decide the convergence criterion in physical terms: for a geometry optimisation, a maximum force below $0.01$&ndash;$0.05$ eV/&Aring; and a stress below $0.1$ GPa; and re-optimise with a tighter criterion before computing second derivatives (phonons need very tight forces).</li>
+            <li>Check that the result is a minimum, not a saddle point: compute the Hessian (phonons) and look for imaginary frequencies (<a href="lab-phonons-phonopy.html">LAB 301</a>).</li>
+            <li>Run from several starting points. A single optimisation is a single sample.</li>
+            </ul></div>
+            <h2 id="eigen">Lecture 6. Eigenvalue problems<a class="anchor" href="#eigen" aria-label="Link to this section">#</a></h2>
+            <p>The equation $A\mathbf v=\lambda\mathbf v$ appears throughout the subject: the normal modes and frequencies of a crystal ($D\mathbf e=\omega^2\mathbf e$ for the dynamical matrix $D$; <a href="solid-state-physics.html">PHYS 302</a>, <a href="lab-phonons-phonopy.html">LAB 301</a>), the energy levels of electrons ($H\psi=E\psi$, with $H$ a matrix in a basis; <a href="quantum-mechanics.html">PHYS 201</a>, <a href="density-functional-theory.html">CMS 501</a>), the principal axes of a stress or inertia tensor, the principal components of a descriptor set, the stability of a numerical scheme. In practice one meets two cases: <em>all</em> eigenvalues of a small or medium dense matrix, and a <em>few</em> (the lowest, or those near a given value) of a large sparse matrix; different algorithms serve each. For symmetric (Hermitian) matrices, which cover almost all physical applications, the eigenvalues are real, the eigenvectors can be chosen orthogonal, and the problem is well conditioned: a perturbation of size $\delta$ of the matrix moves the eigenvalues by at most $\delta$ (Weyl&rsquo;s theorem). For non-symmetric matrices neither is true.</p>
+            <h3>Power iteration and shift-and-invert</h3>
+            <p>Repeated multiplication of a vector by $A$ amplifies the component along the eigenvector of largest $|\lambda|$: $\mathbf v_{k+1}=A\mathbf v_k/\|A\mathbf v_k\|$ converges to the dominant eigenvector, with the error multiplied by $|\lambda_2/\lambda_1|$ per step (and the Rayleigh quotient $\mathbf v^TA\mathbf v$, for a symmetric matrix, by its square). It is the algorithm behind PageRank and the simplest iterative eigensolver, and it needs only matrix&ndash;vector products. Its weakness is the dependence on the eigenvalue ratio:</p>
+            <pre data-file="eig.py (part 1)"><code>&quot;&quot;&quot;Eigenvalue problems: power iteration, QR algorithm, tight-binding chains, sparse eigensolvers.&quot;&quot;&quot;
+            import numpy as np, scipy.sparse as sp, scipy.sparse.linalg as spl, scipy.linalg as sla, time
+
+            rng = np.random.default_rng(5)
+            print(&quot;1. power iteration: convergence of the Rayleigh quotient for a symmetric matrix with eigenvalues 1, r, r^2, ...&quot;)
+            print(&quot;      r = |l2/l1|     iterations to reach error 1e-10     predicted  ln(1e-10/(1-r))/(2 ln r)&quot;)
+            for r in (0.5, 0.9, 0.99, 0.999):
+                n = 20; lam = r**np.arange(n); Q, _ = np.linalg.qr(rng.standard_normal((n, n))); A = Q @ np.diag(lam) @ Q.T
+                v = rng.standard_normal(n); k = 0
+                while True:
+                    v = A @ v; v /= np.linalg.norm(v); k += 1
+                    if abs(v @ A @ v - 1.0) &lt; 1e-10 or k &gt; 10**6: break
+                print(f&quot;      {r:6.3f}            {k:8d}                         {np.log(1e-10 / (1 - r)) / (2 * np.log(r)):10.1f}&quot;)</code></pre>
+            <pre class="out"><code>1. power iteration: convergence of the Rayleigh quotient for a symmetric matrix with eigenvalues 1, r, r^2, ...
+                  r = |l2/l1|     iterations to reach error 1e-10     predicted  ln(1e-10/(1-r))/(2 ln r)
+                   0.500                  17                               16.1
+                   0.900                  96                               98.3
+                   0.990                 924                              916.4
+                   0.999                7932                             8055.0</code></pre>
+            <p>The number of iterations to reach $10^{-10}$ follows the prediction $\ln[10^{-10}/(1-r)]/(2\ln r)$ closely ($17$ against $16.1$, $96$ against $98$, $924$ against $916$, $7932$ against $8055$): fine when the dominant eigenvalue is well separated ($r=0.5$) and hopeless when it is nearly degenerate ($r=0.999$). The remedy is to apply the method to a different matrix with the same eigenvectors and a better ratio. <strong>Shift-and-invert</strong> applies power iteration to $(A-\sigma I)^{-1}$, whose largest eigenvalue $1/(\lambda_i-\sigma)$ belongs to the eigenvalue $\lambda_i$ nearest the shift $\sigma$, and the ratio can be made as good as one likes by moving $\sigma$ closer. It needs a linear solve per iteration (a sparse factorisation computed once). With $\sigma$ updated to the current Rayleigh quotient at each step, the convergence is cubic (Rayleigh quotient iteration).</p>
+            <h3>The QR algorithm</h3>
+            <p>For all eigenvalues of a dense matrix the standard method is the <strong>QR algorithm</strong>: factor $A_k=Q_kR_k$ (COMP 201 Lecture 4) and form $A_{k+1}=R_kQ_k=Q_k^TA_kQ_k$, a similarity transformation that preserves the eigenvalues; the sequence converges to a triangular (for symmetric matrices, diagonal) matrix with the eigenvalues on the diagonal, ordered by size. Two improvements make it practical: the matrix is first reduced to tridiagonal form by Householder reflections ($\tfrac43n^3$ operations) and each iteration then costs $O(n)$; and a <strong>shift</strong> (subtract $\sigma I$ before factoring, add it back after, with $\sigma$ near the last diagonal element) together with <strong>deflation</strong> (as soon as the last row has converged, reduce the problem to size $n-1$) gives cubic or quadratic convergence. For a random symmetric $6\times6$ matrix:</p>
+            <pre class="out"><code>2. the QR algorithm for a random symmetric 6 x 6 matrix: sweeps until the off-diagonal part is below 1e-12 ||A||
+               unshifted QR iterations: 205 sweeps;   eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]
+               shifted QR with deflation: 17 sweeps; eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]
+               numpy.linalg.eigvalsh      :              eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]</code></pre>
+            <p>The unshifted algorithm needs $205$ sweeps (the convergence rate is again the ratio of neighbouring eigenvalues); with shifts and deflation $17$ sweeps give all six eigenvalues, to the digits shown identical to those of LAPACK&rsquo;s <code>eigvalsh</code>. Library routines (<code>numpy.linalg.eigh</code> for symmetric matrices, <code>eig</code> for general ones) implement this with tridiagonalisation, and cost $O(n^3)$: the time grows from $0.023$ s for $n=400$ to $0.27$ s for $n=1600$ and $11$ s for $n=6400$ in the table below.</p>
+            <h3>Large sparse matrices: Lanczos and Arnoldi</h3>
+            <p>When $n$ is large and only a few eigenpairs are needed (the lowest levels of an electronic Hamiltonian, the lowest vibrational modes), a dense solver wastes both memory and time. <strong>Krylov methods</strong> build an orthonormal basis of the space $\mathrm{span}\{\mathbf v,A\mathbf v,A^2\mathbf v,\dots\}$ and find the best eigenvalue approximations within it (for symmetric matrices, the <strong>Lanczos</strong> algorithm; in general, <strong>Arnoldi</strong>). Extreme eigenvalues converge first; interior ones converge fast with shift-and-invert. SciPy&rsquo;s <code>scipy.sparse.linalg.eigsh</code> (symmetric) and <code>eigs</code> (general) wrap ARPACK. The test is the lowest six eigenvalues of the 2D Laplacian on an $m\times m$ grid, whose exact lowest eigenvalue in the continuum is $2\pi^2$:</p>
+            <pre data-file="eig.py (part 4)"><code>print(&quot;\n4. lowest 6 eigenvalues of the 2D Laplacian (Dirichlet) on an m x m grid: dense eigh versus Lanczos (eigsh)&quot;)
+            print(&quot;      m       n    dense eigh (s)   eigsh (s)   max relative difference    lowest eigenvalue / exact pi^2 * 2&quot;)
+            for m in (20, 40, 80, 120):
+                h = 1 / (m + 1); T = sp.diags([-1, 2, -1], [-1, 0, 1], shape=(m, m), dtype=float); I = sp.identity(m)
+                A = ((sp.kron(I, T) + sp.kron(T, I)) / h**2).tocsc()
+                t0 = time.perf_counter(); wd = np.linalg.eigvalsh(A.toarray())[:6] if m &lt;= 80 else None; td = time.perf_counter() - t0 if wd is not None else float(&#x27;nan&#x27;)
+                t0 = time.perf_counter(); ws = np.sort(spl.eigsh(A, k=6, sigma=0, which=&quot;LM&quot;, return_eigenvectors=False)); ts = time.perf_counter() - t0
+                diff = f&quot;{np.max(np.abs(wd - ws) / wd):.1e}&quot; if wd is not None else &quot;   n/a   &quot;
+                print(f&quot;   {m:4d}  {m*m:6d}   {td:12.3f}   {ts:9.4f}       {diff}                 {ws[0] / (2 * np.pi**2):.6f}&quot;)</code></pre>
+            <pre class="out"><code>4. lowest 6 eigenvalues of the 2D Laplacian (Dirichlet) on an m x m grid: dense eigh versus Lanczos (eigsh)
+                  m       n    dense eigh (s)   eigsh (s)   max relative difference    lowest eigenvalue / exact pi^2 * 2
+                 20     400          0.023      0.0043       1.8e-13                 0.998136
+                 40    1600          0.274      0.0144       5.0e-13                 0.999511
+                 80    6400         11.042      0.0620       2.5e-12                 0.999875
+                120   14400            nan      0.2272          n/a                    0.999944</code></pre>
+            <p>The two methods agree to $10^{-12}$. The dense solver costs $11$ s for $n=6400$ and needs $330$ MB; Lanczos with shift-and-invert needs $0.06$ s, and $0.23$ s for $n=14\,400$ where the dense matrix would need $1.7$ GB. The last column shows the discretisation error: the lowest eigenvalue is $0.99814$, $0.99951$, $0.99988$, $0.99994$ of the exact value, with the error falling by a factor of about $4$ per halving of $h$ (second order, as in Lecture 4). These are the particle-in-a-box energies: the eigenvalues of the discretised Laplacian are the energy levels of a free electron in a square well (in units of $\hbar^2/2m$), and a finite-difference electronic-structure code solves exactly this problem for a potential $V(\mathbf r)$ added to the diagonal.</p>
+            <h3>Application: tight-binding models</h3>
+            <p>The simplest electronic-structure model puts one orbital on each atom and a hopping amplitude $-t$ between neighbours: $H=-t\sum_{\langle ij\rangle}(c_i^\dagger c_j+\mathrm{h.c.})$, a matrix with $-t$ for every bond. Its eigenvalues are the energy levels, its eigenvectors the molecular orbitals. For an open chain of $N$ atoms they are known exactly, $E_k=-2t\cos[k\pi/(N+1)]$, $k=1,\dots,N$, and fill the band $[-2t,2t]$ as $N$ grows:</p>
+            <pre data-file="eig.py (part 3)"><code>print(&quot;\n3. tight binding: the electronic levels of a chain of N atoms with hopping -t (t = 1), eigenvalues of -t (adjacency matrix)&quot;)
+            for N in (6, 10, 100):
+                H = -(np.diag(np.ones(N - 1), 1) + np.diag(np.ones(N - 1), -1)); E = np.linalg.eigvalsh(H)
+                Ex = np.sort(-2 * np.cos(np.arange(1, N + 1) * np.pi / (N + 1)))
+                print(f&quot;   open chain N = {N:3d}: lowest level {E[0]:.6f}, highest {E[-1]:.6f}, max |numerical - analytic| = {np.max(np.abs(E - Ex)):.1e}   (band edge -2 and +2 as N grows)&quot;)
+            Hr = -(np.diag(np.ones(5), 1) + np.diag(np.ones(5), -1)); Hr[0, 5] = Hr[5, 0] = -1
+            print(f&quot;   benzene ring (Hueckel, N = 6 with periodic closure): levels {np.linalg.eigvalsh(Hr).round(6)}   (alpha +- 2 beta, alpha +- beta twice)&quot;)
+            N = 12; H = -(np.diag(np.ones(N - 1), 1) + np.diag(np.ones(N - 1), -1)) + np.diag([0.8] + [0] * (N - 1))
+            w, v = np.linalg.eigh(H); print(f&quot;   a defect (site energy +0.8 on the first atom of an open chain of 12): lowest level {w[0]:.4f} (clean chain {-2*np.cos(np.pi/13):.4f}), highest {w[-1]:.4f}; the state above the clean chain&#x27;s top level has weight {v[0, -1]**2:.3f} on the defect atom&quot;)</code></pre>
+            <pre class="out"><code>3. tight binding: the electronic levels of a chain of N atoms with hopping -t (t = 1), eigenvalues of -t (adjacency matrix)
+               open chain N =   6: lowest level -1.801938, highest 1.801938, max |numerical - analytic| = 1.6e-15   (band edge -2 and +2 as N grows)
+               open chain N =  10: lowest level -1.918986, highest 1.918986, max |numerical - analytic| = 1.1e-15   (band edge -2 and +2 as N grows)
+               open chain N = 100: lowest level -1.999033, highest 1.999033, max |numerical - analytic| = 1.3e-15   (band edge -2 and +2 as N grows)
+               benzene ring (Hueckel, N = 6 with periodic closure): levels [-2. -1. -1.  1.  1.  2.]   (alpha +- 2 beta, alpha +- beta twice)
+               a defect (site energy +0.8 on the first atom of an open chain of 12): lowest level -1.9377 (clean chain -1.9419), highest 1.9625; the state above the clean chain&#x27;s top level has weight 0.070 on the defect atom</code></pre>
+            <p>The numerical eigenvalues agree with the formula to $10^{-15}$ for $N=6,10,100$, and the extreme levels approach the band edges $\mp2$ ($-1.80,-1.92,-1.999$). Closing the chain into a ring of six atoms gives the Hückel levels of <strong>benzene</strong>: $-2,-1,-1,+1,+1,+2$ in units of $t$ (that is $\alpha\pm2\beta$ and twice $\alpha\pm\beta$ with $\beta=-t$): a non-degenerate bonding orbital, a degenerate pair, and so on, which explains the stability of the $6\pi$ electron ring (the lowest three levels hold six electrons). A single site with a different energy (a <em>defect</em>) changes the spectrum: with $+0.8$ on the first atom of a $12$-atom chain the highest level moves from $1.942$ to $1.963$, <em>above</em> the top of the clean chain, and the eigenvector has $7\%$ of its weight on the defect atom: the beginning of a localised defect state that splits off from the band (for a stronger perturbation the state is more localised). The same matrix techniques, with the Bloch phases of <a href="crystal-structure-and-periodic-cells.html">MSE 201</a>, give band structures of crystals: replace the chain by the unit cell and the hopping by $\mathrm e^{\mathrm ik\cdot R}$ factors. Non-orthogonal basis sets (all the Gaussian and numerical-orbital bases of <a href="lab-dft-pyscf.html">LAB 501</a>) lead to the <em>generalised</em> problem $H\mathbf c=ES\mathbf c$ with an overlap matrix $S$, solved by <code>scipy.linalg.eigh(H, S)</code> after a Cholesky factorisation of $S$ (not run here).</p>
+            <h3>Sensitivity</h3>
+            <pre class="out"><code>5. sensitivity of eigenvalues: symmetric versus non-symmetric matrices (n = 10, perturbation of size 1e-10 in one entry)
+               Jordan block (all eigenvalues 1): perturbed eigenvalues deviate by up to 0.100   (the 10th root of 1e-10 is 0.1)
+               symmetric matrix diag(1..10): eigenvalues change by up to 0.0e+00</code></pre>
+            <p>A $10\times10$ Jordan block (all eigenvalues $1$, with a single eigenvector) is changed in one corner entry by $10^{-10}$: its eigenvalues move by $0.100$, the tenth root of $10^{-10}$. A symmetric matrix with eigenvalues $1,\dots,10$ perturbed by the same amount in a corner is unchanged to the digits printed (the true shift is second order, $\sim10^{-21}$). The first is an <strong>ill-conditioned eigenvalue problem</strong>; computing the eigenvalues of non-symmetric matrices that are close to defective (typical of non-normal operators, such as those of advection&ndash;diffusion problems) requires care, and for symmetric ones one is safe.</p>
+            <h2 id="fft">Lecture 7. The fast Fourier transform<a class="anchor" href="#fft" aria-label="Link to this section">#</a></h2>
+            <p>A sampled signal $x_0,\dots,x_{N-1}$ can be written as a sum of $N$ complex exponentials, and the <strong>discrete Fourier transform</strong> (DFT) gives the amplitudes, $\hat x_k=\sum_{n=0}^{N-1}x_n\mathrm e^{-2\pi\mathrm ikn/N}$, with the inverse $x_n=\tfrac1N\sum_k\hat x_k\mathrm e^{2\pi\mathrm ikn/N}$ (<a href="fourier-analysis.html">MATH 301</a>). Evaluated as a matrix&ndash;vector product, the DFT costs $N^2$ operations. The <strong>fast Fourier transform</strong> (Cooley and Tukey, 1965, after Gauss) splits the sum into the even- and odd-indexed terms, each a DFT of length $N/2$, and repeats: the cost falls to $O(N\log N)$. It is one of the most important algorithms ever devised, and it is everywhere in materials simulation: plane-wave DFT codes use it to move wave functions between real and reciprocal space, particle-mesh Ewald sums use it for the long-range electrostatics in molecular dynamics, diffraction patterns and structure factors are Fourier transforms of the density, vibrational spectra are Fourier transforms of velocity autocorrelation functions, and phase-field codes can be written in spectral form. The speed-up is dramatic:</p>
+            <pre data-file="fft.py (part 1)"><code>&quot;&quot;&quot;The fast Fourier transform: cost, spectral differentiation, spectral diffusion, aliasing, windowing.&quot;&quot;&quot;
+            import numpy as np, time
+
+            def dft_matrix(x):
+                n = len(x); k = np.arange(n); W = np.exp(-2j * np.pi * np.outer(k, k) / n); return W @ x
+
+            print(&quot;1. cost: the direct DFT (matrix-vector product, N^2) against the FFT (N log N); times in seconds&quot;)
+            print(&quot;        N      direct DFT        FFT      ratio     max |difference|&quot;)
+            rng = np.random.default_rng(0)
+            np.fft.fft(rng.standard_normal(64)); dft_matrix(rng.standard_normal(64))       # warm-up calls, so that start-up costs are not timed
+            for N in (256, 1024, 4096, 8192):
+                x = rng.standard_normal(N)
+                t0 = time.perf_counter(); a = dft_matrix(x); td = time.perf_counter() - t0
+                t0 = time.perf_counter(); b = np.fft.fft(x); tf = time.perf_counter() - t0
+                print(f&quot;   {N:6d}   {td:12.5f}   {tf:10.6f}   {td / tf:7.0f}     {np.max(np.abs(a - b)):.1e}&quot;)
+            for N in (2**20, 2**20 + 1, 1048583):
+                x = rng.standard_normal(N)
+                t0 = time.perf_counter(); np.fft.fft(x); t = time.perf_counter() - t0
+                print(f&quot;   N = {N:8d}: FFT time {t:.4f} s&quot; + (&quot;   (a power of two)&quot; if N == 2**20 else &quot;   (17 x 61681)&quot; if N == 2**20 + 1 else &quot;   (a prime number)&quot;))</code></pre>
+            <pre class="out"><code>1. cost: the direct DFT (matrix-vector product, N^2) against the FFT (N log N); times in seconds
+                    N      direct DFT        FFT      ratio     max |difference|
+                  256        0.00418     0.000052        81     1.7e-12
+                 1024        0.20807     0.000121      1725     1.5e-11
+                 4096        3.74623     0.000188     19880     1.5e-10
+                 8192       12.45186     0.000368     33801     4.3e-10
+               N =  1048576: FFT time 0.0545 s   (a power of two)
+               N =  1048577: FFT time 0.3785 s   (17 x 61681)
+               N =  1048583: FFT time 0.3478 s   (a prime number)</code></pre>
+            <p>The direct transform takes $15$ s for $N=8192$, the FFT $0.37$ ms: a ratio of $34\,000$ (the first row, $N=256$, shows the ratio $81$; the ratio grows like $N/\log N$). For $N=2^{20}\approx10^6$ the FFT takes $0.055$ s, whereas the direct transform would need a matrix of $10^{12}$ complex entries ($18$ TB). The speed depends on the factorisation of $N$: a power of two is fastest ($0.055$ s), and the neighbouring lengths are slower ($0.38$ s for $N=2^{20}+1=17\times61\,681$ and $0.35$ s for the prime $N=1\,048\,583$), because the library falls back on slower algorithms for large prime factors. In practice choose $N$ with only small prime factors ($2, 3, 5, 7$), padding if necessary (<code>scipy.fft.next_fast_len</code>).</p>
+            <h3>Spectral differentiation</h3>
+            <p>In Fourier space the derivative is a multiplication: $\widehat{u^{\prime}}_k=\mathrm ik\,\hat u_k$. For a <em>smooth periodic</em> function this gives the derivative to a precision that finite differences cannot approach with the same number of points, because the error of the FFT derivative decreases faster than any power of the number of points (exponentially for analytic functions): </p>
+            <pre class="out"><code>2. spectral differentiation of a periodic function f = exp(sin x) on [0, 2 pi): error of f&#x27; against exact; finite differences for comparison
+                  N     central difference (2nd order)   4th-order difference      FFT (spectral)
+                  8            3.402e-01                   1.384e-01             4.318e-03
+                 16            9.359e-02                   1.575e-02             1.762e-07
+                 32            2.583e-02                   1.132e-03             2.887e-15
+                 64            6.512e-03                   7.590e-05             1.066e-14</code></pre>
+            <p>For $f=\mathrm e^{\sin x}$ the second-order central difference needs $64$ points to get $6.5\times10^{-3}$ and the fourth-order difference $7.6\times10^{-5}$, while the FFT with $32$ points is already at rounding level ($2.9\times10^{-15}$) and is wrong by $4\times10^{-3}$ with only $8$ points. That is why periodic problems (a crystal in a periodic box, a microstructure with periodic boundaries) are often solved <em>pseudospectrally</em>: derivatives in Fourier space, nonlinear products in real space. The price is the periodicity assumption (a non-periodic function gives Gibbs oscillations and algebraic convergence) and the global coupling (a local change affects every point).</p>
+            <h3>Diffusion in Fourier space</h3>
+            <p>For the heat equation with periodic boundary conditions, each Fourier mode evolves independently, $\hat u_k(t)=\hat u_k(0)\mathrm e^{-Dk^2t}$: the solution at any time $t$ is obtained from one forward transform, a multiplication and one inverse transform, <em>without time stepping</em> and without any stability limit. A Gaussian pulse plus a sinusoid on a periodic domain, integrated to $t=0.5$ with $D=0.01$:</p>
+            <pre class="out"><code>3. spectral solution of the heat equation u_t = D u_xx with periodic conditions: each Fourier mode decays as exp(-D k^2 t)
+               spectral (one step, any t) vs explicit finite differences with 410 steps: max difference 1.88e-04; mass conserved: 0.088623 vs 0.088623</code></pre>
+            <p>The explicit finite-difference solution of the same problem needs $410$ steps (the stability limit) and differs from the spectral solution by $1.9\times10^{-4}$; the difference is the finite-difference error (the spectral result is exact for the resolved modes). The conserved total, $\int u\,\mathrm dx$, is identical ($0.088623$) as it must be: the $k=0$ mode is untouched. The same trick treats the linear part of any equation in phase-field models (the Cahn&ndash;Hilliard equation is solved in this &ldquo;semi-implicit spectral&rdquo; way in many codes, <a href="phase-field-modelling.html">CMS 505</a>).</p>
+            <h3>Aliasing and leakage</h3>
+            <p>Sampling at a rate $f_s$ can represent frequencies only up to the <strong>Nyquist frequency</strong> $f_s/2$; a higher frequency masquerades as a lower one (<em>aliasing</em>). A $70$ Hz sine sampled at $100$ Hz is indistinguishable from a $30$ Hz sine:</p>
+            <pre class="out"><code>4. aliasing: a signal sin(2 pi f t) with f = 70 Hz sampled at 100 Hz (Nyquist frequency 50 Hz)
+               the largest peak appears at 30.0 Hz (= |70 - 100|), amplitude 1.000
+               a true 30 Hz signal sampled the same way gives a peak at 30.0 Hz: the two cannot be distinguished from the samples</code></pre>
+            <p>The peak is at $30$ Hz ($=|70-100|$) with the full amplitude, and a real $30$ Hz signal gives the same samples (up to the sign of the phase): nothing in the data tells them apart. The molecular-dynamics consequence is direct: if the velocities are saved every $\Delta t_\mathrm{out}$, atomic motions faster than $1/(2\Delta t_\mathrm{out})$ appear at the wrong frequency in the spectrum; to see a bond vibration of $100$ THz one must save at least every $5$ fs and preferably every $1$ fs. The second effect is <strong>spectral leakage</strong>: the DFT assumes the record is one period of a periodic signal, and when the record does not contain an integer number of periods the discontinuity at the ends spreads the line over many bins:</p>
+            <pre class="out"><code>5. leakage and windows: a sine of frequency 10.5 cycles per record (not an integer) sampled over N = 256 points
+               rectangular window: spectrum 30 bins from the peak is 7.43e-03 of the peak, main-lobe width (bins above 0.1 of peak): 12
+               Hann        window: spectrum 30 bins from the peak is 1.15e-05 of the peak, main-lobe width (bins above 0.1 of peak): 4
+               for an integer 10 cycles per record the spectrum is a single line: other bins are below 5.4e-16</code></pre>
+            <p>For a sine of $10.5$ cycles in the record the rectangular window leaves a spectrum that is still $7.4\times10^{-3}$ of the peak $30$ bins away, and the main lobe is $12$ bins wide; with a Hann window (a smooth bell-shaped weighting) the far leakage is $1.2\times10^{-5}$ and the lobe $4$ bins wide. For a sine of exactly $10$ cycles the spectrum is a single line (the other bins are at rounding level, $5\times10^{-16}$). So when a spectrum is estimated from a finite simulation, <strong>apply a window</strong>, or use the autocorrelation function (which decays to zero) as the input: that is how vibrational densities of states are computed from molecular-dynamics trajectories, with a frequency resolution of $1/T$: a $10$ ps run gives $0.1$ THz $=3.3$ cm$^{-1}$.</p>
+            <h2 id="perf">Lecture 8. Performance, parallelism and random numbers<a class="anchor" href="#perf" aria-label="Link to this section">#</a></h2>
+            <p>A correct program that takes a month is useless; a fast program that is wrong is worse. The rules of optimisation are: first make it correct, then <em>measure</em> where the time goes (never guess), then fix the bottleneck, then measure again. The experiment below computes one quantity, the sum of the distances between all pairs of $N$ random points in three dimensions ($N^2/2$ pairs: $4.5$ million for $N=3000$), in three ways: loops in pure Python, NumPy array operations, and the same loops compiled to machine code by <strong>Numba</strong> (an <code>@njit</code> decorator):</p>
+            <pre data-file="perf.py (part 1)"><code>&quot;&quot;&quot;Performance: loops versus vectorisation versus compiled code; memory-bound versus compute-bound; Amdahl; random streams.&quot;&quot;&quot;
+            import numpy as np, time, cProfile, pstats, io
+            from numba import njit
+
+            def timeit(f, *a, rep=3):
+                best = 1e99
+                for _ in range(rep):
+                    t0 = time.perf_counter(); r = f(*a); best = min(best, time.perf_counter() - t0)
+                return best, r
+
+            print(&quot;1. the sum of all pair distances of N random points in 3D: the same O(N^2) work written three ways&quot;)
+            def pairs_python(X):
+                n = len(X); s = 0.0
+                for i in range(n):
+                    for j in range(i + 1, n):
+                        dx = X[i][0] - X[j][0]; dy = X[i][1] - X[j][1]; dz = X[i][2] - X[j][2]
+                        s += (dx * dx + dy * dy + dz * dz) ** 0.5
+                return s
+            def pairs_numpy(X):
+                d = X[:, None, :] - X[None, :, :]
+                return 0.5 * np.sqrt((d**2).sum(-1)).sum()
+            @njit(cache=False)
+            def pairs_numba(X):
+                n = X.shape[0]; s = 0.0
+                for i in range(n):
+                    for j in range(i + 1, n):
+                        dx = X[i, 0] - X[j, 0]; dy = X[i, 1] - X[j, 1]; dz = X[i, 2] - X[j, 2]
+                        s += (dx * dx + dy * dy + dz * dz) ** 0.5
+                return s
+            rng = np.random.default_rng(1)
+            pairs_numba(rng.random((10, 3)))          # compile once, outside the timing
+            print(&quot;      N     pure Python     NumPy (N x N x 3 array)     Numba (compiled loops)    results agree&quot;)
+            for N in (200, 1000, 3000):
+                X = rng.random((N, 3)); Xl = X.tolist()
+                tp, a = timeit(pairs_python, Xl, rep=1)
+                tn, b = timeit(pairs_numpy, X) if N &lt;= 3000 else (float(&quot;nan&quot;), None)
+                tj, c = timeit(pairs_numba, X)
+                ok = &quot;yes&quot; if (a is None or abs(a - c) &lt; 1e-6 * c) and abs(b - c) &lt; 1e-6 * c else &quot;NO&quot;
+                print(f&quot;   {N:5d}   {tp:10.4f} s   {tn:14.4f} s           {tj:12.5f} s            {ok}&quot;)
+            print(&quot;   (the NumPy version builds an N x N x 3 array of 8-byte numbers: 216 MB at N = 3000)&quot;)</code></pre>
+            <pre class="out"><code>1. the sum of all pair distances of N random points in 3D: the same O(N^2) work written three ways
+                  N     pure Python     NumPy (N x N x 3 array)     Numba (compiled loops)    results agree
+                 200       0.0041 s           0.0020 s                0.00004 s            yes
+                1000       0.1046 s           0.0454 s                0.00109 s            yes
+                3000       1.0188 s           0.4389 s                0.01281 s            yes
+               (the NumPy version builds an N x N x 3 array of 8-byte numbers: 216 MB at N = 3000)</code></pre>
+            <p>The three versions give the same number. Pure Python takes $1.02$ s for $N=3000$; the NumPy version $0.44$ s (only $2.3$ times faster, because creating the $N\times N\times3$ intermediate array costs memory traffic and $216$ MB); the compiled loop $0.013$ s, <strong>80 times faster than Python and 34 times faster than the &ldquo;vectorised&rdquo; NumPy code</strong>. The advice that Python loops are slow and array operations are fast is true only when the array operation replaces the loop without large temporaries. When the loop is the natural way to write the algorithm (pair interactions with a cutoff, neighbour lists, Monte Carlo moves), compile it with Numba (or write it in C/Fortran/Rust, or use a library). The first call includes the compilation of the function, which is why the program calls it once before the timing.</p>
+            <h3>Memory-bound and compute-bound</h3>
+            <pre data-file="perf.py (part 2)"><code>print(&quot;\n2. memory-bound versus compute-bound: y = a x + y (2 flops per 24 bytes moved) and a matrix product (2 n^3 flops on 3 n^2 numbers)&quot;)
+            n = 10**7; x = np.ones(n); y = np.ones(n)
+            def axpy(): y_ = 2.0 * x + y; return y_
+            t, _ = timeit(axpy); t_axpy = t; print(f&quot;   axpy, n = 1e7: {t * 1e3:.1f} ms -&gt; {3 * 8 * n / t / 1e9:.1f} GB/s of memory traffic, {2 * n / t / 1e9:.2f} GFlop/s&quot;)
+            A = rng.standard_normal((2000, 2000)); B = rng.standard_normal((2000, 2000))
+            t, _ = timeit(lambda: A @ B); print(f&quot;   matrix product, n = 2000: {t * 1e3:.1f} ms -&gt; {2 * 2000**3 / t / 1e9:.1f} GFlop/s&quot;)
+            print(f&quot;   the same machine runs the compute-bound kernel {(2 * 2000**3 / t) / (2 * n / t_axpy):.0f} times faster in flops: the first is limited by the memory bus, not by the processor&quot;)</code></pre>
+            <pre class="out"><code>2. memory-bound versus compute-bound: y = a x + y (2 flops per 24 bytes moved) and a matrix product (2 n^3 flops on 3 n^2 numbers)
+               axpy, n = 1e7: 72.9 ms -&gt; 3.3 GB/s of memory traffic, 0.27 GFlop/s
+               matrix product, n = 2000: 88.8 ms -&gt; 180.3 GFlop/s
+               the same machine runs the compute-bound kernel 657 times faster in flops: the first is limited by the memory bus, not by the processor</code></pre>
+            <p>The vector update $y=ax+y$ does two floating-point operations for every $24$ bytes read or written; the matrix product does $2n^3$ operations on $3n^2$ numbers and reuses each number $\sim n$ times from the cache. The first is limited by the speed of the memory (at least $3.3$ GB/s here; it reaches only $0.27$ GFlop/s), the second by the processor ($180$ GFlop/s): <strong>a factor of $657$ between the two on the same hardware</strong>. Most of the codes of this curriculum (finite differences, finite elements, molecular dynamics with neighbour lists) are memory-bound, which is why a new processor with ten times more arithmetic power does not make them ten times faster, why single precision (half the memory traffic) speeds them up, and why algorithms that raise the arithmetic intensity (blocking, kernel fusion, dense matrix products inside a plane-wave code) matter.</p>
+            <h3>Parallel scaling: Amdahl&rsquo;s law</h3>
+            <pre data-file="perf.py (part 3)"><code>print(&quot;\n3. Amdahl&#x27;s law: speed-up of a code in which a fraction s is serial, on p processors: S = 1/(s + (1-s)/p)&quot;)
+            print(&quot;   serial fraction s     p = 4     p = 16     p = 64    p = 1024    limit 1/s&quot;)
+            for s in (0.5, 0.1, 0.01, 0.001):
+                print(f&quot;      {s:6.3f}         &quot; + &quot;&quot;.join(f&quot;{1 / (s + (1 - s) / p):8.1f}   &quot; for p in (4, 16, 64, 1024)) + f&quot;{1 / s:8.0f}&quot;)</code></pre>
+            <pre class="out"><code>3. Amdahl&#x27;s law: speed-up of a code in which a fraction s is serial, on p processors: S = 1/(s + (1-s)/p)
+               serial fraction s     p = 4     p = 16     p = 64    p = 1024    limit 1/s
+                   0.500              1.6        1.9        2.0        2.0          2
+                   0.100              3.1        6.4        8.8        9.9         10
+                   0.010              3.9       13.9       39.3       91.2        100
+                   0.001              4.0       15.8       60.2      506.2       1000</code></pre>
+            <p>If a fraction $s$ of the work is serial (cannot be divided among processors), the speed-up on $p$ processors is $S=1/(s+(1-s)/p)$ and the maximum possible is $1/s$ however many processors are used. A code that is $1\%$ serial runs only $39$ times faster on $64$ processors and $91$ times faster on $1024$, never more than $100$; with $10\%$ serial work, $1024$ processors give $9.9$. (The table is the formula evaluated; no parallel timing was measured on this four-core machine.) Real codes also lose time to communication and load imbalance, so one distinguishes <strong>strong scaling</strong> (a fixed problem on more processors: limited by Amdahl) from <strong>weak scaling</strong> (a problem that grows with the number of processors: usually limited by communication, and the reason why large molecular-dynamics runs scale well to thousands of processors while a $1000$-atom run does not).</p>
+            <h3>Profiling</h3>
+            <pre data-file="perf.py (part 4)"><code>print(&quot;\n4. profiling: where does a program spend its time?&quot;)
+            def slow_force(X):
+                n = len(X); F = np.zeros_like(X)
+                for i in range(n):
+                    d = X[i] - X; r2 = (d**2).sum(1); r2[i] = 1.0
+                    inv6 = 1 / r2**3; coef = 24 * (2 * inv6**2 - inv6) / r2; coef[i] = 0.0
+                    F[i] = (coef[:, None] * d).sum(0)
+                return F
+            def run():
+                X = rng.random((800, 3)) * 8
+                for _ in range(5): slow_force(X)
+            pr = cProfile.Profile(); pr.enable(); run(); pr.disable()
+            st = io.StringIO(); pstats.Stats(pr, stream=st).strip_dirs().sort_stats(&quot;cumulative&quot;).print_stats(6)
+            print(&quot;\n&quot;.join(l for l in st.getvalue().splitlines() if l.strip())[:1500])</code></pre>
+            <pre class="out"><code>4. profiling: where does a program spend its time?
+                     24037 function calls in 0.399 seconds
+               Ordered by: cumulative time
+               List reduced from 12 to 6 due to restriction &lt;6&gt;
+               ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+                    1    0.000    0.000    0.399    0.399 perf.py:63(run)
+                    5    0.201    0.040    0.399    0.080 perf.py:56(slow_force)
+                 8000    0.008    0.000    0.198    0.000 {method &#x27;sum&#x27; of &#x27;numpy.ndarray&#x27; objects}
+                 8000    0.007    0.000    0.190    0.000 _methods.py:47(_sum)
+                 8000    0.183    0.000    0.183    0.000 {method &#x27;reduce&#x27; of &#x27;numpy.ufunc&#x27; objects}
+                    5    0.000    0.000    0.000    0.000 numeric.py:97(zeros_like)</code></pre>
+            <p>The profile of a force routine that loops over atoms shows that $50\%$ of the time is spent in the loop body itself and almost all the rest in <code>numpy.sum</code> (the <code>reduce</code> method); only measurement tells you this. Profiling tools in order of increasing detail: <code>time.perf_counter</code> around a section; <code>cProfile</code> (as above, function by function); <code>line_profiler</code> (line by line); and for compiled codes <code>perf</code>, Intel VTune or the internal timers of LAMMPS (which print the share of time in pair, neighbour, communication and other at the end of every run, <a href="lab-md-lammps-argon.html">LAB 502</a>).</p>
+            <h3>Random numbers</h3>
+            <pre data-file="perf.py (part 5)"><code>print(&quot;\n5. random-number streams: reproducibility and independent streams for parallel runs&quot;)
+            r1 = np.random.default_rng(42).random(3); r2 = np.random.default_rng(42).random(3)
+            print(f&quot;   default_rng(42) twice: {r1.round(6)} and {r2.round(6)} -&gt; identical: {np.array_equal(r1, r2)}&quot;)
+            ss = np.random.SeedSequence(2024); streams = [np.random.default_rng(s) for s in ss.spawn(4)]
+            data = np.array([g.standard_normal(100000) for g in streams]); C = np.corrcoef(data)
+            print(f&quot;   4 child streams of SeedSequence(2024): largest off-diagonal correlation of 1e5 samples = {np.max(np.abs(C - np.eye(4))):.4f} (expected size 1/sqrt(N) = {1 / np.sqrt(1e5):.4f})&quot;)
+            print(&quot;   a bad habit: seeding with the clock or with seed + rank gives correlated or repeated streams in some generators; use SeedSequence.spawn&quot;)</code></pre>
+            <pre class="out"><code>5. random-number streams: reproducibility and independent streams for parallel runs
+               default_rng(42) twice: [0.773956 0.438878 0.858598] and [0.773956 0.438878 0.858598] -&gt; identical: True
+               4 child streams of SeedSequence(2024): largest off-diagonal correlation of 1e5 samples = 0.0019 (expected size 1/sqrt(N) = 0.0032)
+               a bad habit: seeding with the clock or with seed + rank gives correlated or repeated streams in some generators; use SeedSequence.spawn</code></pre>
+            <p>Monte Carlo and stochastic dynamics rely on pseudo-random generators, deterministic sequences that pass statistical tests. Three rules. (1) <strong>Seed explicitly and record the seed</strong>, so that a surprising result can be reproduced (<code>default_rng(42)</code> gives the same numbers every time). (2) <strong>Use a modern generator</strong> (NumPy&rsquo;s default PCG64, or Philox or Xoshiro); the old linear-congruential <code>rand()</code> of C libraries has short periods and correlations. (3) <strong>Use independent streams</strong> for parallel runs or replicas: <code>SeedSequence.spawn</code> creates child generators with provably non-overlapping states; seeding replica $i$ with $\mathrm{seed}+i$ is acceptable for some generators and can produce correlated streams with others. The four child streams above have correlations of $0.002$, the size expected from $10^5$ samples ($1/\sqrt N=0.003$). A sanity check you should always run on a Monte Carlo code is exactly this kind: independent runs must agree within their statistical errors.</p>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Runge-Kutta methods of order p have a global error proportional to h^p: for y&#x27; = -2y + sin t the errors at t = 5 fall by factors 2.0, 4.1 and 16.4 per halving of h for Euler, midpoint and RK4 (2.6e-3, 3.5e-5 and 1.4e-8 at h = 0.031), and adaptive embedded pairs such as RK45 choose the step to meet a tolerance (9 steps for 1e-3, 241 steps for 1e-11).</li>
+<li>A system is stiff when stability, not accuracy, limits the step of an explicit method: for y&#x27; = -50 y explicit Euler is stable only for h &lt; 0.04 (h = 0.05 gives 3.3e3 instead of 1.9e-22), while implicit Euler is stable for every h; on Robertson&#x27;s chemical kinetics RK45 needs 1.7 million steps and 103 s to reach t = 1000 where the implicit Radau method needs 116 steps and 0.08 s.</li>
+<li>For the heat equation the explicit scheme is stable only if r = D dt/dx^2 &lt;= 1/2 (max|u| = 0.373 for r &lt;= 0.51 and 4e18 for r = 0.55), backward Euler and Crank-Nicolson are stable for all r with errors proportional to dt (ratio 1.98) and dt^2 (ratio about 4), and the second-order central scheme for Poisson&#x27;s equation reduces the error by 3.97 per halving of h.</li>
+<li>Advection exposes the other errors of a discretisation: with CFL 0.8 the first-order upwind scheme smears a pulse of height 1 to 0.745 (numerical diffusion), Lax-Wendroff keeps 0.988 but produces negative values (dispersion), and the unstable central scheme grows to 3e10.</li>
+<li>Optimisation: steepest descent needs a number of iterations proportional to the condition number (81, 922, 10 362 and 115 130 for k = 10 to 10 000) while conjugate gradients solve a two-variable quadratic in 2 steps; on the Rosenbrock function BFGS needs 34 iterations and plain gradient descent 32 076, and random-start BFGS finds the global minimum of a 7-atom Lennard-Jones cluster from 25 percent of 200 starts, of a 13-atom cluster from 5.5 percent and of a 19-atom cluster from 1 start in 200.</li>
+<li>Eigenvalues: power iteration converges at the rate (lambda2/lambda1)^2 per step (7932 iterations for a ratio of 0.999), shifted QR with deflation finds all eigenvalues of a 6 x 6 matrix in 17 sweeps against 205 unshifted, Lanczos (eigsh) finds the lowest six eigenvalues of a 14 400-unknown Laplacian in 0.2 s, and the chain and ring tight-binding eigenvalues -2 cos(k pi/(N+1)) and the benzene levels (-2, -1, -1, 1, 1, 2) are reproduced to 1e-15.</li>
+<li>The FFT turns an O(N^2) transform into O(N log N) (a speed-up of 33 800 at N = 8192), makes derivatives of smooth periodic functions exponentially accurate (error 2.9e-15 with 32 points against 2.6e-2 for second-order differences), solves diffusion exactly mode by mode, and requires care with aliasing (a 70 Hz signal sampled at 100 Hz appears at 30 Hz) and windowing.</li>
+<li>Performance: for a sum over 4.5 million atom pairs compiled loops (Numba) are 80 times faster than pure Python and 34 times faster than a vectorised NumPy version (0.013 s against 1.02 s and 0.44 s), a memory-bound kernel runs at 0.27 GFlop/s while a matrix product reaches 180 GFlop/s on the same machine, Amdahl&#x27;s law limits a code with 1 percent serial work to a speed-up of 100, and independent random streams for parallel runs must come from SeedSequence.spawn.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="pc202-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Take one step of RK4 with $h=0.5$ for $y^{\prime}=-y$, $y(0)=1$. (a) Compute $k_1,\dots,k_4$ and $y_1$. (b) Compare with the exact $\mathrm e^{-0.5}$ and with one Euler step.</p>
+            <details class="hint"><summary>Hint</summary><p>$k_2=f(y+\tfrac h2k_1)$, $k_3=f(y+\tfrac h2k_2)$, $k_4=f(y+hk_3)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $k_1=-1$; $k_2=-(1-0.25)=-0.75$; $k_3=-(1-0.1875)=-0.8125$; $k_4=-(1-0.40625)=-0.59375$. $y_1=1+\tfrac{0.5}6(-1-1.5-1.625-0.59375)=1+0.08333(-4.71875)=0.606771$. (b) $\mathrm e^{-0.5}=0.606531$: the error is $2.4\times10^{-4}$. One Euler step gives $0.5$ (error $0.107$): RK4 is $440$ times more accurate for four times the work. (Indeed $y_1=1-h+h^2/2-h^3/6+h^4/24$, the Taylor series of $\mathrm e^{-h}$ to fourth order.)</p>
+            <p class="answer">(a) $k=-1$, $-0.75$, $-0.8125$, $-0.59375$; $y_1=0.606771$  (b) error $2.4\times10^{-4}$ against $0.107$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>The errors of the table of Lecture 1 at $h=0.0625$ and $0.03125$ are $5.160\times10^{-3}$ and $2.552\times10^{-3}$ (Euler), $1.450\times10^{-4}$ and $3.546\times10^{-5}$ (midpoint), $2.326\times10^{-7}$ and $1.418\times10^{-8}$ (RK4). (a) Compute the observed order of each method. (b) By how much would the Euler error fall if $h$ were divided by $100$, and the RK4 error?</p>
+            <details class="hint"><summary>Hint</summary><p>$p=\log_2(e_h/e_{h/2})$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Euler: $\log_2(2.022)=1.016$; midpoint: $\log_2(4.089)=2.03$; RK4: $\log_2(16.40)=4.04$. All agree with the nominal orders $1,2,4$. (b) The error scales as $h^p$: a hundred-fold smaller step reduces it by $100^1=10^2$ (Euler) and $100^4=10^8$ (RK4). For RK4 this is why a modest step is enough: from $1.4\times10^{-8}$ one would reach $10^{-16}$, i.e. rounding level, with $h$ ten times smaller.</p>
+            <p class="answer">(a) $1.02$, $2.03$, $4.04$  (b) $10^2$ and $10^8$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>The decay $y^{\prime}=-1000\,y$, $y(0)=1$. (a) What is the largest stable step for explicit Euler? (b) How many steps does it need to reach $t=1$? (c) Compute one step of implicit Euler with $h=0.1$ and compare with the exact solution; is it accurate? Is it useful?</p>
+            <details class="hint"><summary>Hint</summary><p>Stability needs $|1-\lambda h|&lt;1$. Implicit Euler: $y_{n+1}=y_n/(1+\lambda h)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $h&lt;2/\lambda=0.002$. (b) $t=1$ needs at least $500$ steps, although the solution is below $10^{-170}$ after $t=0.4$ and visually zero after $t=0.01$: the step is dictated by stability, not accuracy. (c) $y_1=1/(1+100)=0.0099$; the exact value is $\mathrm e^{-100}=3.7\times10^{-44}$. The implicit step is not accurate in the sense of relative error (the first step is far from $\mathrm e^{-\lambda h}$), but it gives a small, positive, decaying number, which is the right qualitative behaviour. When the fast component is not of interest (it is already dead and one wants the slow dynamics driven by it), this is exactly what is needed and one takes $h$ based on the slow time scale.</p>
+            <p class="answer">(a) $0.002$  (b) $\ge500$  (c) $0.0099$ against $3.7\times10^{-44}$: inaccurate but stable</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Carbon diffuses in austenite with $D=10^{-11}$ m$^2$/s at $1000{}^\circ$C. (a) What is the diffusion length $\sqrt{Dt}$ after $1$ hour? (b) For a mesh of spacing $h=1\ \mu$m, what is the largest stable explicit time step and how many steps are needed for $1$ hour? (c) The same for $h=0.1\ \mu$m. (d) How many steps if Crank&ndash;Nicolson with $\tau=1$ s is used?</p>
+            <details class="hint"><summary>Hint</summary><p>$\tau\le h^2/(2D)$ in one dimension.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sqrt{10^{-11}\cdot3600}=1.9\times10^{-4}$ m $=190\ \mu$m. (b) $\tau_\mathrm{max}=(10^{-6})^2/(2\cdot10^{-11})=0.05$ s, so $3600/0.05=72\,000$ steps. (c) $h=10^{-7}$ m: $\tau_\mathrm{max}=5\times10^{-4}$ s, so $7.2\times10^{6}$ steps (a factor of $100$ more for a ten times finer mesh, and in three dimensions the number of grid points would also have grown by $10^{3}$). (d) $3600$ steps, independently of the mesh, each with a tridiagonal solve; the accuracy is limited by $\tau$ relative to the time scale of the solution, $h^2/D=1$ s for the fine mesh. For the carburising profile of <a href="lab-diffusion-fipy.html">LAB 506</a> an implicit scheme with a growing step is the sensible choice.</p>
+            <p class="answer">(a) $190\ \mu$m  (b) $0.05$ s, $72\,000$ steps  (c) $5\times10^{-4}$ s, $7.2\times10^6$ steps  (d) $3600$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>(a) Show that the upwind scheme has the amplification factor $g=1-\nu(1-\mathrm e^{-\mathrm i\theta})$ and that $|g|^2=1-2\nu(1-\nu)(1-\cos\theta)$. (b) Evaluate $|g|$ at the grid mode $\theta=\pi$ for $\nu=0.8$ and $1.2$. (c) What does $|g|&lt;1$ for short wavelengths mean for the simulated pulse?</p>
+            <details class="hint"><summary>Hint</summary><p>$g=1-\nu+\nu\mathrm e^{-\mathrm i\theta}$; $|g|^2=(1-\nu+\nu\cos\theta)^2+\nu^2\sin^2\theta$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Inserting $u_j^n=g^n\mathrm e^{\mathrm ij\theta}$ ($\theta=kh$) in $u_j^{n+1}=u_j^n-\nu(u_j^n-u_{j-1}^n)$ gives $g=1-\nu+\nu\mathrm e^{-\mathrm i\theta}$. Then $|g|^2=(1-\nu+\nu\cos\theta)^2+\nu^2\sin^2\theta=(1-\nu)^2+2\nu(1-\nu)\cos\theta+\nu^2=1-2\nu(1-\nu)(1-\cos\theta)$, which is $\le1$ for all $\theta$ if and only if $0\le\nu\le1$. (b) At $\theta=\pi$: $|g|^2=1-4\nu(1-\nu)$. For $\nu=0.8$: $1-4(0.16)=0.36$, $|g|=0.6$ (stable and strongly damped). For $\nu=1.2$: $1-4(1.2)(-0.2)=1.96$, $|g|=1.4$: the shortest wavelength grows by $40\%$ per step (unstable; CFL violated). (c) For $\nu&lt;1$ short-wavelength components are damped at every step ($0.6$ for the shortest at $\nu=0.8$), which is why upwind never oscillates, and the same damping applied to the sharp parts of the pulse is the numerical diffusion that broadens it (peak $0.745$ in Lecture 4).</p>
+            <p class="answer">(b) $|g|=0.6$ and $1.4$  (c) damping of short waves = numerical diffusion</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>The maximum errors of the Poisson solver of Lecture 4 for $m=10,20,40$ interior points per direction ($h=1/(m+1)$) are $6.6868\times10^{-3}$, $1.8567\times10^{-3}$ and $4.8870\times10^{-4}$. (a) Compute the observed order, using the actual $h$. (b) Predict the error for $m=80$ and compare with the measured $1.2532\times10^{-4}$. (c) A bug in the boundary treatment would make the error $O(h)$: how would this show?</p>
+            <details class="hint"><summary>Hint</summary><p>$p=\ln(e_1/e_2)/\ln(h_1/h_2)$ with $h=1/(m+1)$, so $h_1/h_2=(m_2+1)/(m_1+1)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $h$ ratios: $21/11=1.909$ and $41/21=1.952$. $p_1=\ln(3.601)/\ln(1.909)=1.98$; $p_2=\ln(3.799)/\ln(1.952)=2.00$. (b) With $p=2$ and $h_{80}=1/81$: $e_{80}=e_{40}(41/81)^2=4.887\times10^{-4}\times0.2562=1.252\times10^{-4}$, equal to the measured $1.2532\times10^{-4}$ to three digits. (c) The observed order would come out near $1$: successive errors would fall by a factor $2$ instead of $4$. It is the diagnostic to use: compute the observed order for at least three grids; a value that differs from the formal order, or does not settle, points at a bug in the stencil, boundary, source term or exact solution.</p>
+            <p class="answer">(a) $1.98$, $2.00$  (b) $1.252\times10^{-4}$ (measured $1.2532\times10^{-4}$)  (c) order $\approx1$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Steepest descent with exact line search on $f=\tfrac12(x^2+\kappa y^2)$ started at $(\kappa,1)$ multiplies the error by $(\kappa-1)/(\kappa+1)$ per step. (a) Predict the number of iterations to reach $|\mathbf x|&lt;10^{-6}$ for $\kappa=10$, $10^3$ and $10^4$. (b) Compare with the measured $81$, $10\,362$ and $115\,130$. (c) What does conjugate gradients need?</p>
+            <details class="hint"><summary>Hint</summary><p>$k=\ln(\kappa\cdot10^6)/\ln[(\kappa+1)/(\kappa-1)]$: the initial size is $\approx\kappa$ and the target $10^{-6}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\kappa=10$: $\ln(10^7)/\ln(11/9)=16.12/0.2007=80.3$. $\kappa=10^3$: $\ln(10^9)/\ln(1001/999)=20.72/0.0020=10\,362$. $\kappa=10^4$: $\ln(10^{10})/\ln(10001/9999)=23.03/2.0\times10^{-4}=115\,129$. (b) All three agree with the measurements ($81$, $10\,362$, $115\,130$) to better than $1\%$. For large $\kappa$, $\ln[(\kappa+1)/(\kappa-1)]\approx2/\kappa$ so $k\approx\tfrac\kappa2\ln(\kappa\,10^6)$: linear in $\kappa$. (c) Two iterations, for any $\kappa$, because the problem has two variables (CG on an $n$-variable quadratic terminates in at most $n$ steps, in exact arithmetic).</p>
+            <p class="answer">(a) $80$, $10\,362$, $115\,129$  (b) agree  (c) $2$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>Power iteration on $A=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$ started from $\mathbf v_0=(1,0)^T$. (a) Compute $\mathbf v_1$, $\mathbf v_2$, $\mathbf v_3$ (unnormalised) and the Rayleigh quotients. (b) The eigenvalues are $3$ and $1$: what error ratio per step do you expect for the eigenvalue estimate? (c) Why is the convergence of the Rayleigh quotient twice as fast as that of the vector?</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathbf v_{k+1}=A\mathbf v_k$; Rayleigh quotient $\mathbf v^TA\mathbf v/\mathbf v^T\mathbf v$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\mathbf v_1=(2,1)$, $\mathbf v_2=(5,4)$, $\mathbf v_3=(14,13)$. Rayleigh quotients: $\mathbf v_0$: $2$; $\mathbf v_1$: $(2\cdot5+1\cdot4)/5=2.8$; $\mathbf v_2$: $(5\cdot14+4\cdot13)/41=2.9756$; $\mathbf v_3$: $2.99726$. (b) Errors against $3$: $1$, $\;0.2$, $\;0.0244$, $\;0.00274$: ratios $0.2,\,0.12,\,0.112$, tending to $(\lambda_2/\lambda_1)^2=(1/3)^2=1/9=0.111$. (c) The error of the vector component along $\mathbf v_2$ falls as $(\lambda_2/\lambda_1)^k$, but for a symmetric matrix the Rayleigh quotient is stationary at an eigenvector, so its error is quadratic in the vector error: $(\lambda_2/\lambda_1)^{2k}$.</p>
+            <p class="answer">(a) $2$, $\,2.8$, $\,2.9756$, $\,2.9973$  (b) $1/9$  (c) the Rayleigh quotient is stationary at an eigenvector</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>Hückel model: $H=-t\times$(adjacency matrix) for a ring of $N$ carbon atoms. (a) For $N=6$ the levels are $-2t,-t,-t,t,t,2t$; for $N=4$ (cyclobutadiene) the ring formula $E_k=-2t\cos(2\pi k/N)$ gives what levels? (b) Fill them with $N$ $\pi$ electrons (two per level) and compute the total $\pi$ energies. (c) Compare benzene with three isolated double bonds (ethylene levels $\pm t$) and say why cyclobutadiene is unstable.</p>
+            <details class="hint"><summary>Hint</summary><p>Fill the lowest levels first, two electrons each. Three ethylene units have three electron pairs at $-t$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $N=4$: $E_k=-2t\cos(\pi k/2)$ for $k=0, 1, 2, 3$: $-2t,\,0,\,+2t,\,0$: levels $-2t$, $0$ (twice), $+2t$. (b) Benzene: $2(-2t)+4(-t)=-8t$ (six electrons in the three lowest levels). Cyclobutadiene: four electrons: $2(-2t)+2(0)=-4t$, and the last two electrons occupy the <em>degenerate</em> pair at $0$ with parallel or paired spins (partly filled degenerate level). (c) Three isolated double bonds: $3\times2(-t)=-6t$; benzene is $-8t$, i.e. $2t$ lower: the <strong>delocalisation (resonance) energy</strong>, the origin of aromatic stability. For cyclobutadiene two isolated double bonds give $-4t$, the same as the ring: no stabilisation, and the half-filled degenerate level makes it unstable towards a rectangular distortion (a Jahn&ndash;Teller effect): the ring is <em>antiaromatic</em>. The computed levels of the program for $N=6$ agree: $-2,-1,-1, 1, 1, 2$; for $N=4$ one gets $-2, 0, 0, 2$ (checked numerically).</p>
+            <p class="answer">(a) $-2t,0,0,2t$  (b) $-8t$ and $-4t$  (c) resonance energy $2t$ for benzene, none for cyclobutadiene</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>Velocities are saved every $1$ fs for $10$ ps. (a) What is the frequency resolution of the spectrum computed by FFT, in THz and in cm$^{-1}$ ($c=3\times10^{10}$ cm/s)? (b) What is the highest frequency that can be represented? (c) What would you change to resolve two peaks $1$ cm$^{-1}$ apart?</p>
+            <details class="hint"><summary>Hint</summary><p>Resolution $=1/T$, Nyquist frequency $=1/(2\Delta t)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Delta f=1/T=1/(10\ \mathrm{ps})=0.1$ THz $=10^{11}/(3\times10^{10})=3.3$ cm$^{-1}$. (b) $f_\mathrm{max}=1/(2\Delta t)=1/(2\ \mathrm{fs})=500$ THz $=16\,700$ cm$^{-1}$, far above any vibration (C&ndash;H stretches are near $3000$ cm$^{-1}$, $90$ THz). (c) Peaks closer than $3.3$ cm$^{-1}$ merge: a record of $T=1/(1\ \mathrm{cm^{-1}}\times c)=33$ ps or longer is needed (and a window that does not widen the lines). Saving more often than every $1$ fs does not help the resolution. Zero-padding the record interpolates the spectrum but does not separate the peaks.</p>
+            <p class="answer">(a) $0.1$ THz $=3.3$ cm$^{-1}$  (b) $500$ THz  (c) run $\ge33$ ps</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>A code runs $12$ times faster on $16$ cores than on $1$. (a) What serial fraction does Amdahl&rsquo;s law imply? (b) What speed-up do you expect on $64$ cores, and what is the maximum? (c) What other effects, not in the law, would make the real speed-up smaller?</p>
+            <details class="hint"><summary>Hint</summary><p>$1/S=s+(1-s)/p$: solve for $s$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $1/12=s+(1-s)/16$, i.e. $0.08333=0.0625+0.9375\,s$, so $s=0.0208/0.9375=0.0222$: $2.2\%$ of the work is serial. (b) $S_{64}=1/(0.0222+0.9778/64)=1/(0.0222+0.01528)=26.7$, and the limit is $1/s=45$. Quadrupling the cores from $16$ to $64$ speeds the run up by only $26.7/12=2.2$. (c) Communication between processors (which grows with the number of processors for a fixed problem), load imbalance (the slowest processor decides), memory bandwidth shared between cores (the memory-bound kernels of Lecture 8 saturate a node with a few cores), and input/output. A scaling test (the same problem on $1, 2, 4, 8,\dots$ cores) measures the sum of all these, and should precede any large allocation request.</p>
+            <p class="answer">(a) $2.2\%$  (b) $26.7$; maximum $45$  (c) communication, imbalance, memory bandwidth</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc202-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>You relax a structure of $10^5$ atoms ($n=3\times10^5$ coordinates). (a) How much memory would a dense Hessian or its inverse (BFGS) need? (b) How much does L-BFGS with $m=10$ need? (c) How would you decide between conjugate gradients, L-BFGS and FIRE for a given system?</p>
+            <details class="hint"><summary>Hint</summary><p>A dense $n\times n$ matrix of doubles needs $8n^2$ bytes; L-BFGS stores $2m$ vectors of length $n$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $8n^2=8\times(3\times10^5)^2=7.2\times10^{11}$ bytes $=720$ GB: impossible on one node, and the update would cost $n^2=10^{11}$ operations per step. (b) $2mn\times8=2\cdot10\cdot3\times10^5\cdot8=4.8\times10^7$ bytes $=48$ MB and $O(mn)$ operations per step: trivial. (c) Test on a small representative case and count force evaluations, since the force is the dominant cost: nonlinear CG is simple and robust for smooth surfaces but needs a good line search; L-BFGS usually needs the fewest force calls on smooth problems; FIRE (damped molecular dynamics with an adaptive step) is the most robust on rough or noisy surfaces and for systems near a saddle, and is what many codes (LAMMPS <code>min_style fire</code>, ASE) offer as default. Whatever the choice, the final convergence criterion (force threshold) should be the same for a fair comparison, and the result must be checked for a minimum with a Hessian calculation (phonons).</p>
+            <p class="answer">(a) $720$ GB  (b) $48$ MB  (c) compare force-evaluation counts on a small case</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qc202-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Core</span></div>
+            <p>Explain in your own words why the explicit scheme for the heat equation has a stability limit but the implicit schemes do not, and what the practical cost of the implicit scheme is.</p>
+            <details class="solution"><summary>Solution</summary><p>Explicit: $u^{n+1}$ is computed from $u^n$ alone; the amplification factor of the shortest grid mode is $1-4r$, with magnitude above $1$ for $r=D\tau/h^2&gt;1/2$, so rounding errors in that mode double each step; physically a disturbance must not move farther than one cell per step. Implicit: $u^{n+1}$ is defined by a linear system involving all cells, which damps all modes ($|g|=1/(1+4r\sin^2)\le1$ for any $r$). The price is a sparse linear solve per step (tridiagonal in 1D, a sparse or iterative solve in 2D&ndash;3D), and accuracy still demands $\tau$ small compared with the evolution time of the solution.</p></details>
+            </div>
+            <div class="problem" id="qc202-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Core</span></div>
+            <p>Define stiffness and give two examples from materials modelling. What symptom tells you that an explicit adaptive solver is being used on a stiff problem?</p>
+            <details class="solution"><summary>Solution</summary><p>A problem is stiff if it contains modes that decay much faster than the time scale of interest, so that the stability of explicit methods, not accuracy, restricts the step. Examples: reaction networks with widely different rate constants (point-defect kinetics, oxidation); diffusion on a fine mesh (fastest mode $4D/h^2$); the Cahn&ndash;Hilliard equation ($h^{-4}$). Symptom: the adaptive solver takes an enormous number of tiny steps although the solution is smooth (Robertson: $1.7$ million steps for $t=1000$) and the step does not grow when the tolerance is loosened. The cure is an implicit method (Radau, BDF, LSODA).</p></details>
+            </div>
+            <div class="problem" id="qc202-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>You minimise an energy with BFGS and obtain a structure with $|\mathbf F|_\mathrm{max}&lt;10^{-4}$ eV/&Aring;. List two checks before you trust it as the ground state.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) That it is a minimum and not a saddle point: compute the phonons or the Hessian and look for imaginary frequencies; if there are any, displace along the unstable mode and re-relax. (2) That it is the lowest minimum you can find: repeat from several different starting structures (random displacements, other candidate structures, a short annealing run) and compare energies; a local optimiser never tells you that a lower minimum exists. Also check that the energy and structure do not change when the convergence criteria of the underlying energy calculation (cutoff, k points) are tightened.</p></details>
+            </div>
+            <div class="problem" id="qc202-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>A periodic function sampled at $N=64$ points is differentiated by finite differences and by FFT. When do you prefer each?</p>
+            <details class="solution"><summary>Solution</summary><p>The FFT derivative is exponentially accurate for smooth, periodic data (error $10^{-14}$ for $\mathrm e^{\sin x}$ with $32$ points) and costs $O(N\log N)$; use it for periodic problems such as a periodic box and for smooth fields. Finite differences are local (cost $O(N)$, parallelise easily, handle non-periodic boundaries, variable grids and discontinuous coefficients) and their error is algebraic ($h^2$ or $h^4$); use them when the function is not smooth, not periodic, or when locality is needed. For a non-periodic function the FFT derivative has Gibbs oscillations near the boundaries.</p></details>
+            </div>
+            <div class="problem" id="qc202-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>A graduate student reports that their parallel Monte Carlo code gives different results with $1$ and with $32$ processors, although all runs use the same seed. Name two possible causes.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) The random-number streams on different processors are not the same as the single stream: with a single seed each processor either draws a different part of one stream (the order depends on the number of processors and scheduling) or the same stream is repeated on all (correlated replicas). A different decomposition of the work then gives statistically equivalent but not identical numbers; differences within the statistical error are expected. (2) A parallel reduction (a sum over processors) adds floating-point numbers in a different order, so the results differ in the last digits; in a chaotic dynamics these differences grow exponentially. What must hold is statistical agreement, not bitwise equality: compare averages with error bars, using independent streams from <code>SeedSequence.spawn</code>.</p></details>
+            </div>
+            <div class="problem" id="qc202-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>You need to estimate the vibrational density of states of a metal from a molecular-dynamics run, a free energy surface from many short runs and the structure factor of a polycrystal from a $2000^3$ grid. Name, for each, the numerical tool of this course that does most of the work and one pitfall.</p>
+            <details class="solution"><summary>Solution</summary><p>(1) Vibrational DOS: FFT of the velocity autocorrelation function. Pitfalls: aliasing from too sparse saving (Nyquist), leakage (use the autocorrelation or a window), resolution $1/T$. (2) Free-energy surface from short runs: analysis of a histogram or a fit, solved by least squares (QR/SVD) or an optimiser; pitfalls: strong correlation between samples (the statistical error needs the autocorrelation time), ill-conditioned fits of high-degree polynomials. (3) Structure factor on a $2000^3=8\times10^9$ grid: a three-dimensional FFT, $O(N\log N)$ in the $8\times10^9$ points; the memory ($64$ GB for doubles, $128$ GB complex) is the problem, not the time: use single precision or a distributed FFT, a smaller grid, or a smaller region of reciprocal space.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>LeVeque, R. J., <em>Finite Difference Methods for Ordinary and Partial Differential Equations</em>, SIAM: the best compact introduction to stability, consistency, convergence and the modified-equation view of numerical diffusion. Strikwerda, J. C., <em>Finite Difference Schemes and Partial Differential Equations</em>, SIAM: von Neumann analysis and the CFL condition.</li>
+                <li>Hairer, E., N&oslash;rsett, S. P. and Wanner, G., <em>Solving Ordinary Differential Equations I: Nonstiff Problems</em>, and Hairer, E. and Wanner, G., <em>II: Stiff and Differential-Algebraic Problems</em>, Springer: Runge&ndash;Kutta and implicit methods; Robertson&rsquo;s problem is a standard test there. Ascher, U. M. and Petzold, L. R., <em>Computer Methods for Ordinary Differential Equations and Differential-Algebraic Equations</em>, SIAM.</li>
+                <li>Nocedal, J. and Wright, S. J., <em>Numerical Optimization</em>, Springer: line search, BFGS, L-BFGS, trust regions. Wales, D. J., <em>Energy Landscapes</em>, Cambridge University Press: Lennard-Jones clusters, basin hopping and global optimisation; Bitzek, E. et al., <em>Physical Review Letters</em> <strong>97</strong>, 170201 (2006): the FIRE relaxation algorithm.</li>
+                <li>Golub, G. H. and Van Loan, C. F., <em>Matrix Computations</em>, Johns Hopkins University Press: eigenvalue algorithms (QR, Lanczos). Lehoucq, R. B., Sorensen, D. C. and Yang, C., <em>ARPACK Users&rsquo; Guide</em>, SIAM.</li>
+                <li>Trefethen, L. N., <em>Spectral Methods in MATLAB</em>, SIAM: spectral differentiation and diffusion in a few lines; Cooley, J. W. and Tukey, J. W., <em>Mathematics of Computation</em> <strong>19</strong>, 297 (1965); Harris, F. J., <em>Proceedings of the IEEE</em> <strong>66</strong>, 51 (1978): windows.</li>
+                <li>Hager, G. and Wellein, G., <em>Introduction to High Performance Computing for Scientists and Engineers</em>, CRC Press; O&rsquo;Neill, M. E., &ldquo;PCG: a family of simple fast space-efficient statistically good algorithms for random number generation&rdquo;, Harvey Mudd College report HMC-CS-2014-0905 (the generator behind NumPy&rsquo;s default).</li>
+                <li>MIT OpenCourseWare 18.336J <em>Numerical Methods for Partial Differential Equations</em> and 18.337J <em>Parallel Computing and Scientific Machine Learning</em>; SciPy documentation (<code>scipy.integrate</code>, <code>scipy.optimize</code>, <code>scipy.sparse.linalg</code>, <code>scipy.fft</code>).</li>
+                <li>The programs of this course are in <code>labs/comp-202</code> of the repository. Previous: <a href="numerical-methods-essentials.html">COMP 201</a>. Applications: <a href="lab-diffusion-fipy.html">LAB 506</a> (FiPy: implicit diffusion and Cahn&ndash;Hilliard), <a href="lab-fem-scikit-fem.html">LAB 507</a> (finite elements), <a href="lab-phonons-phonopy.html">LAB 301</a> (eigenvalues of the dynamical matrix), <a href="lab-dft-pyscf.html">LAB 501</a> (eigenvalue problems and basis sets). The courses that use these methods are <a href="molecular-dynamics.html">CMS 502</a>, <a href="diffusion-and-kinetics.html">CMS 504</a>, <a href="phase-field-modelling.html">CMS 505</a> and <a href="finite-element-method.html">CMS 506</a>.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="numerical-methods-essentials.html"><span class="dir">Previous course</span>Numerical methods I: errors, equations and linear algebra</a>
+<span class="spacer"></span>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=d98cf114"></script>
+    <script src="../assets/pathdata.js?v=bb1778c0"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>

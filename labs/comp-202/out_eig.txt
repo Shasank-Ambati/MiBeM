@@ -1,0 +1,29 @@
+1. power iteration: convergence of the Rayleigh quotient for a symmetric matrix with eigenvalues 1, r, r^2, ...
+      r = |l2/l1|     iterations to reach error 1e-10     predicted  ln(1e-10/(1-r))/(2 ln r)
+       0.500                  17                               16.1
+       0.900                  96                               98.3
+       0.990                 924                              916.4
+       0.999                7932                             8055.0
+
+2. the QR algorithm for a random symmetric 6 x 6 matrix: sweeps until the off-diagonal part is below 1e-12 ||A||
+   unshifted QR iterations: 205 sweeps;   eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]
+   shifted QR with deflation: 17 sweeps; eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]
+   numpy.linalg.eigvalsh      :              eigenvalues [-2.06623893 -1.34843964 -0.10608483  0.15873992  0.60100713  2.37948881]
+
+3. tight binding: the electronic levels of a chain of N atoms with hopping -t (t = 1), eigenvalues of -t (adjacency matrix)
+   open chain N =   6: lowest level -1.801938, highest 1.801938, max |numerical - analytic| = 1.6e-15   (band edge -2 and +2 as N grows)
+   open chain N =  10: lowest level -1.918986, highest 1.918986, max |numerical - analytic| = 1.1e-15   (band edge -2 and +2 as N grows)
+   open chain N = 100: lowest level -1.999033, highest 1.999033, max |numerical - analytic| = 1.3e-15   (band edge -2 and +2 as N grows)
+   benzene ring (Hueckel, N = 6 with periodic closure): levels [-2. -1. -1.  1.  1.  2.]   (alpha +- 2 beta, alpha +- beta twice)
+   a defect (site energy +0.8 on the first atom of an open chain of 12): lowest level -1.9377 (clean chain -1.9419), highest 1.9625; the state above the clean chain's top level has weight 0.070 on the defect atom
+
+4. lowest 6 eigenvalues of the 2D Laplacian (Dirichlet) on an m x m grid: dense eigh versus Lanczos (eigsh)
+      m       n    dense eigh (s)   eigsh (s)   max relative difference    lowest eigenvalue / exact pi^2 * 2
+     20     400          0.023      0.0043       1.8e-13                 0.998136
+     40    1600          0.274      0.0144       5.0e-13                 0.999511
+     80    6400         11.042      0.0620       2.5e-12                 0.999875
+    120   14400            nan      0.2272          n/a                    0.999944
+
+5. sensitivity of eigenvalues: symmetric versus non-symmetric matrices (n = 10, perturbation of size 1e-10 in one entry)
+   Jordan block (all eigenvalues 1): perturbed eigenvalues deviate by up to 0.100   (the 10th root of 1e-10 is 0.1)
+   symmetric matrix diag(1..10): eigenvalues change by up to 0.0e+00

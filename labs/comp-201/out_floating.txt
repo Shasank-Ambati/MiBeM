@@ -1,0 +1,29 @@
+machine epsilon (float64): 2.220446049250313e-16   float32: 1.1920929e-07
+0.1 + 0.2 = 0.30000000000000004   == 0.3 ? False
+largest float64: 1.7976931348623157e+308   smallest normal: 2.2250738585072014e-308
+
+1. cancellation: f(x) = (1 - cos x)/x^2  (exact limit 1/2 as x -> 0)
+      x          naive             stable (2 sin^2(x/2)/x^2)
+      1e-01   0.4995834722     0.4995834722
+      1e-03   0.4999999583     0.4999999583
+      1e-05   0.5000000414     0.5000000000
+      1e-07   0.4996003611     0.5000000000
+      1e-08   0.0000000000     0.5000000000
+      1e-09   0.0000000000     0.5000000000
+
+2. quadratic x^2 - 2bx + c = 0 with b = 1e8, c = 1: the small root is c/(2b) ~ 5e-9
+   naive  b - sqrt(b^2-c) = 0.000000e+00
+   stable c/(b + sqrt(b^2-c)) = 5.000000e-09
+   relative error of the naive root = 1.00e+00
+
+3. summation of 10^7 terms 0.1: exact sum 1 000 000
+   plain loop over the first 10^6 terms: 100000.0000013329   (exact 100000)
+   np.sum (pairwise)           : 1000000.0000000000
+   math.fsum (exact rounding)  : 1000000.0000000000
+   float32 loop, first 10^6 terms: 100958.3438   (exact 100000)
+
+4. condition number of a function: f(x) = x - 1 near x = 1  (relative condition |x f'/f|)
+   x = 2.0        kappa = 2.000e+00
+   x = 1.1        kappa = 1.100e+01
+   x = 1.001      kappa = 1.001e+03
+   x = 1.000001   kappa = 1.000e+06

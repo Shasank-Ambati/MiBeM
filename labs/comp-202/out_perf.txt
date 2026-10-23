@@ -1,0 +1,35 @@
+1. the sum of all pair distances of N random points in 3D: the same O(N^2) work written three ways
+      N     pure Python     NumPy (N x N x 3 array)     Numba (compiled loops)    results agree
+     200       0.0041 s           0.0020 s                0.00004 s            yes
+    1000       0.1046 s           0.0454 s                0.00109 s            yes
+    3000       1.0188 s           0.4389 s                0.01281 s            yes
+   (the NumPy version builds an N x N x 3 array of 8-byte numbers: 216 MB at N = 3000)
+
+2. memory-bound versus compute-bound: y = a x + y (2 flops per 24 bytes moved) and a matrix product (2 n^3 flops on 3 n^2 numbers)
+   axpy, n = 1e7: 72.9 ms -> 3.3 GB/s of memory traffic, 0.27 GFlop/s
+   matrix product, n = 2000: 88.8 ms -> 180.3 GFlop/s
+   the same machine runs the compute-bound kernel 657 times faster in flops: the first is limited by the memory bus, not by the processor
+
+3. Amdahl's law: speed-up of a code in which a fraction s is serial, on p processors: S = 1/(s + (1-s)/p)
+   serial fraction s     p = 4     p = 16     p = 64    p = 1024    limit 1/s
+       0.500              1.6        1.9        2.0        2.0          2
+       0.100              3.1        6.4        8.8        9.9         10
+       0.010              3.9       13.9       39.3       91.2        100
+       0.001              4.0       15.8       60.2      506.2       1000
+
+4. profiling: where does a program spend its time?
+         24037 function calls in 0.399 seconds
+   Ordered by: cumulative time
+   List reduced from 12 to 6 due to restriction <6>
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.399    0.399 perf.py:63(run)
+        5    0.201    0.040    0.399    0.080 perf.py:56(slow_force)
+     8000    0.008    0.000    0.198    0.000 {method 'sum' of 'numpy.ndarray' objects}
+     8000    0.007    0.000    0.190    0.000 _methods.py:47(_sum)
+     8000    0.183    0.000    0.183    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+        5    0.000    0.000    0.000    0.000 numeric.py:97(zeros_like)
+
+5. random-number streams: reproducibility and independent streams for parallel runs
+   default_rng(42) twice: [0.773956 0.438878 0.858598] and [0.773956 0.438878 0.858598] -> identical: True
+   4 child streams of SeedSequence(2024): largest off-diagonal correlation of 1e5 samples = 0.0019 (expected size 1/sqrt(N) = 0.0032)
+   a bad habit: seeding with the clock or with seed + rank gives correlated or repeated streams in some generators; use SeedSequence.spawn

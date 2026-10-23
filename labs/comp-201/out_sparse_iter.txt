@@ -1,0 +1,20 @@
+1. one-dimensional problem  -u'' = f : tridiagonal matrix, n unknowns
+      n     dense LAPACK   banded (solveh_banded)   sparse (spsolve)   [seconds]
+     500         0.0042             0.000226              0.000770
+    2000         0.0797             0.000193              0.001119
+    4000         0.4742             0.000325              0.003012
+    8000         3.9256             0.000323              0.003943
+
+2. iterative methods for the 1D problem (tolerance: relative residual 1e-8)
+      n    cond(A)   Jacobi iterations   Gauss-Seidel   conjugate gradients
+     20        178           1633              818             10
+     40        681           6238             3120             20
+     80       2658          24354            12178             40
+    160      10505          96217            48110             80
+
+3. two-dimensional Poisson problem on an m x m grid (n = m^2 unknowns, 5 non-zeros per row)
+      m        n     non-zeros   non-zeros in L+U   spsolve (s)   CG iterations   CG (s)
+     50     2500       12300           116504        0.006           93      0.005
+    100    10000       49600           645750        0.029          187      0.018
+    200    40000      199200          3472176        0.173          369      0.202
+    400   160000      798400         17537956        2.266          734      1.455
