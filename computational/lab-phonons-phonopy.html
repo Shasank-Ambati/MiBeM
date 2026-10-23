@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab: Phonons with phonopy - MiBeM</title>
+    <meta name="description" content="Hands-on lattice dynamics with phonopy and ASE: finite-displacement force constants of copper, the phonon band structure and density of states, thermodynamic properties and the Debye temperature, convergence checks, dynamical instability, and thermal expansion from the Gruneisen parameter.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/lab-phonons-phonopy.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Lab: Phonons with phonopy - MiBeM">
+    <meta property="og:description" content="Hands-on lattice dynamics with phonopy and ASE: finite-displacement force constants of copper, the phonon band structure and density of states, thermodynamic properties and the Debye temperature, convergence checks, dynamical instability, and thermal expansion from the Gruneisen parameter.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/lab-phonons-phonopy.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="48">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#install">Step 1. Install</a></li>
+                <li><a href="#theory">Step 2. What is computed</a></li>
+                <li><a href="#workflow">Step 3. The workflow in code</a></li>
+                <li><a href="#bands">Step 4. Band structure and density of states</a></li>
+                <li><a href="#thermo">Step 5. Thermodynamic properties</a></li>
+                <li><a href="#conv">Step 6. Convergence and sanity checks</a></li>
+                <li><a href="#gru">Step 7. Volume dependence: the Gr&uuml;neisen parameter and thermal expansion</a></li>
+                <li><a href="#dft">Step 8. Using forces from DFT (template; not run here)</a></li>
+                <li><a href="#errors">Step 9. Typical problems</a></li>
+                <li><a href="#check">Exercises</a></li>
+                <li><a href="#refs">Going further and references</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 301</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-phonons-phonopy.html" class="here" aria-current="page" title="LAB 301: Lab: Phonons with phonopy">301</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a><a href="lab-ising-monte-carlo.html" title="LAB 504: Lab: Monte Carlo of the Ising model">504</a><a href="lab-calphad-pycalphad.html" title="LAB 505: Lab: Phase diagrams with CALPHAD and pycalphad">505</a></nav>
+<!-- coursenav:end -->
+            <h1>Lab: Phonons with phonopy</h1>
+            <p class="lead">Atoms in a crystal vibrate around their equilibrium positions, and these vibrations carry the heat, determine the heat capacity and the thermal expansion, scatter the electrons that cause electrical resistance, and tell whether a structure is stable. In the harmonic approximation they are the <strong>phonons</strong>. This lab computes the phonons of copper from forces, in four steps: displace atoms, compute the forces, build the force constants, and diagonalise the dynamical matrix. The forces here come from the built-in EMT potential of ASE so that the whole lab runs in seconds; the workflow is identical when they come from DFT, and Step 8 shows how to switch.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 23 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="solid-state-physics.html">PHYS 302: Solid state physics</a><br><a href="eigenvalues-and-decompositions.html">MATH 202: Linear algebra II</a><br><a href="lab-structures-ase.html">LAB 201: ASE: structures</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 3: advanced theory</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>By the end of this lab you will be able to:</strong>
+                <ul>
+                    <li>Explain how force constants and the dynamical matrix lead to phonon frequencies.</li>
+                    <li>Run the finite-displacement workflow with phonopy and ASE.</li>
+                    <li>Read and plot a phonon band structure and density of states, and convert between THz, meV, cm<sup>-1</sup> and kelvin.</li>
+                    <li>Obtain the heat capacity, entropy and Debye temperature from the phonons.</li>
+                    <li>Test convergence with the supercell size and the reference structure, and recognise an imaginary mode.</li>
+                    <li>Estimate the thermal expansion from the volume dependence of the frequencies.</li>
+                </ul>
+                <strong>Companion courses:</strong> <a href="solid-state-physics.html">PHYS 302</a> (the physics of phonons), <a href="eigenvalues-and-decompositions.html">MATH 202</a> (eigenvalues), <a href="thermal-physics.html">PHYS 102</a> (heat capacity). <strong>Before this lab:</strong> <a href="lab-structures-ase.html">LAB 201</a> (ASE, EMT).
+            </div>
+            <div class="lab-meta"><div><b>Time</b>3 hours</div><div><b>Software</b>Python 3.9+, phonopy, ASE, numpy, scipy, matplotlib</div><div><b>System</b>fcc copper, 2 to 216 atoms per supercell</div><div><b>Run time</b>seconds per script</div></div>
+            <h2 id="install">Step 1. Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+            <pre data-file="shell"><code>python3 -m venv ~/venvs/phon &amp;&amp; source ~/venvs/phon/bin/activate
+            pip install phonopy ase numpy scipy matplotlib
+            python -c &quot;import phonopy, ase; print(phonopy.__version__, ase.__version__)&quot;</code></pre>
+            <pre class="out"><code>4.8.4 3.29.0</code></pre>
+            <p>(These are the versions used for this page. If a function of the script is renamed in a future version, the error message names the new one; the phonopy documentation is at <code>phonopy.github.io/phonopy</code>.) phonopy is also a command-line program that reads files of VASP, Quantum ESPRESSO, CASTEP and other codes; here we use its Python interface, which is easier to follow.</p>
+            <h2 id="theory">Step 2. What is computed<a class="anchor" href="#theory" aria-label="Link to this section">#</a></h2>
+            <p>Expand the energy of the crystal to second order in the displacements $u_{i\alpha}$ of the atoms from equilibrium (Cartesian direction $\alpha$): $E=E_0+\tfrac12\sum\Phi_{i\alpha,j\beta}u_{i\alpha}u_{j\beta}$. The matrix of <strong>force constants</strong> $\Phi_{i\alpha,j\beta}=\partial^2E/\partial u_{i\alpha}\partial u_{j\beta}=-\partial F_{j\beta}/\partial u_{i\alpha}$ is a property of the structure and of the interatomic forces. Searching for plane-wave solutions $u\propto e^{i(\mathbf q\cdot\mathbf R-\omega t)}$ gives the eigenvalue problem (<a href="solid-state-physics.html">PHYS 302</a>)
+            $$D_{\alpha\beta}(\mathbf q)\,e_\beta=\omega^2e_\alpha,\qquad D_{\alpha\beta}(\mathbf q)=\sum_{j}\frac{\Phi_{0\alpha,j\beta}}{\sqrt{m_0m_j}}\,e^{i\mathbf q\cdot\mathbf R_j},$$
+            whose $3n$ eigenvalues for each $\mathbf q$ are the squared frequencies of the branches (for a primitive cell with $n$ atoms). Two facts you will see in the results: the three lowest branches go to zero at $\mathbf q=0$ (the acoustic modes: rigid translations cost no energy); and a negative eigenvalue $\omega^2&lt;0$ means an imaginary frequency, i.e. the structure is not at a minimum of the energy but at a saddle point.</p>
+            <p>In the <strong>finite-displacement</strong> method, $\Phi$ is obtained by displacing one atom by a small distance (here $0.01$ &Aring;) along a Cartesian axis and reading the forces on all atoms: $\Phi_{i\alpha,j\beta}\approx-[F_{j\beta}(u)-F_{j\beta}(0)]/u$. The calculation has to be done in a <em>supercell</em>, because a displacement in a periodic crystal is repeated in every cell; the supercell must be larger than the range of the force constants. The symmetry of the crystal reduces the number of displaced supercells to the minimum: for fcc copper the whole force-constant matrix follows from <em>one</em> displacement.</p>
+            <h2 id="workflow">Step 3. The workflow in code<a class="anchor" href="#workflow" aria-label="Link to this section">#</a></h2>
+            <pre data-file="phonons_cu.py"><code>&quot;&quot;&quot;Phonons of fcc copper with phonopy, using ASE&#x27;s EMT potential for the forces (finite-displacement method).&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)
+            import matplotlib.pyplot as plt
+            from ase import Atoms
+            from ase.build import bulk
+            from ase.calculators.emt import EMT
+            from ase.optimize import BFGS
+            from ase.filters import FrechetCellFilter
+            from phonopy import Phonopy
+            from phonopy.structure.atoms import PhonopyAtoms
+
+            def make_phonopy(atoms, n, distance=0.01):
+                &quot;&quot;&quot;Displace atoms in an n x n x n supercell, compute the forces with EMT, and build the force constants.&quot;&quot;&quot;
+                cell = PhonopyAtoms(symbols=atoms.get_chemical_symbols(), cell=atoms.cell.array, scaled_positions=atoms.get_scaled_positions())
+                ph = Phonopy(cell, supercell_matrix=np.diag([n, n, n]))
+                ph.generate_displacements(distance=distance)
+                forces = []
+                for sc in ph.supercells_with_displacements:
+                    at = Atoms(sc.symbols, cell=sc.cell, scaled_positions=sc.scaled_positions, pbc=True); at.calc = EMT()
+                    forces.append(at.get_forces())
+                ph.forces = forces
+                ph.produce_force_constants()
+                return ph
+
+            if __name__ == &quot;__main__&quot;:
+                # 1. relax the primitive cell (positions and cell) with the same potential: phonons need zero force and zero stress
+                cu = bulk(&quot;Cu&quot;, &quot;fcc&quot;, a=3.6); cu.calc = EMT()
+                BFGS(FrechetCellFilter(cu), logfile=None).run(fmax=1e-4)
+                print(&quot;relaxed lattice constant a = %.4f A&quot; % (2 * cu.cell[0, 1]))
+
+                ph = make_phonopy(cu, 4)
+                print(&quot;number of displaced supercells: %d, atoms per supercell: %d&quot; % (len(ph.supercells_with_displacements), len(ph.supercells_with_displacements[0].symbols)))
+
+                # 2. frequencies (THz) at high-symmetry points
+                pts = {&quot;Gamma&quot;: [0, 0, 0], &quot;X&quot;: [0.5, 0, 0.5], &quot;L&quot;: [0.5, 0.5, 0.5], &quot;K&quot;: [0.375, 0.375, 0.75]}
+                print(&quot;\nfrequencies (THz) of the three branches&quot;)
+                for name, q in pts.items():
+                    ph.run_qpoints([q]); f = ph.qpoints.frequencies[0]
+                    print(&quot;  %-6s %s&quot; % (name, &quot;  &quot;.join(&quot;%6.3f&quot; % x for x in f)))
+
+                # 3. band structure and density of states
+                G, X, W, K, L = [0, 0, 0], [0.5, 0, 0.5], [0.5, 0.25, 0.75], [0.375, 0.375, 0.75], [0.5, 0.5, 0.5]
+                path = [[G, X, W, K, G, L]]
+                qpoints = [np.linspace(a, b, 60) for a, b in zip(path[0][:-1], path[0][1:])]
+                ph.run_band_structure(qpoints, labels=[&quot;Γ&quot;, &quot;X&quot;, &quot;W&quot;, &quot;K&quot;, &quot;Γ&quot;, &quot;L&quot;])
+                ph.run_mesh([24, 24, 24]); ph.run_total_dos(sigma=0.1)
+                fig, ax = plt.subplots(1, 2, figsize=(8, 3.6), gridspec_kw={&quot;width_ratios&quot;: [3, 1]}, sharey=True)
+                bs = ph.band_structure
+                for d, f in zip(bs.distances, bs.frequencies): ax[0].plot(d, f, &quot;k&quot;, lw=1)
+                ticks = [d[0] for d in bs.distances] + [bs.distances[-1][-1]]
+                ax[0].set_xticks(ticks); ax[0].set_xticklabels([&quot;Γ&quot;, &quot;X&quot;, &quot;W&quot;, &quot;K&quot;, &quot;Γ&quot;, &quot;L&quot;]); ax[0].set_ylabel(&quot;frequency (THz)&quot;)
+                for t in ticks: ax[0].axvline(t, color=&quot;grey&quot;, lw=0.5)
+                ax[1].plot(ph.total_dos.dos, ph.total_dos.frequency_points, &quot;k&quot;); ax[1].set_xlabel(&quot;DOS&quot;)
+                fig.tight_layout(); fig.savefig(&quot;cu_phonons.png&quot;, dpi=130)
+                fmax = ph.total_dos.frequency_points[np.where(ph.total_dos.dos &gt; 1e-3)[0][-1]]
+                print(&quot;\nhighest frequency in the DOS: about %.2f THz = %.1f meV = %.0f cm^-1&quot; % (fmax, fmax * 4.13567, fmax * 33.3564))
+
+                # 4. thermodynamics from the harmonic phonons
+                ph.run_mesh([30, 30, 30]); ph.run_thermal_properties(t_min=10, t_max=1000, t_step=10)
+                tp = ph.thermal_properties
+                T, F, S, Cv = tp.temperatures, tp.free_energy, tp.entropy, tp.heat_capacity   # kJ/mol, J/K/mol, J/K/mol
+                print(&quot;\n   T (K)   F_vib (kJ/mol)   S (J/K/mol)   C_v (J/K/mol)   C_v/3R&quot;)
+                R = 8.314462618
+                for t in (50, 100, 200, 300, 500, 1000):
+                    i = list(T).index(t); print(&quot;  %5d    %9.3f      %8.2f      %8.2f        %.3f&quot; % (t, F[i], S[i], Cv[i], Cv[i] / (3 * R)))
+                np.save(&quot;cu_cv.npy&quot;, np.array([T, Cv]))
+
+                # 5. Debye temperature that reproduces C_v at each temperature
+                from scipy.integrate import quad
+                from scipy.optimize import brentq
+                def cv_debye(T, theta):
+                    f = lambda x: x**4 * np.exp(x) / (np.exp(x) - 1) ** 2
+                    return 9 * R * (T / theta) ** 3 * quad(f, 0, theta / T)[0]
+                print(&quot;\nT (K)   theta_D that reproduces C_v (K)&quot;)
+                for t in (50, 100, 200, 300):
+                    i = list(T).index(t); print(&quot;  %4d    %5.0f&quot; % (t, brentq(lambda th: cv_debye(t, th) - Cv[i], 100, 1000)))</code></pre>
+            <p>The function <code>make_phonopy</code> does the whole job: it passes the cell to phonopy with the supercell matrix $n\times n\times n$, asks for the symmetry-reduced displacements, computes the forces with EMT in each displaced supercell, and builds the force constants. Before it, the primitive cell is relaxed (cell vectors and atoms) with the <em>same</em> potential so that the forces are zero in the reference structure; the result is $a=3.5898$ &Aring;, which agrees with the equation-of-state result of Step 5 of <a href="lab-structures-ase.html">LAB 201</a> ($3.590$ &Aring;). The output of the first part:</p>
+            <pre class="out"><code>relaxed lattice constant a = 3.5898 A
+            number of displaced supercells: 1, atoms per supercell: 64
+
+            frequencies (THz) of the three branches
+              Gamma  -0.000  -0.000  -0.000
+              X       5.530   5.530   8.141
+              L       3.549   3.549   8.067
+              K       4.974   6.544   7.504
+
+            highest frequency in the DOS: about 8.34 THz = 34.5 meV = 278 cm^-1</code></pre>
+            <p>One displaced supercell of $64$ atoms was enough, as announced. At $\Gamma$ the three frequencies are zero (acoustic modes; the printed &ldquo;$-0.000$&rdquo; is numerical noise of $10^{-6}$ THz). At the zone-boundary points the frequencies are those of Step 4. The unit that phonopy uses is THz (as ordinary frequency $\nu$, so $\omega=2\pi\nu$). Conversions: $1$ THz $=4.136$ meV $=33.36$ cm$^{-1}=47.99$ K ($h\nu/k_\mathrm B$). The highest frequency $8.1$ THz corresponds to $34$ meV, $272$ cm$^{-1}$ and $391$ K: the vibration with the shortest period ($0.12$ ps, Exercise 1).</p>
+            <h2 id="bands">Step 4. Band structure and density of states<a class="anchor" href="#bands" aria-label="Link to this section">#</a></h2>
+            <p>A phonon band structure plots $\omega(\mathbf q)$ along a path through the high-symmetry points of the Brillouin zone: $\Gamma$ (centre), X (zone face centre, $\tfrac12\,0\,\tfrac12$), W, K and L (the hexagonal face centre, $\tfrac12\tfrac12\tfrac12$). The density of states $g(\omega)$ counts the number of modes per frequency interval on a dense mesh of $24^3$ $\mathbf q$ points (the script smooths with a Gaussian of $0.1$ THz).</p>
+            <figure class="lab-fig"><img src="../assets/labs/lab-301/cu_phonons.png" alt="Phonon band structure and density of states of copper" loading="lazy"><figcaption>Phonon band structure of copper with the EMT potential (left) and the density of states (right).</figcaption></figure>
+            <p>Reading the picture: there are three branches because the primitive fcc cell has one atom. Along $\Gamma$&ndash;X the upper branch is longitudinal (LA) and the two lower ones are transverse (TA), degenerate by symmetry. At small $q$ the branches are linear, $\omega=c\,q$, with $c$ the speed of sound (the slope of the LA branch is larger than the TA ones because the longitudinal elastic constants are larger, $C_{11}&gt;C_{44}$; <a href="tensors-stress-and-strain.html">MATH 302</a>). Near the zone boundary the branches flatten: neighbouring atoms are vibrating in antiphase and the group velocity vanishes (van Hove singularities, seen as steps and peaks in the DOS). The DOS grows as $\omega^2$ at low frequency (the Debye behaviour that gives $C_v\propto T^3$), has a shoulder near $4$&ndash;$5.5$ THz from the flat transverse branches, and a sharp peak near $7.5$ THz from the longitudinal branch; the highest frequency is $8.3$ THz. (Neutron scattering finds about $7$ THz as the highest frequency of copper: EMT is a simple model that is about 15% too stiff, which is the kind of deviation expected from a potential fitted to other properties.)</p>
+            <h2 id="thermo">Step 5. Thermodynamic properties<a class="anchor" href="#thermo" aria-label="Link to this section">#</a></h2>
+            <p>With the frequencies $\omega_{\mathbf q s}$ on a mesh, the harmonic free energy is $F=\sum_{\mathbf qs}\left[\tfrac12\hbar\omega+k_\mathrm BT\ln(1-e^{-\hbar\omega/k_\mathrm BT})\right]$, and the entropy and heat capacity follow by differentiation (<a href="thermal-physics.html">PHYS 102</a>; the result for one oscillator is the Einstein function). phonopy does the sums with <code>run_thermal_properties</code>. The last block of the script also finds the Debye temperature $\theta_D$ that makes the Debye model give the same $C_v$ at each $T$:</p>
+            <pre class="out"><code>   T (K)   F_vib (kJ/mol)   S (J/K/mol)   C_v (J/K/mol)   C_v/3R
+                 50        3.170          2.02          5.37        0.215
+                100        2.904          8.96         14.89        0.597
+                200        1.323         21.92         21.61        0.866
+                300       -1.351         31.08         23.37        0.937
+                500       -8.885         43.31         24.36        0.977
+               1000      -35.283         60.38         24.79        0.994
+
+            T (K)   theta_D that reproduces C_v (K)
+                50      332
+               100      340
+               200      344
+               300      345</code></pre>
+            <p>The heat capacity rises from $5.4$ J/mol/K at $50$ K to $23.4$ at $300$ K and $24.8$ at $1000$ K, approaching the <strong>Dulong&ndash;Petit</strong> value $3R=24.94$ J/mol/K (the classical limit, reached when $k_\mathrm BT$ exceeds the highest phonon energy: $T\gg\theta$). The harmonic model has no further increase above $3R$, so it cannot describe the experimental rise from anharmonicity and electrons at high temperature. The zero-point energy is positive ($F=3.17$ kJ/mol at $50$ K, where the entropy is nearly zero: $F\approx E_\mathrm{ZP}=\tfrac12\hbar\sum\omega$), and at high $T$ the free energy falls as $-TS$. The Debye temperatures $332$ to $345$ K that reproduce $C_v$ are close to the measured $\theta_D=343$ K of copper; the slight drift with $T$ shows that real phonon spectra are not exactly Debye-like. (The highest frequency corresponds to $h\nu/k_\mathrm B=400$ K, and the effective $\theta_D$ is smaller than this because it is an average over the whole spectrum, with weight on the lower frequencies.)</p>
+            <h2 id="conv">Step 6. Convergence and sanity checks<a class="anchor" href="#conv" aria-label="Link to this section">#</a></h2>
+            <p>A phonon spectrum can look convincing and be wrong. The second script performs three tests that you should do for every system: the size of the supercell, the lattice constant of the reference structure, and dynamical stability:</p>
+            <pre data-file="phonon_checks.py"><code>&quot;&quot;&quot;Three tests that every phonon calculation needs: supercell size, the reference structure, and dynamical stability.&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import numpy as np
+            from ase.build import bulk
+            from ase.calculators.emt import EMT
+            from ase.optimize import BFGS
+            from ase.filters import FrechetCellFilter
+            from phonons_cu import make_phonopy
+
+            X = [0.5, 0, 0.5]
+            def freq_X(ph):
+                ph.run_qpoints([X]); return ph.qpoints.frequencies[0]
+
+            cu = bulk(&quot;Cu&quot;, &quot;fcc&quot;, a=3.6); cu.calc = EMT(); BFGS(FrechetCellFilter(cu), logfile=None).run(fmax=1e-4)
+            print(&quot;1. supercell size (relaxed Cu, frequencies at X in THz)&quot;)
+            for n in (2, 3, 4, 5, 6):
+                ph = make_phonopy(cu, n); f = freq_X(ph)
+                print(&quot;   %d x %d x %d  (%3d atoms)   %s   lowest acoustic at Gamma: %.3f&quot; % (n, n, n, n**3, &quot;  &quot;.join(&quot;%6.3f&quot; % x for x in f), (lambda q: (ph.run_qpoints([[0, 0, 0]]), ph.qpoints.frequencies[0].min())[1])(0)))
+
+            print(&quot;\n2. reference lattice constant (4x4x4 supercell; the relaxed value is 3.5898 A)&quot;)
+            for a in (3.50, 3.5898, 3.70):
+                c = bulk(&quot;Cu&quot;, &quot;fcc&quot;, a=a); ph = make_phonopy(c, 4)
+                print(&quot;   a = %.4f A   X: %s THz&quot; % (a, &quot;  &quot;.join(&quot;%6.3f&quot; % x for x in freq_X(ph))))
+
+            print(&quot;\n3. dynamical stability: bcc copper (a = 2.85 A, relaxed) with the same potential&quot;)
+            b = bulk(&quot;Cu&quot;, &quot;bcc&quot;, a=2.85); b.calc = EMT(); BFGS(FrechetCellFilter(b), logfile=None).run(fmax=1e-4)
+            print(&quot;   E(bcc) - E(fcc) = %.1f meV/atom&quot; % (1000 * (b.get_potential_energy() - cu.get_potential_energy())))
+            ph = make_phonopy(b, 4)
+            for name, q in {&quot;H&quot;: [0.5, -0.5, 0.5], &quot;N&quot;: [0, 0, 0.5], &quot;P&quot;: [0.25, 0.25, 0.25]}.items():
+                ph.run_qpoints([q]); print(&quot;   %-2s %s THz&quot; % (name, &quot;  &quot;.join(&quot;%7.3f&quot; % x for x in ph.qpoints.frequencies[0])))</code></pre>
+            <pre class="out"><code>1. supercell size (relaxed Cu, frequencies at X in THz)
+               2 x 2 x 2  (  8 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+               3 x 3 x 3  ( 27 atoms)    5.546   5.546   8.157   lowest acoustic at Gamma: -0.000
+               4 x 4 x 4  ( 64 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: -0.000
+               5 x 5 x 5  (125 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+               6 x 6 x 6  (216 atoms)    5.530   5.530   8.141   lowest acoustic at Gamma: 0.000
+
+            2. reference lattice constant (4x4x4 supercell; the relaxed value is 3.5898 A)
+               a = 3.5000 A   X:  6.425   6.425   9.649 THz
+               a = 3.5898 A   X:  5.530   5.530   8.142 THz
+               a = 3.7000 A   X:  4.461   4.461   6.328 THz
+
+            3. dynamical stability: bcc copper (a = 2.85 A, relaxed) with the same potential
+               E(bcc) - E(fcc) = 32.7 meV/atom
+               H    7.672    7.672    7.672 THz
+               N   -1.138    5.435    8.105 THz
+               P    5.815    5.815    5.815 THz</code></pre>
+            <p><strong>1. Supercell size.</strong> The frequencies at X for $2\times2\times2$, $4\times4\times4$, $5\times5\times5$ and $6\times6\times6$ supercells agree to $0.001$ THz ($5.530$, $8.141$); the $3\times3\times3$ supercell is off by $0.016$ THz ($0.3\%$). The reason is commensurability: the X point $(\tfrac12,0,\tfrac12)$ lies on the grid of $\mathbf q$ points that an $n\times n\times n$ supercell describes <em>exactly</em> only for even $n$; for odd $n$ phonopy has to interpolate. Because the EMT force constants are short-ranged, the interpolation error is tiny; with DFT and long-range forces (metals with Kohn anomalies, polar crystals) it can be much larger. The practical rules are to check at least two supercell sizes and to make sure that the displacement does not generate forces that vanish only at the edge of the supercell.</p>
+            <p><strong>2. The reference structure.</strong> Frequencies depend strongly on the lattice constant: the transverse X mode is $6.43$ THz at $a=3.50$ &Aring;, $5.53$ THz at the relaxed $3.5898$ &Aring; and $4.46$ THz at $3.70$ &Aring;. A phonon calculation on a structure that is not relaxed with the same method (for example, the experimental lattice constant with a DFT code that gives a different one) therefore carries an error of tens of percent; if you need the experimental volume, compute at several volumes and use the quasi-harmonic approximation (Step 7).</p>
+            <p><strong>3. Dynamical stability.</strong> The bcc structure of copper, relaxed with EMT, has an energy $32.7$ meV/atom above fcc, and its phonon at the N point has $-1.138$ THz. phonopy reports an imaginary frequency as a negative number (the sign of $\omega^2$). A negative value means that a displacement along that mode lowers the energy: the structure is not a minimum. Here the instability is the shear of the Bain path that transforms bcc into fcc. Small negative values ($&gt;-0.1$ THz) near $\Gamma$ in a real calculation are numerical noise from the finite grid of the DFT code and are usually ignored; larger values at other points are physical or a sign of an unconverged calculation.</p>
+            <h2 id="gru">Step 7. Volume dependence: the Gr&uuml;neisen parameter and thermal expansion<a class="anchor" href="#gru" aria-label="Link to this section">#</a></h2>
+            <p>In the harmonic approximation the crystal does not expand when heated (the phonon frequencies do not depend on the volume). The <strong>quasi-harmonic</strong> approximation lets the frequencies depend on the volume: each mode has a <em>Gr&uuml;neisen parameter</em> $\gamma_{\mathbf qs}=-\partial\ln\omega_{\mathbf qs}/\partial\ln V$, positive in most solids because bonds stiffen on compression, and the thermal pressure of the phonons expands the lattice. The Gr&uuml;neisen relation gives the linear expansion coefficient $\alpha=\gamma C_v/(3BV_m)$ with the average $\gamma$. We compute $\gamma$ for two modes at X from three lattice constants:</p>
+            <pre data-file="gruneisen.py"><code>&quot;&quot;&quot;Mode Gruneisen parameters from the change of phonon frequencies with volume, and the thermal expansion they predict.&quot;&quot;&quot;
+            import warnings; warnings.filterwarnings(&quot;ignore&quot;)
+            import numpy as np
+            from ase.build import bulk
+            from phonons_cu import make_phonopy
+
+            X = [0.5, 0, 0.5]
+            a = np.array([3.54, 3.5898, 3.64])
+            V = a**3 / 4
+            f = []
+            for ai in a:
+                ph = make_phonopy(bulk(&quot;Cu&quot;, &quot;fcc&quot;, a=ai), 4); ph.run_qpoints([X]); f.append(ph.qpoints.frequencies[0][[0, 2]])   # TA and LA at X
+            f = np.array(f)
+            print(&quot;   a (A)    V (A^3)    TA(X) (THz)   LA(X) (THz)&quot;)
+            for ai, Vi, fi in zip(a, V, f): print(&quot;  %.4f   %7.3f     %7.4f      %7.4f&quot; % (ai, Vi, fi[0], fi[1]))
+            g = -np.gradient(np.log(f), np.log(V), axis=0)[1]                 # centred difference at the relaxed volume
+            print(&quot;Gruneisen parameter gamma = -dln(omega)/dln(V):  TA(X) %.2f   LA(X) %.2f&quot; % tuple(g))
+
+            gamma = 2.0                                                     # a typical average value (the true average needs all modes)
+            B, Vm, Cv = 133.2e9, 6.02214e23 * (3.5898e-10) ** 3 / 4, 23.37  # EMT bulk modulus (LAB 201), molar volume, C_v at 300 K (phonons_cu.py)
+            alpha = gamma * Cv / (3 * B * Vm)
+            print(&quot;molar volume %.3f cm^3/mol;  alpha_L = gamma C_v / (3 B V) = %.1f e-6 /K  (gamma = %.1f)&quot; % (Vm * 1e6, alpha * 1e6, gamma))</code></pre>
+            <pre class="out"><code>   a (A)    V (A^3)    TA(X) (THz)   LA(X) (THz)
+              3.5400    11.090      6.0254       8.9752
+              3.5898    11.565      5.5302       8.1416
+              3.6400    12.057      5.0391       7.3123
+            Gruneisen parameter gamma = -dln(omega)/dln(V):  TA(X) 2.14   LA(X) 2.45
+            molar volume 6.965 cm^3/mol;  alpha_L = gamma C_v / (3 B V) = 16.8 e-6 /K  (gamma = 2.0)</code></pre>
+            <p>$\gamma_\mathrm{TA}(X)=2.14$ and $\gamma_\mathrm{LA}(X)=2.45$; the average over all modes needs the whole zone, but a value near $2$ is typical of metals ($\approx2$ for copper experimentally). With $\gamma=2.0$, $B=133.2$ GPa, $V_m=6.965$ cm$^3$/mol and $C_v=23.37$ J/mol/K the expansion coefficient at $300$ K is $\alpha=16.8\times10^{-6}$ K$^{-1}$, in good agreement with the $16.7\times10^{-6}$ from the NPT simulation of the EAM model in <a href="lab-md-lammps-copper.html">LAB 503</a> and with the measured $16.5\times10^{-6}$. Two quite different routes (molecular dynamics, with full anharmonicity at 300 K, and quasi-harmonic lattice dynamics) give the same number, which is evidence that the anharmonicity of copper at room temperature is moderate.</p>
+            <h2 id="dft">Step 8. Using forces from DFT (template; not run here)<a class="anchor" href="#dft" aria-label="Link to this section">#</a></h2>
+            <p>For a real calculation only the force calculator changes. The following is the standard command-line workflow of phonopy with VASP or Quantum ESPRESSO. <strong>These commands were not executed for this lab</strong> (a DFT code is not available in the environment where the page was produced), so they are given as a template; check the option names against the phonopy documentation of your version.</p>
+            <pre data-file="shell (template)"><code>phonopy -d --dim 4 4 4 -c POSCAR          # write the displaced supercells  POSCAR-001, ...  and  phonopy_disp.yaml
+            # run your DFT code (relaxed structure, tight convergence) in each displaced supercell and collect the forces
+            phonopy -f disp-001/vasprun.xml disp-002/vasprun.xml ...     # builds FORCE_SETS
+            phonopy --dim 4 4 4 -c POSCAR -p -s band.conf               # band structure plot, with DIM, BAND = ... set in band.conf
+            phonopy --dim 4 4 4 -c POSCAR --mesh 20 20 20 -t            # thermal properties</code></pre>
+            <p>With Quantum ESPRESSO use <code>--qe -c pw.in</code> and read the forces from <code>pw.out</code> files. The cost is that of $N_\mathrm{disp}$ DFT calculations in a supercell of $50$&ndash;$200$ atoms, which for a simple crystal such as copper means a few displaced cells and hours on a few cores, instead of seconds. Compare your DFT phonons with the EMT results of this lab (they should be similar in shape, with a highest frequency near $7$ THz), and use the same checks: converge the $\mathbf k$-point mesh and the plane-wave cutoff, relax the structure with the same functional, test the supercell size.</p>
+            <h2 id="errors">Step 9. Typical problems<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 9. Typical problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr><td>Imaginary frequencies at $\Gamma$ (acoustic modes $\ne0$)</td><td>structure not relaxed (residual forces), or the force calculation is not converged</td><td>Relax to forces $&lt;10^{-4}$ eV/&Aring;; tighten SCF and cutoff</td></tr>
+            <tr><td>Acoustic frequencies at $\Gamma$ of order 0.1&ndash;1 THz</td><td>violation of the acoustic sum rule by numerical noise (common with DFT on a real-space grid)</td><td>Apply the acoustic sum rule; use a finer grid; compare with 2 supercells</td></tr>
+            <tr><td>Imaginary frequencies elsewhere</td><td>real instability, or supercell too small to hold the unstable mode</td><td>Test larger supercells; follow the mode and relax (a phase transition!)</td></tr>
+            <tr><td>Frequencies at X depend on the supercell parity</td><td>the $\mathbf q$ point is not commensurate with the supercell</td><td>Use a supercell whose size makes the $\mathbf q$ point exact (even $n$ for X)</td></tr>
+            <tr><td>Frequencies much too high or low</td><td>wrong lattice constant (Step 6), wrong masses, wrong units (THz $\ne$ rad/ps)</td><td>Check the reference structure; $\omega=2\pi\nu$</td></tr>
+            <tr><td>Heat capacity above $3R$</td><td>negative or tiny frequencies near $\Gamma$ on a coarse mesh</td><td>Refine the mesh; check the DOS near $\omega=0$</td></tr>
+            </tbody></table></div>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>Phonons are the quantised lattice vibrations: for each wave vector q a crystal with n atoms per cell has 3n branches whose frequencies are the square roots of the eigenvalues of the dynamical matrix D(q), built from the force constants (the derivatives of forces with respect to displacements).</li>
+<li>In the finite-displacement method, a few atoms of a supercell are displaced by 0.01 angstrom, the forces on all atoms are computed (with any calculator), and phonopy turns them into force constants; because of symmetry, fcc copper needs only one displaced supercell of 64 atoms.</li>
+<li>For copper with the EMT potential the frequencies at X are 5.53 (two transverse branches) and 8.14 THz (longitudinal), the highest frequency of the DOS is 8.3 THz, and the heat capacity from the phonons is 23.4 J/mol/K at 300 K (0.937 of the Dulong-Petit value 3R) with an effective Debye temperature of 345 K.</li>
+<li>Every phonon calculation needs three checks: the supercell must be large enough (the frequency at X changes by less than 0.02 THz from 2x2x2 to 6x6x6 here, but the commensurability with q matters), the structure must be relaxed with the same potential (frequencies at X change from 6.4 to 4.5 THz when a goes from 3.50 to 3.70 angstrom), and the result must have no imaginary frequencies (bcc copper in EMT has -1.14 THz at N, so it is dynamically unstable).</li>
+<li>Frequency changes with volume give the Gruneisen parameter (about 2.1 for the TA mode at X) and, together with the heat capacity and bulk modulus, the thermal expansion: alpha = gamma Cv/(3BV) = 16.8e-6 per K, close to the measured 16.5e-6.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="p301-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>The longitudinal frequency at X is $8.141$ THz. Convert it into (a) meV, (b) cm$^{-1}$, (c) kelvin ($h\nu/k_\mathrm B$) and (d) the period of the vibration in ps.</p>
+            <details class="hint"><summary>Hint</summary><p>$h=4.1357$ meV/THz; $1$ THz $=33.356$ cm$^{-1}$; $k_\mathrm B=0.08617$ meV/K.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $8.141\times4.1357=33.67$ meV. (b) $8.141\times33.356=271.6$ cm$^{-1}$. (c) $33.67/0.08617=390.7$ K. (d) $T=1/\nu=1/8.141\ \mathrm{THz}=0.1228$ ps $=123$ fs. At room temperature ($k_\mathrm BT=25.9$ meV) the highest modes are only partly excited (the energy $33.7$ meV is above $k_\mathrm BT$), which is why $C_v$ is below $3R$ at $300$ K.</p>
+            <p class="answer">(a) $33.67$ meV  (b) $271.6$ cm$^{-1}$  (c) $391$ K  (d) $0.123$ ps</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p301-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Core</span></div>
+            <p>From the table of Step 5, (a) how large is $C_v$ at $300$ K compared with the measured heat capacity at constant pressure $C_p=24.4$ J/mol/K? (b) Estimate $C_p-C_v=9\alpha^2BVT$ with $\alpha=16.5\times10^{-6}$ K$^{-1}$, $B=133.2$ GPa, $V=6.965$ cm$^3$/mol, and compare. (c) Why does the harmonic $C_v$ never exceed $3R=24.94$?</p>
+            <details class="hint"><summary>Hint</summary><p>Use SI units: $B=133.2\times10^9$ Pa, $V=6.965\times10^{-6}$ m$^3$/mol.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $C_v=23.37$ J/mol/K is $4.2\%$ below $C_p=24.4$. (b) $9\times(16.5\times10^{-6})^2\times133.2\times10^9\times6.965\times10^{-6}\times300=0.68$ J/mol/K, so the phonon estimate of the constant-pressure value is $23.37+0.68=24.05$ J/mol/K, within $1.4\%$ of the measurement (the remaining difference includes the electronic heat capacity, $\approx0.2$ J/mol/K at $300$ K for copper, and EMT stiffness). (c) The harmonic crystal is a set of independent oscillators; each contributes at most $k_\mathrm B$ to the heat capacity (the classical equipartition value), and there are $3N$ of them, so $C_v\le3Nk_\mathrm B=3R$. Higher values need anharmonicity, vacancies or electrons.</p>
+            <p class="answer">(a) $-4.2\%$  (b) $C_p-C_v=0.68$, $C_p\approx24.05$  (c) at most $k_\mathrm B$ per oscillator</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p301-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>The highest frequency in the DOS is $8.34$ THz and the Debye temperatures from $C_v$ are $332$&ndash;$345$ K. (a) Convert the highest frequency into a temperature $\theta_\mathrm{max}=h\nu_\mathrm{max}/k_\mathrm B$. (b) Why is $\theta_D$ smaller? (c) At what temperature does $C_v$ reach $90\%$ of $3R$, according to the table?</p>
+            <details class="hint"><summary>Hint</summary><p>$h\nu/k_\mathrm B=47.99\ \mathrm K/\mathrm{THz}\times\nu$. For (c) interpolate $C_v/3R$ between $200$ K and $300$ K.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\theta_\mathrm{max}=8.34\times47.99=400$ K. (b) The Debye model replaces the real spectrum by $g(\omega)\propto\omega^2$ up to a cutoff chosen to conserve the number of modes. The real DOS has more weight at low and intermediate frequencies than the Debye form (the flat transverse branches), so the effective cutoff that reproduces $C_v$ is lower than the highest phonon. (c) The ratio $0.866$ at $200$ K and $0.937$ at $300$ K; linear interpolation gives $0.90$ at $T=200+100\times(0.90-0.866)/(0.937-0.866)=248$ K, about $0.7\,\theta_D$.</p>
+            <p class="answer">(a) $400$ K  (b) the DOS has more weight at low $\omega$  (c) $\approx250$ K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p301-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Explain the supercell test of Step 6: (a) why do the $2\times2\times2$ and $6\times6\times6$ supercells give the same frequency at X while the $3\times3\times3$ does not? (b) What would you check before trusting a DFT phonon calculation in a $2\times2\times2$ supercell of a metal? (c) How many atoms does a $4\times4\times4$ supercell have for a cubic cell with 4 atoms?</p>
+            <details class="hint"><summary>Hint</summary><p>Which $\mathbf q$ points have phases $e^{i\mathbf q\cdot\mathbf R}$ that are periodic in the supercell?</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) A supercell with $n$ primitive cells along each axis contains exactly the $\mathbf q$ points $\mathbf q=(m_1,m_2,m_3)/n$ in units of the reciprocal lattice. X is $(\tfrac12,0,\tfrac12)$ which is of this form only when $n$ is even; for $n=3$ the dynamical matrix at X is obtained by Fourier interpolation of force constants truncated at the supercell boundary, and the (small) error shows that the force constants beyond the cell boundary are not exactly zero. (b) Compare with $3\times3\times3$ or $4\times4\times4$, check that the force constants decay (print $|\Phi|$ against distance), and that the frequencies near $\Gamma$ give the right sound velocities from the elastic constants. In metals with Kohn anomalies a $2\times2\times2$ cell is generally not enough. (c) $4^3\times4=256$ atoms for the cubic cell, but with the 1-atom primitive cell used in the script it is $64$.</p>
+            <p class="answer">(a) X is commensurate only with even $n$  (b) check convergence  (c) 64 (primitive) or 256</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p301-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
+            <p>Compute the Gr&uuml;neisen parameter of the TA mode at X by hand from the table of Step 7 ($a=3.5400$, $3.5898$, $3.6400$ &Aring;; $\nu_\mathrm{TA}=6.0254$, $5.5302$, $5.0391$ THz), using the end points. Then (a) find $\alpha$ for $\gamma=2.14$ and $2.45$; (b) say whether the sign of the thermal expansion can be predicted from the sign of $\gamma$; (c) what would a negative $\gamma$ (as for some modes in silicon and zeolites) imply?</p>
+            <details class="hint"><summary>Hint</summary><p>$V=a^3/4$; $\gamma=-\Delta\ln\nu/\Delta\ln V$; $\alpha=\gamma C_v/(3BV_m)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$V=11.090$ and $12.057$ &Aring;$^3$, $\ln(12.057/11.090)=0.0836$; $\ln(5.0391/6.0254)=-0.1788$, so $\gamma_\mathrm{TA}=0.1788/0.0836=2.14$. (a) With the same $C_v$, $B$, $V_m$ as in Step 7, $\alpha\propto\gamma$: $\alpha=16.8\times10^{-6}\times2.14/2.0=18.0\times10^{-6}$ for $\gamma=2.14$ and $20.6\times10^{-6}$ for $2.45$ K$^{-1}$: slightly above the measured $16.5\times10^{-6}$, because the average over all modes of the zone need not equal the value of these two zone-boundary modes. (b) Yes: $\alpha$ has the sign of the average $\gamma$ weighted by the mode heat capacities: positive $\gamma$ gives expansion. (c) A mode with negative $\gamma$ softens when the volume decreases, which contracts the lattice when it is thermally excited (negative thermal expansion at low temperature, as seen in silicon below $\approx120$ K and in some framework materials such as ZrW$_2$O$_8$).</p>
+            <p class="answer">$\gamma=2.14$; (a) $18.0$ and $20.6\times10^{-6}$ K$^{-1}$  (b) yes  (c) contraction</p>
+            </details>
+            </div>
+
+            <h2 id="refs">Going further and references<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Togo, A. and Tanaka, I., &ldquo;First principles phonon calculations in materials science&rdquo;, <em>Scripta Materialia</em> <strong>108</strong>, 1 (2015); Togo, A., Chaput, L., Tadano, T. and Tanaka, I., &ldquo;Implementation strategies in phonopy and phono3py&rdquo;, <em>Journal of Physics: Condensed Matter</em> <strong>35</strong>, 353001 (2023): the references to cite for phonopy; the documentation has the command-line workflows for every DFT code.</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, chapters on phonons and thermal properties; Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>; Dove, M. T., <em>Introduction to Lattice Dynamics</em>, Cambridge University Press: the theory behind Step 2.</li>
+                <li>Baroni, S., de Gironcoli, S., Dal Corso, A. and Giannozzi, P., &ldquo;Phonons and related crystal properties from density-functional perturbation theory&rdquo;, <em>Reviews of Modern Physics</em> <strong>73</strong>, 515 (2001): the alternative to finite displacements.</li>
+                <li>Svensson, E. C., Brockhouse, B. N. and Rowe, J. M., &ldquo;Crystal dynamics of copper&rdquo;, <em>Physical Review</em> <strong>155</strong>, 619 (1967): the neutron-scattering measurement of the phonon dispersion curves of copper.</li>
+                <li>Next: finite-temperature behaviour beyond the harmonic approximation with molecular dynamics, <a href="lab-md-lammps-copper.html">LAB 503</a>, and the electronic structure that underlies the force constants, <a href="density-functional-theory.html">CMS 501</a>.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="lab-structures-ase.html"><span class="dir">Previous course</span>Lab: Crystal structures in Python with ASE</a>
+<a class="next" href="lab-md-lammps-argon.html"><span class="dir">Next course</span>Lab: Molecular dynamics of liquid argon with LAMMPS</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=aa91be87"></script>
+    <script src="../assets/pathdata.js?v=ad44987f"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>

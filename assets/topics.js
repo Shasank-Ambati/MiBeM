@@ -754,6 +754,34 @@ window.MIBEM_TOPICS = [
     "katex": true
   },
   {
+    "id": 48,
+    "label": "LAB 301",
+    "code": "LAB 301",
+    "dept": "LAB",
+    "level": 3,
+    "slug": "lab-phonons-phonopy",
+    "short": "Phonons: phonopy",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 23,
+    "title": "Lab: Phonons with phonopy",
+    "blurb": "Compute force constants by finite displacements, the phonon bands and density of states of copper, heat capacity and Debye temperature, convergence checks, instability, and thermal expansion from the Grueneisen parameter.",
+    "builds": [
+      41,
+      28,
+      45
+    ],
+    "related": [],
+    "takeaways": [
+      "Phonons are the quantised lattice vibrations: for each wave vector q a crystal with n atoms per cell has 3n branches whose frequencies are the square roots of the eigenvalues of the dynamical matrix D(q), built from the force constants (the derivatives of forces with respect to displacements).",
+      "In the finite-displacement method, a few atoms of a supercell are displaced by 0.01 angstrom, the forces on all atoms are computed (with any calculator), and phonopy turns them into force constants; because of symmetry, fcc copper needs only one displaced supercell of 64 atoms.",
+      "For copper with the EMT potential the frequencies at X are 5.53 (two transverse branches) and 8.14 THz (longitudinal), the highest frequency of the DOS is 8.3 THz, and the heat capacity from the phonons is 23.4 J/mol/K at 300 K (0.937 of the Dulong-Petit value 3R) with an effective Debye temperature of 345 K.",
+      "Every phonon calculation needs three checks: the supercell must be large enough (the frequency at X changes by less than 0.02 THz from 2x2x2 to 6x6x6 here, but the commensurability with q matters), the structure must be relaxed with the same potential (frequencies at X change from 6.4 to 4.5 THz when a goes from 3.50 to 3.70 angstrom), and the result must have no imaginary frequencies (bcc copper in EMT has -1.14 THz at N, so it is dynamically unstable).",
+      "Frequency changes with volume give the Gruneisen parameter (about 2.1 for the TA mode at X) and, together with the heat capacity and bulk modulus, the thermal expansion: alpha = gamma Cv/(3BV) = 16.8e-6 per K, close to the measured 16.5e-6."
+    ],
+    "katex": true
+  },
+  {
     "id": 1,
     "slug": "introduction",
     "short": "Introduction",
@@ -1148,6 +1176,7 @@ window.MIBEM_PATHPLAN = [
       "MATH 304",
       "PHYS 301",
       "PHYS 302",
+      "LAB 301",
       "MSE 301",
       "LAB 505"
     ]

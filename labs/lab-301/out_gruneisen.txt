@@ -1,0 +1,6 @@
+   a (A)    V (A^3)    TA(X) (THz)   LA(X) (THz)
+  3.5400    11.090      6.0254       8.9752
+  3.5898    11.565      5.5302       8.1416
+  3.6400    12.057      5.0391       7.3123
+Gruneisen parameter gamma = -dln(omega)/dln(V):  TA(X) 2.14   LA(X) 2.45
+molar volume 6.965 cm^3/mol;  alpha_L = gamma C_v / (3 B V) = 16.8 e-6 /K  (gamma = 2.0)
