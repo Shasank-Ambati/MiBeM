@@ -1,0 +1,10 @@
+atomisation energies D_e = sum E(atoms) - E(molecule) in eV (no zero-point energy), basis cc-pvtz, fixed experimental geometries
+molecule     HF      LDA     PBE    B3LYP   CCSD(T)     LDA-CC   PBE-CC  B3LYP-CC   HF-CC
+H2         3.628   4.903   4.540   4.781    4.700      0.203  -0.160    0.081   -1.072
+N2         4.955  11.557  10.544   9.925    9.528      2.029   1.017    0.398   -4.572
+CO         7.538  12.963  11.668  11.070   11.048      1.916   0.620    0.022   -3.510
+O2         1.406   7.592   6.249   5.366    5.000      2.592   1.250    0.367   -3.594
+H2O        6.688  11.425  10.032   9.895    9.829      1.596   0.203    0.066   -3.141
+CH4       14.218  20.051  18.229  18.260   18.131      1.921   0.098    0.129   -3.913
+mean absolute error against CCSD(T) (eV):  HF 3.300   LDA 1.709   PBE 0.558   B3LYP 0.177
+total time 107 s

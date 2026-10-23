@@ -1,0 +1,24 @@
+1. bands of the cosine potential V = -V0 cos(G x), V0 = 1 Ha, a = 6 bohr: lowest three bands at k = 0, pi/(2a) and pi/a (Hartree)
+   k = 0.0000:   -0.51550    0.40410    0.90042
+   k = 0.2618:   -0.51358    0.36423    1.02961
+   k = 0.5236:   -0.51162    0.33211    1.26858
+   gap at the zone boundary (k = pi/a) between band 1 and 2: 0.84373 Ha; two-plane-wave estimate 2|V_G| = 1.00000
+   (the exact gap exceeds the two-wave estimate by the coupling to the other plane waves)
+
+2. convergence of the lowest eigenvalue at k = 0 with the number of plane waves (error against the converged result with 401 plane waves, nG = 200)
+   N_PW   energy cutoff (Ha)   cosine      Gaussian wells    square wells    cusp wells
+      3          0.548        3.13e-02       3.49e-02       5.91e-02       1.58e-02
+      5          2.193        5.48e-04       7.65e-03       1.42e-02       3.12e-03
+      7          4.935        2.76e-06       1.41e-03       2.65e-03       7.86e-04
+     11         13.708        1.80e-12       2.77e-05       7.52e-04       9.52e-05
+     17         35.092        6.37e-12       2.44e-08       1.69e-04       1.10e-05
+     25         78.957        6.38e-12       1.10e-12       6.96e-05       1.60e-06
+     41        219.325        6.38e-12       2.85e-13       1.55e-05       1.34e-07
+     81        877.298        6.26e-12       1.37e-13       1.96e-06       4.44e-09
+   reference energies (Ha): cos -0.515504  gauss -0.310061  square -0.391375  cusp -0.291117
+
+3. the rate of convergence: the number of plane waves needed for an error below 1e-6 Ha
+   cosine         : nG = 4  (9 plane waves)
+   Gaussian wells : nG = 7  (15 plane waves)
+   square wells   : nG = 49  (99 plane waves)
+   cusp wells     : nG = 14  (29 plane waves)

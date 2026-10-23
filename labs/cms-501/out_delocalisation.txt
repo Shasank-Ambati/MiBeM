@@ -1,0 +1,10 @@
+(each point is the lowest of two self-consistent solutions, found from the atomic-superposition and the core-Hamiltonian starting guesses; the last column shows how often the two differ)
+energy of H2+ relative to (H atom + proton) computed with the same method, in eV: exact value 0 at infinite separation
+   R (A)     HF        LDA       PBE      B3LYP
+   0.80     -2.270    -2.113    -2.303    -2.290
+   1.06     -2.792    -2.861    -2.975    -2.930
+   1.50     -2.263    -2.674    -2.734    -2.636
+   2.00     -1.422    -2.194    -2.259    -2.095
+   3.00     -0.414    -1.802    -1.941    -1.648
+   4.00     -0.098    -1.872    -2.042    -1.676
+   6.00     -0.007    -2.123    -2.298    -1.869    (two different solutions, up to 0.02 eV apart)

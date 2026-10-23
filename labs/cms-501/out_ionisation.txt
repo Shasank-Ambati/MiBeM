@@ -1,0 +1,14 @@
+first ionisation energy in eV (experimental vertical values: H2O 12.62, N2 15.58, CO 14.01)
+molecule   method   -eps(HOMO)   Delta-SCF   experiment
+H2O        HF         13.89        10.99      12.62
+H2O        LDA         7.40        13.18      12.62
+H2O        PBE         7.25        12.80      12.62
+H2O        B3LYP       8.83        12.81      12.62
+N2         HF         16.72        15.65      15.58
+N2         LDA        10.42        15.63      15.58
+N2         PBE        10.27        15.39      15.58
+N2         B3LYP      11.97        15.84      15.58
+CO         HF         15.10        13.07      14.01
+CO         LDA         9.12        14.09      14.01
+CO         PBE         9.04        13.86      14.01
+CO         B3LYP      10.53        14.19      14.01

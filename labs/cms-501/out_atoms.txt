@@ -1,0 +1,5 @@
+total energies in Hartree, basis aug-cc-pVQZ (He, Be) and cc-pVQZ (Ne); the 'exact' column is the non-relativistic limit from the literature
+atom   HF           LDA          PBE          B3LYP        CCSD(T)      exact        E_corr(exact-HF)   time (s)
+He     -2.861522    -2.834689    -2.892780    -2.915060    -2.902534    -2.903724    -0.042202         4.5
+Be    -14.572969   -14.446531   -14.629010   -14.672649   -14.640130   -14.667356    -0.094387         8.5
+Ne   -128.543470  -128.227568  -128.860303  -128.975665  -128.876762  -128.937620    -0.394150         5.9

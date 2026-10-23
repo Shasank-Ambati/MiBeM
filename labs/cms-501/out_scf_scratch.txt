@@ -1,0 +1,22 @@
+water, 6-31G: 13 basis functions, 5 occupied orbitals, nuclear repulsion 9.195256 Ha
+pyscf.scf.RHF: E = -75.983995777 Ha in 8 cycles
+
+our loop, plain iteration (core-Hamiltonian guess):  iteration   energy (Ha)         |FDS - SDF|
+                                                          1        -69.624746341        2.58e+00
+                                                          2        -70.828299700        2.37e+00
+                                                          3        -73.655360894        2.18e+00
+                                                          4        -74.771591194        1.64e+00
+                                                          5        -75.494943514        1.15e+00
+                                                          6        -75.798806926        7.02e-01
+                                                          7        -75.918071987        4.34e-01
+                                                          8        -75.960644816        2.54e-01
+                                                         30        -75.983995777        2.38e-06
+                                                         31        -75.983995777        1.41e-06
+                                                         32        -75.983995777        8.31e-07
+   converged in 32 iterations, E = -75.983995777, difference from pyscf -1.7e-13 Ha
+   damped :  40 iterations, E = -75.983995777, difference from pyscf 2.0e-11 Ha
+   diis   :  11 iterations, E = -75.983995777, difference from pyscf -3.8e-13 Ha
+
+orbital energies (Ha) of our final iteration: -20.5604  -1.3564  -0.7102  -0.5606  -0.5014   0.2038   0.2999   1.0577   (first 5 occupied, then virtual)
+pyscf orbital energies:                       -20.5604  -1.3564  -0.7102  -0.5606  -0.5014   0.2038   0.2999   1.0577
+HOMO energy = -13.64 eV (Koopmans' estimate of the ionisation energy in this small basis)

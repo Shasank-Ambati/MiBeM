@@ -1,0 +1,11 @@
+number of irreducible k points / total mesh points (Gamma-centred meshes)
+system                                              4x4x4        8x8x8       12x12x12
+fcc Al (1 atom, primitive)                           8/   64       29/  512       72/ 1728 
+diamond Si (2 atoms, primitive)                      8/   64       29/  512       72/ 1728 
+bcc Fe (1 atom, primitive)                           8/   64       29/  512       72/ 1728 
+hcp Mg (2 atoms)                                    12/   64       50/  512      133/ 1728 
+fcc Al, 2x2x2 conventional supercell (32 atoms)      4/    8*      10/   64*      20/  216*
+* for the 32-atom supercell (twice as long in each direction) the mesh is halved: 2x2x2, 4x4x4 and 6x6x6, which samples the same density of k points
+
+an irreducible k point carries a weight: the weights of the irreducible points of a 4x4x4 Gamma-centred mesh of fcc Al
+   0.0156, 0.1250, 0.0625, 0.0938, 0.3750, 0.1875, 0.0469, 0.0938   (sum = 1; 8 points)

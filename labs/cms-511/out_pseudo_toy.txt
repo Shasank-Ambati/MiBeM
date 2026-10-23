@@ -1,0 +1,7 @@
+hydrogenic 3s orbital, Z = 4.0: radial nodes at r = 0.475, 1.775 bohr;  norm = 1.000000
+
+Fourier content of the orbitals: wave vector q_c below which a given fraction of the weight  sum |psi(q)|^2 q^2 dq  lies
+   orbital               q_c for 99%   q_c for 99.9%   q_c for 99.99%   cutoff energy q_c^2/2 for 99.99% (Ha)   number of plane waves relative to the all-electron orbital (q_c^3)
+   all-electron 3s          5.20          9.10           14.80                 109.5                             1.000
+   pseudo, r_c = 2.0        2.00          2.30            3.50                   6.1                             0.013
+   pseudo, r_c = 3.0        1.50          1.80            2.70                   3.6                             0.006
