@@ -1,0 +1,29 @@
+# Elastic constants of fcc copper from small homogeneous strains at 0 K
+# Run:   lmp -in in.cu_elastic
+variable        a       equal 3.6149              # equilibrium lattice constant from the static scan (Angstrom)
+variable        e       equal 0.002               # strain magnitude
+
+units           metal
+atom_style      atomic
+lattice         fcc ${a}
+region          box block 0 4 0 4 0 4
+create_box      1 box
+create_atoms    1 box
+mass            1 63.546
+pair_style      eam
+pair_coeff      1 1 Cu_u3.eam
+thermo_style    custom step pe pxx pyy pzz pxy pxz pyz
+thermo_modify   format float %.6g
+
+# --- reference state: should be stress free ---
+run             0
+
+# --- strain along x:   sigma_xx = C11 e   sigma_yy = C12 e ---
+change_box      all x scale $(1+v_e) remap
+run             0
+change_box      all x scale $(1/(1+v_e)) remap
+
+# --- simple shear xy:  sigma_xy = C44 gamma  (change_box xy delta needs a triclinic box) ---
+change_box      all triclinic
+change_box      all xy delta $(v_e*ly) remap units box   # 'units box' matters: the default is lattice units!
+run             0

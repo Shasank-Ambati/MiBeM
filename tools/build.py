@@ -58,7 +58,7 @@ LEVELS = {
     5: ("Graduate: simulation methods", "The methods themselves, one course each: density functional theory, molecular dynamics, Monte Carlo, kinetics, phase-field, finite elements and machine learning."),
     7: ("Doctoral: research topics", "Advanced and specialist courses for research. These are planned and will be added over time."),
 }
-DEPTS = {"MATH": "Mathematics", "PHYS": "Physics", "MSE": "Materials science", "COMP": "Computing", "CMS": "Computational methods"}
+DEPTS = {"MATH": "Mathematics", "PHYS": "Physics", "MSE": "Materials science", "COMP": "Computing", "CMS": "Computational methods", "LAB": "Computational labs"}
 
 
 def lab(t):

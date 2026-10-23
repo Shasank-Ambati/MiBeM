@@ -960,6 +960,33 @@ window.MIBEM_TOPICS = [
     "code": "CMS 507",
     "dept": "CMS",
     "level": 5
+  },
+  {
+    "id": 43,
+    "label": "LAB 502",
+    "code": "LAB 502",
+    "dept": "LAB",
+    "level": 5,
+    "slug": "lab-md-lammps-argon",
+    "short": "LAMMPS: liquid argon",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 35,
+    "title": "Lab: Molecular dynamics of liquid argon with LAMMPS",
+    "blurb": "Install LAMMPS, write and run an input file for argon, analyse g(r) and diffusion, simulate solid, liquid and gas, test the numerics, add pressure and melting, and fix typical errors.",
+    "builds": [
+      6,
+      16
+    ],
+    "related": [],
+    "takeaways": [
+      "A molecular dynamics run needs five things: a box with atoms, a force law (pair_style), initial velocities, an integrator and a thermostat or barostat; in LAMMPS these are the commands lattice/create_atoms, pair_style/pair_coeff, velocity, fix nve and fix nvt/npt.",
+      "Lennard-Jones simulations are done in reduced units (sigma, epsilon, mass = 1); for argon, one time unit is 2.16 ps, T*=0.85 is 101.8 K and rho*=0.8442 is 1.42 g/cm3, so one reduced run can be converted to real units afterwards.",
+      "Always check the run before analysing it: total energy must be conserved in NVE (here to about 1e-3 over thousands of steps), temperature must fluctuate around its target, and the time step must be small enough (0.004 to 0.012 is safe for the LJ liquid).",
+      "Structure and dynamics come from the trajectory: g(r) from compute rdf shows solid, liquid and gas as sharp peaks, a first peak with a broad shoulder, or nearly nothing; the diffusion coefficient D is the slope of the mean-square displacement divided by 6.",
+      "Report averages with error bars from several independent runs, and test the cutoff (use a tail correction), the system size and the time step before trusting a number: single 80-time-unit runs gave D within about 10 per cent, but a 108-atom box was 20 per cent off."
+    ],
+    "katex": true
   }
 ];
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
@@ -1026,6 +1053,7 @@ window.MIBEM_PATHPLAN = [
     "courses": [
       "CMS 501",
       "CMS 502",
+      "LAB 502",
       "CMS 503",
       "CMS 504",
       "CMS 505",

@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TOPICS_JS = ROOT / "assets" / "topics.js"
-PART = {"MATH": "Mathematics", "PHYS": "Physics", "MSE": "Materials science", "COMP": "Computing", "CMS": "Computational methods"}
+PART = {"MATH": "Mathematics", "PHYS": "Physics", "MSE": "Materials science", "COMP": "Computing", "CMS": "Computational methods", "LAB": "Computational labs"}
 
 
 def split():
@@ -51,7 +51,7 @@ def main():
     if a.katex:
         entry["katex"] = True
     topics.append(entry)
-    order = {"MATH": 0, "PHYS": 1, "MSE": 2, "COMP": 3, "CMS": 4}
+    order = {"MATH": 0, "PHYS": 1, "MSE": 2, "COMP": 3, "CMS": 4, "LAB": 5}
     topics.sort(key=lambda t: (t["level"] if t["code"] != "MATH 100" else 0, order[t["dept"]], int(t["code"].split()[1])))
     planned = [p for p in planned if p["code"] != a.code]
     TOPICS_JS.write_text(h + "window.MIBEM_TOPICS = " + json.dumps(topics, indent=2, ensure_ascii=False) + ";" + mid

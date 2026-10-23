@@ -846,3 +846,13 @@ table.curric tr.planned .chip { margin-left: 6px; }
 @keyframes lp-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 @media (prefers-reduced-motion: reduce) { .lp-node.current .lp-dot { animation: none; } }
 @media (max-width: 560px) { .lp-label { max-width: 112px; font-size: .74rem; left: calc(50% + 40px); } .lp-node.p1 { --sx: 22px; } .lp-node.p3 { --sx: -22px; } .lp-uhead { flex-wrap: wrap; } }
+
+/* labs: terminal output and file listings */
+pre.out { background: var(--code-bg); color: var(--ink); border-left: 4px solid var(--accent); }
+pre.out::before { content: "output"; display: block; font: 700 .68rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+pre[data-file]::before { content: attr(data-file); display: block; font: 700 .72rem/1 var(--sans); letter-spacing: .04em; color: #9fb4c8; margin-bottom: 8px; }
+.lab-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 14px 0; font-family: var(--sans); }
+.lab-meta div { border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; background: var(--surface); }
+.lab-meta b { display: block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.lab-fig { margin: 18px 0; } .lab-fig img { max-width: 100%; height: auto; border: 1px solid var(--border); border-radius: 12px; background: #fff; }
+.lab-fig figcaption { font-size: .85rem; color: var(--muted); margin-top: 6px; }

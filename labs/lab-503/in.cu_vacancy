@@ -1,0 +1,39 @@
+# Vacancy formation energy in copper:  E_f = E(N-1 atoms, relaxed) - (N-1)/N * E(N atoms, perfect)
+# Run:   lmp -in in.cu_vacancy
+variable        n       index 5                   # cells per direction (5 -> 500 atoms)
+
+units           metal
+atom_style      atomic
+boundary        p p p
+lattice         fcc 3.6149
+region          box block 0 ${n} 0 ${n} 0 ${n}
+create_box      1 box
+create_atoms    1 box
+mass            1 63.546
+pair_style      eam
+pair_coeff      1 1 Cu_u3.eam
+thermo_style    custom step atoms pe press lx
+
+# ---- perfect crystal: relax the box (zero pressure) and the atoms ----
+fix             rel all box/relax iso 0.0 vmax 0.001
+minimize        1.0e-12 1.0e-12 10000 100000
+unfix           rel
+variable        E0 equal $(pe)
+variable        N0 equal $(atoms)
+print           "perfect crystal: N = ${N0}  E = ${E0} eV  E/atom = $(v_E0/v_N0:%.5f) eV"
+
+# ---- remove one atom ----
+group           centre id 1
+delete_atoms    group centre
+# unrelaxed energy: same positions, one atom fewer
+run             0
+variable        Eunrel equal $(pe)
+variable        Ef0 equal ${Eunrel}-(v_N0-1)/v_N0*${E0}
+print           "unrelaxed vacancy formation energy = ${Ef0} eV"
+
+# relax the atom positions at fixed box (constant volume: the usual convention differs, see the text)
+fix             rel2 all box/relax iso 0.0 vmax 0.001
+minimize        1.0e-12 1.0e-12 10000 100000
+variable        Evac equal $(pe)
+variable        Ef equal ${Evac}-(v_N0-1)/v_N0*${E0}
+print           "relaxed vacancy formation energy (zero pressure) = ${Ef} eV"

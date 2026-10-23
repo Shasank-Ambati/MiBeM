@@ -1,0 +1,20 @@
+# Copper with an embedded-atom-method (EAM) potential: lattice constant and cohesive energy at 0 K
+# Run:   lmp -in in.cu_static
+variable        a       index 3.615               # lattice constant in Angstrom (override with -var a 3.60)
+
+units           metal                             # eV, Angstrom, ps, bar, K
+atom_style      atomic
+boundary        p p p
+
+lattice         fcc ${a}
+region          box block 0 4 0 4 0 4
+create_box      1 box
+create_atoms    1 box                             # 4 x 4 x 4 cells x 4 atoms = 256 atoms
+mass            1 63.546
+
+pair_style      eam                               # single-element EAM, tabulated "funcfl" file
+pair_coeff      1 1 Cu_u3.eam                     # Foiles-Baskes-Daw potential distributed with LAMMPS
+
+thermo_style    custom step atoms pe pe/atoms press vol lx
+thermo_modify   format float %.8g
+run             0                                 # one force evaluation, no dynamics

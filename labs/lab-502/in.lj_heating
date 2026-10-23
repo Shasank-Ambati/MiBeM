@@ -1,0 +1,32 @@
+# Heat a Lennard-Jones crystal at constant pressure and watch it melt (reduced units)
+# Run:   lmp -in in.lj_heating
+variable        P       index 1.0         # target reduced pressure
+variable        seed    index 777
+
+units           lj
+atom_style      atomic
+lattice         fcc 1.05                  # start from a compressed fcc crystal
+region          box block 0 6 0 6 0 6
+create_box      1 box
+create_atoms    1 box
+mass            1 1.0
+pair_style      lj/cut 2.5
+pair_coeff      1 1 1.0 1.0 2.5
+pair_modify     tail yes                  # long-range correction for the truncated tail
+neighbor        0.3 bin
+velocity        all create 0.3 ${seed} dist gaussian
+timestep        0.004
+
+# relax the density at the starting temperature
+fix             relax all npt temp 0.3 0.3 0.4 iso ${P} ${P} 4.0
+run             5000
+unfix           relax
+
+# ramp T from 0.3 to 1.5 over 100000 steps (rate 0.012 per unit time) with the barostat holding P
+fix             ramp all npt temp 0.3 1.5 0.4 iso ${P} ${P} 4.0
+variable        vol equal vol/atoms       # volume per atom (vol is the box volume)
+variable        nn  equal 1/v_vol         # number density
+fix             out all print 500 "$(temp) ${nn} $(pe)" file heating.dat screen no title "# T rho pe_per_atom   (thermo output is already normalised per atom in lj units)"
+thermo          10000
+thermo_style    custom step temp press pe vol
+run             100000

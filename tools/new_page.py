@@ -115,8 +115,10 @@ def escape_math(body):
             t = breakable(t)
         t = re.sub(r"&(?!(amp|lt|gt|nbsp|[a-z]+|#\d+);)", "&amp;", t)
         return t.replace("<", "&lt;").replace(">", "&gt;")
-    out = MATH.sub(fix, body)
-    stripped = re.sub(r"\$\$", "", re.sub(r"<code>.*?</code>", "", out, flags=re.S))
+    # code listings may contain $, &, < and > (shell variables, LAMMPS ${vars}); leave <pre> blocks untouched
+    pieces = re.split(r"(<pre.*?</pre>)", body, flags=re.S)
+    out = "".join(pc if pc.startswith("<pre") else MATH.sub(fix, pc) for pc in pieces)
+    stripped = re.sub(r"\$\$", "", re.sub(r"<pre.*?</pre>|<code>.*?</code>", "", out, flags=re.S))
     if stripped.count("$") % 2:
         print("WARNING: odd number of $ signs; check for an unclosed formula or a stray dollar")
     return out

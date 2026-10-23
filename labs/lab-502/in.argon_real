@@ -1,0 +1,32 @@
+# The same liquid argon in real units (Angstrom, femtosecond, kcal/mol, kelvin)
+# Run:   lmp -in in.argon_real
+units           real
+atom_style      atomic
+boundary        p p p
+
+lattice         fcc 5.717                 # lattice constant in Angstrom -> 1.419 g/cm^3
+region          box block 0 6 0 6 0 6
+create_box      1 box
+create_atoms    1 box
+mass            1 39.948                  # g/mol
+
+pair_style      lj/cut 8.5125             # 2.5 sigma, in Angstrom
+pair_coeff      1 1 0.2381 3.405          # epsilon (kcal/mol)  sigma (Angstrom)
+neighbor        2.0 bin
+comm_modify     cutoff 12.0
+
+velocity        all create 101.8 12345 dist gaussian
+timestep        8.0                       # femtoseconds
+
+fix             th all nvt temp 101.8 101.8 800.0     # damping time 800 fs = 100 timesteps
+thermo          1000
+thermo_style    custom step temp pe ke etotal press vol density
+run             5000
+unfix           th
+
+reset_timestep  0
+fix             nve all nve
+compute         msd all msd
+fix             msdout all print 100 "$(step) $(c_msd[4])" file msd_real.dat screen no title "# step msd"
+dump            traj all custom 2000 traj.lammpstrj id type x y z    # trajectory for OVITO / VMD
+run             20000

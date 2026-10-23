@@ -1,0 +1,38 @@
+# Uniaxial tension of a perfect copper single crystal along [100] (EAM, constant strain rate)
+# Run:   lmp -in in.cu_tensile -var T 300 -var rate 0.004
+variable        T       index 300                 # temperature, K
+variable        rate    index 0.004               # engineering strain rate, 1/ps  (0.004 /ps = 4e9 /s)
+variable        n       index 10                  # 10 x 10 x 10 cells = 4000 atoms
+
+units           metal
+atom_style      atomic
+boundary        p p p
+lattice         fcc 3.6149
+region          box block 0 ${n} 0 ${n} 0 ${n}
+create_box      1 box
+create_atoms    1 box
+mass            1 63.546
+pair_style      eam
+pair_coeff      1 1 Cu_u3.eam
+velocity        all create ${T} 8675309 dist gaussian
+timestep        0.002
+
+# ---- equilibrate at T and zero pressure in all directions ----
+fix             1 all npt temp ${T} ${T} 0.2 iso 0.0 0.0 2.0
+thermo          1000
+thermo_style    custom step temp pe press lx ly lz
+run             5000
+unfix           1
+
+# ---- tension along x: deform x at a constant rate, keep zero stress in y and z ----
+variable        lx0     equal $(lx)
+fix             2 all npt temp ${T} ${T} 0.2 y 0.0 0.0 2.0 z 0.0 0.0 2.0 drag 1.0
+fix             3 all deform 1 x erate ${rate} units box remap x
+variable        strain  equal (lx-v_lx0)/v_lx0
+variable        stress  equal -pxx/10000          # GPa (LAMMPS pressure is compressive-positive, in bar)
+fix             out all print 100 "${strain} ${stress} $(temp) $(pe/atoms)" file tensile_${T}K.dat screen no title "# strain stress_GPa T pe_per_atom"
+reset_timestep  0
+thermo          2500
+thermo_style    custom step temp v_strain v_stress pe pxx pyy pzz
+dump            traj all custom 5000 tensile_${T}K.lammpstrj id type x y z
+run             60000                             # 120 ps -> strain 0.48 at 0.004/ps
