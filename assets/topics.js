@@ -726,6 +726,34 @@ window.MIBEM_TOPICS = [
     "level": 3
   },
   {
+    "id": 42,
+    "label": "MSE 302",
+    "code": "MSE 302",
+    "dept": "MSE",
+    "level": 3,
+    "slug": "mechanical-behaviour-of-materials",
+    "short": "Mechanical behaviour",
+    "part": "Materials science",
+    "tone": "a",
+    "minutes": 31,
+    "title": "Mechanical behaviour of materials",
+    "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.",
+    "builds": [
+      14,
+      2,
+      29
+    ],
+    "related": [],
+    "takeaways": [
+      "The tensile test gives Young's modulus, yield and ultimate strength and ductility; true stress and strain, $\\sigma_t=\\sigma(1+\\varepsilon)$ and $\\varepsilon_t=\\ln(1+\\varepsilon)$, are needed for large strains, and necking starts when $\\mathrm d\\sigma_t/\\mathrm d\\varepsilon_t=\\sigma_t$ (for $\\sigma=K\\varepsilon^n$, at $\\varepsilon_t=n$).",
+      "Crystals deform plastically by slip on close-packed planes when the resolved shear stress $\\tau=\\sigma\\cos\\phi\\cos\\lambda$ reaches the critical value (Schmid's law); the ideal strength $\\sim G/2\\pi$ is a hundred times the real yield stress because slip proceeds by dislocation motion.",
+      "A dislocation has Burgers vector $\\mathbf b$, line energy $\\approx\\tfrac12Gb^2$ per length and feels a force $\\tau b$ per length; strengthening means obstructing dislocations: by other dislocations (Taylor, $\\tau=\\alpha Gb\\sqrt\\rho$), grain boundaries (Hall-Petch, $\\sigma_y=\\sigma_0+kd^{-1/2}$), solute atoms and precipitates (Orowan, $\\Delta\\tau\\approx Gb/L$).",
+      "Brittle fracture occurs when the stress intensity $K_I=Y\\sigma\\sqrt{\\pi a}$ reaches the toughness $K_{IC}$; Griffith's criterion $\\sigma_f=\\sqrt{2E\\gamma/\\pi a}$ explains why flaws, not bonds, set the strength of ceramics and glass.",
+      "At high temperature ($T>0.4T_m$) materials creep with a thermally activated rate $\\dot\\varepsilon=A\\sigma^ne^{-Q/RT}$, and under cyclic loading they fatigue, with crack growth $\\mathrm da/\\mathrm dN=C\\,\\Delta K^m$ (Paris law); design uses material indices such as $E^{1/2}/\\rho$ to choose materials."
+    ],
+    "katex": true
+  },
+  {
     "id": 1,
     "slug": "introduction",
     "short": "Introduction",
@@ -964,17 +992,6 @@ window.MIBEM_TOPICS = [
 /* Courses that are planned but not yet written. They appear on the curriculum page as "in preparation".
    When one is written, move it into MIBEM_TOPICS (with an id, slug, takeaways and so on) and delete it here. */
 window.MIBEM_PLANNED = [
-  {
-    "code": "MSE 302",
-    "dept": "MSE",
-    "level": 3,
-    "title": "Mechanical behaviour of materials",
-    "blurb": "Elasticity, plasticity, dislocations, fracture and creep, building on stress and strain.",
-    "needs": [
-      "MSE 101",
-      "MATH 302"
-    ]
-  },
   {
     "code": "CMS 701",
     "dept": "CMS",

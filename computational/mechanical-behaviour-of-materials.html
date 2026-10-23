@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanical behaviour of materials - MiBeM</title>
+    <meta name="description" content="University-level mechanical behaviour of materials: the tensile test and elastic and plastic deformation, slip and Schmid law, dislocations, strengthening mechanisms, fracture mechanics, creep and fatigue, and materials selection, with worked examples, problems and a unit quiz.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/mechanical-behaviour-of-materials.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Mechanical behaviour of materials - MiBeM">
+    <meta property="og:description" content="University-level mechanical behaviour of materials: the tensile test and elastic and plastic deformation, slip and Schmid law, dislocations, strengthening mechanisms, fracture mechanics, creep and fatigue, and materials selection, with worked examples, problems and a unit quiz.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/mechanical-behaviour-of-materials.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=0e39a9cd">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="42">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#tensile">Lecture 1. The tensile test: elastic and plastic behaviour</a></li>
+                <li><a href="#slip">Lecture 2. Slip and yielding in crystals</a></li>
+                <li><a href="#dislocations">Lecture 3. Dislocations</a></li>
+                <li><a href="#strengthening">Lecture 4. Strengthening mechanisms</a></li>
+                <li><a href="#fracture">Lecture 5. Fracture</a></li>
+                <li><a href="#timedep">Lecture 6. Creep and fatigue</a></li>
+                <li><a href="#design">Lecture 7. Designing against failure: selection and simulation</a></li>
+                <li><a href="#summary-m302">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Materials science</span><span>MSE 302</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Materials science courses"><span class="cn-dept">MSE</span><a href="materials-science-essentials.html" title="MSE 101: Materials science essentials">101</a><a href="crystal-structure-and-periodic-cells.html" title="MSE 201: Crystal structures, supercells and periodic boundaries">201</a><a href="thermodynamics-and-calphad.html" title="MSE 301: Thermodynamics and CALPHAD">301</a><a href="mechanical-behaviour-of-materials.html" class="here" aria-current="page" title="MSE 302: Mechanical behaviour of materials">302</a></nav>
+<!-- coursenav:end -->
+            <h1>Mechanical behaviour of materials</h1>
+            <p class="lead">A bridge must not bend too far, a turbine blade must not creep, a ceramic must not shatter and an aircraft skin must survive millions of cycles. These requirements are the mechanical behaviour of materials, and understanding them in terms of atoms, defects and microstructure is a central task of materials science. This course connects the continuum mechanics of stress and strain to the atomic-scale processes (slip, dislocation motion, crack growth, diffusion) that control strength, ductility and lifetime, and it identifies exactly the quantities that multiscale simulations try to predict.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 31 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="materials-science-essentials.html">MSE 101: Materials essentials</a><br><a href="crystal-structure-and-periodic-cells.html">MSE 201: Crystals and cells</a><br><a href="tensors-stress-and-strain.html">MATH 302: Tensors</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 3: advanced theory</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this course you should be able to:</strong>
+                <ul>
+                    <li>Interpret a tensile test and convert between engineering and true stress and strain.</li>
+                    <li>Apply Schmid&rsquo;s law to single crystals and explain why real crystals are far weaker than the ideal strength.</li>
+                    <li>Describe dislocations (Burgers vector, line energy, force, density) and compute the main strengthening contributions.</li>
+                    <li>Use the Griffith criterion and fracture toughness to estimate the failure stress of a cracked body.</li>
+                    <li>Estimate creep rates and temperature dependence, and fatigue lifetimes with the Paris law.</li>
+                    <li>Choose materials with simple performance indices and say which mechanical properties simulation can compute.</li>
+                </ul>
+                <strong>You need:</strong> <a href="materials-science-essentials.html">MSE 101: Materials science essentials</a> and <a href="tensors-stress-and-strain.html">MATH 302: Tensors, stress and strain</a> (stress and strain tensors, principal stresses, Hooke&rsquo;s law). Crystal structure from <a href="crystal-structure-and-periodic-cells.html">MSE 201</a> is used in Lectures 2 and 3.
+            </div>
+
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 7 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lectures 3 (dislocations) and 4 (strengthening) are the ones the rest of the curriculum uses most. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="tensile">Lecture 1. The tensile test: elastic and plastic behaviour<a class="anchor" href="#tensile" aria-label="Link to this section">#</a></h2>
+            <p>A specimen of cross-section $A_0$ and gauge length $L_0$ is pulled in a testing machine. Dividing by the original dimensions gives the <strong>engineering stress and strain</strong>, $\sigma=F/A_0$ and $\varepsilon=\Delta L/L_0$. The curve has recognisable features:</p>
+            <ul>
+                <li><strong>Elastic region</strong>: $\sigma=E\varepsilon$ (Hooke&rsquo;s law, <a href="tensors-stress-and-strain.html">MATH 302</a>) and the deformation is fully recovered on unloading. Typical moduli: steel $200$ GPa, Al $70$, Cu $130$, Ti $110$, glass $70$, polymers $1$&ndash;$3$ GPa. The elastic limit is a small strain, $\sim0.1$&ndash;$0.5\%$ for metals.</li>
+                <li><strong>Yield</strong>: the stress at which plastic (permanent) deformation begins, usually defined at $0.2\%$ offset strain, $\sigma_y$.</li>
+                <li><strong>Strain hardening</strong>: stress rises with further plastic strain, up to the <strong>ultimate tensile strength</strong> $\sigma_\mathrm{UTS}$ (the maximum of the engineering curve), after which a neck forms and the load falls until fracture.</li>
+                <li><strong>Ductility</strong>: elongation at fracture or reduction of area; and <strong>toughness</strong> $=\int\sigma\,\mathrm d\varepsilon$, the energy absorbed per volume.</li>
+            </ul>
+            <p>Once the specimen has strained substantially the cross-section is smaller than $A_0$. The <strong>true stress</strong> $\sigma_t=F/A$ and <strong>true strain</strong> $\varepsilon_t=\int\mathrm dL/L=\ln(L/L_0)$ account for this. Plastic flow conserves volume ($AL=A_0L_0$), so before necking $\sigma_t=\sigma(1+\varepsilon)$ and $\varepsilon_t=\ln(1+\varepsilon)$. Many metals follow the power law $\sigma_t=K\varepsilon_t^n$ with strain-hardening exponent $n$ ($0.1$&ndash;$0.5$).</p>
+            <div class="note thm"><strong>Necking (Consid&egrave;re criterion)</strong>
+            <p>The load is $F=\sigma_tA$. It reaches a maximum, and a neck begins, when $\mathrm dF=0$: $\mathrm d\sigma_t\,\allowbreak A+\sigma_t\,\allowbreak \mathrm dA=0$. Since volume is conserved, $\mathrm dA/A=-\mathrm dL/L=-\mathrm d\varepsilon_t$, so $\mathrm d\sigma_t=\sigma_t\mathrm d\varepsilon_t$, i.e.
+            $$\frac{\mathrm d\sigma_t}{\mathrm d\varepsilon_t}=\sigma_t.$$
+            For $\sigma_t=K\varepsilon_t^n$ this gives $nK\varepsilon_t^{n-1}=K\varepsilon_t^n$, so necking begins at $\varepsilon_t=n$. A material that hardens quickly (large $n$) deforms uniformly to large strains; one that hardens little (low $n$) necks early.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 1.1: reading a tensile test</strong>
+                <p class="given">A $10$ mm diameter steel bar ($E=200$ GPa) yields at $40$ kN. (a) Find the yield stress and the strain at yield. (b) At an engineering strain of $0.20$ and stress $400$ MPa find the true stress and strain. (c) A material with $n=0.25$ starts to neck at what engineering strain?</p>
+                <p>(a) $A_0=\pi(5\times10^{-3})^2=78.5$ mm$^2$ and $\sigma_y=40\,000/78.5=509$ MPa; the elastic strain is $509/200\,000=0.25\%$, which is why elastic deformation is nearly invisible. (b) $\sigma_t=400(1.20)=480$ MPa and $\varepsilon_t=\ln1.20=0.182$. (c) Necking at $\varepsilon_t=n=0.25$, i.e. $\varepsilon=e^{0.25}-1=0.284$: the bar can be stretched $28\%$ uniformly before it necks. The stored elastic energy at yield, $\sigma_y^2/2E=0.65$ MJ/m$^3$ (the <em>resilience</em>), is small compared with the plastic work to fracture ($\sim100$ MJ/m$^3$): metals absorb energy by plastic flow.</p>
+            </div>
+
+            <p><strong>Atomic origin of elasticity.</strong> The modulus is the curvature of the interatomic energy curve at equilibrium, $E\sim U''(r_0)/r_0$ (<a href="solid-state-physics.html">PHYS 302</a>, Lecture 1; <a href="classical-mechanics.html">PHYS 101</a>, Lecture 3). A strongly bonded, close-packed solid is stiff (diamond $1000$ GPa), and the elastic range is limited to the strain at which the bond force reaches its maximum, about $10\%$ for the ideal crystal, which is far above the observed $0.1\%$ elastic limit of metals; the difference lies in defects (Lecture 3). The elastic constants $C_{ij}$ of a crystal are directly computable by DFT, by applying small strains and fitting the energy, the best-established prediction in the field.</p>
+
+            <h2 id="slip">Lecture 2. Slip and yielding in crystals<a class="anchor" href="#slip" aria-label="Link to this section">#</a></h2>
+            <p>Plastic deformation of crystals occurs by <strong>slip</strong>: one part of the crystal glides over another along a close-packed plane in a close-packed direction (the <em>slip system</em>), preserving the crystal structure. The planes and directions are those of highest atomic density, because the shear needed to move atoms into the next equivalent position is smallest there: in fcc metals $\{111\}\langle1\bar10\rangle$ (four planes, three directions: $12$ systems), in bcc metals mainly $\{110\}\langle111\rangle$ (and others, 12 to 48 systems, with a strong temperature dependence), and in hcp metals basal $\{0001\}\langle11\bar20\rangle$ (only $3$ systems, hence limited ductility unless other systems are activated).</p>
+            <div class="note thm"><strong>Schmid&rsquo;s law</strong>
+            <p>A single crystal loaded in tension with stress $\sigma$ along a given axis experiences, on a slip plane whose normal makes angle $\phi$ with the axis and in a slip direction making angle $\lambda$, a <strong>resolved shear stress</strong> $\tau=\sigma\cos\phi\cos\lambda$. <em>Proof.</em> The force $F=\sigma A$ resolved along the slip direction is $F\cos\lambda$; it acts on the slip-plane area $A/\cos\phi$; so $\tau=F\cos\lambda\cos\phi/A$. Slip begins on the system where $\tau$ first reaches the <strong>critical resolved shear stress</strong> $\tau_c$, a material constant for a given purity and temperature (Cu $\approx0.6$ MPa, Al $\approx0.8$ MPa, Mg basal $\approx0.5$ MPa): the single-crystal yield stress is $\sigma_y=\tau_c/(\cos\phi\cos\lambda)$, with a minimum of $2\tau_c$ when $\phi=\lambda=45^\circ$. The factor $\cos\phi\cos\lambda$ is the Schmid factor, at most $0.5$.</p>
+            </div>
+            <p>The same result follows from the stress transformation of <a href="tensors-stress-and-strain.html">MATH 302</a>: the shear stress on a plane with normal $\mathbf n$ in direction $\mathbf s$ is $\tau=\mathbf s\cdot\boldsymbol\sigma\mathbf n$, which for uniaxial stress equals $\sigma(\mathbf s\cdot\mathbf e)(\mathbf n\cdot\mathbf e)$. In a polycrystal the grains have random orientations and must deform compatibly with their neighbours, which needs five independent slip systems (von Mises); the average Schmid factor corresponds to a <strong>Taylor factor</strong> $M\approx3.06$ for fcc, so $\sigma_y\approx3.06\tau_c$. The yield stress is higher than that of a single crystal at the best orientation by about a factor $3.06/2$.</p>
+            <div class="demo" data-demo="mohr"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p><strong>The ideal strength.</strong> Estimate the shear stress needed to slide one entire plane over another by one atomic spacing. The shear stress varies periodically with displacement $x$, $\tau=\tau_\mathrm{th}\sin(2\pi x/b)$, and for small $x$ must equal $G\gamma=Gx/a$, so $\tau_\mathrm{th}\approx\dfrac{Gb}{2\pi a}\approx\dfrac G{2\pi}$ (Frenkel, $1926$). For copper this is $48/2\pi=7.6$ GPa, whereas a real single crystal yields at $\tau_c\approx0.6$ MPa, $10^4$ times smaller. Whiskers (nearly perfect crystals) reach a sizeable fraction of the ideal value, which confirmed that bulk crystals contain defects that make slip easy: dislocations.</p>
+            <div class="example">
+                <strong>Worked example 2.1: the Schmid factor</strong>
+                <p class="given">A copper crystal ($\tau_c=0.6$ MPa) is loaded with the tensile axis such that, on the most favoured slip system, $\phi=60^\circ$ and $\lambda=40^\circ$. Find the Schmid factor and the yield stress. What is the polycrystal yield stress for $\tau_c$ the same, with $M=3.06$?</p>
+                <p>The Schmid factor is $\cos60^\circ\cos40^\circ=0.5\times0.766=0.383$, so $\sigma_y=0.6/0.383=1.57$ MPa, compared with the minimum $1.2$ MPa at $\phi=\lambda=45^\circ$. A randomly oriented polycrystal with the same $\tau_c$ yields at $3.06\times0.6=1.84$ MPa. These are tiny numbers: pure annealed copper is extremely soft, and the observed polycrystal yield stress ($\sim25$&ndash;$70$ MPa) is dominated by grain size and dislocation-density effects (Lecture 4), not by $\tau_c$ of a perfect crystal.</p>
+            </div>
+
+            <h2 id="dislocations">Lecture 3. Dislocations<a class="anchor" href="#dislocations" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>dislocation</strong> is a line defect. Its <strong>Burgers vector</strong> $\mathbf b$ is the closing vector of a loop drawn round the line in the crystal (the lattice vector of the slip step), and it is constant along the line. In an <strong>edge</strong> dislocation $\mathbf b$ is perpendicular to the line: the crystal contains an extra half-plane ending at the line. In a <strong>screw</strong> dislocation $\mathbf b$ is parallel to the line and the atomic planes spiral round it like a helical ramp. A general (mixed) dislocation has both characters; a dislocation cannot end inside a crystal, only at a surface, a grain boundary or another dislocation, or close on itself as a loop. The Burgers vector in fcc is $\tfrac a2\langle110\rangle$ (length $a/\sqrt2=0.256$ nm in Cu) and in bcc $\tfrac a2\langle111\rangle$.</p>
+            <p><strong>Why dislocations make slip easy.</strong> When a shear stress acts, the dislocation moves one atomic spacing by breaking and remaking bonds only along the line (a few atoms at a time) instead of shearing a whole plane at once. A sheared crystal advances one atom row per row of atoms; the plastic strain produced is $\gamma=\rho_mb\bar x$, with $\rho_m$ the density of mobile dislocations and $\bar x$ the mean distance moved (Orowan equation), and the strain rate $\dot\gamma=\rho_mb\bar v$.</p>
+            <p><strong>Energy and force.</strong> The strain field of a dislocation extends far from the core, with elastic energy per unit length
+            $$W=\frac{Gb^2}{4\pi(1-\nu)}\ln\frac Rr_0\approx\tfrac12Gb^2\quad(\text{an estimate for the whole range of }R/r_0),$$
+            about $2.5$ eV per atomic length of line in Cu; the energy per length gives the dislocation a <em>line tension</em> $T\approx\tfrac12Gb^2$, which tries to shorten it like a stretched string. This is why $\mathbf b$ is small (energy $\propto b^2$) and why dislocations split into partial dislocations when that lowers $b^2$. A shear stress $\tau$ on the slip plane exerts a force per unit length on the dislocation (the <strong>Peach&ndash;Koehler force</strong>) of $F=\tau b$, perpendicular to the line. A dislocation segment of length $L$ pinned at both ends (by obstacles) bows out under stress to a radius $R=T/(\tau b)\approx Gb/2\tau$ and becomes unstable when $R=L/2$, at
+            $$\tau=\frac{Gb}L.$$
+            This is the <strong>Frank&ndash;Read source</strong>: the pinned segment bows out, loops around and releases a new dislocation loop, repeating the process; it multiplies dislocations, so the density rises from $10^{10}$ to $10^{15}\ \mathrm{m^{-2}}$ during deformation. The <strong>dislocation density</strong> $\rho$ (line length per volume, in $\mathrm{m^{-2}}$) is $10^{6}$&ndash;$10^{10}$ in annealed metals and up to $10^{16}$ in heavily deformed ones.</p>
+            <div class="note mat"><strong>In materials science: dislocations in simulations</strong>
+            <p>The core of a dislocation needs atomistic treatment (molecular dynamics or DFT: the core structure and Peierls stress, the stress needed to move it through the lattice, differ greatly between fcc and bcc metals) while the long-range elastic field is described by continuum theory. <em>Discrete dislocation dynamics</em> follows the motion and interaction of thousands of dislocation lines under stress, and crystal-plasticity finite elements (<a href="finite-element-method.html">CMS 506</a>) use slip systems and Schmid&rsquo;s law as their constitutive law, fed with parameters from the smaller scales. Bridging these scales is the multiscale-modelling problem.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 3.1: dislocation energy and Frank&ndash;Read stress</strong>
+                <p class="given">For copper ($G=48$ GPa, $b=0.256$ nm) estimate the energy per unit length of a dislocation, the energy per atomic length, the Frank&ndash;Read stress for a source of length $1\ \mu$m, and the Taylor hardening for $\rho=10^{14}\ \mathrm{m^{-2}}$ with $\alpha=0.3$.</p>
+                <p>$W=\tfrac12Gb^2=\tfrac12(48\times10^9)(0.256\times10^{-9})^2=1.57\times10^{-9}$ J/m, which is $9.8$ eV per nm of line or $2.5$ eV per atomic length $b$: the energy of a whole line is huge, so dislocations are not in thermal equilibrium (unlike vacancies): they exist because they are made during growth and deformation and removed only by annealing. A $1\ \mu$m Frank&ndash;Read source operates at $\tau=Gb/L=48\times10^9\times0.256\times10^{-9}/10^{-6}=12.3$ MPa. The Taylor stress $\tau=\alpha Gb\sqrt\rho=0.3\times12.29\ \mathrm{N/m}\times10^7\ \mathrm{m^{-1}}=36.9$ MPa for $\rho=10^{14}$; the polycrystal yield contribution is $3.06\times$ larger, $\sim113$ MPa (Lecture 4).</p>
+            </div>
+
+            <h2 id="strengthening">Lecture 4. Strengthening mechanisms<a class="anchor" href="#strengthening" aria-label="Link to this section">#</a></h2>
+            <p>Since plastic flow is the motion of dislocations, a metal is strengthened by obstructing them. Four mechanisms are used, alone or together.</p>
+            <p><strong>1. Strain (work) hardening.</strong> Dislocations multiply during deformation and the forest of dislocations impedes the motion of others. The flow stress increases with density as the <strong>Taylor relation</strong>
+            $$\tau=\tau_0+\alpha Gb\sqrt\rho,\qquad\alpha\approx0.2\text{&ndash;}0.5.$$
+            <em>Why $\sqrt\rho$.</em> The mean spacing between dislocations is $\rho^{-1/2}$; to bow a dislocation between neighbours at spacing $L$ needs $\tau\sim Gb/L=Gb\sqrt\rho$ (the Frank&ndash;Read result). Cold working a metal (rolling, drawing) raises $\rho$ and strength and reduces ductility; annealing (recovery and recrystallisation) reverses it.</p>
+            <p><strong>2. Grain-boundary strengthening (Hall&ndash;Petch).</strong> Grain boundaries stop dislocations because the slip planes change orientation. Dislocations pile up against a boundary; the stress concentrated by a pile-up of length $\sim d$ must reach the stress needed to activate slip in the next grain, which gives
+            $$\sigma_y=\sigma_0+k\,d^{-1/2},$$
+            with $d$ the grain diameter, $\sigma_0$ the friction stress and $k$ ($0.1$ MPa m$^{1/2}$ for Cu, $0.6$&ndash;$0.7$ for steel, $0.3$ for Al) a constant. Finer grains are stronger <em>and</em> tougher, the only mechanism that does both. The relation breaks down below $\sim10$ nm, where boundaries themselves slide (the inverse Hall&ndash;Petch effect).</p>
+            <p><strong>3. Solid-solution strengthening.</strong> Solute atoms of a different size distort the lattice and exert forces on the strain field of dislocations; the extra stress grows as $\Delta\tau\propto c^{1/2}$ to $c^{2/3}$ in concentration $c$ and with the misfit (Cu&ndash;Ni, brass, carbon in iron). Hardening of steel by carbon in interstitial sites is especially strong because interstitials create asymmetric distortions.</p>
+            <p><strong>4. Precipitation (particle) hardening.</strong> Fine second-phase particles obstruct dislocations. Particles that are too hard to be sheared are bypassed by <strong>Orowan looping</strong>: the dislocation bows between particles of spacing $L$, which needs a shear stress $\tau\approx Gb/L$, and leaves loops around the particles. Closer spacing means stronger, so the best strength comes from a fine, dense dispersion; coarsening (Ostwald ripening, <a href="diffusion-and-kinetics.html">CMS 504</a>) increases $L$ and softens the alloy (overageing). Shearable particles have a different dependence (stronger as the particle grows) and so peak strength occurs at the transition. The aluminium&ndash;copper, Ni-base superalloy and maraging steel systems are examples.</p>
+            <p>When different mechanisms act, the contributions are usually added, $\sigma_y=\sigma_0+\Delta\sigma_\mathrm{ss}+\Delta\sigma_\mathrm{gb}+\Delta\sigma_\mathrm{ppt}+\Delta\sigma_\mathrm{disl}$, with a quadratic combination ($\sqrt{\sum\Delta\sigma^2}$) used when the obstacles are of similar strength. These are the &ldquo;recipes&rdquo; in alloy design: a steel is hardened by carbon, fine grains, precipitates and dislocation density together.</p>
+            <div class="note mat"><strong>In materials science: process&ndash;structure&ndash;property computation</strong>
+            <p>Strength models of this type take inputs that are computed by other methods: solute&ndash;dislocation binding energies and lattice misfit from DFT, precipitate size, spacing and volume fraction from phase-field or precipitation (kinetic) models (<a href="phase-field-modelling.html">CMS 505</a>), grain size from grain-growth models, and dislocation density from crystal-plasticity or dislocation dynamics. Combining them into a predicted yield stress is the central workflow of integrated computational materials engineering (ICME).</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: the strength of a fine-grained steel and an aged aluminium alloy</strong>
+                <p class="given">(a) Low-carbon steel has $\sigma_0=100$ MPa and $k=0.6\ \mathrm{MPa\,m^{1/2}}$. Find the yield stress for grain sizes of $100$, $10$ and $1\ \mu$m. (b) An aluminium alloy ($G=26$ GPa, $b=0.286$ nm) contains non-shearable particles with an effective spacing $L=100$ nm. Estimate the Orowan stress, and the effect of halving $L$.</p>
+                <p>(a) $d^{-1/2}$ is $100$, $316$ and $1000\ \mathrm{m^{-1/2}}$, so with $k=0.6$ MPa m$^{1/2}$ the yield stress is $100+0.6\times100=160$ MPa for $100\ \mu$m, $100+0.6\times316=290$ MPa for $10\ \mu$m and $100+0.6\times1000=700$ MPa for $1\ \mu$m. Refining the grains from $100$ to $1\ \mu$m multiplies the yield strength by $4.4$. (b) The shear stress is $\tau=Gb/L=26\times10^9\times0.286\times10^{-9}/10^{-7}=74$ MPa, which in a polycrystal corresponds to $\Delta\sigma=M\tau=3.06\times74=228$ MPa. Halving the spacing to $50$ nm doubles it, to $\sim450$ MPa: precipitation hardening of this kind takes pure aluminium ($\sim20$ MPa) to the strength of many steels.</p>
+            </div>
+
+            <h2 id="fracture">Lecture 5. Fracture<a class="anchor" href="#fracture" aria-label="Link to this section">#</a></h2>
+            <p>A material can fail by plastic collapse or by cracking. <strong>Brittle fracture</strong> (glass, ceramics, cold steel) occurs with little plastic deformation and at stresses far below the ideal cohesive strength $\sim E/10$. <strong>Ductile fracture</strong> proceeds by void nucleation, growth and coalescence after substantial plastic flow. Why are real materials so much weaker than their bonds? Because of flaws.</p>
+            <p><strong>Stress concentration.</strong> A crack or notch concentrates stress at its tip. For an elliptical hole of half-length $a$ (perpendicular to the load) and tip radius $\rho$, Inglis (1913) showed that the local stress is $\sigma_\mathrm{max}=\sigma\bigl(1+2\sqrt{a/\rho}\bigr)$. A flaw $1\ \mu$m long with an atomically sharp tip ($\rho\approx0.5$ nm) multiplies the applied stress by $\approx90$, so the ideal strength is reached locally while the average stress is far lower.</p>
+            <div class="note thm"><strong>The Griffith criterion</strong>
+            <p>A crack of length $2a$ in a large plate under tensile stress $\sigma$ lowers the elastic energy by $\pi\sigma^2a^2/E$ per unit thickness (the volume of material near the crack that is unloaded) and costs surface energy $4a\gamma_s$ (two surfaces of energy $\gamma_s$ per area). The total $\Delta U(a)=4a\gamma_s-\pi\sigma^2a^2/E$ is maximal at $\mathrm d\Delta U/\mathrm da=0$, i.e. at the critical stress
+            $$\sigma_f=\sqrt{\frac{2E\gamma_s}{\pi a}}.$$
+            For longer cracks the elastic energy released exceeds the surface energy, so the crack grows spontaneously and, since the required stress falls as the crack grows, catastrophically. The strength is controlled by the largest flaw, so it is statistically variable (Weibull) and scales with the size of the specimen.</p>
+            </div>
+            <p><strong>Fracture mechanics.</strong> The stress field at a crack tip has the universal form $\sigma_{ij}=K_I f_{ij}(\theta)/\sqrt{2\pi r}$, with the <strong>stress intensity factor</strong> $K_I=Y\sigma\sqrt{\pi a}$ ($Y\approx1$ for a central crack, $1.12$ for an edge crack). Fracture occurs when $K_I$ reaches the material&rsquo;s <strong>fracture toughness</strong> $K_{IC}$ (MPa m$^{1/2}$): $\sim1$ for glass, $3$&ndash;$5$ for alumina, $30$&ndash;$100$ for steels, $25$&ndash;$40$ for aluminium alloys, $&gt;100$ for tough stainless steel. Equivalently the energy release rate $G=K^2/E$ reaches $2\gamma_s+\gamma_p$; the plastic term $\gamma_p$ (energy of plastic deformation at the tip) is $10^3$ times the surface term in metals, which is why metals are tough. The design question is the critical flaw size $a_c=\dfrac1\pi\bigl(\dfrac{K_{IC}}{Y\sigma}\bigr)^2$ at the working stress, which non-destructive inspection must be able to detect. The <strong>ductile&ndash;brittle transition</strong> of bcc metals (steel falls from ductile to brittle below a temperature because the dislocation mobility drops and yield stress rises above the fracture stress) caused the sudden failures of Liberty ships and led to the toughness requirements in steel specifications.</p>
+            <div class="example">
+                <strong>Worked example 5.1: glass and steel</strong>
+                <p class="given">(a) Glass ($E=70$ GPa, $\gamma_s=1$ J/m$^2$) contains a $2\ \mu$m surface flaw. Find the Griffith strength and compare it with the ideal strength $E/10$. (b) A steel with $K_{IC}=50\ \mathrm{MPa\,m^{1/2}}$ has an edge crack of $2$ mm. Find the failure stress and the critical crack length at $400$ MPa.</p>
+                <p>(a) Treating the flaw depth as the half-length $a=1\ \mu$m: $\sigma_f=\sqrt{2(70\times10^9)(1)/(\pi\times10^{-6})}=211$ MPa, a thirtieth of the ideal strength $E/10=7$ GPa; freshly drawn glass fibres without flaws reach several GPa. (b) $\sigma_f=K_{IC}/(Y\sqrt{\pi a})=50/(1.12\sqrt{\pi\times0.002})=563$ MPa; at the working stress of $400$ MPa the critical edge-crack length is $a_c=\dfrac1\pi\Bigl(\dfrac{50}{1.12\times400}\Bigr)^2=4.0$ mm: a crack smaller than $4$ mm is safe against fast fracture, which sets the inspection requirement (but see fatigue in Lecture 6).</p>
+            </div>
+
+            <h2 id="timedep">Lecture 6. Creep and fatigue<a class="anchor" href="#timedep" aria-label="Link to this section">#</a></h2>
+            <p>Real structures fail not only under a single overload but over time. Two time-dependent processes dominate.</p>
+            <p><strong>Creep.</strong> At temperatures above about $0.4T_m$ (the <em>homologous temperature</em>) a material under constant stress deforms slowly and continuously, even below the yield stress. The strain&ndash;time curve has a primary stage (decreasing rate), a secondary stage with a nearly constant <strong>minimum creep rate</strong> (hardening balances recovery) and a tertiary stage of accelerating strain ending in rupture. The steady-state rate follows the <strong>power-law (Norton) relation</strong>
+            $$\dot\varepsilon=A\,\sigma^n\exp\Bigl(-\frac Q{RT}\Bigr),$$
+            with a stress exponent $n=3$&ndash;$8$ for dislocation creep ($n\approx1$ for diffusion creep, when vacancies diffuse from grain boundaries under compression to those under tension, Nabarro&ndash;Herring and Coble creep) and an activation energy $Q$ close to that of lattice self-diffusion ($\sim300$ kJ/mol for iron, $142$ for Al): creep is controlled by atoms and vacancies moving (<a href="diffusion-and-kinetics.html">CMS 504</a>; the Boltzmann factor of <a href="thermal-physics.html">PHYS 102</a>). The strong dependence on $T$ and $\sigma$ means a small increase in the operating temperature or stress shortens life dramatically. Alloys for jet-engine blades are designed against creep: single crystals (no grain boundaries), $\gamma'$ precipitates to block dislocations, and slow-diffusing solutes such as rhenium.</p>
+            <p><strong>Fatigue.</strong> Under cyclic loading, failure occurs after many cycles at stresses far below $\sigma_y$. The life is described by an <strong>S&ndash;N curve</strong> (stress amplitude against number of cycles to failure, $\sigma_a=\sigma_f'(2N_f)^b$ with $b\approx-0.1$, Basquin) with, for steels, an <em>endurance limit</em> below which life is infinite ($\sim0.5\sigma_\mathrm{UTS}$). Cracks initiate at surface slip bands and grow by a small increment each cycle. In the long-crack regime the growth rate obeys the <strong>Paris law</strong>
+            $$\frac{\mathrm da}{\mathrm dN}=C\,(\Delta K)^m,\qquad\Delta K=Y\Delta\sigma\sqrt{\pi a},\quad m\approx2\text{&ndash;}4\ (\text{metals}).$$
+            Integrating from an initial crack size $a_0$ to the critical size $a_f$ gives the number of cycles; for $m=3$ and constant $Y$: $N_f=\dfrac{2}{C\,Y^3\Delta\sigma^3\pi^{3/2}}\bigl(a_0^{-1/2}-a_f^{-1/2}\bigr)$. Most of the life is spent when the crack is small, so the life depends strongly on $a_0$, hence on surface finish and inspection.</p>
+            <div class="example">
+                <strong>Worked example 6.1: creep sensitivity</strong>
+                <p class="given">A creep-resistant steel has $Q=300$ kJ/mol and $n=5$. By what factor does the creep rate rise (a) from $800$ K to $900$ K at fixed stress, (b) if the stress is doubled at fixed temperature? (c) Which is more dangerous for a component?</p>
+                <p>(a) $\dfrac{\dot\varepsilon_{900}}{\dot\varepsilon_{800}}=\exp\Bigl[\dfrac QR\Bigl(\dfrac1{800}-\dfrac1{900}\Bigr)\Bigr]=\exp\bigl[36\,082\times1.389\times10^{-4}\bigr]=e^{5.01}=150$. (b) $2^5=32$. (c) A $100$ K rise in temperature is worth a factor of $150$ in creep rate, more than a doubling of stress ($32$): temperature control of the component (cooling channels, thermal barrier coatings) is as important as stress control. The exponential temperature sensitivity also means that a $25$ K error in estimating the metal temperature of a turbine blade changes its life by a factor of $\sim3$.</p>
+            </div>
+
+            <div class="example">
+                <strong>Worked example 6.2: fatigue crack growth</strong>
+                <p class="given">A plate with an edge crack of $a_0=0.5$ mm carries a cyclic stress range $\Delta\sigma=100$ MPa. Material: $C=10^{-11}$ (m/cycle with $\Delta K$ in MPa m$^{1/2}$), $m=3$, $Y=1.12$, and the critical crack length is $10$ mm. Find the initial crack growth rate and the fatigue life.</p>
+                <p>$\Delta K=1.12\times100\sqrt{\pi\times0.0005}=4.44\ \mathrm{MPa\,m^{1/2}}$ and $\mathrm da/\mathrm dN=10^{-11}(4.44)^3=8.7\times10^{-10}$ m/cycle, i.e. $0.9$ nm per cycle (a few atomic spacings). The life is $N_f=\dfrac{2}{(10^{-11})(1.12)^3(100)^3\pi^{3/2}}\bigl[(5\times10^{-4})^{-1/2}-(10^{-2})^{-1/2}\bigr]=2.56\times10^4\times(44.7-10.0)=8.9\times10^5$ cycles. If the initial flaw is $0.1$ mm instead, $a_0^{-1/2}=100$ and the life becomes $2.3\times10^6$ cycles, nearly three times longer; the life depends mostly on the starting flaw size, hence the importance of surface finishing and inspection.</p>
+            </div>
+
+            <h2 id="design">Lecture 7. Designing against failure: selection and simulation<a class="anchor" href="#design" aria-label="Link to this section">#</a></h2>
+            <p>Choosing a material means matching properties to the function, the objective and the constraints. Ashby&rsquo;s method expresses the objective as a <strong>material index</strong> $M$ that must be maximised. For a light, stiff beam of given length and bending stiffness, the mass is minimised by maximising $E^{1/2}/\rho$ (derived from the beam stiffness $S\propto EI/L^3$ with a square section of side $t$: $I=t^4/12$, so $t\propto(S/E)^{1/4}$ and the mass $\propto\rho t^2\propto\rho(S/E)^{1/2}$); for a light, strong beam, $\sigma_y^{2/3}/\rho$; for a stiff, light <em>plate</em>, $E^{1/3}/\rho$; for a tie rod, $E/\rho$ or $\sigma_y/\rho$. Maps of $E$ against $\rho$ or $\sigma_y$ against $K_{IC}$ show where each material class lies, and a line of constant index on a log&ndash;log plot has a fixed slope. The design rules to remember: select for stiffness (a property of the bonds, little changed by processing) before strength (a property of the microstructure, changed greatly by processing), include the toughness and temperature requirements, and apply safety factors that account for flaw size, scatter and loading uncertainty.</p>
+            <p><strong>What simulation contributes.</strong> The mechanical properties form a hierarchy of difficulty:</p>
+            <ul>
+                <li><strong>Elastic constants</strong>: computed by DFT to a few percent, and by interatomic potentials in molecular dynamics.</li>
+                <li><strong>Ideal strength, stacking-fault and surface energies</strong> ($\gamma_s$, $\gamma_\mathrm{sf}$): DFT; they give the cleavage strength and the splitting of dislocations.</li>
+                <li><strong>Dislocation core structure, Peierls stress, solute&ndash;dislocation interaction</strong>: DFT and molecular statics, increasingly with machine-learned potentials.</li>
+                <li><strong>Collective dislocation behaviour, work hardening</strong>: dislocation dynamics, crystal-plasticity finite elements.</li>
+                <li><strong>Precipitate evolution and strength</strong>: phase-field and CALPHAD-based kinetics, then the strengthening models of Lecture 4.</li>
+                <li><strong>Fracture, creep and fatigue life</strong>: continuum damage mechanics and finite elements with inputs from the lower scales; the hardest to predict because they are controlled by rare events and extreme flaws.</li>
+            </ul>
+            <div class="example">
+                <strong>Worked example 7.1: a stiff, light beam</strong>
+                <p class="given">Rank steel ($E=200$ GPa, $\rho=7850$), aluminium ($70$, $2700$), titanium ($110$, $4500$) and magnesium ($45$, $1740$) for a light, stiff beam, using $M=E^{1/2}/\rho$, and for a light tie rod using $E/\rho$.</p>
+                <p>In SI units $M=\sqrt E/\rho$: steel $\sqrt{2\times10^{11}}/7850=57$; Ti $73.7$; Al $98$; Mg $122$ ($\mathrm{Pa^{1/2}\,m^3/kg}$). For a beam, magnesium is best and steel worst: a beam of given bending stiffness is lightest in the less dense, thicker section. For a tie rod $E/\rho=25.5,\ 25.9,\ 24.4,\ 25.9$ MJ/kg are almost identical for these metals: specific stiffness along the load is nearly independent of material, since $E\propto\rho$ for metals in this range, and only composites (carbon fibre, $E/\rho\sim100$) do much better. This is why aircraft use thin-walled, large-section structures in aluminium and composites rather than solid steel.</p>
+            </div>
+
+            <h2 id="summary-m302">Summary of the unit<a class="anchor" href="#summary-m302" aria-label="Link to this section">#</a></h2>
+            <p>Elastic behaviour is set by interatomic bonds, but plastic behaviour is set by defects: dislocations move at stresses a hundred to ten thousand times below the ideal strength, and metals are strengthened by obstructing them with other dislocations, grain boundaries, solutes and precipitates. Brittle materials fail when a flaw reaches the critical size set by the toughness, and at high temperature or under cyclic load, time-dependent damage by diffusion and crack growth takes over. Material indices turn these properties into design choices, and simulation provides inputs at each scale, from the elastic constants computed with DFT to the crystal-plasticity models run with finite elements (<a href="finite-element-method.html">CMS 506</a>).</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>The tensile test gives Young&#x27;s modulus, yield and ultimate strength and ductility; true stress and strain, $\sigma_t=\sigma(1+\varepsilon)$ and $\varepsilon_t=\ln(1+\varepsilon)$, are needed for large strains, and necking starts when $\mathrm d\sigma_t/\mathrm d\varepsilon_t=\sigma_t$ (for $\sigma=K\varepsilon^n$, at $\varepsilon_t=n$).</li>
+<li>Crystals deform plastically by slip on close-packed planes when the resolved shear stress $\tau=\sigma\cos\phi\cos\lambda$ reaches the critical value (Schmid&#x27;s law); the ideal strength $\sim G/2\pi$ is a hundred times the real yield stress because slip proceeds by dislocation motion.</li>
+<li>A dislocation has Burgers vector $\mathbf b$, line energy $\approx\tfrac12Gb^2$ per length and feels a force $\tau b$ per length; strengthening means obstructing dislocations: by other dislocations (Taylor, $\tau=\alpha Gb\sqrt\rho$), grain boundaries (Hall-Petch, $\sigma_y=\sigma_0+kd^{-1/2}$), solute atoms and precipitates (Orowan, $\Delta\tau\approx Gb/L$).</li>
+<li>Brittle fracture occurs when the stress intensity $K_I=Y\sigma\sqrt{\pi a}$ reaches the toughness $K_{IC}$; Griffith&#x27;s criterion $\sigma_f=\sqrt{2E\gamma/\pi a}$ explains why flaws, not bonds, set the strength of ceramics and glass.</li>
+<li>At high temperature ($T&gt;0.4T_m$) materials creep with a thermally activated rate $\dot\varepsilon=A\sigma^ne^{-Q/RT}$, and under cyclic loading they fatigue, with crack growth $\mathrm da/\mathrm dN=C\,\Delta K^m$ (Paris law); design uses material indices such as $E^{1/2}/\rho$ to choose materials.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p302-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>A $12.0$ mm diameter bar of length $50$ mm is loaded to $30$ kN and extends by $0.066$ mm elastically. (a) Find $\sigma$, $\varepsilon$ and $E$. (b) The bar yields at $45$ kN and breaks at $60$ kN with a final diameter of $8.0$ mm (necked): find the yield stress, UTS and true fracture stress. (c) What is the reduction of area?</p>
+            <details class="hint"><summary>Hint</summary><p>$\sigma=F/A_0$. True fracture stress is the load at fracture over the final area.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $A_0=113.1\ \mathrm{mm^2}$, $\sigma=30\,000/113.1=265$ MPa, $\varepsilon=0.066/50=1.32\times10^{-3}$, $E=265/1.32\times10^{-3}=200$ GPa, the modulus of steel. (b) $\sigma_y=45\,000/113.1=398$ MPa; UTS $=60\,000/113.1=531$ MPa if $60$ kN is the maximum load; the true fracture stress uses the final area $\pi(4)^2=50.3\ \mathrm{mm^2}$: $60\,000/50.3=1194$ MPa, more than twice the engineering UTS. (c) Reduction of area $=(113.1-50.3)/113.1=55.5\%$, and the true fracture strain is $\ln(113.1/50.3)=0.81$.</p>
+            <p class="answer">(a) $265$ MPa, $E=200$ GPa; (b) $398$, $531$, $1194$ MPa; (c) $55.5\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>A material has $\sigma_t=K\varepsilon_t^n$ with $K=600$ MPa and $n=0.20$. (a) At what true and engineering strain does necking begin? (b) What is the true stress and the engineering UTS then?</p>
+            <details class="hint"><summary>Hint</summary><p>Necking at $\varepsilon_t=n$; $\sigma_\mathrm{UTS}=\sigma_t/(1+\varepsilon)=\sigma_te^{-\varepsilon_t}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\varepsilon_t=n=0.20$, engineering strain $e^{0.20}-1=0.221$. (b) $\sigma_t=600(0.20)^{0.20}=435$ MPa and $\sigma_\mathrm{UTS}=435e^{-0.20}=356$ MPa. The engineering stress is lower than the true stress because the area has shrunk by $18\%$.</p>
+            <p class="answer">(a) $0.20$, $0.221$; (b) $435$, $356$ MPa</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>A zinc single crystal (hcp) has a basal-plane critical resolved shear stress of $0.18$ MPa. The tensile axis makes $\phi=60^\circ$ with the plane normal and $\lambda=45^\circ$ with the slip direction. Find the yield stress, and the stress if the axis were at $\phi=85^\circ$.</p>
+            <details class="hint"><summary>Hint</summary><p>$\sigma_y=\tau_c/(\cos\phi\cos\lambda)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\cos60^\circ\cos45^\circ=0.354$, so $\sigma_y=0.18/0.354=0.51$ MPa. For $\phi=85^\circ$ the factor is $\cos85^\circ\cos\lambda\le0.087$, so $\sigma_y\ge2.1$ MPa and a basal plane nearly parallel to the axis is almost impossible to shear on the basal system: other (non-basal) systems with much higher $\tau_c$ must operate, so hcp metals are anisotropic and brittle in some orientations.</p>
+            <p class="answer">$0.51$ MPa; $\geq2.1$ MPa</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>(a) Show that the resolved shear stress on a slip system with normal $\mathbf n$ and direction $\mathbf s$ in uniaxial stress $\sigma$ along $\mathbf e$ is $\sigma(\mathbf s\cdot\mathbf e)(\mathbf n\cdot\mathbf e)$. (b) Find the Schmid factor for tension along $[001]$ in fcc for the system $(111)[\bar101]$. (c) Along $[123]$, which of the twelve systems has the largest Schmid factor, for $(111)[\bar101]$ and $(\bar1\bar11)[101]$?</p>
+            <details class="hint"><summary>Hint</summary><p>$\tau=\mathbf s\cdot\boldsymbol\sigma\cdot\mathbf n$ with $\boldsymbol\sigma=\sigma\,\allowbreak \mathbf e\mathbf e^T$. Use unit vectors.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sigma_{ij}=\sigma e_ie_j$, so $\tau=s_i\sigma_{ij}n_j=\sigma(\mathbf s\cdot\mathbf e)(\mathbf e\cdot\mathbf n)$; with angles, $\cos\lambda\cos\phi$. (b) $\mathbf e=(0,0,1)$, $\mathbf n=(1,1,1)/\sqrt3$, $\mathbf s=(-1,0,1)/\sqrt2$: $\mathbf n\cdot\mathbf e=0.577$, $\mathbf s\cdot\mathbf e=0.707$, product $0.408$. All eight active systems for $[001]$ have this value, which is why $[001]$ crystals start slipping on eight systems at once. (c) For $\mathbf e=(1,2,3)/\sqrt{14}$: $(111)[\bar101]$: $\mathbf n\cdot\mathbf e=6/(\sqrt3\sqrt{14})=0.926$, $\mathbf s\cdot\mathbf e=2/(\sqrt2\sqrt{14})=0.378$, product $0.350$; $(\bar1\bar11)[101]$: $\mathbf n\cdot\mathbf e=(-1-2+3)/(\sqrt3\sqrt{14})=0$, factor $0$. The first is much more favoured; a single system operates initially (easy glide) and the crystal hardens slowly at first.</p>
+            <p class="answer">(b) $0.408$; (c) $0.350$ against $0$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>(a) Find the ideal shear strength $G/2\pi$ for aluminium ($G=26$ GPa) and compare with the measured critical resolved shear stress $0.8$ MPa. (b) A dislocation density of $10^{12}\ \mathrm{m^{-2}}$ is present in an annealed crystal. Find the mean spacing between dislocations and the shear stress needed to bow a dislocation between two neighbours ($b=0.286$ nm). (c) How much plastic strain results if $\rho_m=10^{10}\ \mathrm{m^{-2}}$ dislocations each move $10\ \mu$m?</p>
+            <details class="hint"><summary>Hint</summary><p>$\tau_\mathrm{th}\approx G/2\pi$; Orowan: $\gamma=\rho_mb\bar x$; bow-out $\tau=Gb/L$ with $L=\rho^{-1/2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau_\mathrm{th}=26/2\pi=4.1$ GPa, which is $5\times10^3$ times the observed $0.8$ MPa. (b) $L=\rho^{-1/2}=1\ \mu$m, and $\tau=Gb/L=26\times10^9\times0.286\times10^{-9}/10^{-6}=7.4$ MPa, ten times the single-crystal $\tau_c$ (so $\tau_c$ is controlled by lower densities and more mobile configurations). (c) $\gamma=\rho_mb\bar x=10^{10}\times0.286\times10^{-9}\times10^{-5}=0.029$, a plastic shear strain of $2.9\%$ from dislocations that are $1$ in $10^{8}$ of the atoms in a plane.</p>
+            <p class="answer">(a) $4.1$ GPa; (b) $1\ \mu$m, $7.4$ MPa; (c) $2.9\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>Copper ($G=48$ GPa, $b=0.256$ nm, $M=3.06$) has a yield strength $\sigma_y=\sigma_0+M\alpha Gb\sqrt\rho+kd^{-1/2}$ with $\sigma_0=10$ MPa, $\alpha=0.3$ and $k=0.11\ \mathrm{MPa\,m^{1/2}}$. Find the yield stress (a) for $d=50\ \mu$m, $\rho=10^{12}\ \mathrm{m^{-2}}$, (b) after cold work to $\rho=10^{15}$, and (c) for a nanocrystalline sample with $d=100$ nm and $\rho=10^{14}$.</p>
+            <details class="hint"><summary>Hint</summary><p>$\alpha Gb=0.3\times48\times10^9\times0.256\times10^{-9}=3.69$ N/m; multiply by $\sqrt\rho$ and by $M$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$M\alpha Gb=3.06\times3.69=11.3$ N/m. (a) $11.3\times10^6=11.3$ MPa from dislocations; $kd^{-1/2}=0.11/\sqrt{5\times10^{-5}}=15.6$ MPa; total $10+11.3+15.6=37$ MPa. (b) $\sqrt\rho=3.16\times10^7$, giving $357$ MPa; total $10+357+15.6=383$ MPa: cold work multiplies the strength by $10$. (c) $\sqrt\rho=10^7$: $113$ MPa; $kd^{-1/2}=0.11/\sqrt{10^{-7}}=348$ MPa; total $471$ MPa. Both effects add; the Hall&ndash;Petch term dominates for ultra-fine grains, while for coarse grains work hardening is the main contribution.</p>
+            <p class="answer">(a) $37$ MPa; (b) $383$ MPa; (c) $471$ MPa</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>An alloy ($G=26$ GPa, $b=0.286$ nm) is strengthened by spherical non-shearable precipitates of radius $r$ at volume fraction $f=0.02$. The mean planar spacing is $L\approx r\sqrt{2\pi/3f}$ (centre to centre, minus $2r$ for the free gap). (a) Find the Orowan stress for $r=5$ nm and $20$ nm. (b) Which is stronger and why? (c) What happens on over-ageing?</p>
+            <details class="hint"><summary>Hint</summary><p>Free gap $\lambda=r\bigl(\sqrt{2\pi/3f}-2\bigr)$; $\tau=Gb/\lambda$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\sqrt{2\pi/3f}=\sqrt{104.7}=10.2$, so $\lambda=r(10.2-2)=8.2r$. (a) For $r=5$ nm, $\lambda=41$ nm and $\tau=26\times10^9\times0.286\times10^{-9}/41\times10^{-9}=181$ MPa; for $r=20$ nm, $\lambda=164$ nm and $\tau=45$ MPa. (b) The finer dispersion ($r=5$ nm) is four times stronger: at fixed volume fraction the spacing shrinks in proportion to $r$. (c) During over-ageing particles coarsen (large ones grow at the expense of small ones), $\lambda$ increases, and the strength falls; the peak-aged condition is the finest dispersion that is still not sheared, with the strengths of shearable particles rising until the transition to Orowan bypass.</p>
+            <p class="answer">(a) $181$ MPa, $45$ MPa; (b) fine; (c) softens</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>(a) Use the Griffith relation to find the strength of alumina ($E=380$ GPa, $\gamma_s=1$ J/m$^2$) with a $30\ \mu$m surface flaw (so $a=30\ \mu$m for an edge crack, $Y=1.12$ in the $K$ formula). (b) Compare it with the $K_{IC}$ approach with $K_{IC}=4\ \mathrm{MPa\,m^{1/2}}$. (c) By what factor does the strength increase if the largest flaw is reduced to $3\ \mu$m?</p>
+            <details class="hint"><summary>Hint</summary><p>$\sigma_f=K_{IC}/(Y\sqrt{\pi a})$ and Griffith $\sqrt{2E\gamma_s/\pi a}$; strength $\propto a^{-1/2}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $$\sigma_f=\sqrt{\frac{2(380\times10^9)(1)}{\pi(30\times10^{-6})}}=90\ \text{MPa}$$ with the surface energy alone. (b) With the measured toughness, $\sigma_f=4/(1.12\sqrt{\pi\times30\times10^{-6}})=368$ MPa, four times higher: $K_{IC}=\sqrt{2E\gamma_\mathrm{eff}}$ implies an effective fracture energy $\gamma_\mathrm{eff}=K_{IC}^2/2E=21\ \mathrm{J/m^2}$, twenty times the surface energy (crack deflection and bridging add toughness). (c) A $10$-fold smaller flaw gives $\sqrt{10}=3.2$ times the strength, $1.16$ GPa: ceramics are processed (clean powders, careful finishing) to eliminate large flaws.</p>
+            <p class="answer">(a) $90$ MPa; (b) $368$ MPa, $\gamma_\mathrm{eff}=21\ \mathrm{J/m^2}$; (c) $\times3.2$ ($1.16$ GPa)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>A steel plate of toughness $K_{IC}=50\ \mathrm{MPa\,m^{1/2}}$ carries a working stress of $300$ MPa. (a) Find the critical central crack length $2a_c$ ($Y=1$). (b) A pressure vessel wall of $K_{IC}=100$ and $\sigma=600$ MPa: find $a_c$. (c) What does leak-before-break mean for the safe design of vessels?</p>
+            <details class="hint"><summary>Hint</summary><p>$a_c=\dfrac1\pi\bigl(K_{IC}/Y\sigma\bigr)^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $a_c=\dfrac1\pi\Bigl(\dfrac{50}{300}\Bigr)^2=8.8$ mm, so a through-crack of $2a_c=17.7$ mm is critical. (b) $a_c=\dfrac1\pi(100/600)^2=8.8$ mm: the same, since the ratio $K_{IC}/\sigma$ is the same. (c) If the wall thickness $t$ exceeds $a_c$ for the wall&rsquo;s stress, the crack grows through the wall (a leak) before it reaches the critical length, and the leak is detected before unstable fracture: the design requires $t&gt;a_c$, equivalently $\sigma&lt;K_{IC}/\sqrt{\pi t}$.</p>
+            <p class="answer">(a) $17.7$ mm; (b) $8.8$ mm</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>A metal creeps with $Q=250$ kJ/mol and $n=4.5$. (a) By what factor does the creep rate change between $700$ K and $750$ K? (b) What stress reduction compensates a $50$ K temperature rise? (c) The same metal has $T_m=1600$ K: what is the homologous temperature at $750$ K, and is creep expected?</p>
+            <details class="hint"><summary>Hint</summary><p>Ratio $=\exp[Q/R(1/T_1-1/T_2)]$; to compensate, $\sigma_2/\sigma_1=\text{ratio}^{-1/n}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\exp[(250\,000/8.314)(1/700-1/750)]=\exp[30\,070\times9.52\times10^{-5}]=e^{2.86}=17.5$. (b) The stress must fall by a factor $17.5^{1/4.5}=1.89$, i.e. $\sigma_2=0.53\sigma_1$ (a $47\%$ reduction). (c) $T/T_m=750/1600=0.47&gt;0.4$, so yes: dislocation creep is expected; at $T/T_m&lt;0.3$ creep is negligible in structural metals.</p>
+            <p class="answer">(a) $\times17.5$; (b) $-47\%$; (c) $0.47$, creep</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>Derive the fatigue life for $\mathrm da/\mathrm dN=C(\Delta K)^m$ with $m=3$, and evaluate it for $C=10^{-11}$ (m/cycle, $\Delta K$ in MPa m$^{1/2}$), $\Delta\sigma=150$ MPa, $Y=1.12$, $a_0=0.2$ mm and the final crack $a_f=8$ mm. Then find the factor by which the life changes if $\Delta\sigma$ is halved.</p>
+            <details class="hint"><summary>Hint</summary><p>$N_f=\int_{a_0}^{a_f}\dfrac{\mathrm da}{C(Y\Delta\sigma)^m\pi^{m/2}a^{m/2}}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>For $m=3$: $N_f=\dfrac1{C(Y\Delta\sigma)^3\pi^{3/2}}\int_{a_0}^{a_f}a^{-3/2}\mathrm da=\dfrac{2}{C(Y\Delta\sigma)^3\pi^{3/2}}\bigl(a_0^{-1/2}-a_f^{-1/2}\bigr)$. With $Y\Delta\sigma=168$ MPa: $(168)^3=4.74\times10^6$; $C(Y\Delta\sigma)^3\pi^{3/2}=10^{-11}\times4.74\times10^6\times5.568=2.64\times10^{-4}$; $2/2.64\times10^{-4}=7.58\times10^3$; $a_0^{-1/2}=70.7$, $a_f^{-1/2}=11.2$; $N_f=7.58\times10^3\times59.5=4.5\times10^5$ cycles. Halving $\Delta\sigma$ multiplies the life by $2^m=8$ (to $3.6\times10^6$): a small reduction in the stress range gives a large increase in life, which is the practical aim of reducing stress concentrations.</p>
+            <p class="answer">$N_f=4.5\times10^5$ cycles; $\times8$ when the stress range is halved</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p302-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>For a light, stiff <em>plate</em> of given bending stiffness and width, show that the mass is minimised by maximising $E^{1/3}/\rho$, and rank steel, aluminium, titanium and CFRP ($E=70$ GPa, $\rho=1600$). Why is the beam index $E^{1/2}/\rho$ different?</p>
+            <details class="hint"><summary>Hint</summary><p>Stiffness per width $\propto Et^3/L^3$ for a plate of thickness $t$; mass $\propto\rho tLw$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>The bending stiffness of a plate of thickness $t$ is $S\propto Et^3$, so $t\propto(S/E)^{1/3}$ and the mass per area is $\rho t\propto\rho(S/E)^{1/3}$; for fixed $S$ it is minimised by maximising $M=E^{1/3}/\rho$. Values ($\sqrt[3]{E}/\rho$, SI): steel $\sqrt[3]{2\times10^{11}}/7850=0.745$; Al $\sqrt[3]{7\times10^{10}}/2700=1.52$; Ti $\sqrt[3]{1.1\times10^{11}}/4500=1.06$; CFRP $\sqrt[3]{7\times10^{10}}/1600=2.58$. The beam index ($t\propto(S/E)^{1/4}$ for a beam of square section, mass $\propto\rho t^2$) has exponent $1/2$ because a beam can vary two dimensions, a plate only one: CFRP and Al are then the best choices.</p>
+            <p class="answer">$M=E^{1/3}/\rho$: steel $0.75$, Ti $1.06$, Al $1.52$, CFRP $2.58$</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q302-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Tensile test</span></div>
+            <p>A bar with $A_0=100\ \mathrm{mm^2}$ is loaded to $50$ kN and has extended by $20\%$. Find the engineering stress, the true stress and the true strain (before necking).</p>
+            <details class="solution"><summary>Solution</summary><p>$\sigma=500$ MPa; $\sigma_t=\sigma(1+\varepsilon)=600$ MPa; $\varepsilon_t=\ln1.2=0.182$.</p></details>
+            </div>
+            <div class="problem" id="q302-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Schmid</span></div>
+            <p>What are the Schmid factor and critical resolved shear stress? Find the yield stress if $\tau_c=0.6$ MPa and $\phi=\lambda=45^\circ$.</p>
+            <details class="solution"><summary>Solution</summary><p>$\cos\phi\cos\lambda$ is the Schmid factor; $\tau_c$ is the resolved shear stress at which slip starts. $\sigma_y=0.6/0.5=1.2$ MPa, the minimum possible.</p></details>
+            </div>
+            <div class="problem" id="q302-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Dislocations</span></div>
+            <p>State the energy per length and the force per length on a dislocation, and the Taylor hardening stress for $\rho=10^{14}\ \mathrm{m^{-2}}$ in Cu ($G=48$ GPa, $b=0.256$ nm, $\alpha=0.3$).</p>
+            <details class="solution"><summary>Solution</summary><p>$W\approx\tfrac12Gb^2$ and $F=\tau b$. $\tau=\alpha Gb\sqrt\rho=0.3(48\times10^9)(0.256\times10^{-9})(10^7)=37$ MPa.</p></details>
+            </div>
+            <div class="problem" id="q302-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Strengthening</span></div>
+            <p>Which strengthening mechanism does Hall&ndash;Petch describe? How does the yield stress change if the grain size is reduced from $100\ \mu$m to $1\ \mu$m?</p>
+            <details class="solution"><summary>Solution</summary><p>Grain-boundary strengthening, $\sigma_y=\sigma_0+kd^{-1/2}$. The grain-size term grows by $\sqrt{100}=10$ (for steel, $160\to700$ MPa).</p></details>
+            </div>
+            <div class="problem" id="q302-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Fracture</span></div>
+            <p>Find the failure stress for a $2$ mm edge crack in a steel with $K_{IC}=50\ \mathrm{MPa\,m^{1/2}}$ ($Y=1.12$). How does the answer change if the crack is $0.5$ mm?</p>
+            <details class="solution"><summary>Solution</summary><p>$\sigma_f=K_{IC}/(Y\sqrt{\pi a})=563$ MPa; for $0.5$ mm it is $1126$ MPa (twice as large for a quarter of the length: $\sigma_f\propto a^{-1/2}$).</p></details>
+            </div>
+            <div class="problem" id="q302-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Time dependence</span></div>
+            <p>A creeping metal has $Q=300$ kJ/mol. By what factor does the rate rise from $800$ K to $900$ K? State the Paris law.</p>
+            <details class="solution"><summary>Solution</summary><p>$e^{(Q/R)(1/800-1/900)}=e^{5.0}=150$. Paris law: $\mathrm da/\mathrm dN=C(\Delta K)^m$ with $\Delta K=Y\Delta\sigma\sqrt{\pi a}$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Hosford, W. F., <em>Mechanical Behavior of Materials</em>, Cambridge University Press: the main text for this unit.</li>
+                <li>Dieter, G. E., <em>Mechanical Metallurgy</em>, McGraw&ndash;Hill: yielding, dislocations, fracture, creep and fatigue in depth.</li>
+                <li>Hull, D. and Bacon, D. J., <em>Introduction to Dislocations</em>, Butterworth&ndash;Heinemann: the standard undergraduate account of Lecture 3.</li>
+                <li>Courtney, T. H., <em>Mechanical Behavior of Materials</em>, Waveland Press: a rigorous second text with many worked examples.</li>
+                <li>Anderson, T. L., <em>Fracture Mechanics: Fundamentals and Applications</em>, CRC Press: Griffith, $K$ and fatigue crack growth.</li>
+                <li>Ashby, M. F., <em>Materials Selection in Mechanical Design</em>, Butterworth&ndash;Heinemann: material indices and property charts.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<a class="prev" href="thermodynamics-and-calphad.html"><span class="dir">Previous course</span>Thermodynamics and CALPHAD</a>
+<span class="spacer"></span>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=7c6ded67"></script>
+    <script src="../assets/pathdata.js?v=7a11c920"></script>
+    <script src="../assets/glossary.js?v=66450b7a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
+</body>
+</html>
