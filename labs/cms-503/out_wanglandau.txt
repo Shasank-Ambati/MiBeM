@@ -1,0 +1,27 @@
+exact enumeration of the 4 x 4 lattice: 65536 states, 15 different energies; the ground state has E = -32 and g = 2
+Wang-Landau run finished after 4.00e+06 spin-flip attempts (modification factor ln f reduced from 1 to 1e-6)
+   E     g exact    g Wang-Landau   relative error
+   -32         2            2.0      +0.00e+00
+   -24        32           31.9      -4.03e-03
+   -20        64           63.2      -1.27e-02
+   -16       424          420.9      -7.41e-03
+   -12      1728         1700.4      -1.60e-02
+    -8      6688         6441.2      -3.69e-02
+    -4     13568        13378.4      -1.40e-02
+     0     20524        20214.4      -1.51e-02
+     4     13568        13441.8      -9.30e-03
+     8      6688         6585.0      -1.54e-02
+    12      1728         1710.6      -1.01e-02
+    16       424          415.3      -2.06e-02
+    20        64           64.2      +2.87e-03
+    24        32           31.6      -1.16e-02
+    32         2            2.0      -1.74e-02
+
+energy per site and specific heat per site from the density of states (all temperatures from one run):
+     T     U/N exact   U/N WL     C/N exact   C/N WL
+   1.00    -1.99716   -1.99717     0.02341    0.02330
+   1.50    -1.95064   -1.95093     0.20035    0.19897
+   2.00    -1.75538   -1.75733     0.60553    0.60003
+   2.27    -1.56499   -1.56855     0.78359    0.77776
+   3.00    -1.01707   -1.02197     0.60313    0.60510
+   5.00    -0.45614   -0.45656     0.11955    0.12072

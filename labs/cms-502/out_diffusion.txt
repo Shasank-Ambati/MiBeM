@@ -1,0 +1,6 @@
+500 atoms, rho* = 0.8442, <T*> from the velocities = 0.8329, 12000 frames every 0.020 time units (total 240)
+Einstein: slope of the MSD between t = 3 and 8: D* = 0.0395;  MSD(t = 1, 2, 4, 8) = 0.256, 0.492, 0.965, 1.915
+Green-Kubo: integral of <v(0).v(t)>/3 up to t = 4: D* = 0.0395;  <v^2> = c(0)/3 = 0.8308 (expected T* = 0.8329);  running integral at t = 1, 2, 3, 4, 5: 0.0395, 0.0393, 0.0394, 0.0395, 0.0396
+block averages (4 blocks of 3000 frames):  D(Einstein) = 0.0410, 0.0399, 0.0374, 0.0389;  D(Green-Kubo) = 0.0410, 0.0394, 0.0378, 0.0384
+normalised VACF: first zero at t = 0.140, minimum -0.110 at t = 0.180 (the 'cage effect': the atom rattles against its neighbours and its velocity reverses)
+VDOS (Fourier transform of the VACF): zero-frequency value (proportional to D) = 0.712 of the maximum, maximum at omega = 9.97 (Einstein-like cage frequency)

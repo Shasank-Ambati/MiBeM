@@ -1,0 +1,18 @@
+double well U = 8.0 (x^2 - 1)^2, barrier 8.0 kT; Langevin dynamics, dt = 0.01, friction 2.0
+
+1. brute force: number of transitions between the wells in a trajectory
+     1000000 steps (   10000 time units):    4 crossings of x = 0; fraction of time at x > 0 = 0.309 (exact 0.5)
+    10000000 steps (  100000 time units):   31 crossings of x = 0; fraction of time at x > 0 = 0.549 (exact 0.5)
+   the Kramers estimate of the rate is exp(-barrier/kT) = 3.4e-04 per attempt: events are rare compared with the 1e6 steps needed to resolve the motion
+
+2. umbrella sampling: 17 windows c = -1.6 ... 1.6, bias k = 40, 200000 steps each, then WHAM
+   WHAM converged in 797 iterations; barrier at x = 0: F(0) - F(-1) = 7.95 kT (exact 8.00); maximum |F - U| for |x| < 1.4: 0.12 kT
+   x:       -1.78  -1.38  -0.98  -0.58  -0.18   0.22   0.62   1.02   1.42
+   F(x):   693.86   6.41   0.01   3.51   7.45   7.18   2.93  -0.04   8.09
+   U(x):    37.60   6.53  -0.00   3.51   7.48   7.23   3.02   0.00   8.25
+
+3. metadynamics: Gaussians of height 0.3 kT and width 0.15 deposited every 500 steps
+   3000 Gaussians deposited; the particle first crosses the barrier at t = 146 (brute force needs ~1e5 or more); crossings in the run: 2062
+   after   750 Gaussians: -V_bias(x) - (-V_bias(-1)) at x = 0 is 8.07 kT (exact barrier 8.00);  max error for |x| < 1.4: 1.14 kT
+   after  1500 Gaussians: -V_bias(x) - (-V_bias(-1)) at x = 0 is 7.82 kT (exact barrier 8.00);  max error for |x| < 1.4: 0.68 kT
+   after  3000 Gaussians: -V_bias(x) - (-V_bias(-1)) at x = 0 is 9.77 kT (exact barrier 8.00);  max error for |x| < 1.4: 1.84 kT

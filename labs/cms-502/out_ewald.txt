@@ -1,0 +1,27 @@
+literature value of the Madelung constant of NaCl: M = 1.7475645946  (energy per ion pair = -M e^2/(4 pi eps0 r0))
+
+1. direct summation of sum (-1)^(i+j+k) / sqrt(i^2+j^2+k^2) over the points of the lattice inside a growing region around one ion
+      n     cube-shaped region    sphere-shaped region
+      2          1.516646           -0.866479
+      4          1.619270           -4.508685
+      8          1.679641            0.102809
+     16          1.712574           -4.601541
+     32          1.729800           -0.554069
+     64          1.738613           -4.444809
+   the sums depend on the shape of the region (conditionally convergent): the cube is close to the right value, the sphere is not
+
+2. Ewald summation: total electrostatic energy per ion of the 8-ion cubic cell of rock salt (r0 = 1, cell side 2), charges +-1
+   alpha   real-space cells   k_max      E_real        E_recip       E_self       E_total/N    -2 E/N (= M)
+    1.0        3              6      -2.485025      0.008283     -4.513517    -0.873782      1.747565
+    1.5        2              6      -0.726067      0.506084     -6.770275    -0.873782      1.747565
+    2.0        1              8      -0.110133      2.146908     -9.027033    -0.873782      1.747565
+    2.5        1             10      -0.009747      4.303281    -11.283792    -0.873782      1.747565
+    3.0        1             12      -0.000530      6.550822    -13.540550    -0.873782      1.747565
+   the split between real and reciprocal space changes with alpha, the sum does not: -2E/N reproduces M
+
+3. convergence at alpha = 2 (cutoffs):
+   real-space cells +-0, k_max = 4:  M = 1.73393072   error = -1.36e-02
+   real-space cells +-1, k_max = 4:  M = 1.74756466   error = +6.69e-08
+   real-space cells +-1, k_max = 6:  M = 1.74756459   error = +1.49e-14
+   real-space cells +-1, k_max = 8:  M = 1.74756459   error = +1.55e-15
+   real-space cells +-2, k_max = 8:  M = 1.74756459   error = +1.55e-15

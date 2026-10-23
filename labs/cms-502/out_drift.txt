@@ -1,0 +1,8 @@
+   dt     std(E)/N      drift of E/N per 1000 time units   <T>      max |E - E0|/N
+ 0.002   8.23e-05      -1.09e-04                       0.9006   2.12e-04
+ 0.004   2.47e-04      +1.80e-03                       0.7915   8.25e-04
+ 0.008   5.72e-04      -1.57e-03                       0.8309   2.55e-03
+ 0.012   1.02e-03      +2.92e-03                       0.8260   4.94e-03
+ 0.016   1.83e-03      -1.09e-03                       0.7772   7.23e-03
+ 0.024   the simulation crashed: ERROR: Lost atoms: original 256 current 252
+(lj units: 'etotal' is normalised per atom; the pair energy is shifted to be continuous at the cutoff, the force is not)

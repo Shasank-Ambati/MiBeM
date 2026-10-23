@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monte Carlo and Kinetic Monte Carlo - MiBeM</title>
-    <meta name="description" content="Importance sampling, the Metropolis algorithm, lattice models, cluster expansions and kinetic Monte Carlo for materials.">
+    <title>Monte Carlo and kinetic Monte Carlo - MiBeM</title>
+    <meta name="description" content="Monte Carlo methods for materials: importance sampling and the Metropolis algorithm, the Ising model as a binary alloy compared with mean-field theory and Onsager exact results, off-lattice Monte Carlo of a Lennard-Jones liquid compared with molecular dynamics, Wang-Landau density of states, kinetic Monte Carlo with the residence-time algorithm, error analysis and the choice between methods, with real calculations and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Monte Carlo and Kinetic Monte Carlo - MiBeM">
-    <meta property="og:description" content="Importance sampling, the Metropolis algorithm, lattice models, cluster expansions and kinetic Monte Carlo for materials.">
+    <meta property="og:title" content="Monte Carlo and kinetic Monte Carlo - MiBeM">
+    <meta property="og:description" content="Monte Carlo methods for materials: importance sampling and the Metropolis algorithm, the Ising model as a binary alloy compared with mean-field theory and Onsager exact results, off-lattice Monte Carlo of a Lennard-Jones liquid compared with molecular dynamics, Wang-Landau density of states, kinetic Monte Carlo with the residence-time algorithm, error analysis and the choice between methods, with real calculations and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/monte-carlo-methods.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="7">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,18 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#why">1. Why sample randomly</a></li>
-                <li><a href="#metropolis">2. Metropolis algorithm</a></li>
-                <li><a href="#ising">3. The Ising model</a></li>
-                <li><a href="#moves">4. Moves for materials</a></li>
-                <li><a href="#lattice">5. Lattice models and cluster expansion</a></li>
-                <li><a href="#advanced">6. Better sampling</a></li>
-                <li><a href="#kmc">7. Kinetic Monte Carlo</a></li>
-                <li><a href="#potts">8. Grain growth with the Potts model</a></li>
-                <li><a href="#compare">9. MC compared with MD</a></li>
-                <li><a href="#code">10. A minimal code</a></li>
-                <li><a href="#check">11. Check your understanding</a></li>
-                <li><a href="#refs">12. References</a></li>
+                <li><a href="#sampling">Lecture 1. Importance sampling and the Metropolis algorithm</a></li>
+                <li><a href="#lattice">Lecture 2. Lattice models: the alloy as an Ising model</a></li>
+                <li><a href="#offlattice">Lecture 3. Off-lattice Monte Carlo and the comparison with molecular dynamics</a></li>
+                <li><a href="#dos">Lecture 4. The density of states: Wang&ndash;Landau sampling</a></li>
+                <li><a href="#kmc">Lecture 5. Kinetic Monte Carlo</a></li>
+                <li><a href="#errors">Lecture 6. Error analysis and efficient sampling</a></li>
+                <li><a href="#choose">Lecture 7. Choosing the method: MC, kinetic MC or molecular dynamics</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -56,11 +55,11 @@
 <nav class="course-nav" aria-label="Computational methods courses"><span class="cn-dept">CMS</span><a href="introduction.html" title="CMS 401: Introduction to computational materials science">401</a><a href="density-functional-theory.html" title="CMS 501: Density functional theory I: from the Schrödinger equation to Kohn–Sham">501</a><a href="molecular-dynamics.html" title="CMS 502: Molecular dynamics">502</a><a href="monte-carlo-methods.html" class="here" aria-current="page" title="CMS 503: Monte Carlo and kinetic Monte Carlo">503</a><a href="diffusion-and-kinetics.html" title="CMS 504: Diffusion and kinetics">504</a><a href="phase-field-modelling.html" title="CMS 505: Phase-field modelling">505</a><a href="finite-element-method.html" title="CMS 506: The finite element method">506</a><a href="machine-learning-for-materials.html" title="CMS 507: Machine learning for materials">507</a><a href="density-functional-theory-solids.html" title="CMS 511: Density functional theory II: solids, plane waves and workflows">511</a></nav>
 <!-- coursenav:end -->
             <h1>Monte Carlo and kinetic Monte Carlo</h1>
-            <p class="lead">Where molecular dynamics follows real motion, Monte Carlo (MC) takes a shortcut: it proposes random changes and keeps or rejects them with rules that guarantee the right statistics. Because moves need not be physical, MC reaches equilibrium states that dynamics would take far too long to find, and its kinetic variant reaches seconds and beyond.</p>
+            <p class="lead">Many questions about a material ask for an <em>average over the possible arrangements</em> of its atoms: the equilibrium composition of coexisting phases, the degree of order of an alloy, the adsorbed amount on a surface, the pressure of a liquid, the free energy of a defect. Statistical mechanics writes each as a sum or integral over an astronomically large configuration space; Monte Carlo (MC) methods evaluate it by <em>random sampling</em>, steering the samples towards the configurations that matter. A second family, <em>kinetic</em> Monte Carlo, follows the evolution of a system in real time by picking events at random with the right probabilities, and reaches times that molecular dynamics cannot. Both methods are simple to program, and both are easy to get subtly wrong; this course teaches the principles (detailed balance, ergodicity, correlation), applies them to the standard models of materials science, and always checks them against an exact result or an independent method. The labs <a href="lab-ising-monte-carlo.html">LAB 504</a> (the Ising model with numba) and the program of <a href="your-first-simulation.html">COMP 102</a> are companions; the programs of this course are in <code>labs/cms-503</code>.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Reading time</dt><dd>about 52 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="statistical-mechanics.html">PHYS 301: Statistical mechanics</a><br><a href="numerical-methods-essentials.html">COMP 201: Numerical methods I</a><br><a href="probability-for-simulation.html">MATH 204: Probability</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="lab-ising-monte-carlo.html">LAB 504: Monte Carlo: Ising</a></dd></div>
 <div><dt>Level</dt><dd>Graduate: simulation methods</dd></div>
@@ -68,165 +67,638 @@
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Explain importance sampling, detailed balance and the Metropolis acceptance rule.</li>
-                    <li>Set up a lattice-model MC simulation and choose suitable moves.</li>
-                    <li>Describe cluster expansions and how they link DFT to alloy thermodynamics.</li>
-                    <li>Explain how kinetic Monte Carlo advances physical time, and what it needs as input.</li>
+                    <li>Explain importance sampling, and why Monte Carlo is the method of choice for high-dimensional integrals.</li>
+                    <li>Prove that the Metropolis rule obeys detailed balance and state the conditions (ergodicity, detailed balance) for sampling a target distribution.</li>
+                    <li>Map a binary alloy onto the Ising lattice gas, compute a miscibility gap by simulation and compare it with mean-field theory.</li>
+                    <li>Implement displacement, volume and particle-exchange moves for an off-lattice fluid and tune their acceptance.</li>
+                    <li>Use Wang&ndash;Landau sampling to compute the density of states and thermodynamic functions at all temperatures.</li>
+                    <li>Implement kinetic Monte Carlo with the residence-time algorithm and check it against the exact diffusion coefficient.</li>
+                    <li>Estimate statistical errors with autocorrelation analysis, and decide between MC, kinetic MC and MD for a given problem.</li>
                 </ul>
+                <strong>You need:</strong> <a href="statistical-mechanics.html">PHYS 301</a> (ensembles, partition function, Ising model), <a href="probability-for-simulation.html">MATH 204</a> (probability, Markov chains), <a href="statistics-and-data-fitting.html">MATH 303</a> (errors), <a href="thermodynamics-and-calphad.html">MSE 301</a> (regular solutions, miscibility gaps), <a href="numerical-methods-differential-equations.html">COMP 202</a> (random numbers, performance) and <a href="your-first-simulation.html">COMP 102</a>.
             </div>
 
-            <h2 id="why">1. Why sample randomly<a class="anchor" href="#why" aria-label="Link to this section">#</a></h2>
-            <p>An equilibrium average in the canonical ensemble is an integral over all configurations:</p>
-            <span class="eq">&lang;A&rang; = &int; A(x) exp[&minus;U(x)/k<sub>B</sub>T] dx / &int; exp[&minus;U(x)/k<sub>B</sub>T] dx</span>
-            <p>The space is enormously high-dimensional (3<em>N</em> coordinates, or 2<sup><em>N</em></sup> states for <em>N</em> two-state sites), so grids are impossible. Sampling configurations uniformly at random fails as well: nearly all random configurations (atoms overlapping, or a random jumble of A and B) have very high energy and negligible Boltzmann weight, so the average is dominated by rare lucky samples. <strong>Importance sampling</strong> draws configurations with probability proportional to their Boltzmann weight, so that the average is simply the mean of the samples, &lang;<em>A</em>&rang; &asymp; (1/<em>M</em>)&Sigma;<sub><em>m</em></sub> <em>A</em>(<em>x</em><sub><em>m</em></sub>).</p>
-            <p>The samples are generated by a <strong>Markov chain</strong>: each new configuration is produced from the current one by a random rule. If the rule satisfies <strong>detailed balance</strong>, so that the flow from state <em>a</em> to <em>b</em> equals the flow back at equilibrium,</p>
-            <span class="eq">&pi;(a) P(a&rarr;b) = &pi;(b) P(b&rarr;a), &nbsp;&nbsp; &pi;(a) &prop; exp[&minus;U(a)/k<sub>B</sub>T]</span>
-            <p>(and the chain can reach every state, which is ergodicity), then the chain converges to the Boltzmann distribution.</p>
+            <div class="note"><strong>How this course is organised</strong>
+            <p>Seven <strong>lectures</strong> with calculations (NumPy and numba programs; one LAMMPS run for the comparison with molecular dynamics), a <strong>problem set</strong> of twelve problems with hints and full solutions, and a <strong>unit quiz</strong>. Statistical errors, where quoted, are block-average standard errors.</p>
+            </div>
 
-            <h2 id="metropolis">2. Metropolis algorithm<a class="anchor" href="#metropolis" aria-label="Link to this section">#</a></h2>
-            <p>The simplest rule satisfying detailed balance is due to Metropolis and co-workers (1953). Given a symmetric proposal (the probability of proposing <em>a</em>&rarr;<em>b</em> equals that of <em>b</em>&rarr;<em>a</em>):</p>
-            <ol>
-                <li>Pick a trial move (for example, flip one spin).</li>
-                <li>Compute the energy change &Delta;<em>E</em> = <em>E</em><sub>new</sub> &minus; <em>E</em><sub>old</sub>.</li>
-                <li>If &Delta;<em>E</em> &le; 0, accept. Otherwise accept with probability exp(&minus;&Delta;<em>E</em>/<em>k</em><sub>B</sub><em>T</em>).</li>
-                <li>If rejected, keep the old configuration (and count it again in the averages).</li>
-            </ol>
-            <span class="eq">P<sub>acc</sub>(a&rarr;b) = min[ 1, exp(&minus;&Delta;E / k<sub>B</sub>T) ]</span>
-            <p>Hastings (1970) generalised this to asymmetric proposals by multiplying by the ratio of proposal probabilities. Two practical points: moves that change energy locally can be evaluated cheaply, by recomputing only the affected neighbours, so each step costs <em>O</em>(1) on a lattice; and the acceptance rate should be tuned (often 20 to 50%) by adjusting step sizes, because very high acceptance means moves are too small and very low means they are too large. One <em>sweep</em> is <em>N</em> attempted moves, and sweeps are the natural unit of MC &ldquo;time&rdquo;.</p>
+            <h2 id="sampling">Lecture 1. Importance sampling and the Metropolis algorithm<a class="anchor" href="#sampling" aria-label="Link to this section">#</a></h2>
+            <h3>Why random sampling</h3>
+            <p>The average of a function $A$ over the Boltzmann distribution of a system of $N$ particles is $\langle A\rangle=\int A(\mathbf r^N)\,\mathrm e^{-U(\mathbf r^N)/k_BT}\mathrm d\mathbf r^N/Z$, an integral in $3N$ dimensions. Grid quadrature fails because of the <em>curse of dimensionality</em>: a rule of order $p$ with $m$ points per axis has an error $\sim m^{-p}=n^{-p/d}$ for a total of $n=m^d$ evaluations: with $d=100$ and a trapezoidal rule ($p=2$) one gets $n^{-0.02}$, a useless accuracy. Random sampling has an error $\sigma/\sqrt N$ <em>independent of $d$</em>. The experiment below integrates $\mathrm e^{-|\mathbf x|^2}$ over the unit hypercube with $10^5$ function evaluations by a midpoint grid and by plain Monte Carlo:</p>
+            <pre data-file="mc_integration.py"><code>&quot;&quot;&quot;Monte Carlo integration against grid quadrature as the dimension grows (equal number of function evaluations).&quot;&quot;&quot;
+            import numpy as np
+            from math import erf, pi, sqrt
+            rng = np.random.default_rng(1)
+            N = 100000
+            print(f&quot;integral of exp(-|x|^2) over the unit hypercube [0,1]^d, N = {N} function evaluations each; exact value (sqrt(pi)/2 erf(1))^d&quot;)
+            print(&quot;   d     exact        midpoint grid (m^d &lt;= N)    relative error      Monte Carlo      relative error (+- 1/sqrt(N) estimate)&quot;)
+            for d in (1, 2, 3, 4, 6, 8, 10, 12):
+                exact = (sqrt(pi) / 2 * erf(1.0))**d
+                m = max(1, int(round(N**(1 / d)))); 
+                while m**d &gt; N: m -= 1
+                pts = (np.arange(m) + 0.5) / m
+                # separable integrand: the grid sum factorises exactly, so evaluate it as a product (the cost of the sum over m^d points is what a user would pay)
+                one = np.mean(np.exp(-pts**2)); grid = one**d
+                x = rng.random((N, d)); f = np.exp(-np.sum(x**2, axis=1)); mc = f.mean(); se = f.std(ddof=1) / np.sqrt(N)
+                print(f&quot;  {d:2d}   {exact:10.6f}      {grid:10.6f}  (m = {m:3d})      {abs(grid / exact - 1):9.2e}       {mc:10.6f}      {abs(mc / exact - 1):9.2e} ({se / exact:.1e})&quot;)
+            print(&quot;the midpoint rule has error ~ 1/m^2 = N^(-2/d): excellent for d = 1, 2, poor for d &gt;= 6; the Monte Carlo error N^(-1/2) does not depend on d&quot;)</code></pre>
+            <pre class="out"><code>integral of exp(-|x|^2) over the unit hypercube [0,1]^d, N = 100000 function evaluations each; exact value (sqrt(pi)/2 erf(1))^d
+               d     exact        midpoint grid (m^d &lt;= N)    relative error      Monte Carlo      relative error (+- 1/sqrt(N) estimate)
+               1     0.746824        0.746824  (m = 100000)       4.10e-12         0.746814       1.33e-05 (8.5e-04)
+               2     0.557746        0.557747  (m = 316)       8.22e-07         0.558770       1.84e-03 (1.2e-03)
+               3     0.416538        0.416563  (m =  46)       5.82e-05         0.415684       2.05e-03 (1.5e-03)
+               4     0.311081        0.311258  (m =  17)       5.68e-04         0.311100       6.29e-05 (1.8e-03)
+               6     0.173504        0.174697  (m =   6)       6.87e-03         0.173207       1.71e-03 (2.3e-03)
+               8     0.096771        0.098783  (m =   4)       2.08e-02         0.096864       9.62e-04 (2.7e-03)
+              10     0.053974        0.056503  (m =   3)       4.69e-02         0.054040       1.22e-03 (3.2e-03)
+              12     0.030104        0.034087  (m =   2)       1.32e-01         0.030083       6.97e-04 (3.6e-03)
+            the midpoint rule has error ~ 1/m^2 = N^(-2/d): excellent for d = 1, 2, poor for d &gt;= 6; the Monte Carlo error N^(-1/2) does not depend on d</code></pre>
+            <p>In one to three dimensions the grid is vastly better (relative error $4\times10^{-12}$, $8\times10^{-7}$, $6\times10^{-5}$) and Monte Carlo gives $10^{-3}$&ndash;$10^{-5}$ with the random scatter expected from $1/\sqrt N$. Beyond $d\approx4$ the grid has only $17$, $6$, $4$, $3$, $2$ points per axis and its error rises ($6\times10^{-4}$, $7\times10^{-3}$, $2\times10^{-2}$, $5\times10^{-2}$, $0.13$) while Monte Carlo stays at its $10^{-3}$ level: the two cross at four to six dimensions. A problem with $3N$ coordinates has $d$ of order $10^2$&ndash;$10^6$: random sampling is the only option.</p>
+            <p>Uniform random points are still wasteful: for the Boltzmann integral almost all points of configuration space have an astronomically small weight (two atoms overlapping gives $\mathrm e^{-U/k_BT}\approx\mathrm e^{-100}$). <strong>Importance sampling</strong> draws configurations with a probability proportional to the weight itself, $P(\mathbf r^N)\propto\mathrm e^{-U/k_BT}$; then $\langle A\rangle$ is simply the arithmetic mean of $A$ over the samples. The question is how to generate samples from a distribution that one can evaluate only up to a normalising constant $Z$, which one does not know. Metropolis, Rosenbluth, Rosenbluth, Teller and Teller (1953) gave the answer: a <strong>Markov chain</strong>, a random walk in configuration space with transition probabilities $W(a\to b)$ that depend only on the current state and are designed so that the chain converges to the target $P$.</p>
+            <div class="note thm"><strong>Detailed balance and the Metropolis rule</strong>
+            <p>A Markov chain has the stationary distribution $P$ if the transition probabilities satisfy <em>detailed balance</em>, $P(a)\,W(a\to b)=P(b)\,W(b\to a)$ for every pair of states (a sufficient, not necessary, condition: sum over $a$ to see that $P$ is invariant), and it converges to $P$ from any start if the chain is <em>ergodic</em> (every state can be reached from every other in a finite number of steps) and aperiodic. The Metropolis construction: propose a move $a\to b$ with a symmetric probability $T(a\to b)=T(b\to a)$ (a random displacement of one atom), and accept it with probability $\mathrm{acc}(a\to b)=\min\{1,P(b)/P(a)\}=\min\{1,\mathrm e^{-\Delta E/k_BT}\}$. Check: for $E_b&gt;E_a$, $P(a)\cdot T\cdot\mathrm e^{-(E_b-E_a)/k_BT}=P(b)\cdot T\cdot1$, because $P(b)/P(a)=\mathrm e^{-(E_b-E_a)/k_BT}$; for $E_b\le E_a$ the roles swap. The rule needs only the <em>energy difference</em> of the move, never $Z$; moves that lower the energy are always accepted, moves that raise it are accepted with the Boltzmann factor. A rejected move is <strong>counted again</strong> (the old configuration is added to the average a second time): omitting this is a classic mistake that biases the result.</p></div>
+            <p>The conditions have practical consequences. <strong>Ergodicity</strong> fails for single-atom displacements in a system with a rigid constraint (a polymer with fixed bonds needs pivot moves) and in glassy or two-phase systems where the barrier between regions is high (the chain stays in one basin: it looks converged but is not). <strong>Detailed balance</strong> fails if the proposal is not symmetric (a move that is biased in one direction needs the correction factor $T(b\to a)/T(a\to b)$ in the acceptance), if the random-number generator is poor, if the sequence of the moves is chosen depending on the state, or if the acceptance uses a different weight than the one being sampled. The statistical error comes from the <strong>correlation</strong> between successive samples (Lecture 6): the number of independent samples is $N/(2\tau_\mathrm{int})$.</p>
+            <h2 id="lattice">Lecture 2. Lattice models: the alloy as an Ising model<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
+            <p>Consider a binary alloy A&ndash;B on a lattice in which each site is occupied by A or B, with nearest-neighbour bond energies $\epsilon_\mathrm{AA}$, $\epsilon_\mathrm{BB}$ and $\epsilon_\mathrm{AB}$. Define a spin $s_i=+1$ for A and $-1$ for B. The energy of a bond is a function of the two spins that can always be written $\epsilon(s_i,s_j)=a+b\,(s_i+s_j)-J\,s_is_j$ with $\epsilon_\mathrm{AA}=a+2b-J$, $\epsilon_\mathrm{BB}=a-2b-J$ and $\epsilon_\mathrm{AB}=a+J$ (bond energies, negative for attraction). Solving for the coupling,
+            $$J=\tfrac12\left[\epsilon_\mathrm{AB}-\tfrac12(\epsilon_\mathrm{AA}+\epsilon_\mathrm{BB})\right],$$
+            and the sum over bonds gives $E=-J\sum_{\langle ij\rangle}s_is_j+E_0$, where $E_0$ depends only on the composition (it is constant in a canonical simulation). If unlike pairs are less favourable than the average of the like pairs ($J&gt;0$) the alloy has a tendency to cluster; if they are more favourable ($J&lt;0$) it orders. The regular-solution parameter of MSE 301 is $\Omega=zN_A[\epsilon_\mathrm{AB}-\tfrac12(\epsilon_\mathrm{AA}+\epsilon_\mathrm{BB})]=2zJN_A$ for coordination number $z$. The Ising model of PHYS 301 is therefore the lattice model of an alloy (or a lattice gas, with occupied/empty sites), and $J&gt;0$ gives <strong>phase separation</strong> into an A-rich and a B-rich phase below a critical temperature, exactly the miscibility gap of <a href="thermodynamics-and-calphad.html">MSE 301</a>. The simulation of a real alloy conserves the composition (atoms swap places, <strong>Kawasaki dynamics</strong>) rather than flipping spins, but the equilibrium coexistence curve is the same as that of the spin-flip (<strong>Glauber</strong>) dynamics of the Ising magnet. The regular-solution theory of Lecture 3 of MSE 301 is the <em>mean-field</em> (Bragg&ndash;Williams) approximation of this model, with $T_c=\Omega/2R=zJ/k_B$ ($z=4$ for the square lattice). How good is the approximation? We compute the exact coexistence of the square-lattice model by Metropolis Monte Carlo, with $32\times32$ sites, $20\,000$ sweeps per temperature, and compare with the Onsager exact solution $m(T)=[1-\sinh^{-4}(2J/k_BT)]^{1/8}$ and the mean-field self-consistent equation $m=\tanh(zJm/k_BT)$; the composition of the coexisting phases is $x_B=(1\mp m)/2$:</p>
+            <pre data-file="alloy_mc.py"><code>&quot;&quot;&quot;Monte Carlo of a binary alloy on a square lattice (the Ising model): coexistence curve compared with mean field (regular solution) and with Onsager&#x27;s exact result.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
 
-            <h2 id="ising">3. The Ising model<a class="anchor" href="#ising" aria-label="Link to this section">#</a></h2>
-            <p>The <strong>Ising model</strong> places a spin <em>s</em><sub><em>i</em></sub> = &plusmn;1 on each lattice site, with energy</p>
-            <span class="eq">E = &minus;J &Sigma;<sub>&lang;ij&rang;</sub> s<sub>i</sub> s<sub>j</sub> &minus; h &Sigma;<sub>i</sub> s<sub>i</sub></span>
-            <p>summed over nearest-neighbour pairs. For <em>J</em> &gt; 0 neighbours prefer to align. It is the minimal model of a phase transition: on the two-dimensional square lattice it has an exact solution (Onsager, 1944) with critical temperature <em>k</em><sub>B</sub><em>T</em><sub>c</sub> = 2<em>J</em>/ln(1 + &radic;2) &asymp; 2.269 <em>J</em>. Below <em>T</em><sub>c</sub> a spontaneous magnetisation appears; above it, thermal disorder wins. The model maps directly to <em>binary alloys</em> and lattice gases, where the spin is the species on a site (A or B, or atom and vacancy) and <em>J</em> is built from pair energies; its ordering transition is the same mathematics as ordering in &beta;-brass.</p>
-            <figure>
-                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/ising-monte-carlo.poster.png"><img src="../assets/animations/ising-monte-carlo.gif" alt="Animation of Metropolis Monte Carlo on a two-dimensional Ising lattice coarsening from a random start" width="384" height="408" loading="lazy" decoding="async"></picture>
-                <figcaption>Metropolis Monte Carlo on a 64&times;64 Ising lattice at <em>T</em> = 1.6 (critical temperature 2.27, in units of <em>J</em>/k<sub>B</sub>), starting from a random arrangement. Domains of each orientation form and coarsen; the sweep count is shown in the title.</figcaption>
-            </figure>
-            <div class="demo" data-demo="ising"><div class="demo-body"><p class="demo-note">This interactive simulation needs JavaScript to run.</p></div></div>
+            @njit
+            def sweep(s, beta, L):
+                for _ in range(L * L):
+                    i = np.random.randint(L); j = np.random.randint(L)
+                    nb = s[(i + 1) % L, j] + s[(i - 1) % L, j] + s[i, (j + 1) % L] + s[i, (j - 1) % L]
+                    dE = 2.0 * s[i, j] * nb
+                    if dE &lt;= 0 or np.random.random() &lt; np.exp(-beta * dE): s[i, j] = -s[i, j]
+            @njit
+            def run(L, T, nequil, nprod, seed):
+                np.random.seed(seed)
+                s = np.ones((L, L)); beta = 1.0 / T
+                for _ in range(nequil): sweep(s, beta, L)
+                m = np.empty(nprod); e = np.empty(nprod)
+                for k in range(nprod):
+                    sweep(s, beta, L); m[k] = abs(s.sum()) / (L * L)
+                    E = 0.0
+                    for i in range(L):
+                        for j in range(L): E -= s[i, j] * (s[(i + 1) % L, j] + s[i, (j + 1) % L])
+                    e[k] = E / (L * L)
+                return m, e
+            def onsager(T):
+                return (1 - np.sinh(2 / T)**-4)**0.125 if T &lt; 2.269185314 else 0.0
+            def meanfield(T, z=4):
+                if T &gt;= z: return 0.0
+                from scipy.optimize import brentq
+                return brentq(lambda m: m - np.tanh(z * m / T), 1e-9, 1.0)
+            Tc_ex = 2 / np.log(1 + np.sqrt(2))
+            print(f&quot;square lattice, nearest-neighbour interaction J = 1 (the alloy has the like-atom attraction J = -epsilon_AB + (epsilon_AA + epsilon_BB)/2 per bond, z = 4)&quot;)
+            print(f&quot;critical temperature: exact (Onsager) Tc = {Tc_ex:.4f};  mean field (regular solution, Tc = z J / k) = 4.0000: too high by {4 / Tc_ex - 1:.0%}&quot;)
+            print(&quot;composition of the coexisting phases x = (1 +- m)/2, from the order parameter m (|m| averaged over the run):&quot;)
+            print(&quot;     T     T/Tc    m (Monte Carlo L=32)   m (Onsager)   m (mean field)    x_B (MC)    x_B (MF)&quot;)
+            for T in (1.0, 1.5, 1.8, 2.0, 2.1, 2.2, 2.3, 2.5, 3.0):
+                m, e = run(32, T, 5000, 20000, 11)
+                mc = m.mean(); n = len(m) // 20; err = m[:n * 20].reshape(20, n).mean(1).std(ddof=1) / np.sqrt(20)
+                print(f&quot;   {T:4.2f}   {T / Tc_ex:5.3f}     {mc:6.4f} +- {err:.4f}        {onsager(T):6.4f}       {meanfield(T):6.4f}       {(1 - mc) / 2:6.4f}      {(1 - meanfield(T)) / 2:6.4f}&quot;)
+            print(&quot;above Tc the finite-size |m| of the simulation is nonzero (~ 1/L); the exact and mean-field values are zero.&quot;)</code></pre>
+            <pre class="out"><code>square lattice, nearest-neighbour interaction J = 1 (the alloy has the like-atom attraction J = -epsilon_AB + (epsilon_AA + epsilon_BB)/2 per bond, z = 4)
+            critical temperature: exact (Onsager) Tc = 2.2692;  mean field (regular solution, Tc = z J / k) = 4.0000: too high by 76%
+            composition of the coexisting phases x = (1 +- m)/2, from the order parameter m (|m| averaged over the run):
+                 T     T/Tc    m (Monte Carlo L=32)   m (Onsager)   m (mean field)    x_B (MC)    x_B (MF)
+               1.00   0.441     0.9993 +- 0.0000        0.9993       0.9993       0.0004      0.0003
+               1.50   0.661     0.9864 +- 0.0001        0.9865       0.9899       0.0068      0.0051
+               1.80   0.793     0.9571 +- 0.0003        0.9569       0.9740       0.0214      0.0130
+               2.00   0.881     0.9113 +- 0.0007        0.9113       0.9575       0.0443      0.0212
+               2.10   0.925     0.8703 +- 0.0017        0.8687       0.9472       0.0648      0.0264
+               2.20   0.970     0.7813 +- 0.0052        0.7848       0.9355       0.1093      0.0322
+               2.30   1.014     0.5884 +- 0.0213        0.0000       0.9223       0.2058      0.0389
+               2.50   1.102     0.2009 +- 0.0077        0.0000       0.8906       0.3995      0.0547
+               3.00   1.322     0.0831 +- 0.0016        0.0000       0.7755       0.4584      0.1122
+            above Tc the finite-size |m| of the simulation is nonzero (~ 1/L); the exact and mean-field values are zero.</code></pre>
+            <p><strong>Monte Carlo reproduces the exact solution</strong>: at $T=1.8$, $2.0$, $2.1$ and $2.2$ ($T/T_c=0.79$&ndash;$0.97$) the simulated order parameters are $0.9571\pm0.0003$, $0.9113\pm0.0007$, $0.8703\pm0.0017$ and $0.7813\pm0.0052$ against $0.9569$, $0.9113$, $0.8687$ and $0.7848$ (Onsager): agreement within one or two standard errors, close to the critical point included. This is the verification that the code (the Metropolis rule, the periodic boundaries, the energy bookkeeping) is correct, and it is the standard practice before any new calculation: reproduce a case with a known answer. <strong>Mean-field theory is wrong in two ways.</strong> (i) The critical temperature: $T_c^\mathrm{MF}=4.0$ against the exact $2.2692$, too high by $76\%$ (in three dimensions the overestimate is smaller: $6.0$ against $4.51$, $33\%$, for the simple cubic lattice, $22\%$ for fcc, and the mean field becomes exact only in infinite dimension). (ii) The shape of the gap: at $T/T_c=0.925$ the solubility (the composition of the minority component in the coexisting phase) is $x_B=0.0648$ in the simulation ($0.0657$ from the exact Onsager value) and only $0.0264$ in the mean-field theory, a factor of $2.5$ too small; at $T/T_c=0.793$ it is $0.0214$ against $0.0130$. The mean-field approximation ignores the short-range clustering and fluctuations that increase the entropy of the mixed state and so the solubility. The consequence for alloy thermodynamics is large: <em>a regular-solution model whose interaction parameter was fitted to the experimental critical temperature underestimates the solubility limit</em>, and CALPHAD parameters absorb the difference in effective temperature-dependent interaction parameters (the entropy-like terms $b_k$ of Lecture 6 of MSE 301). Above $T_c$ the simulated $|m|$ is not zero ($0.2009$ at $T=2.5$, $0.0831$ at $3.0$): a finite-size effect of the order $1/\sqrt{N}=0.03$ plus short-range order, which vanishes only in the infinite system.</p>
+            <div class="note"><strong>What lattice Monte Carlo is used for in practice</strong>
+            <p>(i) <strong>Cluster expansions</strong>: the energy of a lattice configuration is fitted to DFT energies as a sum over clusters of sites, $E=\sum_\alpha J_\alpha\Pi_\alpha(\sigma)$; Monte Carlo on the cluster expansion gives the order&ndash;disorder transitions, solubility limits and short-range order of real alloys with first-principles accuracy (the ATAT and CASM codes). (ii) <strong>Surface adsorption and catalysis</strong>: lattice gases with adsorbate interactions, grand canonical (the chemical potential is set by the gas pressure). (iii) <strong>Magnetism and ferroelectrics</strong> with spin Hamiltonians (Heisenberg, XY). (iv) <strong>Microstructure</strong>: the Potts model for grain growth, with spin states as grain orientations. The Hamiltonian is a model that has to be justified, but the sampling of its statistical mechanics is exact up to the statistical error.</p></div>
+            <h2 id="offlattice">Lecture 3. Off-lattice Monte Carlo and the comparison with molecular dynamics<a class="anchor" href="#offlattice" aria-label="Link to this section">#</a></h2>
+            <p>For atoms in continuous space the Metropolis algorithm is the same: pick an atom at random, propose a displacement $\mathbf r_i\to\mathbf r_i+\Delta\,(\boldsymbol\xi-\tfrac12)$ with $\boldsymbol\xi$ uniform in the unit cube, compute the energy change $\Delta E$ (only the pairs involving atom $i$: $O(N)$ operations), accept with probability $\min(1,\mathrm e^{-\Delta E/k_BT})$. $N$ attempted moves are one <strong>sweep</strong>, the unit of MC time. No forces and no velocities are needed, and the momentum distribution is trivial (Maxwell), so MC gives the same <em>configurational</em> averages as MD in the canonical ensemble, but not the dynamics. The maximum displacement $\Delta$ is a parameter that controls the acceptance rate: too small and almost every move is accepted but the configuration moves slowly; too large and almost every move is rejected. For the Lennard-Jones liquid ($N=256$, $T^\ast=0.85$, $\rho^\ast=0.8442$) the acceptance depends on the step as</p>
+            <div class="table-scroll" role="region" aria-label="Lecture 3. Off-lattice Monte Carlo and the comparison with molecular dynamics (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>step $\Delta$ ($\sigma$)</th><th>0.10</th><th>0.20</th><th>0.25</th><th>0.30</th><th>0.45</th><th>0.70</th></tr></thead>
+            <tbody><tr><td>acceptance</td><td>0.732</td><td>0.493</td><td>0.390</td><td>0.319</td><td>0.160</td><td>0.058</td></tr>
+            <tr><td>$\Delta^2\times$acceptance (a measure of the progress per attempt)</td><td>0.0073</td><td>0.0197</td><td>0.0244</td><td>0.0287</td><td>0.0324</td><td>0.0284</td></tr></tbody></table></div>
+            <p>The mean squared displacement per attempt is roughly proportional to $\Delta^2\times$acceptance, which is maximal at $\Delta\approx0.45$ (acceptance $0.16$) but is flat between $0.3$ and $0.7$; the usual advice of an acceptance of $20$&ndash;$50\%$ is a good practical rule, and the step is adapted during equilibration (never during the production, which would break detailed balance). The comparison with MD is a strong test of both methods: the same state point, the same potential (truncated at $2.5\sigma$, with the long-range tail corrections to the energy and the pressure $U_\mathrm{tail}/N=\tfrac83\pi\rho[\tfrac13r_c^{-9}-r_c^{-3}]=-0.4520$ and $P_\mathrm{tail}=\tfrac{16}3\pi\rho^2[\tfrac23r_c^{-9}-r_c^{-3}]=-0.7621$ added), $256$ atoms. The pressure in MC is obtained from the virial of the forces, $P=\rho k_BT+\langle W\rangle/3V$, evaluated on the sampled configurations (forces are not used for the sampling but they are a function of the positions):</p>
+            <pre data-file="lj_mc.py"><code>&quot;&quot;&quot;Metropolis Monte Carlo of the Lennard-Jones fluid (256 atoms, T* = 0.85, rho* = 0.8442), against molecular dynamics (LAMMPS, NVT) at the same state point.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
 
-            <p>Near <em>T</em><sub>c</sub> the correlation length diverges and Metropolis single-spin flips suffer <strong>critical slowing down</strong>: large domains change very slowly. Cluster algorithms (Swendsen&ndash;Wang, Wolff) flip whole correlated clusters and remove most of the problem for such models.</p>
-
-            <h2 id="moves">4. Moves for materials<a class="anchor" href="#moves" aria-label="Link to this section">#</a></h2>
-            <p>The power of MC for materials is the freedom to design moves. Any set of moves that satisfies detailed balance and reaches the whole state space is allowed, whether or not it resembles real dynamics.</p>
-            <div class="table-scroll" role="region" aria-label="4. Moves for materials (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Move</th><th>Ensemble</th><th>What it does</th><th>Used for</th></tr></thead>
-                <tbody>
-                    <tr><td>Displacement</td><td>NVT</td><td>Shifts one atom by a small random vector</td><td>Off-lattice equilibrium; relaxation</td></tr>
-                    <tr><td>Exchange (swap)</td><td>NVT with fixed composition</td><td>Swaps the species of two atoms, even far apart</td><td>Chemical ordering and segregation in alloys, where diffusion in MD is far too slow</td></tr>
-                    <tr><td>Volume change</td><td>NPT</td><td>Rescales the cell; acceptance includes the <em>p</em>&Delta;<em>V</em> and &minus;<em>Nk</em><sub>B</sub><em>T</em> ln(<em>V</em>&prime;/<em>V</em>) terms</td><td>Thermal expansion, equations of state</td></tr>
-                    <tr><td>Insertion / deletion</td><td>Grand canonical (&mu;VT)</td><td>Adds or removes an atom against a reservoir</td><td>Adsorption, gas uptake, vacancy concentrations</td></tr>
-                    <tr><td>Species change</td><td>Semi-grand canonical</td><td>Changes the identity of a site at fixed chemical-potential difference &Delta;&mu;</td><td>Composition as a function of &Delta;&mu;, phase boundaries of alloys</td></tr>
-                    <tr><td>Hybrid MC/MD</td><td>NVT or NPT</td><td>Alternates MD steps (relaxing local strain) with swap moves</td><td>Segregation to grain boundaries, ordering in multicomponent alloys with realistic potentials</td></tr>
-                </tbody>
-            </table></div>
-
-            <h2 id="lattice">5. Lattice models and cluster expansion<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h2>
-            <p>Real alloys are not Ising models, but their configurational energy can be mapped onto one. A <strong>cluster expansion</strong> (Sanchez, Ducastelle and Gratias, 1984) writes the energy of any arrangement &sigma; of species on a fixed parent lattice as a sum over clusters of sites (single sites, pairs, triplets, &hellip;):</p>
-            <span class="eq">E(&sigma;) = &Sigma;<sub>&alpha;</sub> m<sub>&alpha;</sub> J<sub>&alpha;</sub> &lang;&Phi;<sub>&alpha;</sub>(&sigma;)&rang;</span>
-            <p>where &Phi;<sub>&alpha;</sub> are products of site variables over cluster &alpha;, <em>m</em><sub>&alpha;</sub> is a multiplicity and <em>J</em><sub>&alpha;</sub> are the <em>effective cluster interactions</em> (ECIs). The ECIs are fitted to a set of DFT energies of ordered structures (typically tens to hundreds of them), and the fit is checked by cross-validation. The expansion is exact if all clusters are included; in practice it is truncated, and the truncation error determines accuracy. Once fitted, the energy of any configuration costs a few operations, so MC can simulate millions of atoms over many sweeps with <em>ab initio</em> energetics. Typical outputs are order&ndash;disorder transition temperatures, solvus lines, ground-state structures, short-range order and its temperature dependence, and (with vibrational and electronic free energies added) first-principles phase diagrams. Software packages include ATAT, CASM and icet.</p>
-            <p>The same framework handles interstitial ordering (carbon in iron), vacancies and magnetic degrees of freedom by adding more site variables.</p>
-
-            <h2 id="advanced">6. Better sampling<a class="anchor" href="#advanced" aria-label="Link to this section">#</a></h2>
+            @njit
+            def energy_virial(x, L, rc2):
+                n = x.shape[0]; e = 0.0; w = 0.0
+                for i in range(n - 1):
+                    for j in range(i + 1, n):
+                        d = x[i] - x[j]; d -= L * np.round(d / L); r2 = d @ d
+                        if r2 &lt; rc2:
+                            ir6 = (1.0 / r2)**3; e += 4 * (ir6 * ir6 - ir6); w += 24 * (2 * ir6 * ir6 - ir6)
+                return e, w
+            @njit
+            def one_atom_energy(x, i, xi, L, rc2):
+                e = 0.0
+                for j in range(x.shape[0]):
+                    if j != i:
+                        d = xi - x[j]; d -= L * np.round(d / L); r2 = d @ d
+                        if r2 &lt; rc2:
+                            ir6 = (1.0 / r2)**3; e += 4 * (ir6 * ir6 - ir6)
+                return e
+            @njit
+            def mc(x, L, T, delta, nsweeps, nsample, rc2, seed):
+                np.random.seed(seed); n = x.shape[0]; acc = 0; tot = 0
+                es = np.empty(nsweeps // nsample); ps = np.empty(nsweeps // nsample); k = 0
+                for sw in range(nsweeps):
+                    for _ in range(n):
+                        i = np.random.randint(n); xn = x[i] + delta * (np.random.random(3) - 0.5)
+                        dE = one_atom_energy(x, i, xn, L, rc2) - one_atom_energy(x, i, x[i], L, rc2)
+                        tot += 1
+                        if dE &lt;= 0 or np.random.random() &lt; np.exp(-dE / T): x[i] = xn; acc += 1
+                    if sw % nsample == 0 and sw &gt;= 0:
+                        e, w = energy_virial(x, L, rc2); es[k] = e; ps[k] = w; k += 1
+                return es, ps, acc / tot
+            N, rho, T, rc = 256, 0.8442, 0.85, 2.5
+            nc = 4; L = (N / rho)**(1 / 3); a = L / nc
+            cells = np.array([[i, j, k] for i in range(nc) for j in range(nc) for k in range(nc)], float)
+            basis = np.array([[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]])
+            x = ((cells[:, None, :] + basis[None, :, :]).reshape(-1, 3) * a).copy()
+            rc2 = rc * rc
+            # tail corrections for the energy and the pressure (cut at rc, no shift)
+            etail = (8 / 3) * np.pi * rho * ((1 / 3) * rc**-9 - rc**-3)
+            ptail = (16 / 3) * np.pi * rho**2 * ((2 / 3) * rc**-9 - rc**-3)
+            print(f&quot;N = {N}, rho* = {rho}, T* = {T}, cutoff {rc}; tail corrections: energy per atom {etail:.4f}, pressure {ptail:.4f}&quot;)
+            for delta in (0.1, 0.2, 0.25, 0.3, 0.45, 0.7):
+                es, ps, acc = mc(x.copy(), L, T, delta, 300, 300, rc2, 1)
+                print(f&quot;   step {delta:4.2f}: acceptance {acc:.3f}&quot;)
+            delta = 0.25
+            mc(x, L, T, delta, 2000, 2000, rc2, 2)                       # equilibration
+            es, ps, acc = mc(x, L, T, delta, 12000, 10, rc2, 3)
+            nb = 20; n = len(es) // nb
+            def blk(v): return v[:n * nb].reshape(nb, n).mean(1).std(ddof=1) / np.sqrt(nb)
+            e_mc = es / N + etail; p_mc = rho * T + ps / (3 * L**3) + ptail
+            print(f&quot;MC (step {delta}, acceptance {acc:.3f}, 12000 sweeps): &lt;U&gt;/N = {e_mc.mean():.4f} +- {blk(e_mc):.4f};  P = {p_mc.mean():.4f} +- {blk(p_mc):.4f}&quot;)
+            np.savetxt(&quot;lj_mc_result.txt&quot;, [e_mc.mean(), blk(e_mc), p_mc.mean(), blk(p_mc)])</code></pre>
+            <pre class="out"><code>N = 256, rho* = 0.8442, T* = 0.85, cutoff 2.5; tail corrections: energy per atom -0.4520, pressure -0.7621
+               step 0.10: acceptance 0.732
+               step 0.20: acceptance 0.493
+               step 0.25: acceptance 0.390
+               step 0.30: acceptance 0.319
+               step 0.45: acceptance 0.160
+               step 0.70: acceptance 0.058
+            MC (step 0.25, acceptance 0.351, 12000 sweeps): &lt;U&gt;/N = -5.9623 +- 0.0044;  P = 0.8637 +- 0.0220</code></pre>
+            <pre data-file="lj_md_ref.py"><code>&quot;&quot;&quot;Reference for lj_mc.py: molecular dynamics (LAMMPS, Nose-Hoover NVT) of the same Lennard-Jones state point.&quot;&quot;&quot;
+            import numpy as np
+            from lammps import lammps
+            N, rho, T = 256, 0.8442, 0.85
+            lmp = lammps(cmdargs=[&quot;-log&quot;, &quot;none&quot;, &quot;-screen&quot;, &quot;none&quot;])
+            lmp.commands_list([&quot;units lj&quot;, &quot;atom_style atomic&quot;, &quot;boundary p p p&quot;, f&quot;lattice fcc {rho}&quot;, &quot;region box block 0 4 0 4 0 4&quot;, &quot;create_box 1 box&quot;, &quot;create_atoms 1 box&quot;, &quot;mass 1 1.0&quot;,
+                               &quot;pair_style lj/cut 2.5&quot;, &quot;pair_coeff 1 1 1.0 1.0&quot;, &quot;pair_modify tail yes&quot;, f&quot;velocity all create {T} 4928 loop geom&quot;, &quot;neighbor 0.3 bin&quot;, &quot;timestep 0.004&quot;, &quot;thermo 100000&quot;,
+                               f&quot;fix 1 all nvt temp {T} {T} 0.5&quot;, &quot;run 10000&quot;])
+            E, P = [], []
+            for _ in range(4000):
+                lmp.command(&quot;run 20&quot;); E.append(lmp.get_thermo(&quot;pe&quot;)); P.append(lmp.get_thermo(&quot;press&quot;))
+            lmp.close(); E = np.array(E); P = np.array(P); nb = 20; n = len(E) // nb
+            blk = lambda v: v[:n * nb].reshape(nb, n).mean(1).std(ddof=1) / np.sqrt(nb)
+            print(f&quot;MD (Nose-Hoover NVT, {len(E) * 20} steps of 0.004): &lt;U&gt;/N = {E.mean():.4f} +- {blk(E):.4f};  P = {P.mean():.4f} +- {blk(P):.4f}&quot;)
+            np.savetxt(&quot;lj_md_result.txt&quot;, [E.mean(), blk(E), P.mean(), blk(P)])</code></pre>
+            <pre class="out"><code>MD (Nose-Hoover NVT, 80000 steps of 0.004): &lt;U&gt;/N = -5.9524 +- 0.0022;  P = 0.9126 +- 0.0119</code></pre>
+            <p>The two methods give the same thermodynamics to within the statistical accuracy of these short runs: the energy per atom is $-5.9623\pm0.0044$ (MC, $12\,000$ sweeps) against $-5.9524\pm0.0022$ (MD, $80\,000$ steps of $0.004\tau$ after equilibration), a difference of $-0.0098\pm0.0050$, and the pressure $0.864\pm0.022$ against $0.913\pm0.012$, a difference of $-0.049\pm0.025$: both about two combined standard errors, with the MC values slightly lower. That is borderline (it happens by chance one time in twenty for each quantity); a longer Monte Carlo run would settle whether there is a small systematic difference (for instance from the thermostat of the MD run, whose temperature is only accurate to a fraction of a per cent, Lecture 4 of CMS 502) or not. The essential point is that the check was made: it verifies both codes, the force routine of MD, the energy routine of MC, the tail corrections and the thermostat, to a few parts in $10^3$ in the energy. A disagreement of many standard errors would point to a bug in one of them (a wrong cutoff, a missing tail correction, a wrong volume in the virial, or a non-canonical thermostat).</p>
+            <h3>Other ensembles and moves</h3>
+            <p>The advantage of MC is that any move can be used as long as detailed balance holds in the chosen ensemble, including moves that are physically unrealistic but efficient:</p>
             <ul>
-                <li><strong>Parallel tempering (replica exchange).</strong> Several copies run at different temperatures and periodically swap configurations with acceptance min[1, exp((&beta;<sub><em>i</em></sub> &minus; &beta;<sub><em>j</em></sub>)(<em>E</em><sub><em>i</em></sub> &minus; <em>E</em><sub><em>j</em></sub>))]. High-temperature replicas cross barriers, low-temperature replicas refine; the combination escapes metastable states.</li>
-                <li><strong>Flat-histogram methods (Wang&ndash;Landau, multicanonical).</strong> Estimate the density of states <em>g</em>(<em>E</em>) by a random walk that visits all energies equally. From <em>g</em>(<em>E</em>), all thermodynamic quantities at all temperatures follow from one run, including free energies and latent heats.</li>
-                <li><strong>Cluster moves</strong> for critical systems, as noted above.</li>
-                <li><strong>Biased moves</strong> that propose chemically sensible changes more often, corrected by Hastings ratios.</li>
+            <li><strong>NPT</strong>: add a <em>volume move</em> $V\to V^\prime$ with scaling of all coordinates, accepted with $\min\{1,\exp[-(\Delta U+P\Delta V)/k_BT+N\ln(V^\prime/V)]\}$ (the volume is sampled uniformly in $\ln V$ or $V$, with the corresponding Jacobian).</li>
+            <li><strong>Grand canonical (GCMC)</strong>: insert or delete a particle, with acceptances $\min\{1,\ \frac{V}{\Lambda^3(N+1)}\mathrm e^{(\mu-\Delta U)/k_BT}\}$ and $\min\{1,\ \frac{\Lambda^3N}{V}\mathrm e^{(-\mu-\Delta U)/k_BT}\}$ ($\Lambda$ the thermal wavelength): the standard method for adsorption in porous materials (zeolites, metal&ndash;organic frameworks) and for vapour&ndash;liquid equilibria; insertions into a dense liquid are rarely accepted and need biased insertion schemes.</li>
+            <li><strong>Swap moves in alloys</strong>: exchange the identities of an A and a B atom (even at long distance), which equilibrates the chemical order of a solid in a few thousand sweeps where MD would need seconds of real time because of the slow diffusion. Hybrid MD/MC with swaps is the standard to equilibrate the chemical order of high-entropy alloys.</li>
+            <li><strong>Cluster moves</strong> near a critical point (Swendsen&ndash;Wang, Wolff) and <strong>replica exchange</strong> (parallel tempering) for rough landscapes (Lecture 4).</li>
             </ul>
+            <h2 id="dos">Lecture 4. The density of states: Wang&ndash;Landau sampling<a class="anchor" href="#dos" aria-label="Link to this section">#</a></h2>
+            <p>The canonical simulations above give averages at one temperature at a time. If the <strong>density of states</strong> $g(E)$ (the number of configurations with energy $E$) is known, the whole thermodynamics follows at every temperature: $Z(T)=\sum_Eg(E)\mathrm e^{-E/k_BT}$, $U=\sum Eg\,\mathrm e^{-E/kT}/Z$, $C=(\langle E^2\rangle-\langle E\rangle^2)/k_BT^2$, and also the free energy $F=-k_BT\ln Z$ and entropy, which ordinary Metropolis cannot give (they need the normalisation $Z$). The <strong>Wang&ndash;Landau algorithm</strong> (2001) estimates $\ln g(E)$ in a random walk in energy space: a move $E\to E^\prime$ is accepted with probability $\min\{1,g(E)/g(E^\prime)\}$ using the current estimate of $g$, and after each step $\ln g(E_\mathrm{current})$ is increased by a modification factor $\ln f$; the histogram of visited energies becomes flat when $g$ is right, then $\ln f$ is halved (typically from $1$ to $10^{-6}$ or lower), and the walk continues. A walk that visits all energies with equal probability crosses free-energy barriers (such as the one between the two phases at a first-order transition) easily. We test it on a model whose density of states can be found by exact enumeration, the $4\times4$ Ising lattice ($2^{16}=65\,536$ states):</p>
+            <pre data-file="wanglandau.py"><code>&quot;&quot;&quot;Wang-Landau sampling of the density of states of the 2D Ising model; comparison with exact enumeration (4 x 4) and thermodynamics from a single run.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
 
-            <h2 id="kmc">7. Kinetic Monte Carlo<a class="anchor" href="#kmc" aria-label="Link to this section">#</a></h2>
-            <p>Metropolis MC samples equilibrium but its &ldquo;time&rdquo; is not physical. <strong>Kinetic Monte Carlo</strong> (kMC) instead chooses real <em>events</em> with real rates and advances a physical clock. It rests on the picture of a system that sits in a potential-energy basin, vibrates for a long time and then hops (a diffusive jump, a reaction, a dislocation depinning) to another basin; the hops are rare, independent, random events (a Poisson process). Rather than simulating the vibrations, kMC jumps straight from hop to hop.</p>
-            <p>Each possible event <em>i</em> has a rate, typically from harmonic transition-state theory:</p>
-            <span class="eq">k<sub>i</sub> = &nu;<sub>i</sub> exp( &minus;E<sub>a,i</sub> / k<sub>B</sub>T )</span>
-            <p>where <em>E</em><sub>a,<em>i</em></sub> is the activation barrier and &nu;<sub><em>i</em></sub> the attempt frequency (about 10<sup>12</sup>&ndash;10<sup>13</sup> s<sup>&minus;1</sup>, from vibrational frequencies). The rejection-free algorithm (Bortz&ndash;Kalos&ndash;Lebowitz; also called the residence-time or Gillespie algorithm) is:</p>
+            L = 4; N = L * L
+            # exact density of states by enumeration of all 2^16 states
+            def enumerate_dos():
+                g = {}
+                for st in range(2**N):
+                    s = np.array([(st &gt;&gt; k) &amp; 1 for k in range(N)]).reshape(L, L) * 2 - 1
+                    E = -int(np.sum(s * np.roll(s, 1, 0) + s * np.roll(s, 1, 1)))
+                    g[E] = g.get(E, 0) + 1
+                return g
+            exact = enumerate_dos()
+            Es = sorted(exact)
+            Emin = -2 * N
+            levels = np.arange(Emin, 2 * N + 1, 4)
+            # keep only the energy levels that exist on the 4x4 lattice (E = -32, -24, -20, ..., 32; the levels -28 and 28 do not exist)
+            exists = np.array([e in exact for e in levels])
+            print(f&quot;exact enumeration of the 4 x 4 lattice: {2**N} states, {len(exact)} different energies; the ground state has E = {min(exact)} and g = {exact[min(exact)]}&quot;)
+            @njit
+            def wl2(L, Emin, nE, exists, seed, lnf_final):
+                np.random.seed(seed); N = L * L
+                s = np.ones((L, L)); E = -2 * N
+                lng = np.zeros(nE); H = np.zeros(nE); lnf = 1.0; steps = 0
+                while lnf &gt; lnf_final:
+                    for _ in range(200000):
+                        i = np.random.randint(L); j = np.random.randint(L)
+                        nb = s[(i + 1) % L, j] + s[(i - 1) % L, j] + s[i, (j + 1) % L] + s[i, (j - 1) % L]
+                        dE = int(2 * s[i, j] * nb)
+                        a = (E - Emin) // 4; b = (E + dE - Emin) // 4
+                        if np.random.random() &lt; np.exp(lng[a] - lng[b]):
+                            s[i, j] = -s[i, j]; E += dE; a = b
+                        lng[a] += lnf; H[a] += 1
+                    steps += 200000
+                    mn = 1e300; mean = 0.0; cnt = 0
+                    for k in range(nE):
+                        if exists[k]:
+                            cnt += 1; mean += H[k]; mn = min(mn, H[k])
+                    mean /= cnt
+                    if mn &gt; 0.8 * mean: lnf /= 2; H[:] = 0
+                return lng, steps
+            lng, steps = wl2(L, Emin, len(levels), exists, 5, 1e-6)
+            lng = lng - lng[0] + np.log(2)                                       # normalise: g(ground state) = 2
+            print(f&quot;Wang-Landau run finished after {steps:.2e} spin-flip attempts (modification factor ln f reduced from 1 to 1e-6)&quot;)
+            print(&quot;   E     g exact    g Wang-Landau   relative error&quot;)
+            for e, ok, lg in zip(levels, exists, lng):
+                if ok: print(f&quot;  {e:4d}  {exact[e]:8d}   {np.exp(lg):12.1f}      {np.exp(lg) / exact[e] - 1:+.2e}&quot;)
+            E_arr = np.array([e for e, ok in zip(levels, exists) if ok], float); g_wl = np.array([np.exp(l) for l, ok in zip(lng, exists) if ok]); g_ex = np.array([exact[int(e)] for e in E_arr], float)
+            def thermo(g, T):
+                w = g * np.exp(-(E_arr - E_arr.min()) / T); Z = w.sum(); U = (E_arr * w).sum() / Z; U2 = (E_arr**2 * w).sum() / Z
+                return U / N, (U2 - U * U) / (N * T * T)
+            print(&quot;\nenergy per site and specific heat per site from the density of states (all temperatures from one run):&quot;)
+            print(&quot;     T     U/N exact   U/N WL     C/N exact   C/N WL&quot;)
+            for T in (1.0, 1.5, 2.0, 2.27, 3.0, 5.0):
+                ue, ce = thermo(g_ex, T); uw, cw = thermo(g_wl, T)
+                print(f&quot;   {T:4.2f}   {ue:9.5f}  {uw:9.5f}   {ce:9.5f}  {cw:9.5f}&quot;)</code></pre>
+            <pre class="out"><code>exact enumeration of the 4 x 4 lattice: 65536 states, 15 different energies; the ground state has E = -32 and g = 2
+            Wang-Landau run finished after 4.00e+06 spin-flip attempts (modification factor ln f reduced from 1 to 1e-6)
+               E     g exact    g Wang-Landau   relative error
+               -32         2            2.0      +0.00e+00
+               -24        32           31.9      -4.03e-03
+               -20        64           63.2      -1.27e-02
+               -16       424          420.9      -7.41e-03
+               -12      1728         1700.4      -1.60e-02
+                -8      6688         6441.2      -3.69e-02
+                -4     13568        13378.4      -1.40e-02
+                 0     20524        20214.4      -1.51e-02
+                 4     13568        13441.8      -9.30e-03
+                 8      6688         6585.0      -1.54e-02
+                12      1728         1710.6      -1.01e-02
+                16       424          415.3      -2.06e-02
+                20        64           64.2      +2.87e-03
+                24        32           31.6      -1.16e-02
+                32         2            2.0      -1.74e-02
+
+            energy per site and specific heat per site from the density of states (all temperatures from one run):
+                 T     U/N exact   U/N WL     C/N exact   C/N WL
+               1.00    -1.99716   -1.99717     0.02341    0.02330
+               1.50    -1.95064   -1.95093     0.20035    0.19897
+               2.00    -1.75538   -1.75733     0.60553    0.60003
+               2.27    -1.56499   -1.56855     0.78359    0.77776
+               3.00    -1.01707   -1.02197     0.60313    0.60510
+               5.00    -0.45614   -0.45656     0.11955    0.12072</code></pre>
+            <p>The density of states has $15$ different energy levels: the two ground states (all spins parallel, $E=-32J$), $32$ states with $E=-24J$ (one flipped spin has $4$ broken bonds: $16\times2=32$), and so on up to the antiferromagnetic states at $E=+32J$. The Wang&ndash;Landau estimate (normalised to $g(E_0)=2$) agrees with the exact degeneracies to within $0.3\%$&ndash;$3.7\%$ (average $1.3\%$) after $4\times10^6$ attempts, and the derived thermodynamics is better: the energy per site agrees to $\lesssim5\times10^{-3}$ at all temperatures ($-1.56855$ against the exact $-1.56499$ at $T=2.27$, near the critical temperature of the infinite lattice) and the specific heat to $1\%$ ($0.778$ against $0.784$). One run gives <em>all</em> temperatures, and the specific-heat maximum is found without scanning. In larger systems the method is used for first-order transitions (liquid&ndash;vapour, melting, the solid-state transformations of alloys), with the cost of the walk growing with the size of the energy range; the multicanonical method is its relative. The <strong>replica-exchange (parallel-tempering) Monte Carlo</strong> takes another route to the same goal: copies of the system at a ladder of temperatures run in parallel and exchange configurations with the probability $\min\{1,\mathrm e^{(\beta_i-\beta_j)(E_i-E_j)}\}$, so that the high-temperature replicas carry the low-temperature ones over the barriers.</p>
+            <h2 id="kmc">Lecture 5. Kinetic Monte Carlo<a class="anchor" href="#kmc" aria-label="Link to this section">#</a></h2>
+            <p>Metropolis Monte Carlo has no real time: a &ldquo;sweep&rdquo; is not a physical unit. For processes made of discrete, rare events (a vacancy hops, an adatom jumps, a molecule desorbs, a precipitate loses an atom) there is an algorithm that does give time. Each event $k$ has a rate $r_k$ (s$^{-1}$), usually from <strong>transition-state theory</strong>, $r_k=\nu_k\,\mathrm e^{-E_{a,k}/k_BT}$, with the attempt frequency $\nu_k\approx10^{12}$&ndash;$10^{13}$ s$^{-1}$ and the barrier $E_{a,k}$ from DFT with nudged elastic band calculations or from empirical potentials. If the events are independent and Poissonian, the system sitting in a state waits an exponentially distributed time before the next event, and the event that occurs is chosen with probability proportional to its rate. The <strong>residence-time (BKL, Gillespie) algorithm</strong> exploits this exactly:</p>
             <ol>
-                <li>List all possible events and compute the rates <em>k</em><sub><em>i</em></sub> and the total rate <em>R</em> = &Sigma;<sub><em>i</em></sub> <em>k</em><sub><em>i</em></sub>.</li>
-                <li>Choose event <em>i</em> with probability <em>k</em><sub><em>i</em></sub>/<em>R</em>, by drawing a uniform random number and finding where it falls on the cumulative sum of rates.</li>
-                <li>Execute it (move the atom, change the state).</li>
-                <li>Advance the clock by &Delta;<em>t</em> = &minus;ln(<em>u</em>)/<em>R</em>, with <em>u</em> a second uniform random number in (0, 1).</li>
-                <li>Update the event list (only events near the change are affected) and repeat.</li>
+            <li>List all possible events in the current state and their rates $r_k$; $R=\sum_kr_k$.</li>
+            <li>Choose event $k$ with probability $r_k/R$ (draw $u_1\in[0,1)$ and find the $k$ for which the cumulative sum of rates crosses $u_1R$).</li>
+            <li>Execute the event, update the state and the list of events.</li>
+            <li>Advance the clock by $\Delta t=-\ln(u_2)/R$, with $u_2\in(0,1]$ uniform. Go to 1.</li>
             </ol>
-            <p>Every step makes progress, so the method is efficient even when rates are very small, and the time scale can reach seconds, hours or longer; the speed is limited by the <em>fastest</em> events, since the clock moves in steps of 1/<em>R</em>. If some events are much faster than others (for example back-and-forth hops between two sites), they dominate the step count without producing net change, and special treatment (coarse-graining, superbasins) is needed.</p>
-            <h3>Input is the bottleneck</h3>
-            <p>kMC needs a catalogue of events and their barriers. On a rigid lattice the barriers can be tabulated from DFT nudged-elastic-band calculations, but they depend on the local atomic environment (neighbouring solutes, strain), which leads to either many barriers or a barrier model fitted as a function of environment. <strong>Off-lattice (adaptive) kMC</strong> finds events on the fly by searching the potential-energy surface from each new minimum, at much higher cost per step but without having to guess the events beforehand.</p>
-            <h3>Typical uses</h3>
-            <p>Vacancy-mediated diffusion and clustering of solutes in alloys; precipitate nucleation and coarsening; irradiation-damage evolution in reactor steels; thin-film and crystal growth; catalytic surface reactions; point-defect evolution in semiconductors.</p>
+            <p>There is no rejection: every step makes an event, however rare the events are, so a kinetic MC run spans microseconds to hours of physical time when MD would need $10^{12}$&ndash;$10^{20}$ steps. It is the method of choice for diffusion-controlled kinetics in solids (vacancy-mediated diffusion in alloys, ordering, precipitation), epitaxial growth, catalysis (surface reaction networks), radiation damage evolution. The check below uses a single vacancy hopping on a simple cubic lattice, for which the diffusion coefficient is known exactly: $D=\Gamma a^2/6$, where $\Gamma=6r$ is the total jump rate:</p>
+            <pre data-file="kmc_vacancy.py"><code>&quot;&quot;&quot;Kinetic Monte Carlo (residence-time algorithm) of a vacancy on a simple cubic lattice; check against the exact diffusion coefficient D = Gamma a^2 / 6.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
 
-            <h2 id="potts">8. Grain growth with the Potts model<a class="anchor" href="#potts" aria-label="Link to this section">#</a></h2>
-            <p>The <strong>Potts model</strong> generalises Ising to <em>Q</em> states: each site carries an integer (a grain orientation) and neighbouring sites of different orientation cost energy <em>J</em>. Domains of equal integer represent grains, and the boundary between them has an energy proportional to its length. Metropolis dynamics reduces the boundary energy, so grains grow by boundary migration. Studies by Anderson, Srolovitz and co-workers (1984) used this to study normal grain growth, where the classical parabolic law predicts mean size &prop; <em>t</em><sup>1/2</sup>, and to examine the grain-size distribution; fitted growth exponents in these models are usually somewhat below one half. The relationship to physical time must be calibrated, boundary mobility and energy are simple functions of misorientation in the basic model, and anisotropy or particle pinning require extensions; the model is nevertheless a popular tool for exploring grain growth and recrystallisation topologically.</p>
+            kB = 8.617333e-5
+            @njit
+            def kmc(nsteps, rate, a, seed):
+                np.random.seed(seed)
+                pos = np.zeros(3); t = 0.0
+                moves = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]], dtype=np.float64)
+                out_t = np.empty(nsteps); out_r2 = np.empty(nsteps); tsum = 0.0
+                for n in range(nsteps):
+                    R = 6 * rate
+                    t += -np.log(np.random.random()) / R
+                    k = np.random.randint(6); pos += moves[k] * a
+                    out_t[n] = t; out_r2[n] = pos @ pos
+                return out_t, out_r2
+            nu, Em, T, a = 1e13, 0.70, 300.0, 2.86e-10                       # attempt frequency (1/s), migration barrier (eV), temperature (K), lattice constant (m)
+            rate = nu * np.exp(-Em / (kB * T))                               # hop rate in one direction
+            Gamma = 6 * rate
+            print(f&quot;vacancy hopping on a simple cubic lattice: nu = {nu:.0e} 1/s, E_m = {Em} eV, T = {T} K, a = {a * 1e10:.2f} A&quot;)
+            print(f&quot;rate per direction {rate:.4g} 1/s, total jump rate Gamma = {Gamma:.4g} 1/s, mean waiting time {1 / Gamma * 1e3:.3f} ms; D = Gamma a^2/6 = {Gamma * a**2 / 6:.4e} m^2/s&quot;)
+            import time
+            print(&quot;\nensemble of 2000 independent kinetic Monte Carlo walkers of 2000 jumps each; D = &lt;r^2&gt;/(6 t) from the ensemble averages:&quot;)
+            t0 = time.perf_counter(); R2, TT = [], []
+            kmc(10, rate, a, 0)                                                     # compile
+            t0 = time.perf_counter()
+            for seed in range(2000):
+                t, r2 = kmc(2000, rate, a, 1000 + seed); R2.append(r2[-1]); TT.append(t[-1])
+            cpu = time.perf_counter() - t0
+            R2 = np.array(R2); TT = np.array(TT)
+            D_est = R2.mean() / (6 * TT.mean()); D_err = D_est * np.std(R2, ddof=1) / R2.mean() / np.sqrt(len(R2))
+            print(f&quot;   simulated time per walker {TT.mean():.2f} s, &lt;r^2&gt; = {R2.mean():.3e} m^2 (expected 2000 a^2 = {2000 * a**2:.3e});  D = {D_est:.4e} +- {D_err:.1e} m^2/s;  exact D = {Gamma * a**2 / 6:.4e};  ratio {D_est / (Gamma * a**2 / 6):.3f}&quot;)
+            print(f&quot;   total: {2000 * 2000} jumps in {cpu:.2f} s of CPU time&quot;)
+            # check of the waiting-time distribution: exponential with mean 1/Gamma
+            t, r2 = kmc(400000, rate, a, 99)
+            dts = np.diff(np.concatenate([[0.0], t]))
+            print(f&quot;\nwaiting times: mean {dts.mean() * 1e3:.4f} ms (expected {1 / Gamma * 1e3:.4f}), standard deviation {dts.std() * 1e3:.4f} ms (an exponential distribution has std = mean), fraction longer than 3 mean times {np.mean(dts &gt; 3 / Gamma):.4f} (exp(-3) = {np.exp(-3):.4f})&quot;)
+            print(f&quot;\nthe time that molecular dynamics would need: with the same barrier, one jump takes on average 1/Gamma = {1 / Gamma * 1e3:.2f} ms = {1 / Gamma / 2e-15:.1e} MD time steps of 2 fs&quot;)</code></pre>
+            <pre class="out"><code>vacancy hopping on a simple cubic lattice: nu = 1e+13 1/s, E_m = 0.7 eV, T = 300.0 K, a = 2.86 A
+            rate per direction 17.4 1/s, total jump rate Gamma = 104.4 1/s, mean waiting time 9.579 ms; D = Gamma a^2/6 = 1.4231e-18 m^2/s
 
-            <h2 id="compare">9. MC compared with MD<a class="anchor" href="#compare" aria-label="Link to this section">#</a></h2>
-            <div class="table-scroll" role="region" aria-label="9. MC compared with MD (scrollable table)" tabindex="0"><table>
-                <thead><tr><th></th><th>Molecular dynamics</th><th>Metropolis Monte Carlo</th><th>Kinetic Monte Carlo</th></tr></thead>
-                <tbody>
-                    <tr><td>Output</td><td>Trajectory with real dynamics</td><td>Equilibrium samples</td><td>Evolution with physical time</td></tr>
-                    <tr><td>Time</td><td>Femtosecond steps, up to microseconds</td><td>Sweeps; not physical time</td><td>Physical, up to seconds and beyond</td></tr>
-                    <tr><td>Moves</td><td>Dictated by forces</td><td>Any move satisfying detailed balance</td><td>List of real events with rates</td></tr>
-                    <tr><td>Needs</td><td>Forces (potential)</td><td>Energies only</td><td>Event catalogue and barriers</td></tr>
-                    <tr><td>Best for</td><td>Mechanisms, short-time dynamics, transport</td><td>Ordering, segregation, phase equilibrium</td><td>Slow diffusion-controlled evolution</td></tr>
-                </tbody>
-            </table></div>
+            ensemble of 2000 independent kinetic Monte Carlo walkers of 2000 jumps each; D = &lt;r^2&gt;/(6 t) from the ensemble averages:
+               simulated time per walker 19.16 s, &lt;r^2&gt; = 1.641e-16 m^2 (expected 2000 a^2 = 1.636e-16);  D = 1.4269e-18 +- 2.7e-20 m^2/s;  exact D = 1.4231e-18;  ratio 1.003
+               total: 4000000 jumps in 0.49 s of CPU time
 
-            <h2 id="code">10. A minimal code<a class="anchor" href="#code" aria-label="Link to this section">#</a></h2>
-            <p>A complete Metropolis sweep for the 2D Ising model, in units where <em>J</em> = <em>k</em><sub>B</sub> = 1, is only a few lines of Python:</p>
-<pre><code>import numpy as np
-rng = np.random.default_rng(1)
-N, T = 32, 1.6
-s = rng.choice([-1, 1], size=(N, N))
+            waiting times: mean 9.5802 ms (expected 9.5793), standard deviation 9.5749 ms (an exponential distribution has std = mean), fraction longer than 3 mean times 0.0498 (exp(-3) = 0.0498)
 
-def sweep(s, T):
-    for _ in range(N * N):
-        i, j = rng.integers(N, size=2)
-        nb = s[(i+1) % N, j] + s[(i-1) % N, j] + s[i, (j+1) % N] + s[i, (j-1) % N]
-        dE = 2 * s[i, j] * nb
-        if dE &lt;= 0 or rng.random() &lt; np.exp(-dE / T):
-            s[i, j] *= -1
+            the time that molecular dynamics would need: with the same barrier, one jump takes on average 1/Gamma = 9.58 ms = 4.8e+12 MD time steps of 2 fs</code></pre>
+            <p>With $\nu=10^{13}$ s$^{-1}$, a barrier of $0.70$ eV at $300$ K the rate per direction is $17.4$ s$^{-1}$ and the total rate $104.4$ s$^{-1}$: a hop every $9.58$ ms. The simulation of $2000$ walkers of $2000$ jumps each covers $19.2$ s of physical time per walker in $0.5$ s of CPU for all of them ($4$ million jumps) and gives $D=(1.427\pm0.027)\times10^{-18}$ m$^2$/s against the exact $1.423\times10^{-18}$ (ratio $1.003$). The waiting times are exponentially distributed: mean $9.5802$ ms (expected $9.5793$), standard deviation $9.5749$ ms (for an exponential distribution it equals the mean), and the fraction longer than three mean times is $0.0498$, equal to $\mathrm e^{-3}=0.0498$. For molecular dynamics a single such jump takes on average $4.8\times10^{12}$ steps of $2$ fs; at the measured speed of a $256$-atom EAM simulation on one core (about $4500$ steps/s) one jump would need about $30$ years: kinetic Monte Carlo reaches the same observables in a fraction of a second.</p>
+            <div class="note warn"><strong>What kinetic Monte Carlo needs, and where it fails</strong>
+            <ul>
+            <li><strong>The event catalogue</strong> must be complete and the rates correct. Missing a mechanism (a concerted move, a long jump, an unexpected relaxation) gives wrong kinetics without any warning. For lattice-based KMC all the barriers (which depend on the local environment: the neighbours of the jumping atom) have to be computed or fitted, often by a cluster expansion of the barriers, and for off-lattice KMC the transition states are searched on the fly (adaptive kinetic MC, with the dimer method).</li>
+            <li><strong>Separation of time scales</strong>: if some events are much faster than others (a fast back-and-forth hop between two sites), the algorithm spends all its steps on them (&ldquo;flickers&rdquo;), and one has to treat the fast subsystem analytically or merge the states.</li>
+            <li><strong>Harmonic transition-state theory</strong> applies when the barrier is much larger than $k_BT$ and the dynamics after crossing is not recrossing; for barriers below $\approx5k_BT$ use MD.</li>
+            <li><strong>Cost</strong>: the rate list must be updated efficiently (binary-tree or composition-rejection selection give $O(\log N)$ or $O(1)$ per event); for $10^6$ sites and $10^6$ events per second the time of an event is a few microseconds.</li>
+            </ul></div>
+            <h2 id="errors">Lecture 6. Error analysis and efficient sampling<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <p>Successive configurations of a Markov chain are correlated, so a sample of length $N$ contains only $N/(2\tau_\mathrm{int})$ independent measurements, where the <strong>integrated autocorrelation time</strong> $\tau_\mathrm{int}=\tfrac12+\sum_{t\ge1}A(t)$ is the sum of the normalised autocorrelation function of the observable (COMP 102, <a href="lab-ising-monte-carlo.html">LAB 504</a>). The error of the mean is $\sigma\sqrt{2\tau_\mathrm{int}/N}$. Near a critical point the correlation length diverges and the local-update Metropolis algorithm suffers <strong>critical slowing down</strong>: $\tau\sim\xi^z$ with $z\approx2.2$. For the $32\times32$ Ising model:</p>
+            <pre data-file="autocorr.py"><code>&quot;&quot;&quot;Autocorrelation times of the Metropolis and Wolff (cluster) algorithms for the 2D Ising model (L = 32) at several temperatures.&quot;&quot;&quot;
+            import numpy as np
+            from numba import njit
 
-for _ in range(500):
-    sweep(s, T)
-print("magnetisation per spin:", s.mean())</code></pre>
-            <p>Below <em>T</em><sub>c</sub> the magnetisation per spin ends near &plusmn;1; above it, it fluctuates near zero. Try <em>T</em> = 3 and compare; then plot energy against sweeps to see equilibration.</p>
+            @njit
+            def metropolis_sweep(s, beta, L):
+                for _ in range(L * L):
+                    i = np.random.randint(L); j = np.random.randint(L)
+                    nb = s[(i + 1) % L, j] + s[(i - 1) % L, j] + s[i, (j + 1) % L] + s[i, (j - 1) % L]
+                    dE = 2.0 * s[i, j] * nb
+                    if dE &lt;= 0 or np.random.random() &lt; np.exp(-beta * dE): s[i, j] = -s[i, j]
+            @njit
+            def wolff_step(s, p, L, stack):
+                i0 = np.random.randint(L); j0 = np.random.randint(L); sp = s[i0, j0]
+                s[i0, j0] = -sp; n = 0; stack[0, 0] = i0; stack[0, 1] = j0; ns = 1; size = 1
+                while ns &gt; 0:
+                    ns -= 1; i = stack[ns, 0]; j = stack[ns, 1]
+                    for k in range(4):
+                        ii = (i + (1 if k == 0 else -1 if k == 1 else 0)) % L; jj = (j + (1 if k == 2 else -1 if k == 3 else 0)) % L
+                        if s[ii, jj] == sp and np.random.random() &lt; p:
+                            s[ii, jj] = -sp; stack[ns, 0] = ii; stack[ns, 1] = jj; ns += 1; size += 1
+                return size
+            @njit
+            def run_metropolis(L, T, nequil, nprod, seed):
+                np.random.seed(seed); s = np.ones((L, L)); beta = 1 / T
+                for _ in range(nequil): metropolis_sweep(s, beta, L)
+                m = np.empty(nprod)
+                for k in range(nprod): metropolis_sweep(s, beta, L); m[k] = abs(s.sum()) / (L * L)
+                return m
+            @njit
+            def run_wolff(L, T, nequil, nprod, seed):
+                np.random.seed(seed); s = np.ones((L, L)); p = 1 - np.exp(-2 / T); stack = np.empty((L * L, 2), np.int64)
+                for _ in range(nequil): wolff_step(s, p, L, stack)
+                m = np.empty(nprod); touched = 0
+                for k in range(nprod):
+                    # one &#x27;sweep&#x27; of cluster updates: flip clusters until about L*L spins have been touched
+                    t = 0
+                    while t &lt; L * L: t += wolff_step(s, p, L, stack)
+                    m[k] = abs(s.sum()) / (L * L)
+                return m
+            def tau_int(x):
+                x = x - x.mean(); n = len(x); f = np.fft.rfft(x, 2 * n); acf = np.fft.irfft(f * np.conj(f))[:n]; acf /= acf[0]
+                tau = 0.5
+                for t in range(1, n):
+                    tau += acf[t]
+                    if t &gt; 6 * tau: break
+                return tau
+            L = 32; Tc = 2 / np.log(1 + np.sqrt(2))
+            print(f&quot;2D Ising model, L = {L}: integrated autocorrelation time of |m| (in sweeps; a Wolff sweep = clusters flipped until L^2 spins have been touched)&quot;)
+            print(&quot;     T      T/Tc    Metropolis   Wolff     N_eff/N (Metropolis) = 1/(2 tau)&quot;)
+            for T in (1.8, 2.1, 2.269, 2.5, 3.5):
+                mm = run_metropolis(L, T, 2000, 100000, 1); mw = run_wolff(L, T, 500, 20000, 2)
+                tm, tw = tau_int(mm), tau_int(mw)
+                print(f&quot;   {T:5.3f}   {T / Tc:5.3f}     {tm:7.1f}    {tw:6.2f}        {1 / (2 * tm):.4f}&quot;)
+            print(&quot;\neffect on the error bar: naive standard error of the mean (assuming independent samples) against the correct one, Metropolis at T = Tc, 100000 sweeps&quot;)
+            mm = run_metropolis(L, 2.269, 2000, 100000, 1)
+            naive = mm.std(ddof=1) / np.sqrt(len(mm)); tau = tau_int(mm); right = mm.std(ddof=1) * np.sqrt(2 * tau / len(mm))
+            nb = 20; n = len(mm) // nb; blk = mm[:n * nb].reshape(nb, n).mean(1).std(ddof=1) / np.sqrt(nb)
+            print(f&quot;   &lt;|m|&gt; = {mm.mean():.4f}; naive error {naive:.5f}; error with the autocorrelation time {right:.5f} (factor {right / naive:.1f} larger); block-average error (20 blocks) {blk:.5f}&quot;)</code></pre>
+            <pre class="out"><code>2D Ising model, L = 32: integrated autocorrelation time of |m| (in sweeps; a Wolff sweep = clusters flipped until L^2 spins have been touched)
+                 T      T/Tc    Metropolis   Wolff     N_eff/N (Metropolis) = 1/(2 tau)
+               1.800   0.793         3.4      0.51        0.1461
+               2.100   0.925        26.2      0.62        0.0191
+               2.269   1.000       201.9      0.74        0.0025
+               2.500   1.102        46.6      0.57        0.0107
+               3.500   1.542         2.6      0.51        0.1889
 
+            effect on the error bar: naive standard error of the mean (assuming independent samples) against the correct one, Metropolis at T = Tc, 100000 sweeps
+               &lt;|m|&gt; = 0.6418; naive error 0.00059; error with the autocorrelation time 0.01187 (factor 20.1 larger); block-average error (20 blocks) 0.01018</code></pre>
+            <p>The autocorrelation time of the Metropolis algorithm is $3.4$ sweeps at $T=1.8$, $26$ at $2.1$, <strong>$202$ sweeps at the critical temperature</strong> and again short on the other side ($2.6$ at $T=3.5$). The Wolff cluster algorithm, which flips a whole connected cluster of aligned spins at once (a cluster grown with probability $p=1-\mathrm e^{-2J/k_BT}$ for each aligned neighbour, and flipped with probability $1$, which satisfies detailed balance), has $\tau\approx0.5$&ndash;$0.7$ at all temperatures: <em>critical slowing down is gone</em> (the dynamic exponent is $z\approx0.25$). The effect on the error bar of the mean $\langle|m|\rangle$ at $T_c$ from $10^5$ Metropolis sweeps: the naive standard error (assuming independent samples) is $0.00059$, the correct one with the autocorrelation time $0.0119$ (a factor $20$ larger) and the block average with $20$ blocks $0.0102$: <strong>ignoring correlation underestimates the error by a factor of twenty</strong>, and a result that looks as precise as the third decimal place is really good to the second. Cluster algorithms exist for spin models; for atoms in a liquid the analogues are collective moves (rotations of rigid molecules, configurational-bias for chains, swap moves) designed for the system.</p>
+            <h3>Good practice</h3>
+            <ul>
+            <li><strong>Equilibration</strong>: discard the initial part until observables stop drifting; start from two different states (ordered and disordered) and check that they give the same result (history dependence is the signature of a metastable state or of non-ergodicity).</li>
+            <li><strong>Error bars</strong> from autocorrelation analysis or from blocks longer than $\tau$, not from the naive formula; use several independent runs with different seeds.</li>
+            <li><strong>Finite-size effects</strong>: repeat for several system sizes; near a critical point use finite-size scaling (the Binder cumulant of LAB 504).</li>
+            <li><strong>Random numbers</strong>: a good generator with a documented seed (COMP 202, Lecture 8); independent streams for independent runs.</li>
+            <li><strong>Verification</strong>: reproduce a known result (the exact Onsager magnetisation, the exact density of states of a small lattice, the exact $D$ of a random walker) every time a code is changed.</li>
+            </ul>
+            <h2 id="choose">Lecture 7. Choosing the method: MC, kinetic MC or molecular dynamics<a class="anchor" href="#choose" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Lecture 7. Choosing the method: MC, kinetic MC or molecular dynamics (scrollable table)" tabindex="0"><table>
+            <thead><tr><th></th><th>Molecular dynamics</th><th>Metropolis Monte Carlo</th><th>Kinetic Monte Carlo</th></tr></thead>
+            <tbody>
+            <tr><td>Output</td><td>trajectory, dynamics, transport</td><td>equilibrium averages, free energies (with extra tools)</td><td>real-time evolution of a catalogue of events</td></tr>
+            <tr><td>Time</td><td>physical, up to $\mu$s</td><td>no physical time (sweeps)</td><td>physical, up to hours</td></tr>
+            <tr><td>Input</td><td>potential energy surface (forces)</td><td>energy function only</td><td>events and rates</td></tr>
+            <tr><td>Moves</td><td>Newtonian only</td><td>any move with detailed balance (swaps, insertions, clusters)</td><td>the events of the catalogue</td></tr>
+            <tr><td>Strength</td><td>no assumptions on mechanisms; non-equilibrium</td><td>efficient equilibration of slowly diffusing or constrained systems; any ensemble</td><td>reaches long times for rare events</td></tr>
+            <tr><td>Weakness</td><td>the time-scale gap (Lecture 1 of CMS 502)</td><td>no dynamics; poor for dense, strongly correlated systems unless special moves</td><td>needs the mechanisms and barriers in advance</td></tr>
+            <tr><td>Typical use in this curriculum</td><td><a href="molecular-dynamics.html">CMS 502</a>, LAB 502, LAB 503</td><td>LAB 504, alloy order&ndash;disorder, adsorption</td><td>diffusion, growth, precipitation (<a href="diffusion-and-kinetics.html">CMS 504</a>)</td></tr>
+            </tbody></table></div>
+            <p>Combining them is common and powerful: <strong>MD/MC hybrids</strong> (MD for the physical relaxation and MC swaps for the chemical order), <strong>DFT-derived cluster expansions with MC</strong> for phase diagrams, <strong>DFT barriers with kinetic MC</strong> for diffusion and catalysis, and <strong>MD to find the events</strong> and kinetic MC to chain them (accelerated dynamics). The criterion is always the same: which question, which time and length scales, which information is available.</p>
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>Importance sampling with detailed balance produces Boltzmann-distributed samples; the Metropolis rule accepts with probability min(1, exp(-dE/kT)).</li>
-<li>Moves need not be physical: swap moves equilibrate chemical order far faster than dynamics can.</li>
-<li>Lattice models and cluster expansions carry DFT energetics into alloy thermodynamics at large size.</li>
-<li>Kinetic Monte Carlo advances physical time, dt = -ln(u)/R, using rates built from barriers.</li>
-<li>kMC is only as good as its event catalogue and barriers.</li>
+<li>Monte Carlo evaluates averages over a probability distribution by sampling it: its error falls as N^(-1/2) whatever the dimension, so it beats grid quadrature above about 4 to 6 dimensions (relative error 1.3e-1 for a 12-dimensional grid with 2 points per axis against 7e-4 for Monte Carlo at the same cost of 1e5 evaluations), and the Metropolis rule min(1, exp(-dE/kT)) samples the Boltzmann distribution because it satisfies detailed balance.</li>
+<li>On a lattice the Ising model is the binary alloy: for the square lattice the Monte Carlo order parameter agrees with Onsager&#x27;s exact result within the statistical error (0.8703 +- 0.0017 against 0.8687 at T = 2.10 J/k, 0.7813 +- 0.0052 against 0.7848 at 2.20), whereas the mean-field (regular-solution) theory places the critical temperature at 4.0 instead of 2.269 (76 percent too high) and has the wrong shape of the miscibility gap (x = 0.0264 against the true 0.0648 at T/Tc = 0.925).</li>
+<li>Off-lattice Metropolis Monte Carlo of a Lennard-Jones liquid reproduces the molecular-dynamics averages (see the table for U/N and P at T* = 0.85, rho* = 0.8442); the step size must be tuned (acceptance 0.73, 0.49, 0.32, 0.16 and 0.06 for steps of 0.1, 0.2, 0.3, 0.45 and 0.7) and the efficiency of exploration is largest at acceptance of order 0.2 to 0.5.</li>
+<li>Wang-Landau sampling estimates the density of states g(E) with a flat-histogram random walk: on the 4 x 4 Ising lattice it reproduces the exact enumeration of 65 536 states within 0.4 to 3.7 percent in g (and within 0.005 in the energy per site and 1 percent in the specific heat at all temperatures from a single run of 4e6 attempts).</li>
+<li>Kinetic Monte Carlo uses the residence-time algorithm: the time advances by -ln(u)/R_tot, the waiting times are exponential (mean 9.5802 ms against 9.5793 expected, 4.98 percent longer than three means against 4.98 percent), and an ensemble of walkers with a 0.7 eV barrier at 300 K gives D = (1.427 +- 0.027) x 10^-18 m^2/s, in agreement with the exact 1.423 x 10^-18, simulating 19 s of vacancy motion per walker in 0.5 s of CPU for 4 million jumps, a time that molecular dynamics (5e12 steps per jump) cannot reach.</li>
+<li>Choosing the method: MD gives dynamics but is limited to nanoseconds; Metropolis Monte Carlo samples equilibrium faster for lattice and off-lattice models, allows unphysical moves and ensembles (grand canonical, swaps), but has no real time; kinetic Monte Carlo gives the real time evolution of rare events if the event catalogue and rates are known.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">11. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>Why is a rejected move still counted in the averages?</summary>
-                <p>Because the Markov chain must stay in state <em>a</em> with the probability 1 &minus; &Sigma;<sub><em>b</em></sub> <em>P</em>(<em>a</em>&rarr;<em>b</em>) for detailed balance to hold. Repeated states carry weight, which is how low-probability states are visited less often. Dropping rejected steps would bias the average toward high-energy states.</p>
-            </details>
-            <details>
-                <summary>A kMC run has rates summing to R = 10<sup>6</sup> s<sup>&minus;1</sup>. About how much physical time does one step advance?</summary>
-                <p>On average &Delta;<em>t</em> = 1/<em>R</em> = 10<sup>&minus;6</sup> s (the expectation of &minus;ln(<em>u</em>)/<em>R</em> is 1/<em>R</em>). A million steps then represent about one second.</p>
-            </details>
-            <details>
-                <summary>Why does MC with swap moves equilibrate a ternary alloy much faster than MD?</summary>
-                <p>In MD, atoms must diffuse to rearrange, which at ordinary temperatures takes times far beyond what MD can reach. A swap move exchanges two atoms directly regardless of distance and barrier, so the arrangement can sample the equilibrium distribution of chemical order in a small number of sweeps.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pc503-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>A system has two states with energies $0$ and $2\epsilon$ at $k_BT=\epsilon$. (a) What are the equilibrium probabilities? (b) Write the Metropolis acceptance probabilities for $0\to1$ and $1\to0$. (c) Verify detailed balance.</p>
+            <details class="hint"><summary>Hint</summary><p>$P_i\propto\mathrm e^{-E_i/k_BT}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $P_0=1/(1+\mathrm e^{-2})=0.8808$ and $P_1=\mathrm e^{-2}/(1+\mathrm e^{-2})=0.1192$. (b) $W(0\to1)=\min\{1,\mathrm e^{-2}\}=0.1353$ and $W(1\to0)=1$ (for symmetric proposals). (c) $P_0W(0\to1)=0.8808\times0.1353=0.1192$ and $P_1W(1\to0)=0.1192\times1=0.1192$: equal, so detailed balance holds and the chain has $P$ as its stationary distribution.</p>
+            <p class="answer">(a) $0.881$, $0.119$  (b) $0.135$, $1$  (c) both flows $=0.1192$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>The value of $\pi$ is estimated by throwing $N$ random points in the unit square and counting the fraction $p$ inside the quarter circle ($p=\pi/4$). (a) What is the relative error of the estimate of $\pi$ after $N$ points? (b) How many points for a relative error of $10^{-3}$? (c) What would a grid method of the same precision need?</p>
+            <details class="hint"><summary>Hint</summary><p>The count is binomial: $\sigma_p=\sqrt{p(1-p)/N}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\pi=4p$, so $\delta\pi/\pi=\delta p/p=\sqrt{(1-p)/(pN)}=\sqrt{0.2732/N}$. (b) $N=0.2732/10^{-6}=2.7\times10^5$. (c) A midpoint grid in two dimensions has an error $\sim m^{-1}$ for a discontinuous integrand (the boundary of the circle is crossed by $\sim m$ cells), so $m\approx10^3$ points per axis and $10^6$ evaluations: in two dimensions the grid is not better than Monte Carlo for this discontinuous integrand; for smooth integrands in $d\le3$ the grid wins by orders of magnitude (the table of Lecture 1).</p>
+            <p class="answer">(a) $\sqrt{0.273/N}$  (b) $2.7\times10^5$  (c) $\sim10^6$, no better</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Basic</span></div>
+            <p>Using the acceptance table of Lecture 3: (a) at which step does the figure of merit $\Delta^2\times$acceptance reach its maximum among the tested values? (b) How much more efficient is $\Delta=0.45$ than $\Delta=0.10$? (c) Why is it dangerous to adapt the step size during the production run?</p>
+            <details class="hint"><summary>Hint</summary><p>The values are $0.0073$, $0.0197$, $0.0244$, $0.0287$, $0.0324$, $0.0284$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Delta=0.45$ ($0.0324$), although the maximum is broad ($0.0287$ at $0.30$ and $0.0284$ at $0.70$). (b) $0.0324/0.0073=4.4$ times more displacement per attempt. (c) Changing $\Delta$ according to the recent acceptance makes the transition probability depend on the history of the chain, so that the chain is not Markovian with a fixed kernel and detailed balance is violated; the stationary distribution is not guaranteed to be the Boltzmann distribution. Adapt $\Delta$ during equilibration only, and then fix it.</p>
+            <p class="answer">(a) $0.45$  (b) $4.4\times$  (c) breaks detailed balance</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>The mean-field critical temperature of the Ising model is $T_c^\mathrm{MF}=zJ/k_B$. Compare with the exact values $T_c=2.2692$, $\ 3.6410$, $\ 4.5115$, $\ 6.3508$, $\ 9.7939\ (J/k_B)$ for the square ($z=4$), triangular ($6$), simple cubic ($6$), bcc ($8$) and fcc ($12$) lattices. (a) Compute the overestimate in per cent. (b) What trend do you see and why?</p>
+            <details class="hint"><summary>Hint</summary><p>Overestimate $=T_c^\mathrm{MF}/T_c-1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) square: $4/2.2692=1.763$, $+76\%$; triangular: $6/3.641=1.648$, $+65\%$; simple cubic: $6/4.5115=1.330$, $+33\%$; bcc: $8/6.3508=1.260$, $+26\%$; fcc: $12/9.7939=1.225$, $+23\%$. (b) The overestimate falls with the coordination number $z$ and with the dimension: mean-field theory replaces the fluctuating environment of a site by its average, and the neglected fluctuations are less important when a site interacts with more neighbours (the mean-field theory becomes exact when $z\to\infty$). It also falls from two to three dimensions, where fluctuations are weaker. For a regular-solution model of an fcc alloy, the actual critical temperature is still about $20\%$ lower than $\Omega/2R$.</p>
+            <p class="answer">(a) $+76\%$, $+65\%$, $+33\%$, $+26\%$, $+23\%$  (b) decreases with $z$ and dimension</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>An fcc alloy has the regular-solution parameter $\Omega=12$ kJ/mol. (a) What is the Ising coupling $J$ per bond (in J and as $J/k_B$ in K)? (b) What does mean-field theory predict for $T_c$, and what does the exact Ising model give with $T_c=9.7939\,J/k_B$?</p>
+            <details class="hint"><summary>Hint</summary><p>$\Omega=2zJN_A$ with $z=12$, and $T_c^\mathrm{MF}=\Omega/2R$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $J=\Omega/(2zN_A)=12\,000/(24\times6.022\times10^{23})=8.30\times10^{-22}$ J ($5.2$ meV) and $J/k_B=60.1$ K. (b) Mean field: $T_c=\Omega/2R=12\,000/16.63=721.6$ K ($=zJ/k_B=12\times60.1$). Exact (Ising, fcc): $9.7939\times60.1=589$ K, $18\%$ lower than the mean-field value (ratio $0.816$). The solubility limits calculated from the regular-solution model with this $\Omega$ are therefore too low at a given temperature: to describe a measured miscibility gap with a regular-solution model one needs a smaller effective $\Omega$, and in CALPHAD this shows up as a temperature-dependent interaction parameter.</p>
+            <p class="answer">(a) $8.30\times10^{-22}$ J, $60.1$ K  (b) $722$ K (MF) against $589$ K (exact)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>A vacancy in a simple cubic metal has $\nu=10^{13}$ s$^{-1}$ and a migration barrier $0.70$ eV ($a=2.86$ &Aring;). (a) At $600$ K compute the rate per direction, the total jump rate, and $D=\Gamma a^2/6$. (b) How long until the root-mean-square displacement reaches $1\ \mu$m? (c) How many kinetic Monte Carlo steps is that?</p>
+            <details class="hint"><summary>Hint</summary><p>$k_BT=0.05170$ eV at $600$ K; $r=\nu\mathrm e^{-E/k_BT}$; $\langle r^2\rangle=6Dt$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\mathrm e^{-0.70/0.0517}=\mathrm e^{-13.54}=1.32\times10^{-6}$, so $r=1.32\times10^{7}$ s$^{-1}$ per direction and $\Gamma=6r=7.9\times10^7$ s$^{-1}$; $D=7.9\times10^7\times(2.86\times10^{-10})^2/6=1.08\times10^{-12}$ m$^2$/s. (b) $t=r_\mathrm{rms}^2/(6D)=10^{-12}/(6.5\times10^{-12})=0.154$ s. (c) $\Gamma t=7.9\times10^7\times0.154=1.2\times10^7$ jumps: a few seconds of kinetic Monte Carlo; molecular dynamics would need $0.154/(2\times10^{-15})=7.7\times10^{13}$ steps per vacancy even if the barrier were not an obstacle.</p>
+            <p class="answer">(a) $1.3\times10^7$, $7.9\times10^7$ s$^{-1}$, $1.08\times10^{-12}$ m$^2$/s  (b) $0.154$ s  (c) $1.2\times10^7$ jumps</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>In the vacancy simulation the total rate is $R=104.4$ s$^{-1}$. (a) What is the probability that the next jump happens within $1$ ms? (b) The median waiting time? (c) The probability of waiting longer than $20$ ms?</p>
+            <details class="hint"><summary>Hint</summary><p>$P(\Delta t&gt;\tau)=\mathrm e^{-R\tau}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $1-\mathrm e^{-0.1044}=0.0991$. (b) $\ln2/R=0.693/104.4=6.64$ ms (shorter than the mean $9.58$ ms because the exponential distribution is skewed). (c) $\mathrm e^{-104.4\times0.02}=\mathrm e^{-2.088}=0.124$. In the simulation we confirmed that the fraction of waiting times longer than three mean times is $0.0498$ ($\mathrm e^{-3}$), a check of the random-number generator and of the algorithm.</p>
+            <p class="answer">(a) $0.099$  (b) $6.64$ ms  (c) $0.124$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>A volume move changes $V=100$ to $V^\prime=100.5$ (reduced units) for $N=100$ atoms at $P=1$, $k_BT=1$, with an energy change $\Delta U=+0.2$. Using the NPT acceptance $\min\{1,\exp[-(\Delta U+P\Delta V)/k_BT+N\ln(V^\prime/V)]\}$, compute the acceptance. What does the logarithmic term represent?</p>
+            <details class="hint"><summary>Hint</summary><p>$\Delta V=0.5$; $N\ln(100.5/100)=100\times0.004988$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$-(0.2+1\times0.5)=-0.7$; $N\ln(V^\prime/V)=100\ln1.005=0.4988$; the exponent is $-0.2012$ and the acceptance is $\mathrm e^{-0.2012}=0.818$. The logarithmic term comes from the Jacobian of the scaling of the $N$ particle coordinates with the cell (the configurational partition function in scaled coordinates carries a factor $V^N$): it is the ideal-gas entropy gain of the larger volume and it must be included for the volume to follow the correct NPT distribution.</p>
+            <p class="answer">$0.818$; the term is the entropic Jacobian $V^N$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Core</span></div>
+            <p>In a grand-canonical simulation with $V=1000\sigma^3$, $\Lambda=1\sigma$, $N=100$, $\mu=-3\,k_BT$ (relative to the units used), the insertion acceptance is $\min\{1,\frac{V}{\Lambda^3(N+1)}\mathrm e^{(\mu-\Delta U)/k_BT}\}$. Compute it for (a) $\Delta U=-5\,k_BT$ and (b) $\Delta U=+2\,k_BT$ and discuss.</p>
+            <details class="hint"><summary>Hint</summary><p>$V/[\Lambda^3(N+1)]=1000/101=9.90$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $9.90\times\mathrm e^{-3+5}=9.90\times7.389=73$: accepted with probability $1$. (b) $9.90\times\mathrm e^{-3-2}=9.90\times0.00674=0.0667$. In a dense fluid most insertion attempts find an overlap with an existing atom ($\Delta U\gg k_BT$) and are rejected: the acceptance of insertions is low, and for dense systems and molecules one uses biased insertion (configurational-bias, cavity-bias) to find the holes. Deletions are accepted with $\min\{1,\frac{\Lambda^3N}{V}\mathrm e^{(-\mu-\Delta U)/k_BT}\}$ with the balancing factor.</p>
+            <p class="answer">(a) $1$  (b) $0.067$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Core</span></div>
+            <p>For the $4\times4$ Ising lattice with $J=k_B=1$ and the exact density of states of Lecture 4 ($g(-32)=2$, $g(-24)=32$, $g(-20)=64$, $g(-16)=424,\dots$), compute at $T=1$: (a) the partition function $Z$ (sum over all $15$ levels, relative to $E=-32$); (b) the probability of the ground state; (c) the energy per site, and compare with the table.</p>
+            <details class="hint"><summary>Hint</summary><p>$Z=\sum_Eg(E)\mathrm e^{-(E+32)/T}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Z=2+32\mathrm e^{-8}+64\mathrm e^{-12}+424\mathrm e^{-16}+1728\mathrm e^{-20}+\dots=2+0.010735+0.000393+0.000047+0.000004+\dots=2.01118$. (b) $P_0=2/2.01118=0.99444$. (c) $U/N=\frac1{16}\sum Eg\mathrm e^{-(E+32)/T}/Z=-1.99716$, in agreement with the exact entry of the table of Lecture 4 ($-1.99716$). At $T=1$ the system is essentially in its ground state ($99.4\%$), the thermal excitation costing $8$ energy units for a single flipped spin, $\mathrm e^{-8}=3.4\times10^{-4}$ per spin.</p>
+            <p class="answer">(a) $2.0112$  (b) $0.9944$  (c) $-1.9972$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>From the autocorrelation data ($\tau_\mathrm{int}=201.9$ for Metropolis and $0.74$ for Wolff at $T_c$ with $L=32$; the standard error $0.0119$ for $10^5$ Metropolis sweeps): (a) deduce the standard deviation $\sigma$ of $|m|$; (b) the number of Metropolis sweeps for a standard error of $0.002$; (c) the number of Wolff sweeps; (d) the ratio.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathrm{err}=\sigma\sqrt{2\tau/N}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\sigma=0.0119/\sqrt{2\times201.9/10^5}=0.0119/0.0636=0.187$. (b) $N=2\tau\sigma^2/\mathrm{err}^2=403.8\times0.0349/(4\times10^{-6})=3.5\times10^6$ sweeps. (c) $N=2\times0.74\times0.0349/(4\times10^{-6})=1.3\times10^4$ Wolff sweeps. (d) The ratio of the numbers of sweeps is $2\tau_\mathrm{M}/2\tau_\mathrm{W}=273$. A Wolff sweep costs somewhat more than a Metropolis sweep (a bookkeeping of clusters), but not $273$ times more: the cluster algorithm wins by a factor of the order of $100$ at $L=32$, and the advantage grows with the size ($\tau_\mathrm{Metropolis}\propto L^{2.2}$).</p>
+            <p class="answer">(a) $0.187$  (b) $3.5\times10^6$  (c) $1.3\times10^4$  (d) $273$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pc503-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>Choose a method (MD, Metropolis MC, kinetic MC, a combination) and justify it for: (a) the equilibrium short-range order of a $10^3$-atom CoCrFeNiMn alloy at $1000$ K; (b) the diffusion of carbon in &alpha;-iron between $400$ and $700$ K; (c) the melting temperature of a metal; (d) the growth of a thin film by deposition at $300$ K.</p>
+            <details class="hint"><summary>Hint</summary><p>Ask: what is the quantity, what are the time scales, is the mechanism known?</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <strong>Hybrid MD/MC with swap moves</strong>: the chemical order of a solid relaxes by diffusion that takes seconds to years at $1000$ K, out of reach for MD; swapping the identities of two atoms (accepted by Metropolis with the energy of an MD-relaxed or MLIP structure) equilibrates the order in a few $10^3$ sweeps; the observable is an equilibrium average (Warren&ndash;Cowley parameters). (b) <strong>Kinetic MC</strong> with barriers computed by DFT/NEB (interstitial octahedral hops, with the effect of the neighbours), or the analytic jump-frequency model (the Arrhenius form $D=D_0\mathrm e^{-Q/k_BT}$) because the barrier ($\approx0.8$&ndash;$0.9$ eV) makes plain MD hopeless at these temperatures (about one hop per millisecond per atom at $400$ K for $0.8$ eV, a million times longer than a $1$ ns MD run); MD only at high temperature to extrapolate. (c) <strong>MD</strong> (two-phase coexistence method, or free-energy methods with thermodynamic integration, <a href="molecular-dynamics.html">CMS 502</a>): the melting is a first-order transition, hysteresis in a single-phase heating run (superheating) gives an overestimate by $20\%$ or more; the two-phase method or Wang&ndash;Landau/free-energy gives $T_m$ reliably. (d) <strong>Kinetic MC</strong> for the growth on the lattice (adsorption, surface diffusion, step attachment with the rates from DFT), possibly with MD for the first stage of each deposition event (the impact of a hyperthermal atom), a multi-scale scheme; a pure MD cannot reach a monolayer deposition time ($\sim1$ s) at realistic fluxes.</p>
+            <p class="answer">(a) MD/MC swaps  (b) kinetic MC  (c) MD two-phase  (d) kinetic MC with MD for impacts</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qc503-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Core</span></div>
+            <p>State the two conditions for a Markov chain to sample the Boltzmann distribution and give an example of how each can fail in a simulation.</p>
+            <details class="solution"><summary>Solution</summary><p><em>Detailed balance</em> (or at least stationarity of $P$): fails when the proposal is asymmetric without the Hastings correction, when the step size is adapted during production, or when a rejected move is not counted again. <em>Ergodicity</em>: fails when the moves cannot connect all states (a system with a hard constraint and only single-particle moves), or in practice when the barrier between regions is so high that the chain does not cross within the run (a glass, two phases, a deep metastable state): the averages then depend on the starting configuration.</p></details>
+            </div>
+            <div class="problem" id="qc503-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Core</span></div>
+            <p>Why is the mean-field theory of the regular solution not accurate, and what does the Monte Carlo calculation of the square-lattice alloy show quantitatively?</p>
+            <details class="solution"><summary>Solution</summary><p>It replaces the local environment of an atom by its average composition and neglects the short-range order and the fluctuations that increase the entropy of the mixed state. For the square lattice it predicts $T_c=4$ against the exact $2.269$ ($+76\%$) and solubilities that are too small by a factor $2.5$ at $T/T_c=0.925$ ($x_B=0.026$ against $0.065$). The simulation reproduces Onsager&rsquo;s exact result within $1$&ndash;$2$ standard errors, so it can be used for lattices where no exact solution exists (cluster expansions of real alloys).</p></details>
+            </div>
+            <div class="problem" id="qc503-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>What is the purpose of the tail correction in the Lennard-Jones simulation, and how large was it?</p>
+            <details class="solution"><summary>Solution</summary><p>Interactions beyond the cutoff $r_c$ are neglected in the simulation but contribute to the energy and the pressure of a liquid (the pair distribution is $g\approx1$ beyond $r_c$): $U_\mathrm{tail}/N=\tfrac83\pi\rho[\tfrac13r_c^{-9}-r_c^{-3}]=-0.452$ (about $8\%$ of the total energy of $-5.95$) and $P_\mathrm{tail}=-0.762$, comparable to the pressure itself ($0.91$). Without them the MC and MD values would not agree with the literature, but they would still agree with each other if both omit the correction: the correction is therefore not needed to compare two codes with the same truncation, but is needed to compare with data computed with a longer cutoff.</p></details>
+            </div>
+            <div class="problem" id="qc503-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>In the residence-time algorithm, why is no random number rejected, and why do we draw a second random number for the time?</p>
+            <details class="solution"><summary>Solution</summary><p>The algorithm samples directly the joint distribution of the waiting time and the event: the event is chosen with probability $r_k/R$ and the waiting time with the exponential distribution of mean $1/R$, so each step is one physical event and nothing is rejected (compare Metropolis in which most trial moves are rejected). The time increment must be drawn independently of the choice of the event, and the distribution of $\Delta t$ must be exponential for the process to be a Poisson process; using the mean time $1/R$ instead gives the correct average dynamics for large systems but the wrong fluctuations.</p></details>
+            </div>
+            <div class="problem" id="qc503-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>The autocorrelation time of a Monte Carlo run is $100$ sweeps. How many independent samples are in $10^6$ sweeps, and by how much does the naive error bar underestimate the true one?</p>
+            <details class="solution"><summary>Solution</summary><p>$N_\mathrm{eff}=N/(2\tau)=10^6/200=5000$ independent samples. The naive error assumes $10^6$ independent samples and is too small by $\sqrt{2\tau}=\sqrt{200}=14$ times. A block analysis with blocks of several hundred sweeps reveals the factor.</p></details>
+            </div>
+            <div class="problem" id="qc503-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>You have computed the miscibility gap of an alloy with a lattice Monte Carlo and DFT-derived interactions, and the result differs by $15\%$ in the critical temperature from experiment. List sources of error, from the Monte Carlo itself to the Hamiltonian.</p>
+            <details class="solution"><summary>Solution</summary><p>Monte Carlo: finite-size effects (the critical temperature of a finite lattice is shifted; use finite-size scaling), insufficient equilibration or sampling (autocorrelation), a wrong random-number generator. Hamiltonian: truncation of the cluster expansion (fit error of the DFT energies: a cross-validation score of $2$ meV/atom leads to a $\sim10$&ndash;$20\%$ error of $T_c$), the DFT functional (formation energies of PBE are biased), the neglect of lattice vibrations (vibrational entropy changes $T_c$ by $10$&ndash;$20\%$ in many alloys), of the lattice relaxation (included in the effective interactions only if the expansion was fitted to relaxed energies), and of the electronic and magnetic entropy. The mean-field result would be even farther: the difference between the methods is $20$&ndash;$70\%$ of $T_c$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Landau, D. P. and Binder, K., <em>A Guide to Monte Carlo Simulations in Statistical Physics</em>, Cambridge University Press.</li>
-                <li>Newman, M. E. J. and Barkema, G. T., <em>Monte Carlo Methods in Statistical Physics</em>, Oxford University Press (1999).</li>
-                <li>Metropolis, N. et al., Equation of state calculations by fast computing machines, <em>J. Chem. Phys.</em> 21, 1087 (1953).</li>
-                <li>Hastings, W. K., Monte Carlo sampling methods using Markov chains and their applications, <em>Biometrika</em> 57, 97 (1970).</li>
-                <li>Swendsen, R. H. and Wang, J.-S., Nonuniversal critical dynamics in Monte Carlo simulations, <em>Phys. Rev. Lett.</em> 58, 86 (1987); Wolff, U., Collective Monte Carlo updating for spin systems, <em>Phys. Rev. Lett.</em> 62, 361 (1989).</li>
-                <li>Wang, F. and Landau, D. P., Efficient, multiple-range random walk algorithm to calculate the density of states, <em>Phys. Rev. Lett.</em> 86, 2050 (2001).</li>
-                <li>Sanchez, J. M., Ducastelle, F. and Gratias, D., Generalized cluster description of multicomponent systems, <em>Physica A</em> 128, 334 (1984).</li>
-                <li>Bortz, A. B., Kalos, M. H. and Lebowitz, J. L., A new algorithm for Monte Carlo simulation of Ising spin systems, <em>J. Comput. Phys.</em> 17, 10 (1975).</li>
-                <li>Gillespie, D. T., Exact stochastic simulation of coupled chemical reactions, <em>J. Phys. Chem.</em> 81, 2340 (1977).</li>
-                <li>Voter, A. F., Introduction to the kinetic Monte Carlo method, in <em>Radiation Effects in Solids</em>, Springer (2007).</li>
-                <li>Anderson, M. P., Srolovitz, D. J., Grest, G. S. and Sahni, P. S., Computer simulation of grain growth, <em>Acta Metall.</em> 32, 783 (1984).</li>
+                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press: Chapters 3&ndash;5 and 9 (Monte Carlo, ensembles, free energies); Newman, M. E. J. and Barkema, G. T., <em>Monte Carlo Methods in Statistical Physics</em>, Oxford University Press: the standard text for lattice models, cluster algorithms, finite-size scaling and error analysis; Landau, D. P. and Binder, K., <em>A Guide to Monte Carlo Simulations in Statistical Physics</em>, Cambridge University Press.</li>
+                <li>Metropolis, N. et al., <em>Journal of Chemical Physics</em> <strong>21</strong>, 1087 (1953); Hastings, W. K., <em>Biometrika</em> <strong>57</strong>, 97 (1970); Swendsen, R. H. and Wang, J.-S., <em>Physical Review Letters</em> <strong>58</strong>, 86 (1987); Wolff, U., <em>Physical Review Letters</em> <strong>62</strong>, 361 (1989); Wang, F. and Landau, D. P., <em>Physical Review Letters</em> <strong>86</strong>, 2050 (2001) (density of states).</li>
+                <li>Bortz, A. B., Kalos, M. H. and Lebowitz, J. L., <em>Journal of Computational Physics</em> <strong>17</strong>, 10 (1975) (the residence-time algorithm); Gillespie, D. T., <em>Journal of Physical Chemistry</em> <strong>81</strong>, 2340 (1977); Voter, A. F., &ldquo;Introduction to the kinetic Monte Carlo method&rdquo;, in <em>Radiation Effects in Solids</em>, Springer (2007).</li>
+                <li>Onsager, L., <em>Physical Review</em> <strong>65</strong>, 117 (1944); Yang, C. N., <em>Physical Review</em> <strong>85</strong>, 808 (1952); Sanchez, J. M., Ducastelle, F. and Gratias, D., <em>Physica A</em> <strong>128</strong>, 334 (1984) (cluster expansion); van de Walle, A., <em>Calphad</em> <strong>33</strong>, 266 (2009) (ATAT).</li>
+                <li>MIT OpenCourseWare 3.021J <em>Introduction to Modeling and Simulation</em> and 6.262 <em>Discrete Stochastic Processes</em>. The programs of this course are in <code>labs/cms-503</code> of the repository. Related: <a href="lab-ising-monte-carlo.html">LAB 504</a>, <a href="statistical-mechanics.html">PHYS 301</a>, <a href="molecular-dynamics.html">CMS 502</a>, <a href="diffusion-and-kinetics.html">CMS 504</a>, <a href="thermodynamics-and-calphad.html">MSE 301</a>.</li>
             </ul>
 
             <!-- pager:start -->
@@ -244,11 +716,13 @@ print("magnetisation per spin:", s.mean())</code></pre>
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=859b15b4"></script>
-    <script src="../assets/pathdata.js?v=4eb9fcbe"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=ad132ad3"></script>
+    <script src="../assets/pathdata.js?v=34380722"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
-    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>

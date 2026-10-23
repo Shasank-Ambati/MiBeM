@@ -1,0 +1,11 @@
+integral of exp(-|x|^2) over the unit hypercube [0,1]^d, N = 100000 function evaluations each; exact value (sqrt(pi)/2 erf(1))^d
+   d     exact        midpoint grid (m^d <= N)    relative error      Monte Carlo      relative error (+- 1/sqrt(N) estimate)
+   1     0.746824        0.746824  (m = 100000)       4.10e-12         0.746814       1.33e-05 (8.5e-04)
+   2     0.557746        0.557747  (m = 316)       8.22e-07         0.558770       1.84e-03 (1.2e-03)
+   3     0.416538        0.416563  (m =  46)       5.82e-05         0.415684       2.05e-03 (1.5e-03)
+   4     0.311081        0.311258  (m =  17)       5.68e-04         0.311100       6.29e-05 (1.8e-03)
+   6     0.173504        0.174697  (m =   6)       6.87e-03         0.173207       1.71e-03 (2.3e-03)
+   8     0.096771        0.098783  (m =   4)       2.08e-02         0.096864       9.62e-04 (2.7e-03)
+  10     0.053974        0.056503  (m =   3)       4.69e-02         0.054040       1.22e-03 (3.2e-03)
+  12     0.030104        0.034087  (m =   2)       1.32e-01         0.030083       6.97e-04 (3.6e-03)
+the midpoint rule has error ~ 1/m^2 = N^(-2/d): excellent for d = 1, 2, poor for d >= 6; the Monte Carlo error N^(-1/2) does not depend on d

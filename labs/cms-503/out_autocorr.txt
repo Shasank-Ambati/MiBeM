@@ -1,0 +1,10 @@
+2D Ising model, L = 32: integrated autocorrelation time of |m| (in sweeps; a Wolff sweep = clusters flipped until L^2 spins have been touched)
+     T      T/Tc    Metropolis   Wolff     N_eff/N (Metropolis) = 1/(2 tau)
+   1.800   0.793         3.4      0.51        0.1461
+   2.100   0.925        26.2      0.62        0.0191
+   2.269   1.000       201.9      0.74        0.0025
+   2.500   1.102        46.6      0.57        0.0107
+   3.500   1.542         2.6      0.51        0.1889
+
+effect on the error bar: naive standard error of the mean (assuming independent samples) against the correct one, Metropolis at T = Tc, 100000 sweeps
+   <|m|> = 0.6418; naive error 0.00059; error with the autocorrelation time 0.01187 (factor 20.1 larger); block-average error (20 blocks) 0.01018

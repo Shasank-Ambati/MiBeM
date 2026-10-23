@@ -1,0 +1,6 @@
+N = 256 atoms; canonical prediction: relative standard deviation of the kinetic energy sqrt(2/(3N)) = 0.0510  (sqrt(2/(3(N-1))) = 0.0511 with the centre-of-mass constraint)
+ensemble                <T>      error of <T>   std(T)/<T>   ratio to canonical
+NVE (microcanonical)      0.8415     0.0001         0.0353         0.690
+Berendsen (tau = 0.4)     0.8500     0.0001         0.0334         0.653
+Langevin (damp = 0.4)     0.8195     0.0022         0.0499         0.976
+Nose-Hoover (tau = 0.4)   0.8483     0.0024         0.0510         0.998

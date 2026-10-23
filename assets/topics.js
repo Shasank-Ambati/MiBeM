@@ -941,12 +941,12 @@ window.MIBEM_TOPICS = [
   {
     "id": 7,
     "slug": "monte-carlo-methods",
-    "short": "Monte Carlo and kMC",
+    "short": "Monte Carlo",
     "part": "Computational methods",
     "tone": "b",
-    "minutes": 12,
+    "minutes": 52,
     "title": "Monte Carlo and kinetic Monte Carlo",
-    "blurb": "Importance sampling, Metropolis, the Ising model, cluster expansions and rejection-free kinetics.",
+    "blurb": "Importance sampling and the Metropolis algorithm, the alloy as an Ising model against mean-field theory and exact results, off-lattice Monte Carlo compared with molecular dynamics, Wang-Landau density of states, kinetic Monte Carlo and error analysis, with real calculations.",
     "builds": [
       3,
       15,
@@ -956,16 +956,18 @@ window.MIBEM_TOPICS = [
       8
     ],
     "takeaways": [
-      "Importance sampling with detailed balance produces Boltzmann-distributed samples; the Metropolis rule accepts with probability min(1, exp(-dE/kT)).",
-      "Moves need not be physical: swap moves equilibrate chemical order far faster than dynamics can.",
-      "Lattice models and cluster expansions carry DFT energetics into alloy thermodynamics at large size.",
-      "Kinetic Monte Carlo advances physical time, dt = -ln(u)/R, using rates built from barriers.",
-      "kMC is only as good as its event catalogue and barriers."
+      "Monte Carlo evaluates averages over a probability distribution by sampling it: its error falls as N^(-1/2) whatever the dimension, so it beats grid quadrature above about 4 to 6 dimensions (relative error 1.3e-1 for a 12-dimensional grid with 2 points per axis against 7e-4 for Monte Carlo at the same cost of 1e5 evaluations), and the Metropolis rule min(1, exp(-dE/kT)) samples the Boltzmann distribution because it satisfies detailed balance.",
+      "On a lattice the Ising model is the binary alloy: for the square lattice the Monte Carlo order parameter agrees with Onsager's exact result within the statistical error (0.8703 +- 0.0017 against 0.8687 at T = 2.10 J/k, 0.7813 +- 0.0052 against 0.7848 at 2.20), whereas the mean-field (regular-solution) theory places the critical temperature at 4.0 instead of 2.269 (76 percent too high) and has the wrong shape of the miscibility gap (x = 0.0264 against the true 0.0648 at T/Tc = 0.925).",
+      "Off-lattice Metropolis Monte Carlo of a Lennard-Jones liquid reproduces the molecular-dynamics averages (see the table for U/N and P at T* = 0.85, rho* = 0.8442); the step size must be tuned (acceptance 0.73, 0.49, 0.32, 0.16 and 0.06 for steps of 0.1, 0.2, 0.3, 0.45 and 0.7) and the efficiency of exploration is largest at acceptance of order 0.2 to 0.5.",
+      "Wang-Landau sampling estimates the density of states g(E) with a flat-histogram random walk: on the 4 x 4 Ising lattice it reproduces the exact enumeration of 65 536 states within 0.4 to 3.7 percent in g (and within 0.005 in the energy per site and 1 percent in the specific heat at all temperatures from a single run of 4e6 attempts).",
+      "Kinetic Monte Carlo uses the residence-time algorithm: the time advances by -ln(u)/R_tot, the waiting times are exponential (mean 9.5802 ms against 9.5793 expected, 4.98 percent longer than three means against 4.98 percent), and an ensemble of walkers with a 0.7 eV barrier at 300 K gives D = (1.427 +- 0.027) x 10^-18 m^2/s, in agreement with the exact 1.423 x 10^-18, simulating 19 s of vacancy motion per walker in 0.5 s of CPU for 4 million jumps, a time that molecular dynamics (5e12 steps per jump) cannot reach.",
+      "Choosing the method: MD gives dynamics but is limited to nanoseconds; Metropolis Monte Carlo samples equilibrium faster for lattice and off-lattice models, allows unphysical moves and ensembles (grand canonical, swaps), but has no real time; kinetic Monte Carlo gives the real time evolution of rare events if the event catalogue and rates are known."
     ],
     "label": "CMS 503",
     "code": "CMS 503",
     "dept": "CMS",
-    "level": 5
+    "level": 5,
+    "katex": true
   },
   {
     "id": 8,

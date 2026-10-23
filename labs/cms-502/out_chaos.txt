@@ -1,0 +1,18 @@
+time   RMS distance between the two trajectories (configuration space)    ln(distance)
+  0.0   6.250e-12       -25.798
+  2.0   7.231e-09       -18.745
+  4.0   1.441e-05       -11.148
+  6.0   3.204e-02        -3.441
+  8.0   8.735e-01        -0.135
+ 10.0   1.301e+00         0.263
+ 12.0   1.588e+00         0.462
+ 14.0   1.831e+00         0.605
+ 16.0   2.000e+00         0.693
+ 18.0   2.246e+00         0.809
+ 20.0   2.478e+00         0.907
+ 22.0   2.631e+00         0.968
+ 24.0   2.703e+00         0.995
+ 26.0   2.823e+00         1.038
+ 28.0   2.927e+00         1.074
+fit of ln(distance) against time in the exponential regime: largest Lyapunov exponent ~ 3.83 per time unit (1 time unit = 2.16 ps for argon)
+the initial 1e-10 difference reaches the size of a particle (0.3) after ~ 6 time units = 12 ps

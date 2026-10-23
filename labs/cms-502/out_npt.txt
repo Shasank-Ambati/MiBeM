@@ -1,0 +1,8 @@
+NVT equation of state at T* = 0.85 (500 atoms, with the tail correction of the cutoff):
+   rho* = 0.8342   P* =  0.7476 +- 0.0098
+   rho* = 0.8442   P* =  0.9225 +- 0.0153
+   rho* = 0.8542   P* =  1.1231 +- 0.0109
+   dP/drho = 18.777  ->  isothermal compressibility kappa_T = 1/(rho dP/drho) = 0.0631  (in units of sigma^3/epsilon)
+
+NPT run at P* = 0.923: <V> = 526.12 (rho = 0.9504), std(V) = 4.195
+   kappa_T from the volume fluctuations <dV^2>/(kT <V>) = 0.0394 +- 0.0032   (equation-of-state value 0.0631)

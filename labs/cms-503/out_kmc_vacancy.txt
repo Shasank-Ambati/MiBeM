@@ -1,0 +1,10 @@
+vacancy hopping on a simple cubic lattice: nu = 1e+13 1/s, E_m = 0.7 eV, T = 300.0 K, a = 2.86 A
+rate per direction 17.4 1/s, total jump rate Gamma = 104.4 1/s, mean waiting time 9.579 ms; D = Gamma a^2/6 = 1.4231e-18 m^2/s
+
+ensemble of 2000 independent kinetic Monte Carlo walkers of 2000 jumps each; D = <r^2>/(6 t) from the ensemble averages:
+   simulated time per walker 19.16 s, <r^2> = 1.641e-16 m^2 (expected 2000 a^2 = 1.636e-16);  D = 1.4269e-18 +- 2.7e-20 m^2/s;  exact D = 1.4231e-18;  ratio 1.003
+   total: 4000000 jumps in 0.49 s of CPU time
+
+waiting times: mean 9.5802 ms (expected 9.5793), standard deviation 9.5749 ms (an exponential distribution has std = mean), fraction longer than 3 mean times 0.0498 (exp(-3) = 0.0498)
+
+the time that molecular dynamics would need: with the same barrier, one jump takes on average 1/Gamma = 9.58 ms = 4.8e+12 MD time steps of 2 fs

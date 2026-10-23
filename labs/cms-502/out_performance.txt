@@ -1,0 +1,23 @@
+system   atoms   steps   wall time (s)   microseconds per atom and step    steps/s
+LJ         108   1000       0.04           0.390                     23730.8
+LJ         256   1000       0.15           0.590                      6623.8
+LJ         864   1000       0.60           0.699                      1654.6
+LJ        2048   1000       1.18           0.577                       846.0
+LJ        4000   1000       2.33           0.583                       428.7
+LJ       10976   1000       6.25           0.570                       159.9
+Cu EAM     108    500       0.03           0.643                     14395.1
+Cu EAM     256    500       0.11           0.874                      4469.0
+Cu EAM     864    500       0.48           1.114                      1038.8
+Cu EAM    2048    500       1.24           1.213                       402.4
+Cu EAM    4000    500       2.52           1.258                       198.7
+Cu EAM   10976    500       5.35           0.974                        93.5
+
+neighbour-list skin (LJ, 1372 atoms of 7^3 cells; the list is rebuilt when an atom has moved half the skin):
+  skin   wall time for 2000 steps (s)
+  0.05        2.44
+  0.10        1.93
+  0.20        1.70
+  0.30        1.77
+  0.50        1.91
+  0.80        2.12
+  1.20        2.30

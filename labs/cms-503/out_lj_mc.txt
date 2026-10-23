@@ -1,0 +1,8 @@
+N = 256, rho* = 0.8442, T* = 0.85, cutoff 2.5; tail corrections: energy per atom -0.4520, pressure -0.7621
+   step 0.10: acceptance 0.732
+   step 0.20: acceptance 0.493
+   step 0.25: acceptance 0.390
+   step 0.30: acceptance 0.319
+   step 0.45: acceptance 0.160
+   step 0.70: acceptance 0.058
+MC (step 0.25, acceptance 0.351, 12000 sweeps): <U>/N = -5.9623 +- 0.0044;  P = 0.8637 +- 0.0220
