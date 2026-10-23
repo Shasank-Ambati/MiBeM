@@ -101,17 +101,18 @@ MATH = re.compile(r"\$\$.*?\$\$|\$[^$\n]*?\$|\$[^$]*?\$", re.S)
 def escape_math(body):
     """Write raw TeX in the source: &, < and > inside $...$ / $$...$$ are escaped for HTML here."""
     def breakable(t):
-        """Long inline formulas cannot wrap on a phone; allow a line break after each top-level comma."""
-        out, depth = [], 0
+        """Long inline formulas cannot wrap on a phone: split them into separate formulas at each top-level comma, so the line can break there."""
+        out, depth, prev = [], 0, ""
         for ch in t[1:-1]:
             depth += ch in "([{"
             depth = max(0, depth - (ch in ")]}"))
-            out.append(ch + ("\\allowbreak " if ch == "," and depth == 0 else ""))
-        return "$" + "".join(out) + "$"
+            out.append("$, $" if ch == "," and depth == 0 and prev != "\\" else ch)   # \, is a thin space, not a comma
+            prev = ch
+        return ("$" + "".join(out) + "$").replace("$ $", "$ $").replace("$, $ ", "$, $")
 
     def fix(m):
         t = m.group(0)
-        if not t.startswith("$$") and len(t) > 38:
+        if not t.startswith("$$") and len(t) > 26:
             t = breakable(t)
         t = re.sub(r"&(?!(amp|lt|gt|nbsp|[a-z]+|#\d+);)", "&amp;", t)
         return t.replace("<", "&lt;").replace(">", "&gt;")

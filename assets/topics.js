@@ -673,7 +673,7 @@ window.MIBEM_TOPICS = [
     "short": "Statistical mechanics",
     "part": "Physics",
     "tone": "a",
-    "minutes": 12,
+    "minutes": 43,
     "title": "Statistical mechanics for simulation",
     "blurb": "Microstates, ensembles, the partition function, free energy, ergodicity and error bars.",
     "builds": [
@@ -683,16 +683,17 @@ window.MIBEM_TOPICS = [
     ],
     "related": [],
     "takeaways": [
-      "The Boltzmann distribution, p proportional to exp(-E/kT), underlies Metropolis Monte Carlo, thermostats and equilibrium defect concentrations.",
-      "Pick the ensemble that matches what is held fixed: NVE, NVT, NPT or the grand canonical.",
-      "Free energies, not energies, decide stability, and they need dedicated methods: thermodynamic integration, perturbation, umbrella sampling, the quasi-harmonic approximation.",
-      "Classical simulation assumes equipartition, so it overestimates heat capacity when quantum modes are frozen out at low temperature.",
-      "Quote averages with error bars. The correlation time sets the number of independent samples, and ergodicity is never guaranteed."
+      "Statistical mechanics connects the microscopic world to thermodynamics: the entropy S = k_B ln Omega counts the microstates compatible with a macrostate, temperature is defined by 1/T = dS/dU, and the equilibrium state is the overwhelmingly most probable one (two Einstein solids with 300 oscillators each share energy within about 5 quanta of the mean 50).",
+      "A system in contact with a heat bath has probability P_i = exp(-E_i/k_B T)/Z; the partition function Z contains all thermodynamics: F = -k_B T ln Z, U = -d ln Z/d beta, S = -dF/dT, and the heat capacity C_V = (U^2 variance)/(k_B T^2).",
+      "Simple partition functions give the classic results: the two-level system has a Schottky heat-capacity peak of 0.439 N k_B at k_B T = 0.417 epsilon, the quantum oscillator gives the Einstein heat capacity, and the ideal gas gives the Sackur-Tetrode entropy (154.85 J/mol/K for argon at 298.15 K and 1 bar, against the calorimetric 154.84).",
+      "Equilibrium concentrations of defects follow from minimising F: the vacancy fraction is exp(-E_f/k_B T) (for E_f = 1.28 eV it is 3e-22 at 300 K and 1.1e-5 at 1300 K), and the relation C_V = Var(E)/(k_B T^2) means that thermodynamic derivatives can be measured from fluctuations in a simulation.",
+      "Quantum statistics explain the heat capacity of solids (Debye T^3 law, with 4.8e-5 J/mol/K^4 T^3 for copper) and of electrons (the Fermi energy of copper is 7.0 eV, so electrons are degenerate up to 81 000 K and contribute only a linear term); mean-field theory of the Ising model gives T_c = zJ/k_B = 4 J/k_B for the square lattice, too high by 76 per cent compared with the exact 2.269, and Monte Carlo corrects it."
     ],
     "label": "PHYS 301",
     "code": "PHYS 301",
     "dept": "PHYS",
-    "level": 3
+    "level": 3,
+    "katex": true
   },
   {
     "id": 41,
@@ -1162,7 +1163,7 @@ window.MIBEM_TOPICS = [
     "short": "FiPy: diffusion, spinodal",
     "part": "Computational labs",
     "tone": "a",
-    "minutes": 24,
+    "minutes": 25,
     "title": "Lab: Diffusion and phase separation with FiPy",
     "blurb": "Solve Fick's law for carburising and compare with the erf solution, test mesh and time-step errors, recover D(c) with the Boltzmann-Matano method, and simulate spinodal decomposition with the Cahn-Hilliard equation.",
     "builds": [

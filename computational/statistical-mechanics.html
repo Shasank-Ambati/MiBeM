@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistical Mechanics for Simulation - MiBeM</title>
-    <meta name="description" content="Microstates, ensembles, the partition function, free energy, ergodicity and error estimation for atomistic simulation.">
+    <title>Statistical mechanics for simulation - MiBeM</title>
+    <meta name="description" content="University-level statistical mechanics for computational materials science: microstates and entropy, the canonical ensemble and partition functions, free energy and fluctuations, quantum statistics of phonons and electrons, the Ising model and mean-field theory, and time correlation functions and sampling error, with worked examples and problems with full solutions.">
     <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/statistical-mechanics.html">
     <meta name="theme-color" content="#2b6cb0">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="MiBeM">
-    <meta property="og:title" content="Statistical Mechanics for Simulation - MiBeM">
-    <meta property="og:description" content="Microstates, ensembles, the partition function, free energy, ergodicity and error estimation for atomistic simulation.">
+    <meta property="og:title" content="Statistical mechanics for simulation - MiBeM">
+    <meta property="og:description" content="University-level statistical mechanics for computational materials science: microstates and entropy, the canonical ensemble and partition functions, free energy and fluctuations, quantum statistics of phonons and electrons, the Ising model and mean-field theory, and time correlation functions and sampling error, with worked examples and problems with full solutions.">
     <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/statistical-mechanics.html">
     <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
     <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="3">
     <a class="skip" href="#main">Skip to content</a>
@@ -35,17 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#bridge">1. From atoms to properties</a></li>
-                <li><a href="#ensembles">2. Ensembles</a></li>
-                <li><a href="#boltzmann">3. The Boltzmann distribution</a></li>
-                <li><a href="#partition">4. Partition function and examples</a></li>
-                <li><a href="#free-energy">5. Free energy and entropy</a></li>
-                <li><a href="#fluctuations">6. Properties from fluctuations</a></li>
-                <li><a href="#correlation">7. Correlation functions and transport</a></li>
-                <li><a href="#ergodicity">8. Ergodicity and sampling</a></li>
-                <li><a href="#errors">9. Statistical error</a></li>
-                <li><a href="#check">10. Check your understanding</a></li>
-                <li><a href="#refs">11. References</a></li>
+                <li><a href="#counting">Lecture 1. Microstates, entropy and temperature</a></li>
+                <li><a href="#canonical">Lecture 2. The Boltzmann distribution and the partition function</a></li>
+                <li><a href="#models">Lecture 3. Partition functions of simple systems</a></li>
+                <li><a href="#free-energy">Lecture 4. Free energy, fluctuations and defects</a></li>
+                <li><a href="#quantum">Lecture 5. Quantum statistics: electrons, phonons and photons</a></li>
+                <li><a href="#interacting">Lecture 6. Interacting systems: the Ising model, mean-field theory and the regular solution</a></li>
+                <li><a href="#time">Lecture 7. Time correlations, transport and the error of a simulation</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -55,11 +55,11 @@
 <nav class="course-nav" aria-label="Physics courses"><span class="cn-dept">PHYS</span><a href="classical-mechanics.html" title="PHYS 101: Classical mechanics">101</a><a href="thermal-physics.html" title="PHYS 102: Thermal physics">102</a><a href="electricity-magnetism-and-waves.html" title="PHYS 103: Electricity, magnetism and waves">103</a><a href="quantum-mechanics.html" title="PHYS 201: Quantum mechanics">201</a><a href="statistical-mechanics.html" class="here" aria-current="page" title="PHYS 301: Statistical mechanics for simulation">301</a><a href="solid-state-physics.html" title="PHYS 302: Solid state physics">302</a></nav>
 <!-- coursenav:end -->
             <h1>Statistical mechanics for simulation</h1>
-            <p class="lead">A simulation follows a few thousand atoms; a material has 10<sup>23</sup>. Statistical mechanics is the bridge: it says which averages over the small system reproduce the temperature, pressure, free energy and transport coefficients of the large one.</p>
+            <p class="lead">A piece of copper contains $10^{23}$ atoms, each moving according to Newton&rsquo;s laws, yet we describe it with just a few numbers: temperature, pressure, heat capacity, thermal expansion. <strong>Statistical mechanics</strong> is the bridge between the two descriptions. It is also the theory behind every simulation method in this curriculum: molecular dynamics samples the Boltzmann distribution by following trajectories, Monte Carlo samples it by random moves, free-energy methods compute the partition function itself, and the error bars of all of them come from the statistics of correlated samples. This course builds the theory from the counting of states to the Ising model, with each result checked by a number.</p>
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 12 min</dd></div>
+<div><dt>Reading time</dt><dd>about 43 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="thermal-physics.html">PHYS 102: Thermal physics</a><br><a href="probability-for-simulation.html">MATH 204: Probability</a><br><a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a></dd></div>
 <div><dt>Leads to</dt><dd><a href="solid-state-physics.html">PHYS 302: Solid state physics</a><br><a href="thermodynamics-and-calphad.html">MSE 301: Thermodynamics and CALPHAD</a><br><a href="molecular-dynamics.html">CMS 502: Molecular dynamics</a><br><a href="monte-carlo-methods.html">CMS 503: Monte Carlo and kMC</a><br><a href="lab-ising-monte-carlo.html">LAB 504: Monte Carlo: Ising</a></dd></div>
 <div><dt>Level</dt><dd>Year 3: advanced theory</dd></div>
@@ -67,136 +67,379 @@
 <!-- facts:end -->
 
             <div class="callout">
-                <strong>After reading this page you should be able to:</strong>
+                <strong>After this course you should be able to:</strong>
                 <ul>
-                    <li>Distinguish microstates from macrostates and time averages from ensemble averages.</li>
-                    <li>State the main ensembles, their fixed variables and their thermodynamic potentials.</li>
-                    <li>Write and use the Boltzmann distribution and the canonical partition function.</li>
-                    <li>Explain why free-energy differences are harder to compute than energies, and name the main methods.</li>
-                    <li>Estimate the statistical uncertainty of a simulated average.</li>
+                    <li>Count microstates for simple systems and use $S=k_\mathrm B\ln\Omega$ to find temperature and the equilibrium distribution of energy.</li>
+                    <li>Derive the Boltzmann distribution and use the partition function $Z$ to compute energy, entropy, free energy and heat capacity.</li>
+                    <li>Compute the partition functions of the two-level system, the harmonic oscillator and the ideal gas, and the thermodynamics that follow.</li>
+                    <li>Relate response functions (heat capacity, compressibility) to fluctuations, and compute equilibrium defect concentrations.</li>
+                    <li>Use the Fermi&ndash;Dirac and Bose&ndash;Einstein distributions for electrons, phonons and photons, and derive the Debye $T^3$ law and the electronic heat capacity.</li>
+                    <li>Apply mean-field theory to the Ising model and the regular solution, and explain what simulations add to it.</li>
+                    <li>Use time correlation functions, the Green&ndash;Kubo relation and the autocorrelation time to compute transport coefficients and honest error bars.</li>
                 </ul>
+                <strong>You need:</strong> <a href="thermal-physics.html">PHYS 102: Thermal physics</a> (entropy, free energy, Boltzmann factor), <a href="quantum-mechanics.html">PHYS 201: Quantum mechanics</a> (energy levels, the oscillator and the box), and <a href="probability-for-simulation.html">MATH 204: Probability for simulation</a> (distributions, variance, Markov chains).
             </div>
 
-            <h2 id="bridge">1. From atoms to properties<a class="anchor" href="#bridge" aria-label="Link to this section">#</a></h2>
-            <p>A <strong>microstate</strong> is a complete specification of the system at the atomic level: all positions and momenta for a classical system, or a full quantum state. A <strong>macrostate</strong> is what an experiment sees: a few variables such as temperature <em>T</em>, pressure <em>p</em>, volume <em>V</em>, number of atoms <em>N</em> and composition. Enormously many microstates correspond to one macrostate, and the macroscopic property is the average of the microscopic quantity over those microstates, weighted by how probable each is.</p>
-            <p>For <em>N</em> classical atoms the microstate is a point in <strong>phase space</strong> of 6<em>N</em> dimensions, (<strong>r</strong><sub>1</sub>, &hellip;, <strong>r</strong><sub><em>N</em></sub>, <strong>p</strong><sub>1</sub>, &hellip;, <strong>p</strong><sub><em>N</em></sub>). The total energy as a function of that point is the Hamiltonian,</p>
-            <span class="eq">H(r, p) = &Sigma;<sub>i</sub> |p<sub>i</sub>|&sup2; / 2m<sub>i</sub> + U(r<sub>1</sub>, &hellip;, r<sub>N</sub>)</span>
-            <p>Two kinds of average appear in simulation. An <strong>ensemble average</strong> &lang;<em>A</em>&rang; weights every phase-space point by its probability. A <strong>time average</strong> follows one trajectory and averages over time. Molecular dynamics produces time averages; Monte Carlo produces samples that estimate ensemble averages directly. The two agree if the system is <em>ergodic</em> (Section 8).</p>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>Seven <strong>lectures</strong> develop the theory, each with derivations and worked examples to attempt before reading the solution; a <strong>problem set</strong> of twelve problems with hints and full solutions follows, and a <strong>unit quiz</strong> at the end. The labs <a href="lab-ising-monte-carlo.html">LAB 504</a> and <a href="lab-md-lammps-argon.html">LAB 502</a> let you see every result of Lectures 1&ndash;7 in a simulation.</p>
+            </div>
 
-            <h2 id="ensembles">2. Ensembles<a class="anchor" href="#ensembles" aria-label="Link to this section">#</a></h2>
-            <p>An <strong>ensemble</strong> is the set of microstates consistent with a set of fixed macroscopic conditions. Which one to use depends on what the experiment holds constant and what the algorithm can impose.</p>
-            <div class="table-scroll" role="region" aria-label="2. Ensembles (scrollable table)" tabindex="0"><table>
-                <thead><tr><th>Ensemble</th><th>Fixed</th><th>Fluctuates</th><th>Potential that is minimised at equilibrium</th><th>Typical use</th></tr></thead>
-                <tbody>
-                    <tr><td>Microcanonical (NVE)</td><td>N, V, E</td><td>T, p</td><td>Entropy S is maximised (S = k<sub>B</sub> ln &Omega;)</td><td>Plain MD without a thermostat; testing energy conservation</td></tr>
-                    <tr><td>Canonical (NVT)</td><td>N, V, T</td><td>E, p</td><td>Helmholtz free energy F = U &minus; TS</td><td>Properties at fixed volume; Monte Carlo</td></tr>
-                    <tr><td>Isothermal&ndash;isobaric (NPT)</td><td>N, p, T</td><td>E, V</td><td>Gibbs free energy G = H &minus; TS</td><td>Matching laboratory conditions; thermal expansion; phase stability</td></tr>
-                    <tr><td>Grand canonical (&mu;VT)</td><td>&mu;, V, T</td><td>E, N</td><td>Grand potential &Omega; = F &minus; &mu;N</td><td>Adsorption, segregation, chemical equilibrium with a reservoir</td></tr>
-                </tbody>
-            </table></div>
-            <p>In the thermodynamic limit (large <em>N</em>) the ensembles give the same averages. Fluctuations of an extensive quantity scale as 1/&radic;<em>N</em> relative to its mean, so they are tiny for a macroscopic sample but visible in a box of a few hundred atoms, and they differ between ensembles. A well-posed simulation states which ensemble it samples.</p>
+            <h2 id="counting">Lecture 1. Microstates, entropy and temperature<a class="anchor" href="#counting" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>macrostate</strong> is described by a few thermodynamic variables (energy $U$, volume $V$, number of particles $N$). A <strong>microstate</strong> is a complete specification of the system at the atomic level (in quantum mechanics, one quantum state of the whole system). Many microstates correspond to the same macrostate; their number is the <strong>multiplicity</strong> $\Omega(U,V,N)$. The one postulate of statistical mechanics is:</p>
+            <div class="note thm"><strong>Fundamental postulate</strong>
+            <p>An isolated system in equilibrium is equally likely to be found in any of its accessible microstates. The probability of a macrostate is therefore proportional to its multiplicity, and the equilibrium macrostate is the one with the largest $\Omega$.</p>
+            </div>
+            <p>The <strong>entropy</strong> is defined as $S=k_\mathrm B\ln\Omega$ (<a href="thermal-physics.html">PHYS 102</a>), where $k_\mathrm B=1.381\times10^{-23}$ J/K. The logarithm makes entropy additive: two independent systems have $\Omega=\Omega_1\Omega_2$ and $S=S_1+S_2$. <strong>Temperature</strong> is then defined by how the entropy responds to energy:
+            $$\frac1T=\Bigl(\frac{\partial S}{\partial U}\Bigr)_{V,N}.$$
+            <em>Why this is temperature:</em> put two systems A and B in thermal contact; they exchange energy, the total $U_A+U_B$ is fixed, and the multiplicity of the combined system is $\Omega_A(U_A)\Omega_B(U-U_A)$. The most probable $U_A$ maximises $\ln\Omega_A+\ln\Omega_B$, so $\partial S_A/\partial U_A=\partial S_B/\partial U_B$: at equilibrium $1/T$ is the same in both. This is the zeroth law, now derived.</p>
+            <h3>A system you can count: the Einstein solid</h3>
+            <p>Take $N$ identical quantum oscillators (a crude model of the atoms of a solid, <a href="solid-state-physics.html">PHYS 302</a>), each with energies $0$, $\hbar\omega$, $2\hbar\omega$, $\ldots$, sharing $q$ quanta of energy. The number of ways to distribute $q$ indistinguishable quanta among $N$ oscillators is the &ldquo;stars and bars&rdquo; count
+            $$\Omega(N,q)=\binom{q+N-1}{q}=\frac{(q+N-1)!}{q!\,(N-1)!}.$$</p>
+            <div class="example">
+                <strong>Worked example 1.1: two small solids share energy</strong>
+                <p class="given">Solid A and solid B each have $N=3$ oscillators, and $q=6$ quanta are shared between them. List the multiplicity for each possible number $q_A$ of quanta in A, and find the probability that the energy is shared equally.</p>
+                <p>Use $\Omega(3,q)=\binom{q+2}{q}$: $\Omega=1$, $3$, $6$, $10$, $15$, $21$, $28$ for $q=0, \ldots, 6$. The multiplicity of the combined system with $q_A$ quanta in A is $\Omega(3,q_A)\Omega(3,6-q_A)$: $28$, $63$, $90$, $100$, $90$, $63$, $28$ for $q_A=0, \ldots, 6$. The total is $462=\binom{11}{6}=\Omega(6,6)$, as it must be (the sum over $q_A$ counts every microstate of the combined $6$-oscillator solid). The equal division $q_A=3$ has $100$ microstates, probability $100/462=21.6\%$, the most likely single outcome; but a division with all the energy in A has only $28/462=6\%$. For three oscillators the preference for equal sharing is mild.</p>
+            </div>
 
-            <h2 id="boltzmann">3. The Boltzmann distribution<a class="anchor" href="#boltzmann" aria-label="Link to this section">#</a></h2>
-            <p>For a system in contact with a heat bath at temperature <em>T</em> (canonical ensemble), the probability of finding it in a microstate of energy <em>E</em><sub><em>i</em></sub> is</p>
-            <span class="eq">p<sub>i</sub> = exp(&minus;E<sub>i</sub> / k<sub>B</sub>T) / Z, &nbsp;&nbsp; Z = &Sigma;<sub>i</sub> exp(&minus;E<sub>i</sub> / k<sub>B</sub>T)</span>
-            <p>This single formula underlies Metropolis Monte Carlo, thermostatted molecular dynamics, transition-state theory and the equilibrium populations of defects and phases. Lower-energy states are more probable, but the number of states at each energy (the degeneracy) also counts: a high-energy level with many states can hold more total probability than a low-energy level with few. The balance between these two effects is the balance between energy and entropy.</p>
-            <figure>
-                <picture><source media="(prefers-reduced-motion: reduce)" srcset="../assets/animations/boltzmann-distribution.poster.png"><img src="../assets/animations/boltzmann-distribution.svg" alt="Animated bars showing level populations broadening as temperature increases" width="720" height="330" loading="lazy" decoding="async"></picture>
-                <figcaption>Populations of six equally spaced energy levels as temperature changes. The scale of &ldquo;hot&rdquo; and &ldquo;cold&rdquo; is set by the spacing &epsilon; compared with k<sub>B</sub>T.</figcaption>
-            </figure>
-            <div class="demo" data-demo="boltzmann"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+            <p>With more oscillators the preference becomes overwhelming. The script of the lab computes it exactly; for two solids with $N=300$ oscillators each and $q=100$ quanta, the most probable division is $q_A=50$ (as the symmetry requires) and the probability distribution has a mean of $50.0$ and a standard deviation of $5.4$ quanta: the relative width is only $11\%$, and it shrinks as $1/\sqrt N$ when the system grows. For $N\sim10^{23}$ the relative fluctuations are $\sim10^{-12}$ and the most probable state is, for all purposes, the only state. This is why thermodynamics works.</p>
+            <div class="note thm"><strong>Large numbers and Stirling&rsquo;s approximation</strong>
+            <p>For large $n$, $\ln n!\approx n\ln n-n$ (<em>Stirling</em>; the next correction is $\tfrac12\ln2\pi n$). Check: $\ln 100!=363.74$, and $100\ln100-100=360.52$ differs by $0.9\%$. With this, the entropy of the Einstein solid for $q,N\gg1$ is $S/k_\mathrm B=(q+N)\ln(q+N)-q\ln q-N\ln N$. Differentiating, $1/T=\partial S/\partial U=(k_\mathrm B/\hbar\omega)\ln[(q+N)/q]$, so with $U=q\hbar\omega$ the energy per oscillator is $\hbar\omega/(e^{\hbar\omega/k_\mathrm BT}-1)$ (the zero-point energy omitted): the Einstein result of Lecture 3 is already contained in the counting.</p>
+            </div>
+            <h3>The two-state system and negative temperature</h3>
+            <p>The simplest model is $N$ independent spins (or any two-level systems), each with energy $0$ (ground) or $\varepsilon$ (excited). With $n$ excited spins the energy is $U=n\varepsilon$ and $\Omega=\binom Nn$. By Stirling,
+            $$\frac S{k_\mathrm B}=N\ln N-n\ln n-(N-n)\ln(N-n),\qquad\frac1T=\frac{\partial S}{\partial U}=\frac{k_\mathrm B}{\varepsilon}\ln\frac{N-n}{n},$$
+            so $n/N=1/(e^{\varepsilon/k_\mathrm BT}+1)$: at low $T$ almost all spins are in the ground state, at $T\to\infty$ the populations equalise ($n/N\to\tfrac12$, the maximum entropy $S=Nk_\mathrm B\ln2$). If more than half of the spins are excited ($n&gt;N/2$) the entropy decreases with energy, $\partial S/\partial U&lt;0$, and the definition gives a <em>negative temperature</em>: not &ldquo;colder than zero&rdquo; but hotter than infinity, since such a system gives energy to any normal system it touches. Negative temperatures are realised in nuclear spin systems and cold atoms; a system with unbounded kinetic energy (any atom) cannot have them.</p>
+            <div class="example">
+                <strong>Worked example 1.2: how rare is a fluctuation?</strong>
+                <p class="given">A box of gas contains $N$ molecules, each equally likely to be in the left or right half. What is the probability that all are found in the left half, for $N=10$, $100$ and one mole?</p>
+                <p>Each molecule is in the left half with probability $\tfrac12$, so the probability of the particular configuration with all in the left half is $2^{-N}$. $N=10$: $2^{-10}=9.8\times10^{-4}$, about one in a thousand: easily seen. $N=100$: $2^{-100}=7.9\times10^{-31}$. $N=N_\mathrm A=6.02\times10^{23}$: $2^{-N}=10^{-0.301N}=10^{-1.8\times10^{23}}$. Even if the gas redistributed itself a billion times per second since the beginning of the universe ($4\times10^{17}$ s), the chance that it was ever observed once would be $\sim10^{-1.8\times10^{23}}\times10^{26}$. Entropy increase is not a law that forbids the rare fluctuation, it is the overwhelming statistical dominance of the typical states.</p>
+            </div>
 
+            <h2 id="canonical">Lecture 2. The Boltzmann distribution and the partition function<a class="anchor" href="#canonical" aria-label="Link to this section">#</a></h2>
+            <p>An isolated system is a rare thing; real systems exchange energy with their surroundings. Consider a small system S (one atom, one molecule, or a macroscopic sample) in thermal contact with a very large <strong>heat bath</strong> R at temperature $T$, the combination being isolated with total energy $E_\mathrm{tot}$. If S is in a particular microstate $i$ of energy $E_i$, the bath has energy $E_\mathrm{tot}-E_i$ and $\Omega_R(E_\mathrm{tot}-E_i)$ microstates. By the fundamental postulate,
+            $$P_i\propto\Omega_R(E_\mathrm{tot}-E_i)=\exp\!\Bigl[\frac{S_R(E_\mathrm{tot}-E_i)}{k_\mathrm B}\Bigr]\approx\exp\!\Bigl[\frac{S_R(E_\mathrm{tot})}{k_\mathrm B}-\frac{E_i}{k_\mathrm BT}\Bigr],$$
+            because $E_i\ll E_\mathrm{tot}$ allows the expansion $S_R(E_\mathrm{tot}-E_i)\approx S_R(E_\mathrm{tot})-E_i\,\partial S_R/\partial E=S_R(E_\mathrm{tot})-E_i/T$. The first term is a constant, so
+            $$\boxed{P_i=\frac{e^{-E_i/k_\mathrm BT}}{Z},\qquad Z=\sum_ie^{-E_i/k_\mathrm BT}}$$
+            (the <strong>canonical ensemble</strong>, with $\beta=1/k_\mathrm BT$). The sum runs over <em>microstates</em>: if a level of energy $E$ has degeneracy $g$, it appears $g$ times. $Z$, the <strong>partition function</strong> (German <em>Zustandssumme</em>, sum over states), is not just a normalisation constant: it contains the whole thermodynamics.</p>
+            <div class="note thm"><strong>Everything from $Z$</strong>
+            <p>Mean energy: $\langle E\rangle=\sum_iE_iP_i=-\dfrac{\partial\ln Z}{\partial\beta}$. Helmholtz free energy: $F=-k_\mathrm BT\ln Z$. Entropy: $S=-\partial F/\partial T=k_\mathrm B\ln Z+\langle E\rangle/T=-k_\mathrm B\sum_iP_i\ln P_i$ (the Gibbs entropy). Heat capacity: $C_V=\partial\langle E\rangle/\partial T$. Pressure: $p=-\partial F/\partial V=k_\mathrm BT\,\partial\ln Z/\partial V$.</p>
+            <p><em>Proof of the first.</em> $-\partial\ln Z/\partial\beta=-\frac1Z\sum_i(-E_i)e^{-\beta E_i}=\sum_iE_iP_i$. The Gibbs entropy: with $\ln P_i=-\beta E_i-\ln Z$ one finds $-k_\mathrm B\sum P_i\ln P_i=k_\mathrm B\beta\langle E\rangle+k_\mathrm B\ln Z=\langle E\rangle/T-F/T$, which is $S$ because $F=\langle E\rangle-TS$.</p>
+            </div>
+            <p>When the energy levels are continuous (a classical gas), the sum is an integral over phase space, $Z=\frac1{h^{3N}N!}\int e^{-H(\mathbf p,\mathbf q)/k_\mathrm BT}\,\mathrm d^{3N}p\,\mathrm d^{3N}q$, where $h$ is Planck&rsquo;s constant (the volume of a quantum state in phase space) and $N!$ accounts for indistinguishable particles. A product of independent systems has a product of partition functions, $Z=Z_1Z_2$, so that $\ln Z$ and all extensive quantities add.</p>
+            <div class="note thm"><strong>A simulation samples this distribution</strong>
+            <p>Molecular dynamics with a thermostat and Metropolis Monte Carlo are algorithms whose long-time averages converge to $\sum_iA_iP_i$ with exactly this $P_i$. The Metropolis acceptance rule $\min(1,e^{-\Delta E/k_\mathrm BT})$ is chosen so that the ratio of the probabilities of two states is $e^{-\Delta E/k_\mathrm BT}$ (detailed balance, <a href="monte-carlo-methods.html">CMS 503</a>). In <a href="lab-ising-monte-carlo.html">LAB 504</a> the energy per spin of a $32\times32$ Ising lattice at $T=1.8$ is $-1.8603$ from the simulation and $-1.8593$ from the exact partition function of Onsager.</p>
+            </div>
+            <h3>The two-level system, and the Schottky heat capacity</h3>
+            <p>For $N$ independent two-level systems with energies $0$ and $\varepsilon$, the one-particle partition function is $z=1+e^{-\beta\varepsilon}$ and $Z=z^N$. Then
+            $$\langle E\rangle=-N\frac{\partial\ln z}{\partial\beta}=\frac{N\varepsilon}{e^{\beta\varepsilon}+1},\qquad C_V=Nk_\mathrm B\Bigl(\frac\varepsilon{k_\mathrm BT}\Bigr)^2\frac{e^{\varepsilon/k_\mathrm BT}}{(e^{\varepsilon/k_\mathrm BT}+1)^2}.$$
+            The heat capacity goes to zero at both low temperature (the upper level is frozen out) and high temperature (the populations are saturated at $\tfrac12$) and has a maximum, the <strong>Schottky anomaly</strong>, of $0.4392\,Nk_\mathrm B$ at $k_\mathrm BT=0.4167\,\varepsilon$ (found by setting the derivative to zero numerically). A bump of this kind in the heat capacity of a solid at low temperature is the signature of a two-level degree of freedom, such as a magnetic ion in a crystal field or a tunnelling defect: a spectroscopy done with a calorimeter. The result also shows that heat capacity measures the number of levels that are thermally accessible, which is the unifying idea of Lecture 3.</p>
+            <div class="example">
+                <strong>Worked example 2.1: a magnetic defect</strong>
+                <p class="given">An impurity in a crystal has a ground state and an excited level $\varepsilon=0.10$ meV higher. What fraction is in the excited state at $T=1$ K, at $T=0.1$ K, and at $T=100$ K? At what temperature is the heat capacity largest?</p>
+                <p>$\varepsilon/k_\mathrm B=0.10\times10^{-3}\times11\,604.5/1\ \mathrm{K}=1.1605$ K (using $1\ \mathrm{eV}/k_\mathrm B=11\,604.5$ K). At $T=1$ K: $n/N=1/(e^{1.1605}+1)=1/(3.192+1)=0.2385$. At $0.1$ K: $e^{11.605}=1.1\times10^5$, so $n/N=9\times10^{-6}$. At $100$ K: $e^{0.0116}=1.0117$, so $n/N=0.4971$, almost exactly one half. The heat capacity peaks at $k_\mathrm BT=0.4167\varepsilon$, i.e. at $T=0.4167\times1.1605=0.484$ K. Heat capacity measurements below a kelvin probe levels of this size.</p>
+            </div>
 
-            <h2 id="partition">4. Partition function and examples<a class="anchor" href="#partition" aria-label="Link to this section">#</a></h2>
-            <p>The <strong>partition function</strong> <em>Z</em> is the sum above, and it generates the thermodynamics. With &beta; = 1/<em>k</em><sub>B</sub><em>T</em>:</p>
-            <span class="eq">F = &minus;k<sub>B</sub>T ln Z, &nbsp; &lang;E&rang; = &minus;&part;(ln Z)/&part;&beta;, &nbsp; S = &minus;&part;F/&part;T, &nbsp; p = &minus;&part;F/&part;V</span>
-            <p>If <em>Z</em> can be computed, everything follows. It can be computed exactly only for simple models, which are nevertheless the building blocks of larger ones.</p>
-            <h3>Two-level system</h3>
-            <p>A defect with ground state at 0 and an excited state at &epsilon; has <em>Z</em> = 1 + exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>). The excited fraction is exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)/<em>Z</em>, which at low temperature gives the Arrhenius form used for equilibrium vacancy concentration.</p>
-            <h3>Harmonic oscillator and equipartition</h3>
-            <p>For one classical oscillator <em>Z</em> &prop; <em>k</em><sub>B</sub><em>T</em>/(&hbar;&omega;), giving mean energy <em>k</em><sub>B</sub><em>T</em>: <strong>equipartition</strong> assigns &frac12;<em>k</em><sub>B</sub><em>T</em> to every quadratic term in the Hamiltonian. A solid of <em>N</em> atoms has 3<em>N</em> oscillators and so heat capacity 3<em>Nk</em><sub>B</sub> (3<em>R</em> &asymp; 24.9 J mol<sup>&minus;1</sup> K<sup>&minus;1</sup>, the Dulong&ndash;Petit value). This is why classical simulations give a constant heat capacity at all temperatures, while real solids drop below it at low temperature because quantum oscillators with &hbar;&omega; &gt; <em>k</em><sub>B</sub><em>T</em> are frozen out. Classical MD is therefore reliable only when <em>T</em> is comparable to or above the Debye temperature of the material, or when quantum corrections are applied.</p>
-            <h3>Kinetic temperature</h3>
-            <p>Equipartition also defines the temperature seen in an MD run:</p>
-            <span class="eq">&lang;K&rang; = &frac12; N<sub>f</sub> k<sub>B</sub>T, &nbsp;&nbsp; N<sub>f</sub> = 3N &minus; 3 (for fixed total momentum; subtract further constraints)</span>
-            <p>The instantaneous kinetic temperature fluctuates by a relative amount of order &radic;(2/<em>N</em><sub>f</sub>) in a small box, so a reading of a few percent away from the target in a 200-atom cell is normal, not an error.</p>
+            <h2 id="models">Lecture 3. Partition functions of simple systems<a class="anchor" href="#models" aria-label="Link to this section">#</a></h2>
+            <p>With the canonical recipe, the thermodynamics of a system follows from its energy levels. Three examples provide most of the intuition of solid-state and gas physics.</p>
+            <h3>The harmonic oscillator and the Einstein solid</h3>
+            <p>A quantum oscillator has $E_n=(n+\tfrac12)\hbar\omega$, so $z=\sum_n e^{-\beta\hbar\omega(n+1/2)}=\dfrac{e^{-\beta\hbar\omega/2}}{1-e^{-\beta\hbar\omega}}=\dfrac1{2\sinh(\beta\hbar\omega/2)}$ (a geometric series). The mean energy and heat capacity are
+            $$\langle E\rangle=\hbar\omega\Bigl[\frac12+\frac1{e^{\hbar\omega/k_\mathrm BT}-1}\Bigr],\qquad C=k_\mathrm B\Bigl(\frac{\hbar\omega}{k_\mathrm BT}\Bigr)^2\frac{e^{\hbar\omega/k_\mathrm BT}}{(e^{\hbar\omega/k_\mathrm BT}-1)^2}.$$
+            At high temperature $\langle E\rangle\to k_\mathrm BT$ (equipartition: two quadratic terms) and $C\to k_\mathrm B$; at low temperature $C\propto e^{-\hbar\omega/k_\mathrm BT}$ goes to zero exponentially, because the oscillator cannot absorb less than one quantum. A solid of $N$ atoms is $3N$ oscillators of this kind. With the <strong>Einstein temperature</strong> $\theta_E=\hbar\omega/k_\mathrm B$, the molar heat capacity is $C=3R\,f_E(\theta_E/T)$, and Dulong and Petit&rsquo;s $3R$ is the high-temperature limit. Einstein (1907) explained why diamond, with its high frequency, has a heat capacity far below $3R$ at room temperature; the exponential low-$T$ decay is however too fast compared with experiment, which follows $T^3$ (Debye, Lecture 5), because real solids have vibrations at all frequencies down to zero.</p>
+            <div class="note thm"><strong>Zero-point energy matters for light atoms</strong>
+            <p>At $T=0$ the oscillator has $E_0=\tfrac12\hbar\omega$. For the lattice vibrations of copper ($\nu_\mathrm{max}\approx8$ THz, <a href="lab-phonons-phonopy.html">LAB 301</a>) the zero-point energy per atom is $\tfrac98k_\mathrm B\theta_D\approx0.033$ eV, small against the cohesive energy of $3.5$ eV but not negligible in the lattice constant of light elements (helium does not solidify at atmospheric pressure at any temperature because its zero-point energy is larger than the energy barrier to melting).</p>
+            </div>
+            <h3>The ideal gas and the Sackur&ndash;Tetrode equation</h3>
+            <p>For one particle of mass $m$ in a box of volume $V$, the classical partition function is $z=\dfrac{V}{h^3}\int e^{-p^2/2mk_\mathrm BT}\mathrm d^3p=\dfrac V{\lambda^3}$, with the <strong>thermal de Broglie wavelength</strong> $\lambda=h/\sqrt{2\pi mk_\mathrm BT}$. For $N$ identical, indistinguishable, non-interacting particles, $Z=z^N/N!$ (the factor $1/N!$ corrects for counting permutations of identical particles as different states; without it the entropy would not be extensive, which is the <em>Gibbs paradox</em>). With Stirling&rsquo;s formula,
+            $$F=-k_\mathrm BT\ln Z=-Nk_\mathrm BT\Bigl[\ln\frac{V}{N\lambda^3}+1\Bigr].$$
+            Differentiating, $p=-\partial F/\partial V=Nk_\mathrm BT/V$ (the ideal gas law, derived), $U=\tfrac32Nk_\mathrm BT$ (equipartition, derived) and the <strong>Sackur&ndash;Tetrode</strong> entropy
+            $$S=Nk_\mathrm B\Bigl[\ln\frac{V}{N\lambda^3}+\frac52\Bigr].$$
+            It is a purely quantum result: $h$ appears in it. The classical gas is a valid description if $V/N\gg\lambda^3$, i.e. the thermal wavelength is much smaller than the spacing between molecules.</p>
+            <div class="example">
+                <strong>Worked example 3.1: the entropy of argon</strong>
+                <p class="given">Compute the molar entropy of argon gas ($m=39.948$ u) at $298.15$ K and $1$ bar (the standard state) and compare with the value $154.84$ J/(mol K) obtained from calorimetry (heat capacity measurements integrated from near $0$ K).</p>
+                <p>$\lambda=h/\sqrt{2\pi mk_\mathrm BT}$ with $h=6.626\times10^{-34}$ J s, $m=6.634\times10^{-26}$ kg, $k_\mathrm B=1.381\times10^{-23}$ J/K and $T=298.15$ K gives $\lambda=1.600\times10^{-11}$ m (about $0.016$ nm). The volume per molecule is $V/N=k_\mathrm BT/p=4.116\times10^{-26}$ m$^3$, so $V/N\lambda^3=4.116\times10^{-26}/4.094\times10^{-33}=1.006\times10^{7}$ and $S/Nk_\mathrm B=\ln(1.006\times10^7)+2.5=16.12+2.5=18.62$; times $R$: $S=154.85$ J/(mol K). This agrees with the calorimetric $154.84$ to $0.01\%$: a calculation with only Planck&rsquo;s constant and the mass, no fitted parameter, reproduces a measurement of the heat absorbed by the real gas, which was one of the early triumphs of statistical mechanics. At $100$ K the same formula (at $1$ atm) gives $132.0$ and at $1000$ K $179.9$ J/(mol K), an increase of $47.9$ J/(mol K) $=\tfrac52R\ln10$: at constant pressure the entropy of a monatomic ideal gas grows as $\tfrac52R\ln T$.</p>
+            </div>
 
-            <h2 id="free-energy">5. Free energy and entropy<a class="anchor" href="#free-energy" aria-label="Link to this section">#</a></h2>
-            <p>Phase stability, defect concentrations, solubility, nucleation barriers and reaction equilibria are governed by <em>free energies</em>, not energies. Free energies are harder to compute because they depend on the <em>volume</em> of phase space accessible, not just on averages of observables. In a simulation, regions of high entropy are visited often and are easy to see, but the free energy needs the absolute probability, which is ln <em>Z</em>, and <em>Z</em> is not an average of anything that is directly sampled.</p>
-            <p>Contributions to the entropy of a material include <em>vibrational</em> (the main finite-temperature term in most solids), <em>configurational</em> (arrangement of atoms or vacancies on a lattice), <em>electronic</em> (important in metals) and <em>magnetic</em> (important in iron and its alloys, where it changes the relative stability of bcc and fcc). Neglecting the right one is a common reason that a 0 K energy ranking fails at the temperature of interest.</p>
-            <h3>Methods for free-energy differences</h3>
-            <ul>
-                <li><strong>Harmonic and quasi-harmonic approximation.</strong> The vibrational free energy of a crystal from its phonon frequencies &omega;<sub><em>i</em></sub>: <em>F</em><sub>vib</sub> = &Sigma;<sub><em>i</em></sub> [&frac12;&hbar;&omega;<sub><em>i</em></sub> + <em>k</em><sub>B</sub><em>T</em> ln(1 &minus; exp(&minus;&hbar;&omega;<sub><em>i</em></sub>/<em>k</em><sub>B</sub><em>T</em>))]. The quasi-harmonic version lets frequencies depend on volume, capturing thermal expansion. It fails when anharmonicity is strong.</li>
-                <li><strong>Thermodynamic integration.</strong> Switch the Hamiltonian from a reference <em>H</em><sub>0</sub> to the target <em>H</em><sub>1</sub> through a coupling parameter &lambda;, and integrate: &Delta;<em>F</em> = &int;<sub>0</sub><sup>1</sup> &lang;&part;<em>H</em>/&part;&lambda;&rang;<sub>&lambda;</sub> d&lambda;. With an Einstein crystal as reference this is the Frenkel&ndash;Ladd method for absolute free energies of solids; melting points follow from equating solid and liquid free energies.</li>
-                <li><strong>Free-energy perturbation.</strong> &Delta;<em>F</em> = &minus;<em>k</em><sub>B</sub><em>T</em> ln&lang;exp(&minus;&Delta;<em>U</em>/<em>k</em><sub>B</sub><em>T</em>)&rang;<sub>0</sub>, accurate only when the two states overlap strongly.</li>
-                <li><strong>Umbrella sampling and metadynamics.</strong> To obtain a free-energy <em>profile</em> along a coordinate (for example the distance an atom moves, or a nucleation order parameter), bias the simulation so that it samples barriers and then remove the bias. Both rely on a good choice of coordinate.</li>
-                <li><strong>Coexistence methods.</strong> Simulate two phases in one box and watch the interface move or stay still; the temperature at which it is stationary is the transition temperature.</li>
-            </ul>
+            <h3>Equipartition and the classical limit</h3>
+            <p>Any energy term that is quadratic in a coordinate or momentum, $E=\tfrac12ax^2$, gives a classical partition function $\int e^{-\beta ax^2/2}\mathrm dx=\sqrt{2\pi k_\mathrm BT/a}\propto T^{1/2}$ and so $\langle E\rangle=-\partial\ln z/\partial\beta=\tfrac12k_\mathrm BT$. This is the <strong>equipartition theorem</strong>. It explains the Dulong&ndash;Petit law ($3N$ oscillators each with two quadratic terms, $\langle E\rangle=3Nk_\mathrm BT$, $C=3Nk_\mathrm B$), the heat capacity of gases ($\tfrac32k_\mathrm B$ per atom, $\tfrac52k_\mathrm B$ for a diatomic molecule at moderate temperatures: translation plus two rotations; the vibration is frozen out), and the kinetic temperature used in molecular dynamics: $\langle\tfrac12mv_x^2\rangle=\tfrac12k_\mathrm BT$ is how a simulation thermometer works. It fails when the spacing of the energy levels exceeds $k_\mathrm BT$ (frozen degrees of freedom, as in the exponential decay of the oscillator heat capacity), which is why classical molecular dynamics overestimates the heat capacity of solids below the Debye temperature (<a href="lab-phonons-phonopy.html">LAB 301</a>: $C_v/3R=0.937$ at $300$ K for copper, $0.215$ at $50$ K from the quantum formula).</p>
+            <h2 id="free-energy">Lecture 4. Free energy, fluctuations and defects<a class="anchor" href="#free-energy" aria-label="Link to this section">#</a></h2>
+            <p>The canonical ensemble describes a system with fixed $N$, $V$ and temperature. The thermodynamic potential that goes with it is the Helmholtz free energy $F=-k_\mathrm BT\ln Z=U-TS$ (<a href="thermal-physics.html">PHYS 102</a>): a system at fixed $T$ and $V$ evolves to the minimum of $F$, which balances the tendency to low energy against the tendency to high entropy. Two other ensembles complete the set. The <strong>isothermal&ndash;isobaric</strong> ensemble ($N,p,T$ fixed) has Gibbs free energy $G=F+pV$ as potential and is the ensemble of the NPT molecular dynamics runs of <a href="lab-md-lammps-copper.html">LAB 503</a>; the <strong>grand canonical</strong> ensemble ($\mu,V,T$ fixed, particles exchanged with a reservoir) has probability $P_{i,N}=e^{-\beta(E_i-\mu N)}/\Xi$ with the grand partition function $\Xi=\sum_{N}\sum_ie^{-\beta(E_i-\mu N)}$. The <strong>chemical potential</strong> $\mu=(\partial F/\partial N)_{T,V}$ is the free energy needed to add one particle; for the ideal gas, $\mu=k_\mathrm BT\ln(N\lambda^3/V)$, so $\mu$ rises with density and particles flow from high to low $\mu$.</p>
+            <h3>Fluctuations</h3>
+            <p>In the canonical ensemble the energy is not fixed but fluctuates around its mean. Differentiating $\langle E\rangle=-\partial\ln Z/\partial\beta$ once more,
+            $$\boxed{\langle(\delta E)^2\rangle=\langle E^2\rangle-\langle E\rangle^2=\frac{\partial^2\ln Z}{\partial\beta^2}=k_\mathrm BT^2C_V}$$
+            (the notation $\delta E=E-\langle E\rangle$). The heat capacity, a response of the average to a change of temperature, equals a measure of the spontaneous fluctuations: this is a case of the <em>fluctuation&ndash;dissipation theorem</em>. Since $C_V$ and $\langle E\rangle$ are both extensive, the relative fluctuation $\sigma_E/\langle E\rangle=\sqrt{k_\mathrm BT^2C_V}/U\propto1/\sqrt N$. For a monatomic ideal gas ($U=\tfrac32Nk_\mathrm BT$, $C_V=\tfrac32Nk_\mathrm B$) it is $\sqrt{2/3N}$: $1.05\times10^{-12}$ for a mole, but $2.8\%$ for a simulation box of $N=864$ atoms and $7.9\%$ for $N=108$. In an NpT ensemble the volume fluctuates with $\langle(\delta V)^2\rangle=k_\mathrm BT\,V\kappa_T$ ($\kappa_T$ is the isothermal compressibility), and in the grand canonical ensemble $\langle(\delta N)^2\rangle=k_\mathrm BT(\partial\langle N\rangle/\partial\mu)$.</p>
+            <div class="note thm"><strong>Using fluctuations in simulations</strong>
+            <p>These relations are practical tools. In a canonical Monte Carlo or thermostatted MD run, $C_V=\langle(\delta E)^2\rangle/k_\mathrm BT^2$ is obtained from the variance of the recorded energies, with no extra simulation; in <a href="lab-ising-monte-carlo.html">LAB 504</a> the specific heat and the susceptibility of the Ising model are computed exactly in this way, and show a peak growing with the lattice size near the critical temperature, where the fluctuations become large (a divergence of fluctuations is how a continuous phase transition shows up). The caveat: the ensemble matters. The fluctuations of the energy in a microcanonical (NVE) run are not the canonical ones, and a thermostat that is too strong or too weak distorts them: only a few thermostats (Nos&eacute;&ndash;Hoover chains, stochastic velocity rescaling, Langevin with small damping) generate the correct canonical fluctuations.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: how large are the fluctuations in a simulation box?</strong>
+                <p class="given">A molecular-dynamics cell of $N=864$ argon-like atoms is held at $T=85$ K in the canonical ensemble. Treating the system as a monatomic ideal gas, estimate the rms fluctuation of the kinetic energy and the corresponding fluctuation of the instantaneous kinetic temperature.</p>
+                <p>The kinetic energy is $K=\tfrac32Nk_\mathrm BT_\mathrm{inst}$; its mean is $\tfrac32Nk_\mathrm BT=\tfrac32(864)(1.381\times10^{-23})(85)=1.52\times10^{-18}$ J ($9.5$ eV). The canonical variance of the kinetic energy of $3N$ quadratic degrees of freedom is $\langle(\delta K)^2\rangle=\tfrac32N(k_\mathrm BT)^2$, so $\sigma_K/\langle K\rangle=\sqrt{2/3N}=2.8\%$, i.e. $\sigma_K=0.27$ eV. The instantaneous temperature, defined by $K=\tfrac32Nk_\mathrm BT_\mathrm{inst}$, then fluctuates by $2.8\%$ of $85$ K, $\sigma_T=2.4$ K: a thermostat that holds $T$ to $\pm0.1$ K would be wrong. A simulation reports averages of $T$ with a scatter of this size, which is the reason for the &ldquo;temperature fluctuates around its target&rdquo; check in <a href="lab-md-lammps-argon.html">LAB 502</a>.</p>
+            </div>
 
-            <h2 id="fluctuations">6. Properties from fluctuations<a class="anchor" href="#fluctuations" aria-label="Link to this section">#</a></h2>
-            <p>Response functions are determined by fluctuations of the corresponding quantities at equilibrium. For example in the canonical ensemble,</p>
-            <span class="eq">C<sub>V</sub> = ( &lang;E&sup2;&rang; &minus; &lang;E&rang;&sup2; ) / (k<sub>B</sub> T&sup2;)</span>
-            <p>and in the isothermal&ndash;isobaric ensemble the isothermal compressibility follows from the variance of the volume, &kappa;<sub><em>T</em></sub> = (&lang;<em>V</em>&sup2;&rang; &minus; &lang;<em>V</em>&rang;&sup2;)/(<em>k</em><sub>B</sub><em>T</em>&lang;<em>V</em>&rang;). Thermal expansion comes from the cross-fluctuation of enthalpy and volume, and elastic constants from stress fluctuations. These formulae let one run produce several properties, but they converge slowly because they are variances; direct perturbation (apply a small strain and measure the response) is often more efficient.</p>
+            <h3>Equilibrium defects</h3>
+            <p>The most important application of free-energy minimisation for a materials scientist is the equilibrium concentration of point defects. Take a crystal of $N$ lattice sites and create $n$ vacancies, each costing a formation energy $E_f$ (and, in general, a formation entropy $S_f$ from the changed vibrations around it). The $n$ vacancies can be placed on the $N$ sites in $\binom Nn$ ways, which gives the configurational entropy $S_\mathrm{conf}=k_\mathrm B\ln\binom Nn\approx k_\mathrm B[N\ln N-n\ln n-(N-n)\ln(N-n)]$. The free energy change is $\Delta F=n(E_f-TS_f)-TS_\mathrm{conf}$. Setting $\partial\Delta F/\partial n=0$ gives, for $n\ll N$,
+            $$\boxed{\frac nN=\exp\Bigl(\frac{S_f}{k_\mathrm B}\Bigr)\exp\Bigl(-\frac{E_f}{k_\mathrm BT}\Bigr)}.$$
+            The factor $e^{S_f/k_\mathrm B}$ is usually between $1$ and $e^3\approx20$. The exponential dependence on $E_f/k_\mathrm BT$ is the dominant effect; the concentration is never zero at $T&gt;0$, because the entropy of mixing a few vacancies into the crystal is infinitely steep at $n=0$ ($\partial S_\mathrm{conf}/\partial n\to\infty$).</p>
+            <div class="example">
+                <strong>Worked example 4.2: vacancies in copper</strong>
+                <p class="given">The vacancy formation energy of copper is $E_f=1.28$ eV (<a href="lab-md-lammps-copper.html">LAB 503</a>). Compute the equilibrium vacancy fraction at $300$, $600$, $900$ and $1300$ K without formation entropy, and at $1300$ K with $S_f=2k_\mathrm B$. How many vacancies are there in $1$ cm$^3$ of copper at $1300$ K? The melting point is $1358$ K.</p>
+                <p>$k_\mathrm BT=0.02585$, $0.05170$, $0.07755$ and $0.1120$ eV, so $E_f/k_\mathrm BT=49.5$, $24.8$, $16.5$ and $11.4$, giving $n/N=3.1\times10^{-22}$, $1.8\times10^{-11}$, $6.8\times10^{-8}$ and $1.1\times10^{-5}$. With $S_f=2k_\mathrm B$ at $1300$ K the result is multiplied by $e^2=7.4$: $8.1\times10^{-5}$. Copper has $N/V=8.49\times10^{22}$ atoms/cm$^3$, so at $1300$ K there are $9\times10^{17}$ (without $S_f$) to $7\times10^{18}$ vacancies per cm$^3$. At room temperature, one vacancy per $3\times10^{21}$ sites would mean about $0.03$ vacancies per cm$^3$: practically none. Measured vacancy fractions near the melting point are of order $10^{-4}$, consistent with this calculation including a formation entropy. (A quenched sample can retain the high-temperature vacancies, which then dominate the diffusion at room temperature.)</p>
+            </div>
 
-            <h2 id="correlation">7. Correlation functions and transport<a class="anchor" href="#correlation" aria-label="Link to this section">#</a></h2>
-            <p><strong>Structure.</strong> The radial distribution function <em>g</em>(<em>r</em>) is the probability, relative to a uniform gas, of finding an atom a distance <em>r</em> from another. Crystals give sharp peaks, liquids give damped oscillations that decay to 1, and amorphous solids lie between. Its Fourier transform is the structure factor <em>S</em>(<em>q</em>), directly comparable with diffraction. The coordination number is the integral of 4&pi;<em>r</em>&sup2;&rho;<em>g</em>(<em>r</em>) up to the first minimum.</p>
-            <p><strong>Dynamics.</strong> Time-correlation functions measure how quickly the system forgets a state. Transport coefficients follow from them. The diffusion coefficient has two equivalent forms:</p>
-            <span class="eq">Einstein: D = lim<sub>t&rarr;&infin;</sub> &lang;|r(t) &minus; r(0)|&sup2;&rang; / (6t) &nbsp;&nbsp;&nbsp; Green&ndash;Kubo: D = (1/3) &int;<sub>0</sub><sup>&infin;</sup> &lang;v(0)&middot;v(t)&rang; dt</span>
-            <p>The mean-squared displacement (MSD) must be computed from unwrapped coordinates, and the slope fitted only in the linear (diffusive) regime, not the early ballistic regime where MSD &prop; <em>t</em>&sup2;. Viscosity and thermal conductivity have analogous Green&ndash;Kubo expressions (from stress and heat-current correlations), and these converge slowly.</p>
+            <div class="note thm"><strong>The same argument for any reaction</strong>
+            <p>Minimising a free energy that contains an energy cost per defect and an entropy of mixing is the pattern behind the law of mass action, the equilibrium concentration of dopants and interstitials, the solubility limit of a second element (<a href="lab-calphad-pycalphad.html">LAB 505</a>: the solubility of B in A at the eutectic temperature, $0.046$), and the Arrhenius form of diffusion in <a href="diffusion-and-kinetics.html">CMS 504</a>, where the diffusion coefficient is the product of the equilibrium vacancy fraction and the rate at which a vacancy jumps.</p>
+            </div>
+            <h2 id="quantum">Lecture 5. Quantum statistics: electrons, phonons and photons<a class="anchor" href="#quantum" aria-label="Link to this section">#</a></h2>
+            <p>The classical Boltzmann treatment counts the particles as distinguishable and ignores that identical particles of different kinds obey different rules. Quantum mechanics distinguishes <strong>fermions</strong> (electrons, protons, neutrons: half-integer spin; at most one particle per single-particle state, the Pauli principle) and <strong>bosons</strong> (photons, phonons, helium-4: integer spin; any number per state). In the grand canonical ensemble the average occupation of a single-particle state of energy $\varepsilon$ is
+            $$\bar n_\mathrm{FD}=\frac1{e^{(\varepsilon-\mu)/k_\mathrm BT}+1},\qquad\bar n_\mathrm{BE}=\frac1{e^{(\varepsilon-\mu)/k_\mathrm BT}-1}$$
+            for the Fermi&ndash;Dirac and Bose&ndash;Einstein distributions, and both reduce to the Boltzmann factor $e^{-(\varepsilon-\mu)/k_\mathrm BT}$ when $\bar n\ll1$. <em>Derivation for one state:</em> the state has occupation $n$ and energy $n\varepsilon$; for fermions $n=0,1$ so $\Xi=1+e^{-\beta(\varepsilon-\mu)}$ and $\bar n=e^{-\beta(\varepsilon-\mu)}/\Xi$, which is the FD form; for bosons $n=0,1,2,\ldots$ and the geometric series $\Xi=1/(1-e^{-\beta(\varepsilon-\mu)})$ gives $\bar n=1/(e^{\beta(\varepsilon-\mu)}-1)$. For photons and phonons the number of quanta is not conserved, so $\mu=0$ and $\bar n=1/(e^{\hbar\omega/k_\mathrm BT}-1)$, the Planck distribution (the same average as in the quantum oscillator of Lecture 3).</p>
+            <h3>Phonons: the Debye model</h3>
+            <p>The lattice vibrations of a solid with $N$ atoms are $3N$ normal modes (<a href="lab-phonons-phonopy.html">LAB 301</a>), each a quantum oscillator. Einstein gave all the modes the same frequency; <strong>Debye</strong> (1912) took the density of modes of a continuous elastic medium, $g(\omega)=\dfrac{3V\omega^2}{2\pi^2c^3}$ ($c$ is an average sound velocity), up to a cutoff $\omega_D$ chosen so that the total number of modes is $3N$: $\omega_D=c(6\pi^2N/V)^{1/3}$. The Debye temperature is $\theta_D=\hbar\omega_D/k_\mathrm B$. The energy and heat capacity follow by summing the oscillator results over $g(\omega)$:
+            $$C_V=9Nk_\mathrm B\Bigl(\frac T{\theta_D}\Bigr)^3\int_0^{\theta_D/T}\frac{x^4e^x}{(e^x-1)^2}\,\mathrm dx\ \longrightarrow\ \begin{cases}3Nk_\mathrm B&amp;T\gg\theta_D\\[2pt]\dfrac{12\pi^4}5Nk_\mathrm B\Bigl(\dfrac T{\theta_D}\Bigr)^3&amp;T\ll\theta_D.\end{cases}$$
+            The $T^3$ law at low temperature is an exact consequence of the linear dispersion $\omega=ck$ of long-wavelength sound waves, which is why it is observed in all insulators. For copper ($\theta_D=343$ K, <a href="lab-phonons-phonopy.html">LAB 301</a> found $332$&ndash;$345$ K) the coefficient is $12\pi^4R/(5\theta_D^3)=4.82\times10^{-5}$ J/(mol K$^4$): $C=0.048$ J/(mol K) at $10$ K and $0.385$ at $20$ K. The full Debye formula gives $4.99$ J/(mol K) at $50$ K, $14.8$ at $100$ K, $21.6$ at $200$ K and $23.4$ at $300$ K, to be compared with the value $23.4$ obtained from the real phonon spectrum in the lab: a model with one parameter reproduces a heat capacity to $1\%$ at room temperature.</p>
+            <div class="note thm"><strong>Photons</strong>
+            <p>For electromagnetic radiation in a cavity, $g(\omega)=V\omega^2/\pi^2c^3$ (two polarisations) and $\mu=0$ give the Planck spectrum and a total energy density $u=aT^4$ with $a=\pi^2k_\mathrm B^4/15\hbar^3c^3=7.57\times10^{-16}$ J m$^{-3}$ K$^{-4}$. The radiated power is $\sigma T^4$ with the Stefan&ndash;Boltzmann constant $\sigma=ac/4=5.67\times10^{-8}$ W m$^{-2}$ K$^{-4}$, which is how a furnace loses heat at high temperature (<a href="thermal-physics.html">PHYS 102</a>).</p>
+            </div>
+            <h3>Electrons: the Fermi gas</h3>
+            <p>The conduction electrons of a metal form a gas of fermions at a density so high that the Pauli principle dominates. At $T=0$ the single-particle states are filled up to the <strong>Fermi energy</strong> $E_F$, found by counting states in a box ($2\times\dfrac{V}{(2\pi)^3}\dfrac{4\pi}3k_F^3=N$):
+            $$E_F=\frac{\hbar^2}{2m_e}(3\pi^2n)^{2/3},\qquad T_F=\frac{E_F}{k_\mathrm B}.$$
+            For copper with one conduction electron per atom, $n=8.47\times10^{28}$ m$^{-3}$ gives $E_F=7.03$ eV and $T_F=81\,600$ K. Room temperature ($k_\mathrm BT=0.026$ eV) is therefore only $0.37\%$ of $E_F$: the electron gas is <strong>degenerate</strong>. The Fermi&ndash;Dirac distribution is a step function smeared over a layer of width $\sim k_\mathrm BT$ at $E_F$; only the electrons in that layer, a fraction $\sim T/T_F$, can absorb heat. The result (Sommerfeld expansion) is a heat capacity linear in $T$:
+            $$C_\mathrm{el}=\frac{\pi^2}2Nk_\mathrm B\frac T{T_F}=\gamma T,\qquad\gamma_\mathrm{free}=\frac{\pi^2}{2}\frac{R}{T_F}=0.50\ \mathrm{mJ/(mol\,K^2)}\ \text{for Cu}.$$
+            The measured $\gamma$ of copper is $0.695$ mJ/(mol K$^2$), $38\%$ larger, because the electrons interact with the lattice and with each other (a &ldquo;thermal effective mass&rdquo; $m^*=1.38\,m_e$). The total low-temperature heat capacity of a metal is $C=\gamma T+\beta T^3$ with $\beta=4.82\times10^{-5}$ J/(mol K$^4$) for copper. The two terms are equal at $T=\sqrt{\gamma/\beta}=3.8$ K: above this temperature the lattice dominates, which is why the electronic contribution is unimportant at room temperature ($\gamma T=0.21$ J/(mol K), under $1\%$ of $3R$), and why a plot of $C/T$ against $T^2$ gives a straight line with intercept $\gamma$ and slope $\beta$, the standard way of separating them.</p>
+            <div class="example">
+                <strong>Worked example 5.1: electrons and phonons in the heat capacity of copper</strong>
+                <p class="given">Estimate the electronic and lattice contributions to the heat capacity of copper at $2$, $4$ and $10$ K using $\gamma=0.695$ mJ/(mol K$^2$) and $\beta=4.82\times10^{-5}$ J/(mol K$^4$).</p>
+                <p>$C_\mathrm{el}=\gamma T$: $1.39$, $2.78$ and $6.95$ mJ/(mol K). $C_\mathrm{ph}=\beta T^3$: $0.39$, $3.08$ and $48.2$ mJ/(mol K). At $2$ K the electrons contribute $78\%$ of the total ($1.78$ mJ/(mol K)); at $4$ K the two are almost equal ($2.78$ against $3.08$, the crossover at $3.8$ K); at $10$ K the lattice dominates by a factor $7$ ($C=55.2$ mJ/(mol K)). In the plot $C/T=\gamma+\beta T^2$ the points at $T^2=4$, $16$ and $100$ K$^2$ lie on a straight line from $0.695$ mJ/(mol K$^2$) at the intercept, with a slope of $0.0482$ mJ/(mol K$^4$).</p>
+            </div>
 
-            <h2 id="ergodicity">8. Ergodicity and sampling<a class="anchor" href="#ergodicity" aria-label="Link to this section">#</a></h2>
-            <p>A system is <strong>ergodic</strong> if, given enough time, a trajectory visits all accessible regions of phase space in proportion to their probability. Then the time average equals the ensemble average. Real simulations are finite, and several situations break this in practice:</p>
-            <ul>
-                <li><strong>Rare events.</strong> A system with an energy barrier much larger than <em>k</em><sub>B</sub><em>T</em> can sit in one basin for longer than the run, so the average describes only that basin. With a typical attempt frequency of 10<sup>13</sup> s<sup>&minus;1</sup>, an atomic hop over a 1 eV barrier at 300 K occurs about once every 10<sup>4</sup> seconds (hours), compared with MD runs of nanoseconds, a gap of some thirteen orders of magnitude.</li>
-                <li><strong>Metastability and hysteresis.</strong> Heating and cooling runs through a phase transition give different answers because nucleation is slow.</li>
-                <li><strong>Glassy dynamics.</strong> Structural relaxation is much slower than the simulated time.</li>
-            </ul>
-            <p>Remedies are: run longer; start from several independent configurations and compare; use methods that sample differently (Monte Carlo with swap moves, replica exchange, which exchanges configurations between temperatures; metadynamics; accelerated dynamics); or use kinetic methods that model rare events explicitly (see the <a href="monte-carlo-methods.html">Monte Carlo</a> page).</p>
+            <h2 id="interacting">Lecture 6. Interacting systems: the Ising model, mean-field theory and the regular solution<a class="anchor" href="#interacting" aria-label="Link to this section">#</a></h2>
+            <p>Non-interacting systems have a partition function that factorises, and exact solutions. A phase transition requires interaction between the particles. The simplest model of a system with interactions and a transition is the <strong>Ising model</strong>: spins $s_i=\pm1$ on a lattice with energy $H=-J\sum_{\langle ij\rangle}s_is_j-h\sum_is_i$, with $J&gt;0$ favouring parallel neighbours and $h$ a magnetic field. It describes a ferromagnet, but the same mathematics describes a binary alloy (spin up = atom A, spin down = atom B; <em>lattice gas</em> for occupied/empty sites), which is why it is the model system for order&ndash;disorder transitions in materials (<a href="phase-field-modelling.html">CMS 505</a>). In one dimension it can be solved exactly and has no transition at $T&gt;0$; in two dimensions Onsager solved it (1944) and found a transition at $k_\mathrm BT_c/J=2/\ln(1+\sqrt2)=2.269$; in three dimensions no exact solution is known and $T_c\approx4.51J/k_\mathrm B$ comes from simulations (<a href="lab-ising-monte-carlo.html">LAB 504</a>).</p>
+            <h3>Mean-field theory</h3>
+            <p>The difficulty is the correlation between neighbouring spins. Mean-field theory replaces the interaction of a spin with its $z$ neighbours (the coordination number) by an interaction with their <em>average</em> orientation $m=\langle s\rangle$: each spin sees an effective field $h_\mathrm{eff}=h+zJm$, so the one-spin partition function is $2\cosh(\beta h_\mathrm{eff})$ and $m=\tanh(\beta(h+zJm))$. For $h=0$ this is a self-consistency equation,
+            $$\boxed{m=\tanh\!\Bigl(\frac{zJ}{k_\mathrm BT}\,m\Bigr)}.$$
+            Graphically, the line $y=m$ and the curve $y=\tanh(m/\tau)$ with $\tau=k_\mathrm BT/zJ$ always intersect at $m=0$; if the slope of the tanh at the origin, $1/\tau$, exceeds $1$ there are two further solutions $\pm m_0$. The slope reaches one at the <strong>mean-field critical temperature</strong>
+            $$k_\mathrm BT_c^\mathrm{MF}=zJ.$$
+            Below $T_c$ the symmetric solution $m=0$ becomes unstable and the system chooses $m=+m_0$ or $-m_0$ (<em>spontaneous symmetry breaking</em>). Near $T_c$, expanding the tanh, $m\approx\sqrt{3(1-T/T_c)}$: the order parameter vanishes with an exponent $\beta=\tfrac12$.</p>
+            <div class="table-scroll" role="region" aria-label="Mean-field theory (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Lattice</th><th>$z$</th><th>$T_c^\mathrm{MF}$ ($J/k_\mathrm B$)</th><th>Exact or numerical $T_c$</th><th>Order-parameter exponent $\beta$ (exact)</th></tr></thead>
+            <tbody>
+            <tr><td>chain (1D)</td><td>2</td><td>2</td><td>0 (no transition)</td><td>&ndash;</td></tr>
+            <tr><td>square (2D)</td><td>4</td><td>4</td><td>2.269 (Onsager)</td><td>$1/8$</td></tr>
+            <tr><td>simple cubic (3D)</td><td>6</td><td>6</td><td>4.51 (simulation)</td><td>$0.326$</td></tr>
+            <tr><td>mean field (any $d$)</td><td></td><td></td><td></td><td>$1/2$</td></tr>
+            </tbody></table></div>
+            <p>The table shows what mean-field theory gets right and wrong. It gives the right qualitative physics (a transition, symmetry breaking, a growth of $m$ below $T_c$), and it improves as the dimension (and so the coordination) grows, because fluctuations matter less when each spin has many neighbours; but it overestimates $T_c$ by $76\%$ in two dimensions and predicts a transition where there is none in one dimension, and its critical exponents are wrong below four dimensions. The same neglect of correlation occurs in all simple solid-solution models (Bragg&ndash;Williams), whose ordering temperatures are too high. In <a href="lab-ising-monte-carlo.html">LAB 504</a> the magnetisation of the $32\times32$ lattice at $T=2.0$ is $0.910$ (exact $0.911$), while mean field gives $m=\tanh(2m)\Rightarrow m=0.9575$ at that temperature.</p>
+            <div class="note thm"><strong>Landau theory in one equation</strong>
+            <p>Mean-field theory can be recast as an expansion of the free energy in the order parameter, $F(m)=F_0+a(T-T_c)m^2+bm^4$ with $a,b&gt;0$ (the symmetry $m\to-m$ forbids odd powers). For $T&gt;T_c$ the minimum is at $m=0$; for $T&lt;T_c$ it is at $m_0^2=a(T_c-T)/2b$: $m_0\propto(T_c-T)^{1/2}$ again. This is the starting point of the phase-field models of <a href="phase-field-modelling.html">CMS 505</a>, where $F(m)$ is combined with a gradient term to describe interfaces, and of <a href="lab-diffusion-fipy.html">LAB 506</a>.</p>
+            </div>
+            <h3>The regular solution is the Ising model of alloys</h3>
+            <p>A binary solution of A and B atoms on a lattice with $z$ neighbours, with pair energies $\varepsilon_{AA}$, $\varepsilon_{BB}$ and $\varepsilon_{AB}$, has in the mean-field approximation the Gibbs energy of mixing per mole
+            $$\Delta G_\mathrm{mix}=\Omega x(1-x)+RT[x\ln x+(1-x)\ln(1-x)],\qquad\Omega=zN_\mathrm A\Bigl[\varepsilon_{AB}-\tfrac12(\varepsilon_{AA}+\varepsilon_{BB})\Bigr].$$
+            This is exactly the expression used in <a href="lab-calphad-pycalphad.html">LAB 505</a> with $\Omega=L$ the interaction parameter, and in the Cahn&ndash;Hilliard model of <a href="lab-diffusion-fipy.html">LAB 506</a> as a double well. With the mapping $\varepsilon_{AA}=\varepsilon_{BB}=-J$, $\varepsilon_{AB}=+J$ one finds $\Omega=2zN_\mathrm AJ$, and the critical temperature of demixing, from $\partial^2\Delta G/\partial x^2=\partial^3\Delta G/\partial x^3=0$ at $x=\tfrac12$, is $T_c=\Omega/2R$, equal to $zJ/k_\mathrm B$: the same as the mean-field Ising result. Below $T_c$ the common tangent (binodal) is found from $\ln\frac{x}{1-x}=-\frac{\Omega}{RT}(1-2x)$ and the spinodal, where $\partial^2\Delta G/\partial x^2=0$, from $x(1-x)=RT/2\Omega$.</p>
+            <div class="example">
+                <strong>Worked example 6.1: the miscibility gap of a regular solution</strong>
+                <p class="given">For $\Omega=14\,000$ J/mol (the solid parameter of the teaching database in <a href="lab-calphad-pycalphad.html">LAB 505</a>) compute the critical temperature and the binodal and spinodal compositions at $T=600$ K.</p>
+                <p>$T_c=\Omega/2R=14\,000/(2\times8.314)=842$ K. At $T=600$ K, the spinodal satisfies $x(1-x)=RT/2\Omega=8.314\times600/28\,000=0.1782$, so $x=\tfrac12[1-\sqrt{1-4(0.1782)}]=0.232$ (and $0.768$ by symmetry): a solution of composition between $0.232$ and $0.768$ is unstable to spinodal decomposition. The binodal compositions solve $\ln\frac x{1-x}=-\frac\Omega{RT}(1-2x)$ numerically, $x=0.092$ and $0.908$. A solution of composition $0.15$ is therefore in the metastable region between the binodal ($0.092$) and the spinodal ($0.232$): it decomposes only by nucleation. At $T=800$ K the gap narrows to $0.311&lt;x&lt;0.689$, with spinodal $0.388&lt;x&lt;0.612$, and at $840$ K ($99.8\%$ of $T_c$) it is nearly closed ($0.459$ to $0.541$). The same numbers apply to the Ising model with $zJ/k_\mathrm B=842$ K.</p>
+            </div>
 
-            <h2 id="errors">9. Statistical error<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
-            <p>A simulated average is an estimate with an uncertainty, and a number without an error bar is incomplete. Successive configurations in an MD or MC run are <em>correlated</em>, so the number of independent samples is much smaller than the number of recorded frames. For <em>M</em> frames with correlation time &tau; (in units of the sampling interval), the standard error of the mean is approximately</p>
-            <span class="eq">&sigma;<sub>mean</sub> &asymp; &sigma; &radic;( 2&tau; / M )</span>
-            <p>where &sigma; is the standard deviation of the quantity. Practical ways to get it:</p>
-            <ul>
-                <li><strong>Block averaging.</strong> Divide the series into blocks longer than the correlation time, average each block and compute the error from the block means. Increase the block length until the estimated error stops growing.</li>
-                <li><strong>Independent replicas.</strong> Repeat with different random seeds or initial velocities; the spread of results is the error.</li>
-                <li><strong>Discard the equilibration period.</strong> The start of a run depends on the initial configuration; plot the property against time and start averaging only after it has stopped drifting.</li>
-            </ul>
-            <p>Systematic errors (a poor potential, finite box, neglected quantum effects) are not reduced by longer runs and are usually larger than the statistical error. Report both kinds.</p>
+            <h2 id="time">Lecture 7. Time correlations, transport and the error of a simulation<a class="anchor" href="#time" aria-label="Link to this section">#</a></h2>
+            <p>So far we have computed averages over the ensemble. A molecular-dynamics run produces instead a time series $A(t)$, and the connection is the <strong>ergodic hypothesis</strong>: for a system that explores all its accessible microstates, the long-time average equals the ensemble average, $\bar A=\lim\frac1\tau\int_0^\tau A(t)\,\mathrm dt=\langle A\rangle$. The hypothesis fails when a system is trapped: a glass cannot reach the crystal on any practical timescale; an Ising model below $T_c$ stays in $m&gt;0$ or $m&lt;0$ for a time that grows as $e^{N}$; in <a href="lab-ising-monte-carlo.html">LAB 504</a> a quench of a $64\times64$ lattice at $T=1.8$ trapped the system in a striped state that the ensemble average would never contain. Whether a simulation is ergodic on the time of the run is something that must be checked (two different initial states, several seeds), not assumed.</p>
+            <h3>Correlation functions</h3>
+            <p>The <strong>time autocorrelation function</strong> of a fluctuating quantity $A$ is
+            $$C_{AA}(t)=\frac{\langle\delta A(0)\,\delta A(t)\rangle}{\langle\delta A^2\rangle},\qquad\delta A=A-\langle A\rangle,$$
+            equal to $1$ at $t=0$ and decaying to $0$ over a <em>correlation time</em>. Many transport coefficients are integrals of such functions (<strong>Green&ndash;Kubo relations</strong>); for the self-diffusion coefficient
+            $$D=\frac13\int_0^\infty\langle\mathbf v(0)\cdot\mathbf v(t)\rangle\,\mathrm dt,$$
+            and the equivalent <strong>Einstein relation</strong> in terms of the mean-square displacement is $D=\lim_{t\to\infty}\langle|\mathbf r(t)-\mathbf r(0)|^2\rangle/6t$ (the one used in <a href="lab-md-lammps-argon.html">LAB 502</a>). The viscosity and the thermal conductivity have analogous forms with the stress and the heat current. Check the formulae with the random walk of <a href="lab-workstation-setup.html">LAB 101</a>: the velocity (the step $\pm1$ per unit time) is uncorrelated from one step to the next, so $\langle v(0)v(t)\rangle=\delta_{t,0}$ and the integral (here a sum) gives $D=\tfrac12\langle v^2\rangle=0.5$ in one dimension, in agreement with the measured slope $\langle x^2\rangle=2Dt$ ($D=0.48$ from $2000$ walkers). The <strong>static</strong> correlation functions describe the structure: the radial distribution function $g(r)$ of the argon liquid in LAB 502 is the probability of finding an atom at distance $r$ from another, and its zero-wavevector Fourier transform is related to the compressibility, $S(0)=\rho k_\mathrm BT\kappa_T$: structure and thermodynamics are connected by the fluctuations of Lecture 4.</p>
+            <h3>How long do samples stay correlated?</h3>
+            <p>Consecutive samples of a Monte Carlo or molecular-dynamics run are not independent. If a quantity has an autocorrelation function $C(t)$, the <strong>integrated autocorrelation time</strong> is $\tau_\mathrm{int}=\tfrac12+\sum_{t\ge1}C(t)$ (in units of the sampling interval; for a pure exponential decay $C=e^{-t/\tau}$ it equals $\tau$). A run of $N$ samples then contains only $N_\mathrm{eff}=N/2\tau_\mathrm{int}$ independent ones, and the statistical error of the mean is
+            $$\boxed{\varepsilon=\sigma\sqrt{\frac{2\tau_\mathrm{int}}{N}}}$$
+            where $\sigma$ is the standard deviation of the quantity. A naive estimate $\sigma/\sqrt N$ is too small by the factor $\sqrt{2\tau_\mathrm{int}}$. In <a href="lab-ising-monte-carlo.html">LAB 504</a>, $\tau_\mathrm{int}$ of the magnetisation of a $32\times32$ lattice is $3.1$ sweeps at $T=1.8$ and $161$ sweeps at $T_c$ (critical slowing down): at $T_c$, $40\,000$ sweeps contain $124$ independent samples, and the error bar is $\sqrt{2\times161}=18$ times larger than the naive one.</p>
+            <div class="note thm"><strong>Block averaging</strong>
+            <p>When the autocorrelation function is not available, divide the series into $n_b$ blocks of length $L_b$ longer than $\tau_\mathrm{int}$, average inside each block, and compute the standard error of the block means, $\sigma_b/\sqrt{n_b}$. If $L_b$ is larger than the correlation time the block means are independent, and the error estimate is reliable; plotting it against $L_b$ shows a plateau when $L_b\gg\tau$. The method is more robust than estimating $\tau$ directly and is the standard way to quote an error bar in simulation papers.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.1: the error bar of a diffusion coefficient</strong>
+                <p class="given">A molecular-dynamics run of $N=10^5$ samples of an observable with $\sigma=2.0$ (arbitrary units) has an integrated autocorrelation time of $50$ sampling intervals. What is the statistical error of the mean, and how many independent samples are there? How long would the run have to be to halve the error?</p>
+                <p>$N_\mathrm{eff}=10^5/(2\times50)=1000$ independent samples. The error is $\varepsilon=2.0\sqrt{2\times50/10^5}=0.063$, compared with the naive $\sigma/\sqrt N=0.0063$, ten times smaller and wrong. To halve the error one needs four times as many samples, $4\times10^5$: the cost of precision grows as the inverse square of the error, and the cost of a correlated observable is multiplied by $2\tau_\mathrm{int}$. Running ten independent trajectories of $10^5$ samples would give the error directly from their scatter (the standard error of ten means), which has the same statistical power and protects against a trajectory that is trapped.</p>
+            </div>
 
             <!-- takeaways:start -->
 <div class="takeaways"><strong>Key takeaways</strong>
 <ul>
-<li>The Boltzmann distribution, p proportional to exp(-E/kT), underlies Metropolis Monte Carlo, thermostats and equilibrium defect concentrations.</li>
-<li>Pick the ensemble that matches what is held fixed: NVE, NVT, NPT or the grand canonical.</li>
-<li>Free energies, not energies, decide stability, and they need dedicated methods: thermodynamic integration, perturbation, umbrella sampling, the quasi-harmonic approximation.</li>
-<li>Classical simulation assumes equipartition, so it overestimates heat capacity when quantum modes are frozen out at low temperature.</li>
-<li>Quote averages with error bars. The correlation time sets the number of independent samples, and ergodicity is never guaranteed.</li>
+<li>Statistical mechanics connects the microscopic world to thermodynamics: the entropy S = k_B ln Omega counts the microstates compatible with a macrostate, temperature is defined by 1/T = dS/dU, and the equilibrium state is the overwhelmingly most probable one (two Einstein solids with 300 oscillators each share energy within about 5 quanta of the mean 50).</li>
+<li>A system in contact with a heat bath has probability P_i = exp(-E_i/k_B T)/Z; the partition function Z contains all thermodynamics: F = -k_B T ln Z, U = -d ln Z/d beta, S = -dF/dT, and the heat capacity C_V = (U^2 variance)/(k_B T^2).</li>
+<li>Simple partition functions give the classic results: the two-level system has a Schottky heat-capacity peak of 0.439 N k_B at k_B T = 0.417 epsilon, the quantum oscillator gives the Einstein heat capacity, and the ideal gas gives the Sackur-Tetrode entropy (154.85 J/mol/K for argon at 298.15 K and 1 bar, against the calorimetric 154.84).</li>
+<li>Equilibrium concentrations of defects follow from minimising F: the vacancy fraction is exp(-E_f/k_B T) (for E_f = 1.28 eV it is 3e-22 at 300 K and 1.1e-5 at 1300 K), and the relation C_V = Var(E)/(k_B T^2) means that thermodynamic derivatives can be measured from fluctuations in a simulation.</li>
+<li>Quantum statistics explain the heat capacity of solids (Debye T^3 law, with 4.8e-5 J/mol/K^4 T^3 for copper) and of electrons (the Fermi energy of copper is 7.0 eV, so electrons are degenerate up to 81 000 K and contribute only a linear term); mean-field theory of the Ising model gives T_c = zJ/k_B = 4 J/k_B for the square lattice, too high by 76 per cent compared with the exact 2.269, and Monte Carlo corrects it.</li>
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Check your understanding<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
-            <details>
-                <summary>At what temperature is the excited state of a two-level defect with &epsilon; = 1 eV populated at 1%?</summary>
-                <p>Solve exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)/(1 + exp(&minus;&epsilon;/<em>k</em><sub>B</sub><em>T</em>)) = 0.01, which gives &epsilon;/<em>k</em><sub>B</sub><em>T</em> &asymp; 4.6, so <em>T</em> &asymp; 11 600 K / 4.6 &asymp; 2 500 K (using 1 eV/<em>k</em><sub>B</sub> &asymp; 11 600 K). Even at high temperature the excited state stays rare for such a large gap.</p>
-            </details>
-            <details>
-                <summary>Why does classical MD overestimate the heat capacity of a solid at low temperature?</summary>
-                <p>Classical equipartition gives each oscillator energy <em>k</em><sub>B</sub><em>T</em> at every temperature, so <em>C</em><sub>V</sub> = 3<em>Nk</em><sub>B</sub>. In a real solid, modes with &hbar;&omega; larger than <em>k</em><sub>B</sub><em>T</em> are not excited, so <em>C</em><sub>V</sub> falls below this value as the temperature drops.</p>
-            </details>
-            <details>
-                <summary>A run of 10<sup>6</sup> frames has a correlation time of 10<sup>3</sup> frames. About how many independent samples is that?</summary>
-                <p>Roughly <em>M</em>/(2&tau;) = 10<sup>6</sup>/(2&times;10<sup>3</sup>) = 500 independent samples, so the standard error is about &sigma;/&radic;500, not &sigma;/&radic;10<sup>6</sup>.</p>
-            </details>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="pph301-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Two Einstein solids share $q=6$ quanta: solid A has $N_A=4$ oscillators and solid B has $N_B=2$. (a) Compute the multiplicity for each $q_A=0, \ldots, 6$ and check that they sum to $\Omega(6,6)=462$. (b) Which division is most probable and with what probability? (c) What is the probability that A holds at most one quantum?</p>
+            <details class="hint"><summary>Hint</summary><p>$\Omega(N,q)=\binom{q+N-1}{q}$, and the combined multiplicity is $\Omega(4,q_A)\,\Omega(2,6-q_A)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Omega(4,q_A)=1$, $4$, $10$, $20$, $35$, $56$, $84$ and $\Omega(2,q_B)=q_B+1=7$, $6$, $5$, $4$, $3$, $2$, $1$ for $q_A=0, \ldots, 6$, so the products are $7$, $\,24$, $\,50$, $\,80$, $\,105$, $\,112$, $\,84$; the sum is $7+24+50+80+105+112+84=462=\binom{11}{6}$ &check;. (b) The most probable division is $q_A=5$ with $112$ microstates, $112/462=24.2\%$ (the distribution is skewed, so its maximum is above its mean: the mean of $q_A$ is $(24+100+240+420+560+504)/462=4.0$, the equipartition value $\tfrac{N_A}{N_A+N_B}q$, because A has twice as many oscillators as B). (c) $(7+24)/462=6.7\%$.</p>
+            <p class="answer">(a) $7$, $24$, $50$, $80$, $105$, $112$, $84$  (b) $q_A=5$, $24.2\%$  (c) $6.7\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>$N$ independent two-level defects have a splitting $\varepsilon=0.050$ eV. At $T=300$ K, find (a) the fraction in the excited state, (b) the entropy per defect in units of $k_\mathrm B$, and (c) the temperature at which the heat capacity is greatest.</p>
+            <details class="hint"><summary>Hint</summary><p>$\varepsilon/k_\mathrm B=580.2$ K for $0.050$ eV. The entropy of a two-state system with populations $p$ and $1-p$ is $-k_\mathrm B[p\ln p+(1-p)\ln(1-p)]$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\varepsilon/k_\mathrm BT=0.050/0.02585=1.934$, so $p=1/(e^{1.934}+1)=0.1263$. (b) $S/Nk_\mathrm B=-[0.1263\ln0.1263+0.8737\ln0.8737]=0.2605+0.1188=0.3793$ (out of the maximum $\ln2=0.693$ at infinite temperature). (c) The Schottky maximum is at $k_\mathrm BT=0.4167\varepsilon$, i.e. $T=0.4167\times580.2=242$ K, where $C=0.4392\,Nk_\mathrm B$. At $300$ K, $k_\mathrm BT/\varepsilon=0.517$ and $C=0.41\,Nk_\mathrm B$ (just below the peak).</p>
+            <p class="answer">(a) $0.126$  (b) $0.379\,k_\mathrm B$  (c) $242$ K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>Diamond is an Einstein solid with $\theta_E=1320$ K. (a) Compute the molar heat capacity $C=3R\,(\theta_E/T)^2e^{\theta_E/T}/(e^{\theta_E/T}-1)^2$ at $100$, $300$ and $1000$ K. (b) Compare with $3R$ and explain why diamond is far from Dulong&ndash;Petit at room temperature. (c) What is the energy per atom at $T=0$ if $\hbar\omega=k_\mathrm B\theta_E$?</p>
+            <details class="hint"><summary>Hint</summary><p>At $300$ K, $x=\theta_E/T=4.4$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) At $100$ K ($x=13.2$): $C=3R\cdot174\,e^{13.2}/(e^{13.2}-1)^2\approx3R\cdot174e^{-13.2}=0.01$ J/(mol K). At $300$ K ($x=4.4$): $f=19.36\times81.45/80.45^2=0.2437$, $C=3(8.314)(0.2437)=6.08$ J/(mol K) (measured $6.1$ J/(mol K): the Einstein model works well here). At $1000$ K ($x=1.32$): $f=0.867$, $C=21.6$ J/(mol K). (b) The Dulong&ndash;Petit value is $3R=24.9$ J/(mol K). Diamond has very stiff bonds and light atoms, so the quanta of vibration are large ($k_\mathrm B\theta_E=0.114$ eV, against $k_\mathrm BT=0.026$ eV at $300$ K): most vibrational modes are frozen out. Lead, with $\theta\approx100$ K, is fully classical at $300$ K. (c) The zero-point energy is $3\times\tfrac12\hbar\omega=\tfrac32k_\mathrm B\theta_E=0.171$ eV per atom (three oscillators).</p>
+            <p class="answer">(a) $0.01$, $6.08$, $21.6$ J/(mol K)  (b) modes frozen out ($k_\mathrm B\theta_E\gg k_\mathrm BT$)  (c) $0.171$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Use the Sackur&ndash;Tetrode equation at $298.15$ K and $1$ bar to compute the molar entropy of helium ($4.0026$ u) and of xenon ($131.29$ u). (a) Give the difference and relate it to the masses. (b) The experimental values are $126.15$ and $169.68$ J/(mol K): comment. (c) What is the entropy change when one mole of argon expands isothermally to twice its volume?</p>
+            <details class="hint"><summary>Hint</summary><p>$S=Nk_\mathrm B[\ln(V/N\lambda^3)+5/2]$ with $\lambda\propto m^{-1/2}$, so at fixed $T,p$, $S\propto\tfrac32R\ln m$ up to a constant.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The formula gives $S(\mathrm{He})=126.15$ and $S(\mathrm{Xe})=169.69$ J/(mol K). The difference $43.5$ J/(mol K) equals $\tfrac32R\ln(m_\mathrm{Xe}/m_\mathrm{He})=1.5(8.314)\ln(32.80)=43.5$: heavier atoms have a smaller thermal wavelength $\lambda\propto m^{-1/2}$, hence more states in the same volume ($\Omega\propto\lambda^{-3N}$). (b) The calculation reproduces the calorimetric values to $0.01$ J/(mol K) for both gases, using no adjustable parameter: this is a precision test of statistical mechanics including the $1/N!$ factor (without it the entropy would be wrong by $R(\ln N_\mathrm A-1)\approx450$ J/(mol K)). (c) $\Delta S=R\ln2=5.76$ J/(mol K) (the entropy of mixing a mole into twice the volume, independent of the gas).</p>
+            <p class="answer">(a) $126.15$, $169.69$; difference $43.5=\tfrac32R\ln(m_\mathrm{Xe}/m_\mathrm{He})$  (b) agrees to $0.01$  (c) $5.76$ J/(mol K)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Core</span></div>
+            <p>A molecular-dynamics simulation of $N=500$ atoms in the canonical ensemble at $T=300$ K has total energy with standard deviation $0.90$ eV. (a) Compute $C_V$ per atom in units of $k_\mathrm B$. (b) Is the result plausible for a solid? (c) By what factor does the standard deviation of $E$ change if the system is made four times larger (at the same $T$ and the same $C_V$ per atom)?</p>
+            <details class="hint"><summary>Hint</summary><p>$C_V=\langle\delta E^2\rangle/k_\mathrm BT^2$, so $C_V/k_\mathrm B=\sigma_E^2/(k_\mathrm BT)^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $k_\mathrm BT=0.02585$ eV, so $C_V/k_\mathrm B=0.81/6.68\times10^{-4}=1212$ for the whole system and $1212/500=2.42$ per atom. (b) Plausible: a classical harmonic solid has $3k_\mathrm B$ per atom (Dulong&ndash;Petit) and anharmonic or quantum effects can lower it (real copper at $300$ K: $2.8\,k_\mathrm B$, i.e. $23.4$ J/mol/K; a value of $2.4$ would indicate a soft material, or an energy that includes thermostat artefacts). A value above $3$ would suggest anharmonicity, defects or an error. (c) $\sigma_E\propto\sqrt N$ for fixed $T$ and $C_V/N$, so it doubles; the relative fluctuation $\sigma_E/\langle E\rangle$ halves. This is why very small boxes show large scatter in thermodynamic averages.</p>
+            <p class="answer">(a) $2.42\,k_\mathrm B$ per atom  (b) plausible  (c) $\sigma_E$ doubles</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-6">
+            <div class="p-head"><span class="p-num">Problem 6</span><span class="p-level">Core</span></div>
+            <p>The vacancy in aluminium has $E_f=0.67$ eV and $S_f=0.6\,k_\mathrm B$. (a) Compute the equilibrium vacancy fraction at the melting point ($933$ K) and at $300$ K. (b) How many vacancies are there per cm$^3$ at $933$ K ($6.02\times10^{22}$ atoms/cm$^3$)? (c) The activation energy of self-diffusion of Al is $1.3$ eV: how is it related to $E_f$?</p>
+            <details class="hint"><summary>Hint</summary><p>$n/N=e^{S_f/k_\mathrm B}e^{-E_f/k_\mathrm BT}$, with $k_\mathrm B=8.617\times10^{-5}$ eV/K.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) At $933$ K, $E_f/k_\mathrm BT=0.67/0.08040=8.33$, $e^{-8.33}=2.40\times10^{-4}$, times $e^{0.6}=1.82$: $n/N=4.4\times10^{-4}$. At $300$ K, $E_f/k_\mathrm BT=25.9$ and $n/N=1.0\times10^{-11}$. (b) $4.4\times10^{-4}\times6.02\times10^{22}=2.6\times10^{19}$ cm$^{-3}$. (c) The diffusion coefficient is proportional to the product of the vacancy fraction and the rate of vacancy jumps, $D\propto\exp[-(E_f+E_m)/k_\mathrm BT]$, where $E_m$ is the migration energy; with $E_f=0.67$ eV the migration energy is about $1.3-0.67=0.6$ eV. At $300$ K the number of vacancies is negligible and diffusion is extremely slow, which is why aluminium alloys are annealed at high temperature.</p>
+            <p class="answer">(a) $4.4\times10^{-4}$ at $933$ K; $1\times10^{-11}$ at $300$ K  (b) $2.6\times10^{19}$ cm$^{-3}$  (c) $Q=E_f+E_m$, $E_m\approx0.6$ eV</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-7">
+            <div class="p-head"><span class="p-num">Problem 7</span><span class="p-level">Core</span></div>
+            <p>Aluminium has three conduction electrons per atom and $n=18.1\times10^{28}$ m$^{-3}$. (a) Find $E_F$ and $T_F$. (b) What fraction of the electrons can be thermally excited at $300$ K? (c) Estimate the electronic heat capacity coefficient $\gamma=\tfrac{\pi^2}2R/T_F$ per mole of electrons; the measured value for aluminium is $1.35$ mJ/(mol K$^2$) per mole of atoms.</p>
+            <details class="hint"><summary>Hint</summary><p>$E_F=\dfrac{\hbar^2}{2m_e}(3\pi^2n)^{2/3}$; per mole of atoms there are $3$ moles of electrons.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $E_F=11.67$ eV ($=1.87\times10^{-18}$ J), $T_F=1.35\times10^5$ K. (b) The excitable fraction is about $\tfrac32k_\mathrm BT/E_F=1.5\times0.02585/11.67=0.33\%$ (the order of $T/T_F$). (c) For one mole of electrons $\gamma=\tfrac{\pi^2}2(8.314)/(1.354\times10^5)=0.303$ mJ/(mol K$^2$); there are three moles of electrons per mole of Al atoms, so $\gamma=0.91$ mJ/(mol K$^2$) per mole of atoms, compared with $1.35$ measured: the measured value is $1.5$ times larger, again from electron&ndash;phonon and electron&ndash;electron interactions (thermal mass $m^*\approx1.5\,m_e$).</p>
+            <p class="answer">(a) $11.7$ eV, $1.35\times10^5$ K  (b) $\approx0.3\%$  (c) $0.91$ mJ/(mol K$^2$) (measured $1.35$)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-8">
+            <div class="p-head"><span class="p-num">Problem 8</span><span class="p-level">Core</span></div>
+            <p>At low temperature the molar heat capacity of a metal is $C=\gamma T+\beta T^3$. A measurement gives $C/T=0.888$ mJ/(mol K$^2$) at $T^2=4$ K$^2$ and $1.466$ mJ/(mol K$^2$) at $T^2=16$ K$^2$. (a) Find $\gamma$ and $\beta$. (b) Find the Debye temperature from $\beta=12\pi^4R/(5\theta_D^3)$. (c) At what temperature are the two contributions equal?</p>
+            <details class="hint"><summary>Hint</summary><p>$C/T=\gamma+\beta T^2$ is a straight line in $T^2$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The slope is $\beta=(1.466-0.888)/(16-4)=0.0482$ mJ/(mol K$^4$) $=4.82\times10^{-5}$ J/(mol K$^4$) and the intercept $\gamma=0.888-4(0.0482)=0.695$ mJ/(mol K$^2$). (b) $\theta_D=[12\pi^4R/(5\beta)]^{1/3}=[12(97.41)(8.314)/(5\times4.82\times10^{-5})]^{1/3}=(4.03\times10^7)^{1/3}=343$ K: the Debye temperature of copper. (c) $\gamma T=\beta T^3$ at $T=\sqrt{\gamma/\beta}=\sqrt{0.695/0.0482}=3.8$ K.</p>
+            <p class="answer">(a) $\gamma=0.695$ mJ/(mol K$^2$), $\beta=4.82\times10^{-5}$ J/(mol K$^4$)  (b) $343$ K  (c) $3.8$ K</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-9">
+            <div class="p-head"><span class="p-num">Problem 9</span><span class="p-level">Challenge</span></div>
+            <p>(a) Derive the mean-field critical temperature $T_c=zJ/k_\mathrm B$ of the Ising model from $m=\tanh(zJm/k_\mathrm BT)$. (b) For the square lattice, solve for $m$ at $T=2.0$, $3.0$ and $3.8$ in units of $J/k_\mathrm B$ and compare at $T=2.0$ with the exact value $0.9113$. (c) Using the expansion $\tanh y\approx y-y^3/3$, show that $m\approx\sqrt{3(1-T/T_c)}$ near $T_c$ and evaluate it at $T=3.8$.</p>
+            <details class="hint"><summary>Hint</summary><p>A nonzero solution exists when the slope of $\tanh(m/\tau)$ at the origin exceeds $1$, $\tau=k_\mathrm BT/zJ$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Near $m=0$, $\tanh(m/\tau)\approx m/\tau$, so the equation $m=m/\tau$ has the slope $1/\tau$ at the origin; for $\tau&lt;1$ the curve starts above the line $y=m$ and intersects it again at finite $m$ (while $\tanh$ saturates at $1$). At $\tau=1$, $k_\mathrm BT_c=zJ$. (b) Numerically, with $z=4$: $T=2.0$: $m=\tanh(2m)\Rightarrow m=0.9575$; $T=3.0$: $m=0.7755$; $T=3.8$: $m=0.3795$. At $T=2.0$ the exact value is $0.9113$ (and the Monte Carlo of LAB 504 gives $0.910$): the mean-field value is $5\%$ too high, and at $T=3.0$ the exact lattice is already nearly disordered ($m\approx0.1$ in a finite lattice, where mean field predicts $0.78$). (c) $m=\tanh(m/\tau)\approx m/\tau-m^3/3\tau^3$ gives $1=1/\tau-m^2/3\tau^3$, hence $m^2=3\tau^2(1-\tau)\approx3(1-\tau)$ near $\tau=1$ (here $\tau=T/T_c$). At $T=3.8$: $\tau=0.95$ and $m\approx\sqrt{3(0.05)}=0.387$, close to the exact mean-field solution $0.3795$.</p>
+            <p class="answer">(a) $T_c=zJ/k_\mathrm B$  (b) $0.9575$, $0.7755$, $0.3795$ (exact at $T=2$: $0.911$)  (c) $m\approx\sqrt{3(1-T/T_c)}=0.387$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-10">
+            <div class="p-head"><span class="p-num">Problem 10</span><span class="p-level">Challenge</span></div>
+            <p>For a regular solution with $\Omega=14\,000$ J/mol (Worked example 6.1), (a) show that the critical temperature is $T_c=\Omega/2R$ and (b) compute the spinodal compositions at $T=700$ K. (c) A solution of composition $x=0.30$ is quenched from high temperature to $700$ K. Is it inside the spinodal? What about $x=0.20$?</p>
+            <details class="hint"><summary>Hint</summary><p>The spinodal is where $\partial^2\Delta G/\partial x^2=RT/[x(1-x)]-2\Omega=0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\partial^2\Delta G/\partial x^2=RT/[x(1-x)]-2\Omega$ has the minimum value $4RT-2\Omega$ at $x=\tfrac12$, and it is negative for some $x$ only if $4RT&lt;2\Omega$, i.e. below $T_c=\Omega/2R=842$ K. (b) At $700$ K, $x(1-x)=RT/2\Omega=8.314\times700/28\,000=0.2079$; $x=\tfrac12[1-\sqrt{1-0.8316}]=\tfrac12(1-0.4103)=0.295$, and $0.705$ by symmetry. (c) $x=0.30$ is just inside the spinodal ($0.295&lt;0.30&lt;0.705$): unstable to composition fluctuations, it decomposes by spinodal decomposition. $x=0.20$ is outside the spinodal but inside the miscibility gap (the binodal at $700$ K is at $0.17$, from $\ln\frac x{1-x}=-\frac{\Omega}{RT}(1-2x)$), so it is metastable and separates only by nucleation: slower and with a different microstructure.</p>
+            <p class="answer">(a) $T_c=\Omega/2R=842$ K  (b) $0.295$ and $0.705$  (c) $0.30$ spinodal; $0.20$ metastable</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-11">
+            <div class="p-head"><span class="p-num">Problem 11</span><span class="p-level">Challenge</span></div>
+            <p>A simulation yields $10^5$ samples of an energy with $\sigma=2.0$ eV and autocorrelation function $C(t)=e^{-t/\tau}$ with $\tau=50$ sampling intervals. (a) Compute $\tau_\mathrm{int}$, the number of independent samples and the statistical error of the mean energy. (b) What block length makes block averaging reliable? (c) If the autocorrelation time at a second temperature is $5$ intervals, how much shorter can the run be for the same error?</p>
+            <details class="hint"><summary>Hint</summary><p>For $C(t)=e^{-t/\tau}$ the sum is $\tau_\mathrm{int}=\tfrac12+\sum_{t\ge1}e^{-t/\tau}\approx\tau$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\tau_\mathrm{int}=\tfrac12+1/(e^{1/50}-1)=50.5$ intervals ($\approx\tau$). $N_\mathrm{eff}=10^5/(2\times50.5)=990$. Error $=2.0\sqrt{2\times50.5/10^5}=0.064$ eV. (b) The blocks must be long compared with $\tau$: at least $5$&ndash;$10\tau$, i.e. $250$&ndash;$500$ intervals, which gives $200$&ndash;$400$ blocks from the run (enough to estimate the standard error of the block means to $5\%$). (c) The error at fixed $\sigma$ depends on $N/\tau_\mathrm{int}$: with $\tau$ ten times smaller the same error is obtained with $N=10^4$, a run ten times shorter: the cost of a simulation is dominated by the slowest relaxation.</p>
+            <p class="answer">(a) $\tau_\mathrm{int}=50.5$, $N_\mathrm{eff}=990$, error $0.064$ eV  (b) $\ge250$&ndash;$500$ intervals  (c) ten times shorter</p>
+            </details>
+            </div>
+
+            <div class="problem" id="pph301-12">
+            <div class="p-head"><span class="p-num">Problem 12</span><span class="p-level">Challenge</span></div>
+            <p>Show that the self-diffusion coefficient from the Green&ndash;Kubo formula agrees with the Einstein relation for a one-dimensional walker whose velocity correlation is $\langle v(0)v(t)\rangle=\langle v^2\rangle e^{-|t|/\tau}$. (a) Compute $D$ from $D=\int_0^\infty\langle v(0)v(t)\rangle\mathrm dt$. (b) Compute the mean-square displacement $\langle x^2(t)\rangle=2\int_0^t(t-s)\langle v(0)v(s)\rangle\,\mathrm ds$ and its long-time limit. (c) What is the short-time behaviour and what does it mean physically?</p>
+            <details class="hint"><summary>Hint</summary><p>$\int_0^te^{-s/\tau}\mathrm ds=\tau(1-e^{-t/\tau})$ and $\int_0^tse^{-s/\tau}\mathrm ds=\tau^2-\tau(t+\tau)e^{-t/\tau}$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) In one dimension $D=\int_0^\infty\langle v(0)v(t)\rangle\mathrm dt=\langle v^2\rangle\tau$ (with $\langle v^2\rangle=k_\mathrm BT/m$ this is the Einstein relation $D=k_\mathrm BT\tau/m=k_\mathrm BT/\gamma_f$ with a friction coefficient $\gamma_f=m/\tau$). (b) $\int_0^t(t-s)e^{-s/\tau}\mathrm ds=t\tau(1-e^{-t/\tau})-[\tau^2-\tau(t+\tau)e^{-t/\tau}]=t\tau-\tau^2+\tau^2e^{-t/\tau}$. So $\langle x^2\rangle=2\langle v^2\rangle\tau[t-\tau(1-e^{-t/\tau})]\to2Dt-2D\tau$ at long times: a straight line of slope $2D$, which confirms that $D$ from the slope of the mean-square displacement and from the Green&ndash;Kubo integral are the same. (c) For $t\ll\tau$, $e^{-t/\tau}\approx1-t/\tau+t^2/2\tau^2$ gives $\langle x^2\rangle\approx\langle v^2\rangle t^2$: <em>ballistic</em> motion (the particle has not yet forgotten its velocity), crossing over to <em>diffusive</em> motion ($\propto t$) at $t\gg\tau$. This is why the mean-square displacement in MD (LAB 502) must be fitted after the ballistic regime, in the linear part.</p>
+            <p class="answer">(a) $D=\langle v^2\rangle\tau$  (b) $\langle x^2\rangle=2D[t-\tau(1-e^{-t/\tau})]\to2Dt-2D\tau$  (c) ballistic $\propto t^2$ then diffusive</p>
+            </details>
+            </div>
+
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="qph301-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Basic</span></div>
+            <p>State the fundamental postulate of statistical mechanics and use it to explain why heat flows from hot to cold.</p>
+            <details class="solution"><summary>Solution</summary><p>An isolated system in equilibrium is equally likely to be in any accessible microstate, so macrostates occur with probability proportional to their multiplicity. When two systems exchange energy, the total multiplicity $\Omega_A(U_A)\Omega_B(U-U_A)$ is overwhelmingly largest where $\partial S_A/\partial U_A=\partial S_B/\partial U_B$, i.e. at equal temperature. Starting from unequal temperatures the energy moves to the state of larger total multiplicity: the hotter system (smaller $\partial S/\partial U$) loses energy to the colder one, because that increases the total entropy.</p></details>
+            </div>
+            <div class="problem" id="qph301-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Basic</span></div>
+            <p>A system has energy levels $0$, $\varepsilon$ and $\varepsilon$ (a doubly degenerate excited level). Write $Z$ and the probability of the ground level, and give the limits for $T\to0$ and $T\to\infty$.</p>
+            <details class="solution"><summary>Solution</summary><p>$Z=1+2e^{-\varepsilon/k_\mathrm BT}$, so $P_0=1/Z$. For $T\to0$, $P_0\to1$ (all in the ground state); for $T\to\infty$, $Z\to3$ and $P_0\to\tfrac13$: all three states equally likely (the degeneracy counts states, not levels). The entropy tends to $k_\mathrm B\ln3$.</p></details>
+            </div>
+            <div class="problem" id="qph301-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Core</span></div>
+            <p>Explain how $C_V$ can be obtained from the fluctuations of the energy in a canonical simulation, and why a microcanonical run cannot give the same variance.</p>
+            <details class="solution"><summary>Solution</summary><p>$C_V=\langle(\delta E)^2\rangle/k_\mathrm BT^2$: it follows from differentiating $\langle E\rangle=-\partial\ln Z/\partial\beta$ twice. In the canonical ensemble $E$ fluctuates because of the contact with the bath; in an NVE run $E$ is constant (apart from integration drift), so its variance is zero and $C_V$ must be obtained from the fluctuations of the kinetic energy (Lebowitz&ndash;Percus&ndash;Verlet formula) or by differentiating the mean energy of several runs. Thermostats must be correct canonical ones for the formula to apply.</p></details>
+            </div>
+            <div class="problem" id="qph301-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Core</span></div>
+            <p>Why does the Dulong&ndash;Petit law fail for diamond at room temperature, and why does the Einstein model fail at very low temperature while the Debye model works?</p>
+            <details class="solution"><summary>Solution</summary><p>The quanta of the vibrations of diamond ($k_\mathrm B\theta_E\approx0.11$ eV) are larger than $k_\mathrm BT=0.026$ eV at $300$ K, so most modes are frozen and $C=6.1$ J/(mol K)$\ll3R$. The Einstein model has all modes at one frequency, so at low $T$ the heat capacity decays exponentially, $\propto e^{-\theta_E/T}$; real solids have long-wavelength acoustic modes with frequencies going to zero ($\omega=ck$), which can always be excited and give the $T^3$ law of the Debye model (the density of modes grows as $\omega^2$).</p></details>
+            </div>
+            <div class="problem" id="qph301-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Core</span></div>
+            <p>The electrons of copper are described by $E_F=7.03$ eV. Explain why their heat capacity at $300$ K is only about $1\%$ of the classical value $\tfrac32k_\mathrm B$ per electron, and how the temperature dependence differs from that of the lattice.</p>
+            <details class="solution"><summary>Solution</summary><p>The electron gas is degenerate: only electrons within about $k_\mathrm BT$ of the Fermi level can change state, a fraction $\sim k_\mathrm BT/E_F=0.0037$ of them. Classical equipartition would give each electron $\tfrac32k_\mathrm B$; the quantum result is $\tfrac{\pi^2}{2}k_\mathrm B(T/T_F)$ per electron, i.e. a factor $\sim T/T_F=0.4\%$ ($0.0037\times\pi^2/3\approx1.2\%$ of $\tfrac32k_\mathrm B$). It is linear in $T$ while the lattice contribution goes as $T^3$ at low $T$ and saturates at $3R$ above $\theta_D$.</p></details>
+            </div>
+            <div class="problem" id="qph301-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Challenge</span></div>
+            <p>You run a Monte Carlo simulation of a binary alloy near its critical temperature. The energy autocorrelation time is $2000$ steps and you have $2\times10^6$ steps. How many independent samples do you have, and what would you do to improve the estimate of the error bar and the confidence in the run?</p>
+            <details class="solution"><summary>Solution</summary><p>$N_\mathrm{eff}=N/2\tau=2\times10^6/4000=500$. The error bar of the mean is $\sigma\sqrt{2\tau/N}=\sigma\times0.045$, not $\sigma\times7\times10^{-4}$. Improve: (i) run several independent chains from different initial states and seeds (this also tests ergodicity: a trapped chain would give a result different from the others), (ii) use block averaging with blocks of at least $10\tau=20\,000$ steps to get an error bar that does not depend on estimating $\tau$, (iii) consider a cluster algorithm or parallel tempering to reduce critical slowing down, and (iv) move away from $T_c$ for quantities that do not require it.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
-                <li>Chandler, D., <em>Introduction to Modern Statistical Mechanics</em>, Oxford University Press.</li>
-                <li>McQuarrie, D. A., <em>Statistical Mechanics</em>, University Science Books.</li>
-                <li>Tuckerman, M. E., <em>Statistical Mechanics: Theory and Molecular Simulation</em>, Oxford University Press.</li>
-                <li>Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press (free energies, ensembles, error analysis).</li>
-                <li>Frenkel, D. and Ladd, A. J. C., New Monte Carlo method to compute the free energy of arbitrary solids, <em>J. Chem. Phys.</em> 81, 3188 (1984).</li>
-                <li>Flyvbjerg, H. and Petersen, H. G., Error estimates on averages of correlated data, <em>J. Chem. Phys.</em> 91, 461 (1989).</li>
-                <li>Laio, A. and Parrinello, M., Escaping free-energy minima, <em>Proc. Natl. Acad. Sci. USA</em> 99, 12562 (2002).</li>
+                <li>Schroeder, D. V., <em>An Introduction to Thermal Physics</em>, Addison-Wesley: the best first course; Chapters 2&ndash;3 on multiplicity (the Einstein solid of Lecture 1) and Chapter 6 on the Boltzmann factor. Reif, F., <em>Fundamentals of Statistical and Thermal Physics</em>, McGraw-Hill: a rigorous alternative.</li>
+                <li>Kittel, C. and Kroemer, H., <em>Thermal Physics</em>, Freeman: concise, with the Fermi and Bose gases (Lecture 5) and the Ising model in Chapter 10. Pathria, R. K. and Beale, P. D., <em>Statistical Mechanics</em>, Academic Press: the graduate reference.</li>
+                <li>Chandler, D., <em>Introduction to Modern Statistical Mechanics</em>, Oxford University Press; Frenkel, D. and Smit, B., <em>Understanding Molecular Simulation</em>, Academic Press: the connection to simulation, fluctuations, free-energy methods and error analysis.</li>
+                <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Chapters 2&ndash;3 (Fermi gas) and 23 (phonon heat capacity); Callen, H. B., <em>Thermodynamics and an Introduction to Thermostatistics</em>, Wiley.</li>
+                <li>Sokal, A., &ldquo;Monte Carlo methods in statistical mechanics: foundations and new algorithms&rdquo;, lecture notes (1996): the clearest treatment of autocorrelation times and error analysis.</li>
+                <li>Labs for this unit: <a href="lab-ising-monte-carlo.html">LAB 504</a> (Ising model, fluctuations, autocorrelation), <a href="lab-md-lammps-argon.html">LAB 502</a> (MD of a fluid), <a href="lab-phonons-phonopy.html">LAB 301</a> (phonons and heat capacity). Next: <a href="thermodynamics-and-calphad.html">MSE 301</a>, which uses these results for materials phase equilibria.</li>
             </ul>
 
             <!-- pager:start -->
@@ -214,11 +457,13 @@
         <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
         <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
     </div></footer>
-    <script src="../assets/topics.js?v=953ae166"></script>
-    <script src="../assets/pathdata.js?v=a464f2e2"></script>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=3f9c906b"></script>
+    <script src="../assets/pathdata.js?v=8c9b2fd7"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>
-    <script src="../assets/demos.js?v=ca1d8edb" defer></script>
 </body>
 </html>
