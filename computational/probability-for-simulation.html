@@ -197,7 +197,7 @@
             <div class="example">
                 <strong>Worked example 6.1: sampling for kinetic Monte Carlo and MD</strong>
                 <p class="given">(a) Three events have rates $3,5,2\ \mathrm{s^{-1}}$. With $U_1=0.37$ and $U_2=0.65$ choose the next event and the time step. (b) Box&ndash;Muller with $U_1=0.3$, $U_2=0.6$. (c) The Gaussian velocity width for argon at $300$ K.</p>
-                <p>(a) The total rate is $10\ \mathrm{s^{-1}}$, so $\Delta t=-\ln(U_1)/10=0.0994$ s. The cumulative fractions are $0.3,\,0.8,\,1.0$; since $U_2=0.65$ lies between $0.3$ and $0.8$, event 2 is chosen (probability proportional to its rate). (b) $r=\sqrt{-2\ln0.3}=1.552$ and $\theta=2\pi(0.6)$, so $z_1=r\cos\theta=-1.255$ and $z_2=r\sin\theta=-0.912$, two independent standard normals. (c) Each velocity component has variance $k_\mathrm BT/m$: $\sqrt{1.381\times10^{-23}\times300/(39.95\times1.661\times10^{-27})}=250$ m/s.</p>
+                <p>(a) The total rate is $10\ \mathrm{s^{-1}}$, so $\Delta t=-\ln(U_1)/10=0.0994$ s. The cumulative fractions are $0.3,\,0.8,\,1.0$; since $U_2=0.65$ lies between $0.3$ and $0.8$, event 2 is chosen (probability proportional to its rate). (b) $r=\sqrt{-2\ln0.3}=1.552$ and $\theta=2\pi(0.6)$, so $z_1=r\cos\theta=-1.255$ and $z_2=r\sin\theta=-0.912$, two independent standard normals. (c) Each velocity component has variance $k_\mathrm BT/m$, so the standard deviation is $$\sqrt{\frac{1.381\times10^{-23}\times300}{39.95\times1.661\times10^{-27}}}=250\ \text{m/s}.$$</p>
             </div>
 
             <h2 id="rw">Lecture 7. Random walks and diffusion<a class="anchor" href="#rw" aria-label="Link to this section">#</a></h2>
@@ -436,7 +436,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=00ba2e79"></script>
+    <script src="../assets/topics.js?v=34d42aed"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>

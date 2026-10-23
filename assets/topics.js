@@ -184,7 +184,7 @@ window.MIBEM_TOPICS = [
       12
     ],
     "takeaways": [
-      "The course has twelve modules, each with explained concepts, derivations, worked examples, interactive figures and twelve graded problems with hints and full solutions.",
+      "The course has twelve modules, each organised as lectures with proofs and worked examples, interactive figures, a problem set of twelve graded problems with hints and full solutions, and a six-question unit quiz.",
       "Read in order if you can; otherwise follow a goal-based path (electronic structure, atomistic simulation, continuum and phase-field, or data and machine learning).",
       "Learning happens in the problems: attempt each on paper first, then use the hint, and only then read the solution.",
       "Your ticks are stored only in your browser; the table below counts them per module."
@@ -468,7 +468,7 @@ window.MIBEM_TOPICS = [
     "short": "Statistics",
     "part": "Maths course",
     "tone": "a",
-    "minutes": 26,
+    "minutes": 31,
     "title": "Statistics, error analysis and fitting",
     "blurb": "Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.",
     "builds": [
@@ -496,7 +496,7 @@ window.MIBEM_TOPICS = [
     "short": "Variational methods",
     "part": "Maths course",
     "tone": "b",
-    "minutes": 29,
+    "minutes": 34,
     "title": "Calculus of variations and optimisation",
     "blurb": "Functionals, the Euler-Lagrange equation, functional derivatives, weak forms, and gradient-based and Newton-type optimisation.",
     "builds": [

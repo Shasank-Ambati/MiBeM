@@ -36,15 +36,16 @@
         <aside class="toc">
             <strong>On this page</strong>
             <ol>
-                <li><a href="#functionals">1. Functionals</a></li>
-                <li><a href="#el">2. The Euler&ndash;Lagrange equation</a></li>
-                <li><a href="#funcderiv">3. Functional derivatives and gradient flows</a></li>
-                <li><a href="#rr">4. Variational principles in quantum mechanics: Rayleigh&ndash;Ritz</a></li>
-                <li><a href="#weak">5. Weak forms and the finite element method</a></li>
-                <li><a href="#opt">6. Optimisation algorithms</a></li>
-                <li><a href="#summary-m12">7. How the pieces fit together</a></li>
-                <li><a href="#check">8. Problems</a></li>
-                <li><a href="#refs">9. References and further reading</a></li>
+                <li><a href="#functionals">Lecture 1. Functionals</a></li>
+                <li><a href="#el">Lecture 2. The Euler&ndash;Lagrange equation</a></li>
+                <li><a href="#funcderiv">Lecture 3. Functional derivatives and gradient flows</a></li>
+                <li><a href="#rr">Lecture 4. Variational principles in quantum mechanics: Rayleigh&ndash;Ritz</a></li>
+                <li><a href="#weak">Lecture 5. Weak forms and the finite element method</a></li>
+                <li><a href="#opt">Lecture 6. Optimisation algorithms</a></li>
+                <li><a href="#summary-m12">Summary of the unit</a></li>
+                <li><a href="#check">Problem set</a></li>
+                <li><a href="#quiz">Unit quiz</a></li>
+                <li><a href="#refs">References and further reading</a></li>
             </ol>
         </aside>
 
@@ -58,7 +59,7 @@
 
             <!-- facts:start -->
 <dl class="facts">
-<div><dt>Reading time</dt><dd>about 29 min</dd></div>
+<div><dt>Reading time</dt><dd>about 34 min</dd></div>
 <div><dt>Builds on</dt><dd><a href="multivariable-calculus.html">M2. Calculus II</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a></dd></div>
 <div><dt>Leads to</dt><dd>&mdash;</dd></div>
 <div><dt>Category</dt><dd>Maths course</dd></div>
@@ -77,7 +78,11 @@
                 <strong>You need:</strong> <a href="multivariable-calculus.html">M2. Calculus II</a> (gradients, Hessians, Lagrange multipliers) and <a href="ordinary-differential-equations.html">M7. ODEs</a>.
             </div>
 
-            <h2 id="functionals">1. Functionals<a class="anchor" href="#functionals" aria-label="Link to this section">#</a></h2>
+            <div class="note"><strong>How this unit is organised</strong>
+            <p>It follows the format of a university course: 6 <strong>lectures</strong> develop the theory, each with proofs of the key facts and worked examples to try before reading the solution; the <strong>problem set</strong> (twelve problems with hints and full solutions) is your homework; and a timed <strong>unit quiz</strong> tests the whole unit. Lecture 2 (the Euler-Lagrange equation) and Lecture 5 (the weak form) underlie phase-field, DFT and finite element simulation. Allow about a week at six to eight hours.</p>
+            </div>
+
+            <h2 id="functionals">Lecture 1. Functionals<a class="anchor" href="#functionals" aria-label="Link to this section">#</a></h2>
             <p>A <strong>functional</strong> $F[y]$ assigns a number to a whole function $y(x)$. The square brackets mark the difference from an ordinary function. Examples:</p>
             <ul>
                 <li><strong>Length</strong> of a curve $y(x)$ from $a$ to $b$: $\displaystyle\int_a^b\sqrt{1+y'^2}\,\allowbreak \mathrm dx$.</li>
@@ -88,7 +93,13 @@
             </ul>
             <p>The task is to find the function that makes $F$ stationary, usually a minimum, subject to boundary conditions and possibly constraints.</p>
 
-            <h2 id="el">2. The Euler&ndash;Lagrange equation<a class="anchor" href="#el" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 1.1: comparing trial functions</strong>
+                <p class="given">Evaluate $F[y]=\int_0^1y'^2\,\mathrm dx$ with $y(0)=0$, $y(1)=1$ for $y=x$, $y=x^2$ and $y=x^3$. Which is smallest, and can you prove the straight line is the minimiser?</p>
+                <p>$y=x$: $F=\int_0^11\,\mathrm dx=1$. $y=x^2$: $F=\int_0^14x^2\,\mathrm dx=\tfrac43$. $y=x^3$: $F=\int_0^19x^4\,\mathrm dx=\tfrac95$. The line is lowest of the three. Proof: any admissible function is $y=x+\eta$ with $\eta(0)=\eta(1)=0$, and $F=\int(1+\eta')^2\mathrm dx=1+2\int\eta'\mathrm dx+\int\eta'^2\mathrm dx=1+2[\eta]_0^1+\int\eta'^2\mathrm dx=1+\int\eta'^2\mathrm dx\ge1$, with equality only when $\eta'=0$. This is the second-variation argument in miniature: the linear term in $\eta$ vanishes (stationarity) and the quadratic term is positive (a minimum).</p>
+            </div>
+
+            <h2 id="el">Lecture 2. The Euler&ndash;Lagrange equation<a class="anchor" href="#el" aria-label="Link to this section">#</a></h2>
             <p>Let $F[y]=\displaystyle\int_a^bL\bigl(x,y,y'\bigr)\,\allowbreak \mathrm dx$ with $y(a)$ and $y(b)$ fixed. Suppose $y$ is a minimiser and consider a nearby trial function $y+\varepsilon\eta$, where $\eta(x)$ is any smooth function with $\eta(a)=\eta(b)=0$. Then $F(\varepsilon)=F[y+\varepsilon\eta]$ is an ordinary function of $\varepsilon$ with a minimum at $\varepsilon=0$, so $\mathrm dF/\mathrm d\varepsilon|_0=0$ (<a href="calculus-single-variable.html">M1</a>). By the chain rule,
             $$0=\int_a^b\Bigl(\frac{\partial L}{\partial y}\eta+\frac{\partial L}{\partial y'}\eta'\Bigr)\mathrm dx=\int_a^b\Bigl(\frac{\partial L}{\partial y}-\frac{\mathrm d}{\mathrm dx}\frac{\partial L}{\partial y'}\Bigr)\eta\,\mathrm dx+\Bigl[\frac{\partial L}{\partial y'}\eta\Bigr]_a^b,$$
             after integrating the second term by parts. The boundary term vanishes because $\eta(a)=\eta(b)=0$. Since $\eta$ is arbitrary, the bracket must vanish identically (the <em>fundamental lemma</em>):
@@ -114,7 +125,13 @@
             <div class="demo" data-demo="interfacedemo"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
 
 
-            <h2 id="funcderiv">3. Functional derivatives and gradient flows<a class="anchor" href="#funcderiv" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 2.3: a bar with a free end</strong>
+                <p class="given">A bar of stiffness $\kappa$ and length $L$ is fixed at $x=0$, free at $x=L$, and carries a uniform load $f$. Minimise $J[u]=\int_0^L\bigl(\tfrac12\kappa u'^2-fu\bigr)\mathrm dx$.</p>
+                <p>The Euler&ndash;Lagrange equation is $\dfrac{\mathrm d}{\mathrm dx}(\kappa u')+f=0$, i.e. $\kappa u''=-f$. At $x=0$ the displacement is fixed, $u(0)=0$. At the free end $u$ is not prescribed, so the boundary term $\kappa u'\eta\big|_{L}$ must vanish for arbitrary $\eta(L)$: the <strong>natural boundary condition</strong> $u'(L)=0$ (zero stress at a free surface) appears on its own. Integrating, $u=\dfrac f\kappa\bigl(Lx-\tfrac12x^2\bigr)$, which has $u'(L)=0$ &check; and tip displacement $fL^2/(2\kappa)$. Fixing both ends instead gives $u=\dfrac f{2\kappa}x(L-x)$ with maximum $fL^2/(8\kappa)$, four times smaller at the midpoint than the tip of the cantilever-like bar: the free end is less constrained.</p>
+            </div>
+
+            <h2 id="funcderiv">Lecture 3. Functional derivatives and gradient flows<a class="anchor" href="#funcderiv" aria-label="Link to this section">#</a></h2>
             <p>For a functional of a field $c(\mathbf r)$ in several dimensions the first variation is
             $$\delta F=\int\frac{\delta F}{\delta c}\,\delta c\,\mathrm dV,$$
             which defines the <strong>functional derivative</strong> $\delta F/\delta c(\mathbf r)$: the rate of change of $F$ when $c$ is changed at the point $\mathbf r$. It is the continuum analogue of the gradient $\partial F/\partial c_i$ of a function of many variables. For the Ginzburg&ndash;Landau functional $F=\int[f(c)+\tfrac12\kappa|\nabla c|^2]\mathrm dV$:
@@ -129,7 +146,13 @@
             $$\frac{\mathrm dF}{\mathrm dt}=\int\frac{\delta F}{\delta c}\frac{\partial c}{\partial t}\mathrm dV=\begin{cases}-M\displaystyle\int\Bigl(\frac{\delta F}{\delta\eta}\Bigr)^2\mathrm dV\le0&amp;\text{(Allen&ndash;Cahn)},\\[2mm]-M\displaystyle\int|\nabla\mu|^2\mathrm dV\le0&amp;\text{(Cahn&ndash;Hilliard, by parts)}.\end{cases}$$
             The energy never increases and stops changing only when $\delta F/\delta c$ (or $\nabla\mu$) vanishes. This guarantees that a numerical scheme with a decreasing energy is behaving, and it is the thermodynamic consistency that makes phase-field models robust. (The time evolution is the ODE gradient flow $\dot{\mathbf x}=-\nabla E$ of <a href="ordinary-differential-equations.html">M7</a>, with the energy minima as stable fixed points.)</p>
 
-            <h2 id="rr">4. Variational principles in quantum mechanics: Rayleigh&ndash;Ritz<a class="anchor" href="#rr" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 3.1: relaxing near a pure phase</strong>
+                <p class="given">For $f=\tfrac A4(1-c^2)^2$ and the Allen&ndash;Cahn equation $\partial_tc=-M[f'(c)-\kappa\nabla^2c]$, find how a small perturbation of the uniform state $c=1$ relaxes.</p>
+                <p>$f'(c)=Ac(c^2-1)$ and $f''(c)=A(3c^2-1)$, so $f''(1)=2A$. Put $c=1+\delta$ and linearise: $\partial_t\delta=-M[2A\delta-\kappa\nabla^2\delta]$. A Fourier mode $e^{ikx}$ decays as $e^{-\sigma t}$ with $\sigma=M(2A+\kappa k^2)$. With the interface width $w=\sqrt{2\kappa/A}$ this is $\sigma=2AM\bigl(1+k^2w^2/4\bigr)$: long wavelengths relax at the rate $2AM$ and wavelengths shorter than the interface width are damped faster. For $A=1$, $\kappa=0.5$ ($w=1$), $M=1$ and $k=2$: $\sigma=2+0.5\times4=4$. Compare with the Cahn&ndash;Hilliard result of M9, where in the unstable region $f''&lt;0$ and the sign flips for long waves.</p>
+            </div>
+
+            <h2 id="rr">Lecture 4. Variational principles in quantum mechanics: Rayleigh&ndash;Ritz<a class="anchor" href="#rr" aria-label="Link to this section">#</a></h2>
             <p>The ground-state energy $E_0$ of a Hamiltonian $\hat H$ is the minimum of the energy functional over all normalised wavefunctions:
             $$E[\psi]=\frac{\langle\psi|\hat H|\psi\rangle}{\langle\psi|\psi\rangle}\ \ge\ E_0 .$$
             (Expand $\psi$ in eigenstates $\psi=\sum c_n\phi_n$: $E[\psi]=\sum|c_n|^2E_n/\sum|c_n|^2\ge E_0$, since every $E_n\ge E_0$.) This is the <strong>Rayleigh quotient</strong> of <a href="eigenvalues-and-decompositions.html">M5</a>. Two consequences. First, <strong>the eigenproblem is the Euler&ndash;Lagrange equation</strong>: minimising $\langle\psi|\hat H|\psi\rangle$ subject to the constraint $\langle\psi|\psi\rangle=1$ with a Lagrange multiplier $E$ gives $\delta\bigl(\langle\psi|\hat H|\psi\rangle-E\langle\psi|\psi\rangle\bigr)=0$, i.e. $\hat H\psi=E\psi$. Second, <strong>any trial function gives an upper bound</strong> on $E_0$: choose a family $\psi(\alpha)$ with a few variational parameters, minimise $E(\alpha)$ and you obtain the best approximation within that family, always above the truth. The error in the energy is second order in the error of the wavefunction, so even rough trial functions give good energies. Expanding $\psi$ in a finite basis, $\psi=\sum c_\mu\phi_\mu$, and minimising gives the matrix eigenproblem $H\mathbf c=ES\mathbf c$ of <a href="eigenvalues-and-decompositions.html">M5</a>, and the energy can only decrease as the basis grows: the variational principle that makes basis-set convergence systematic. The Hohenberg&ndash;Kohn theorem makes the analogous statement for the density, $E[n]\ge E_0$, which is the foundation of <a href="density-functional-theory.html">DFT</a>.</p>
@@ -139,7 +162,13 @@
                 <p>For this Gaussian, $\langle T\rangle=\dfrac{\hbar^2\alpha}{2m}$ and $\langle V\rangle=\dfrac{m\omega^2}{8\alpha}$ (from the Gaussian integrals of <a href="calculus-single-variable.html">M1</a>). So $E(\alpha)=\dfrac{\hbar^2\alpha}{2m}+\dfrac{m\omega^2}{8\alpha}$, with $E'(\alpha)=0$ at $\alpha=\dfrac{m\omega}{2\hbar}$ and $E=\dfrac12\hbar\omega$: the exact ground-state energy, because the trial family contains the exact ground state. The balance between kinetic energy (which favours spreading, small $\alpha$) and potential energy (which favours confinement, large $\alpha$) fixes the width. With a family that does <em>not</em> contain the exact answer, the bound is strict (Problem 5).</p>
             </div>
 
-            <h2 id="weak">5. Weak forms and the finite element method<a class="anchor" href="#weak" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 4.2: a trial function for a particle in a box</strong>
+                <p class="given">Use $\psi=x(L-x)$ to estimate the ground-state energy of a particle in the box $0&lt;x&lt;L$ (units: $\hbar^2/m$ for energy, with $\hat H=-\tfrac{\hbar^2}{2m}\partial_x^2$ and $\psi(0)=\psi(L)=0$).</p>
+                <p>Integrating by parts, $\langle\psi|\hat H|\psi\rangle=\dfrac{\hbar^2}{2m}\int\psi'^2\,\allowbreak \mathrm dx$. With $\psi'=L-2x$: $\int_0^L(L-2x)^2\mathrm dx=L^3/3$ and $\int_0^L\psi^2\mathrm dx=L^5/30$. The ratio is $10/L^2$, so $E[\psi]=\dfrac{10\hbar^2}{2mL^2}=5.000\,\allowbreak \dfrac{\hbar^2}{mL^2}$. The exact ground state is $\dfrac{\pi^2\hbar^2}{2mL^2}=4.935\,\allowbreak \dfrac{\hbar^2}{mL^2}$. The trial energy is above the exact one (as the variational principle demands) and only $1.3\%$ too high, although the parabola looks quite different from the sine: errors in energy are second order in the error in the wavefunction. Adding a second function, $x^2(L-x)^2$, and diagonalising the $2\times2$ matrix of M5 improves this to within $0.0015\%$ of the exact value.</p>
+            </div>
+
+            <h2 id="weak">Lecture 5. Weak forms and the finite element method<a class="anchor" href="#weak" aria-label="Link to this section">#</a></h2>
             <p>Many equations of materials modelling are Euler&ndash;Lagrange equations of an energy. The finite element method (FEM) exploits this by working directly with the integral form, avoiding second derivatives and handling complicated geometries and discontinuous coefficients. Consider the one-dimensional problem for a bar with stiffness $\kappa$ under a distributed load $f$ (or steady diffusion with a source):
             $$-\bigl(\kappa u'\bigr)'=f\ \ \text{on }(0,L),\qquad u(0)=u(L)=0\qquad\text{(strong form).}$$
             Multiply by an arbitrary <strong>test function</strong> $v(x)$ with $v(0)=v(L)=0$ and integrate. Integrating the left side by parts moves one derivative onto $v$:
@@ -155,7 +184,13 @@
                 <p>The three interior nodes at $0.25,0.5,0.75$ give $K=\dfrac1h\begin{pmatrix}2&amp;-1&amp;0\\-1&amp;2&amp;-1\\0&amp;-1&amp;2\end{pmatrix}$ and, since $\int\varphi_i\,\mathrm dx=h$, $F_i=h$. Multiplying by $h$: $\begin{pmatrix}2&amp;-1&amp;0\\-1&amp;2&amp;-1\\0&amp;-1&amp;2\end{pmatrix}\mathbf u=h^2\begin{pmatrix}1\\1\\1\end{pmatrix}=0.0625\begin{pmatrix}1\\1\\1\end{pmatrix}$. By symmetry $u_1=u_3$; the first two equations give $u_2=u_1+0.03125$ and $u_1=0.09375$, $u_2=0.125$. The exact solution $u=\tfrac12x(1-x)$ gives $u(0.25)=0.09375$ and $u(0.5)=0.125$: <strong>identical at the nodes</strong>. (For this 1D problem the linear-element solution is exact at the nodes; between nodes it is piecewise linear, with an error of order $h^2$.) The discrete strain energy is $\tfrac12\mathbf u^TK\mathbf u=\tfrac12\mathbf u\cdot\mathbf F=\tfrac12h\sum u_i=0.0391$, slightly below the exact $\tfrac1{24}=0.0417$. Equivalently the discrete potential energy $J=-0.0391$ lies <em>above</em> the exact minimum $-0.0417$: the finite element solution is the minimiser over a restricted family of functions, so it gives a variational upper bound on $J$, and the error shrinks as the mesh is refined.</p>
             </div>
 
-            <h2 id="opt">6. Optimisation algorithms<a class="anchor" href="#opt" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 5.2: two elements with different stiffness</strong>
+                <p class="given">A bar of length $1$ is fixed at $x=0$ and pulled by $P=10$ at $x=1$. The left half has $\kappa=100$, the right half $\kappa=200$. Use two linear elements.</p>
+                <p>An element of length $h=0.5$ and stiffness $\kappa$ acts like a spring $k_e=\kappa/h$: $k_1=200$, $k_2=400$. Assembling for the free nodes ($x=0.5$ and $x=1$): $K=\begin{pmatrix}k_1+k_2&amp;-k_2\\-k_2&amp;k_2\end{pmatrix}=\begin{pmatrix}600&amp;-400\\-400&amp;400\end{pmatrix}$, $\mathbf F=(0,10)^T$. Solving, $u_1=0.05$ and $u_2=0.075$; this is simply two springs in series, $u_1=P/k_1$ and $u_2=u_1+P/k_2$. Checks: $600(0.05)-400(0.075)=0$ and $-400(0.05)+400(0.075)=10$ &check;. Both strains are constant in each element ($0.1$ and $0.05$): FEM handles a jump in stiffness without any special treatment because only first derivatives enter the weak form.</p>
+            </div>
+
+            <h2 id="opt">Lecture 6. Optimisation algorithms<a class="anchor" href="#opt" aria-label="Link to this section">#</a></h2>
             <p>After discretisation, a variational problem becomes: minimise a function $E(\mathbf x)$ of many variables (atomic coordinates, nodal values, parameters of a model). Algorithms use the gradient $\mathbf g=\nabla E$ and the Hessian $H$ (<a href="multivariable-calculus.html">M2</a>).</p>
             <h3 id="gd">Gradient descent and its convergence<a class="anchor" href="#gd" aria-label="Link to this section">#</a></h3>
             <p>The simplest method follows the negative gradient: $\mathbf x_{k+1}=\mathbf x_k-\alpha\nabla E(\mathbf x_k)$, the explicit Euler discretisation of the gradient flow. Near a minimum $E\approx\tfrac12(\mathbf x-\mathbf x^*)^TH(\mathbf x-\mathbf x^*)$, so each eigen-component of the error (eigenvectors of $H$, <a href="eigenvalues-and-decompositions.html">M5</a>) is multiplied by $1-\alpha\lambda_i$ every step. All components decay only if $\alpha&lt;2/\lambda_\mathrm{max}$ (the same stability limit as in <a href="ordinary-differential-equations.html">M7</a>), and the best choice $\alpha=2/(\lambda_\mathrm{max}+\lambda_\mathrm{min})$ gives the contraction factor
@@ -173,7 +208,13 @@
             <h3 id="global">Many minima: global optimisation<a class="anchor" href="#global" aria-label="Link to this section">#</a></h3>
             <p>The methods above find the <em>nearest</em> local minimum. Energy landscapes of clusters, alloys and crystal structures have enormous numbers of local minima. <strong>Simulated annealing</strong> runs a Metropolis random walk (<a href="probability-for-simulation.html">M10</a>) at a temperature that is slowly lowered: at high $T$ the system crosses barriers (an uphill move of $\Delta E$ is accepted with probability $e^{-\Delta E/k_\mathrm{B}T}$), and as $T$ falls it settles into a deep minimum (Problem 11). Other approaches: <em>basin hopping</em> (random perturbation, local relaxation, Metropolis acceptance of the relaxed energy), <em>genetic algorithms</em> and <em>particle swarm</em> methods, and random structure searching. With a machine-learned energy model, <strong>stochastic gradient descent</strong> on mini-batches is how the model parameters themselves are optimised (<a href="machine-learning-for-materials.html">Machine learning for materials</a>), and the same landscape concerns (conditioning, saddles, learning rates) apply.</p>
 
-            <h2 id="summary-m12">7. How the pieces fit together<a class="anchor" href="#summary-m12" aria-label="Link to this section">#</a></h2>
+            <div class="example">
+                <strong>Worked example 6.1: how many iterations?</strong>
+                <p class="given">A quadratic energy has Hessian eigenvalues $1$ and $100$. Compare gradient descent, conjugate gradients and Newton's method for a $10^{-6}$ reduction of the error.</p>
+                <p>The condition number is $\kappa=100$. Optimal gradient descent uses $\alpha=2/(\lambda_\mathrm{max}+\lambda_\mathrm{min})=2/101$ and reduces the error by $(\kappa-1)/(\kappa+1)=99/101=0.980$ per step, so $\ln10^{-6}/\ln0.980=691$ steps. Conjugate gradients has the factor $(\sqrt\kappa-1)/(\sqrt\kappa+1)=9/11=0.818$, needing about $69$ steps (and for a two-variable quadratic, at most $2$ steps in exact arithmetic). Newton's method solves a quadratic in one step. For a non-quadratic $E=e^x-2x$ (minimum at $x=\ln2=0.693147$), Newton's iteration $x\to x-(e^x-2)/e^x$ from $x=1$ gives $0.73576,\allowbreak \ 0.69404,\allowbreak \ 0.693148,\allowbreak \ 0.693147$: the error is $0.043,\allowbreak \ 9\times10^{-4},\allowbreak \ 4\times10^{-7},\allowbreak \ 8\times10^{-14}$, roughly squaring each step (quadratic convergence).</p>
+            </div>
+
+            <h2 id="summary-m12">Summary of the unit<a class="anchor" href="#summary-m12" aria-label="Link to this section">#</a></h2>
             <p>A physical energy defined on functions is minimised by solving its Euler&ndash;Lagrange equation; in a field theory this uses the functional derivative, whose value is the chemical potential, and the dynamics that lowers the energy at maximum rate is the phase-field gradient flow. The same principle underlies quantum mechanics (Rayleigh&ndash;Ritz, giving upper bounds and eigenproblems) and the finite element method (the weak form is stationarity of an energy, and the discretised problem is a sparse positive-definite system). Finally, all of these end as minimisation in many variables, whose speed is set by the Hessian&rsquo;s condition number: so the whole course comes together in one object, the Hessian, with its eigenvalues describing stiffness, stability, convergence speed and vibration frequencies.</p>
 
             <!-- takeaways:start -->
@@ -188,7 +229,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">8. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">Problem set<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -338,7 +379,40 @@
             </details>
             </div>
 
-            <h2 id="refs">9. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="quiz">Unit quiz<a class="anchor" href="#quiz" aria-label="Link to this section">#</a></h2>
+            <p>Closed-book, about 45 minutes, six questions. Attempt all of them before opening any solution, then mark yourself honestly.</p>
+            <div class="problem" id="q12-1">
+            <div class="p-head"><span class="p-num">Quiz 1</span><span class="p-level">Euler-Lagrange</span></div>
+            <p>Find the extremal of $\int_0^1(y^{\prime2}+y^2)\,\allowbreak \mathrm dx$ with $y(0)=0$, $y(1)=1$.</p>
+            <details class="solution"><summary>Solution</summary><p>$L=y^{\prime2}+y^2$ gives $2y^{\prime\prime}-2y=0$, so $y=A\sinh x+B\cosh x$. $y(0)=0$ gives $B=0$ and $y(1)=1$ gives $A=1/\sinh1$: $y=\sinh x/\sinh1$.</p></details>
+            </div>
+            <div class="problem" id="q12-2">
+            <div class="p-head"><span class="p-num">Quiz 2</span><span class="p-level">Beltrami</span></div>
+            <p>State the first integral of $L=\tfrac12\kappa c^{\prime2}+f(c)$ and what it says at an interface with $c^\prime\to0$ far away.</p>
+            <details class="solution"><summary>Solution</summary><p>$L-c^\prime\,\allowbreak \partial L/\partial c^\prime=f-\tfrac12\kappa c^{\prime2}=\text{const}=0$, so $\tfrac12\kappa c^{\prime2}=f(c)$: the gradient energy equals the bulk energy at every point of the interface.</p></details>
+            </div>
+            <div class="problem" id="q12-3">
+            <div class="p-head"><span class="p-num">Quiz 3</span><span class="p-level">Free end</span></div>
+            <p>For $J=\int_0^L(\tfrac12\kappa u^{\prime2}-fu)\,\allowbreak \mathrm dx$ with $u(0)=0$ and a free end, give the natural boundary condition and the tip displacement.</p>
+            <details class="solution"><summary>Solution</summary><p>$u^\prime(L)=0$; $u=(f/\kappa)(Lx-x^2/2)$ and $u(L)=fL^2/(2\kappa)$.</p></details>
+            </div>
+            <div class="problem" id="q12-4">
+            <div class="p-head"><span class="p-num">Quiz 4</span><span class="p-level">Variational estimate</span></div>
+            <p>A trial wavefunction gives $E=5.000\,\hbar^2/(mL^2)$ for a particle in a box. The exact value is $4.935$. Is this consistent? What can you conclude?</p>
+            <details class="solution"><summary>Solution</summary><p>Yes: the variational principle guarantees $E[\psi]\ge E_0$, and the estimate is $1.3\%$ high. Any trial energy below $4.935$ would signal an error.</p></details>
+            </div>
+            <div class="problem" id="q12-5">
+            <div class="p-head"><span class="p-num">Quiz 5</span><span class="p-level">Finite elements</span></div>
+            <p>Two springs in series, $k_1=200$ and $k_2=400$, with a force $P=10$ at the free end of the second. Find the end displacement.</p>
+            <details class="solution"><summary>Solution</summary><p>$u_2=P/k_1+P/k_2=0.05+0.025=0.075$.</p></details>
+            </div>
+            <div class="problem" id="q12-6">
+            <div class="p-head"><span class="p-num">Quiz 6</span><span class="p-level">Optimisation</span></div>
+            <p>A Hessian has eigenvalues $1$ and $100$. Estimate the iteration counts of gradient descent and conjugate gradients for a $10^{-6}$ error reduction.</p>
+            <details class="solution"><summary>Solution</summary><p>Gradient descent: factor $99/101$, about $690$ steps. Conjugate gradients: factor $9/11$, about $69$ steps. The saving comes from $\sqrt\kappa$ replacing $\kappa$.</p></details>
+            </div>
+
+            <h2 id="refs">References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Gelfand, I. M. and Fomin, S. V., <em>Calculus of Variations</em>, Dover: a compact classical introduction.</li>
                 <li>Boas, M. L., <em>Mathematical Methods in the Physical Sciences</em>, Wiley: chapter 9.</li>
@@ -368,7 +442,7 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=00ba2e79"></script>
+    <script src="../assets/topics.js?v=34d42aed"></script>
     <script src="../assets/glossary.js?v=ea645ac3"></script>
     <script src="../assets/site.js?v=cdf2ee74" defer></script>
     <script src="../assets/demos.js?v=b26fd2cd" defer></script>
