@@ -16,3 +16,8 @@
    a = 5.38 A   V =  38.930 A^3   E = -213.74002 eV
    a = 5.43 A   V =  40.026 A^3   E = -213.78191 eV
    a = 5.48 A   V =  41.142 A^3   E = -213.80458 eV
+   a = 5.53 A   V =  42.278 A^3   E = -213.80961 eV
+   a = 5.58 A   V =  43.435 A^3   E = -213.79851 eV
+   Birch-Murnaghan fit: a0 = 5.520 A   B = 84.8 GPa     (experiment: 5.431 A, 99 GPa)
+
+3. band gap at the fitted lattice constant
