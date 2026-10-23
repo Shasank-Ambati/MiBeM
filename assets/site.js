@@ -18,6 +18,7 @@
   function tLabel(t) {
     if (t.series === "background") return "Background " + String(t.label).replace(/^B/, "");
     if (t.series === "start") return "Start here " + String(t.label).replace(/^S/, "");
+    if (t.series === "maths") return "Maths module " + String(t.label).replace(/^M/, "");
     return "Topic " + (t.label || t.id);
   }
   function el(tag, cls, html) { var n = doc.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
@@ -272,6 +273,38 @@
     var r = readList();
     doc.querySelectorAll(".topic-card[data-id]").forEach(function (c) { if (r.indexOf(parseInt(c.getAttribute("data-id"), 10)) >= 0) c.classList.add("visited"); });
     ensureClearButton();
+  }
+
+  /* ---------------- course problems: "mark as solved" ticks, stored on this device only ---------------- */
+  var PKEY = "mibem-solved";
+  function solvedList() { try { return JSON.parse(store.get(PKEY) || "[]"); } catch (e) { return []; } }
+  function initProblems() {
+    var probs = doc.querySelectorAll(".problem[id]");
+    if (!probs.length) return;
+    var counter = doc.getElementById("prob-count");
+    function refresh() {
+      var done = solvedList(), n = 0;
+      probs.forEach(function (p) { if (done.indexOf(p.id) >= 0) n++; });
+      if (counter) counter.textContent = n + " of " + probs.length + " solved";
+      var bar = doc.getElementById("prob-bar"); if (bar) bar.style.width = (100 * n / probs.length) + "%";
+    }
+    probs.forEach(function (p) {
+      var head = p.querySelector(".p-head"); if (!head) return;
+      var label = el("label", "p-done", '<input type="checkbox"> <span>Mark as solved</span>');
+      var box = label.querySelector("input");
+      box.checked = solvedList().indexOf(p.id) >= 0;
+      p.classList.toggle("is-done", box.checked);
+      box.addEventListener("change", function () {
+        var v = solvedList(), i = v.indexOf(p.id);
+        if (box.checked && i < 0) v.push(p.id);
+        if (!box.checked && i >= 0) v.splice(i, 1);
+        store.set(PKEY, JSON.stringify(v));
+        p.classList.toggle("is-done", box.checked);
+        refresh();
+      });
+      head.appendChild(label);
+    });
+    refresh();
   }
 
   /* ---------------- topic map (tree graph) ---------------- */
@@ -575,7 +608,7 @@
       re = new RegExp("(^|[^\\p{L}\\p{N}])(" + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }).join("|") + ")(?![\\p{L}\\p{N}])", "giu");
     } catch (e) { return; }
     var skipTag = /^(A|CODE|PRE|H1|H2|H3|H4|BUTTON|SCRIPT|STYLE|SUMMARY|TEXTAREA|SELECT|LABEL|OUTPUT|SVG|MARK)$/;
-    var skipClass = ["eq", "toc", "demo", "crumbs", "facts", "term", "table-scroll-skip", "pager"];
+    var skipClass = ["eq", "katex", "katex-display", "toc", "demo", "crumbs", "facts", "term", "table-scroll-skip", "pager"];
     var walker = doc.createTreeWalker(art, NodeFilter.SHOW_TEXT, {
       acceptNode: function (n) {
         if (!n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
@@ -647,6 +680,7 @@
     initCopy();
     initBackTop();
     initProgress();
+    initProblems();
     initMap();
   }
   if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", boot); else boot();

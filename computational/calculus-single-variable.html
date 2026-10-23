@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus I: functions of one variable - MiBeM</title>
+    <meta name="description" content="A university-level course in single-variable calculus for materials modelling: limits, derivatives, integrals and Taylor series, with worked examples and twelve problems with full solutions.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/calculus-single-variable.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Calculus I: functions of one variable - MiBeM">
+    <meta property="og:description" content="A university-level course in single-variable calculus for materials modelling: limits, derivatives, integrals and Taylor series, with worked examples and twelve problems with full solutions.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/calculus-single-variable.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="24">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#toolkit">1. The toolkit: functions you must know cold</a></li>
+                <li><a href="#limits">2. Limits and continuity</a></li>
+                <li><a href="#derivative">3. The derivative</a></li>
+                <li><a href="#applications">4. Using derivatives: extrema, stability and root finding</a></li>
+                <li><a href="#integrals">5. Integration</a></li>
+                <li><a href="#series">6. Sequences and series</a></li>
+                <li><a href="#taylor">7. Taylor series</a></li>
+                <li><a href="#summary-m1">8. How the pieces fit together</a></li>
+                <li><a href="#check">9. Problems</a></li>
+                <li><a href="#refs">10. References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip">Maths course</span><span>Maths module 1</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" class="here" aria-current="page" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
+<!-- coursenav:end -->
+            <h1>Calculus I: functions of one variable</h1>
+            <p class="lead">Almost every model in this series is a differential equation, an integral over states, or a Taylor expansion about a minimum. This module teaches the single-variable calculus behind all three at the level of a first-year university course, but with a different emphasis from a pure-mathematics course: we care about what a derivative <em>means</em> as a sensitivity, how to <em>estimate</em> an error, and why the same few formulas keep reappearing in simulation codes.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 23 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="rates-of-change-calculus.html">S2. Rates of change</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="multivariable-calculus.html">M2. Calculus II</a><br><a href="ordinary-differential-equations.html">M7. ODEs</a><br><a href="fourier-analysis.html">M8. Fourier analysis</a><br><a href="probability-for-simulation.html">M10. Probability</a></dd></div>
+<div><dt>Category</dt><dd>Maths course</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Evaluate limits, differentiate any elementary function, and use implicit and logarithmic differentiation.</li>
+                    <li>Find and classify stationary points and relate them to equilibrium and stability of a potential energy.</li>
+                    <li>Integrate by substitution and by parts, evaluate improper and Gaussian integrals, and estimate integrals numerically with a known error.</li>
+                    <li>Expand a function in a Taylor series with a remainder, and use it to derive finite-difference formulas and the harmonic approximation.</li>
+                    <li>Solve nonlinear equations with Newton&rsquo;s method and say how fast it converges.</li>
+                </ul>
+                <strong>You need:</strong> algebra, the exponential and logarithm, and basic trigonometry. The earlier page <a href="rates-of-change-calculus.html">S2. Rates of change</a> gives the picture without the proofs; this module is the full treatment.
+            </div>
+
+            <h2 id="toolkit">1. The toolkit: functions you must know cold<a class="anchor" href="#toolkit" aria-label="Link to this section">#</a></h2>
+            <p>Calculus is the study of how functions change, so fluency with the standard functions comes first. The table lists the ones that appear throughout simulation, with the facts that save you time.</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="1. The toolkit: functions you must know cold (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Function</th><th>Key facts</th><th>Where it shows up</th></tr></thead>
+                <tbody>
+                    <tr><td>Powers $x^n$</td><td>$x^a x^b = x^{a+b}$, $(x^a)^b = x^{ab}$, $x^{-n}=1/x^n$, $x^{1/2}=\sqrt{x}$</td><td>Potentials ($r^{-12}$, $r^{-6}$), scaling laws, polynomials</td></tr>
+                    <tr><td>Exponential $e^x$</td><td>$e^{a+b}=e^a e^b$, $e^0=1$, never zero, grows faster than any power</td><td>Boltzmann factors, Arrhenius rates, decay and relaxation</td></tr>
+                    <tr><td>Logarithm $\ln x$</td><td>$\ln(ab)=\ln a+\ln b$, $\ln(a^b)=b\ln a$, $\ln e^x = x$, defined for $x&gt;0$</td><td>Entropy $S=k_\mathrm{B}\ln\Omega$, chemical potential, log-log plots</td></tr>
+                    <tr><td>Sine and cosine</td><td>$\sin^2x+\cos^2x=1$, $\sin(a\pm b)=\sin a\cos b\pm\cos a\sin b$, period $2\pi$</td><td>Vibrations, waves, Fourier modes, angles in crystals</td></tr>
+                    <tr><td>Hyperbolic $\sinh$, $\cosh$, $\tanh$</td><td>$\cosh x=\tfrac12(e^x+e^{-x})$, $\sinh x=\tfrac12(e^x-e^{-x})$, $\cosh^2x-\sinh^2x=1$</td><td>Order-parameter profiles, the Ising mean field, interface shapes</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>Two habits repay themselves many times over. First, <strong>always keep track of units and dimensions</strong>: the argument of $e^x$, $\ln x$, $\sin x$ must be dimensionless, so a formula such as $e^{-E/(k_\mathrm{B}T)}$ is only meaningful because $E/(k_\mathrm{B}T)$ has no units. Second, <strong>sketch the function</strong> before computing anything: where it is positive, where it blows up, what it does as $x\to0$ and $x\to\infty$.</p>
+
+            <h2 id="limits">2. Limits and continuity<a class="anchor" href="#limits" aria-label="Link to this section">#</a></h2>
+            <h3 id="limit-idea">The idea of a limit<a class="anchor" href="#limit-idea" aria-label="Link to this section">#</a></h3>
+            <p>The limit of $f(x)$ as $x\to a$ is the value $f(x)$ approaches as $x$ gets close to $a$, whether or not $f(a)$ itself is defined. Limits are what let us talk about <em>instantaneous</em> rates and <em>exact</em> areas, so every derivative and integral is secretly a limit.</p>
+            <div class="note def"><strong>Definition (limit)</strong>
+            <p>$\displaystyle\lim_{x\to a} f(x)=L$ means: for every tolerance $\varepsilon&gt;0$ there is a distance $\delta&gt;0$ such that $|f(x)-L|&lt;\varepsilon$ whenever $0&lt;|x-a|&lt;\delta$. In words: you can make $f(x)$ as close to $L$ as you like by taking $x$ close enough to $a$.</p>
+            </div>
+            <p>You will rarely use the $\varepsilon$&ndash;$\delta$ form directly, but it is what makes the following <strong>limit laws</strong> true. If $\lim f=L$ and $\lim g=M$, then
+            $$\lim (f\pm g)=L\pm M,\qquad \lim (fg)=LM,\qquad \lim \frac{f}{g}=\frac{L}{M}\ \ (M\neq0),$$
+            and if $h$ is continuous at $L$ then $\lim h(f(x))=h(L)$.</p>
+            <p>A function is <strong>continuous</strong> at $a$ if $\lim_{x\to a}f(x)=f(a)$: no jumps, no holes. Polynomials, $e^x$, $\sin x$, $\cos x$ are continuous everywhere; $\ln x$ and $1/x$ are continuous wherever they are defined. The <strong>intermediate value theorem</strong> says that a continuous function on $[a,b]$ takes every value between $f(a)$ and $f(b)$. In particular if $f(a)&lt;0&lt;f(b)$, there is a root in between: this is why bisection always works.</p>
+
+            <h3 id="limit-tools">Standard limits and how to evaluate difficult ones<a class="anchor" href="#limit-tools" aria-label="Link to this section">#</a></h3>
+            <p>When direct substitution gives $0/0$ or $\infty/\infty$ (an <em>indeterminate form</em>), the limit may still exist. Three standard results cover most cases:</p>
+            $$\lim_{x\to0}\frac{\sin x}{x}=1,\qquad \lim_{x\to0}\frac{e^x-1}{x}=1,\qquad \lim_{n\to\infty}\Bigl(1+\frac{1}{n}\Bigr)^n=e .$$
+            <p>And two comparison facts, essential for judging whether a Boltzmann weight or a decaying tail wins: for any $n$,
+            $$\lim_{x\to\infty}\frac{x^n}{e^x}=0,\qquad \lim_{x\to0^+}x^n\ln x=0\quad(n&gt;0).$$
+            Exponentials beat powers; powers beat logarithms.</p>
+            <div class="note thm"><strong>L&rsquo;H&ocirc;pital&rsquo;s rule</strong>
+            <p>If $f(a)=g(a)=0$ (or both tend to $\pm\infty$) and $\lim f'/g'$ exists, then $\displaystyle\lim_{x\to a}\frac{f(x)}{g(x)}=\lim_{x\to a}\frac{f'(x)}{g'(x)}$.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 2.1: an indeterminate form</strong>
+                <p class="given">Find $\displaystyle\lim_{x\to0}\frac{1-\cos x}{x^2}$.</p>
+                <p>Direct substitution gives $0/0$. Apply L&rsquo;H&ocirc;pital once: $\dfrac{\sin x}{2x}$, still $0/0$ at $x=0$. But now the standard limit applies: $\dfrac{\sin x}{2x}=\dfrac12\cdot\dfrac{\sin x}{x}\to\dfrac12$. (A second application of the rule gives $\cos x/2\to1/2$ as well.)</p>
+                <p><strong>Answer: $1/2$.</strong> This says $1-\cos x\approx x^2/2$ for small $x$, the first term of the Taylor series you will meet in section 7.</p>
+            </div>
+
+            <div class="note mat"><strong>In materials science</strong>
+            <p>Continuum models treat matter as if limits like $\Delta V\to0$ exist (a &ldquo;density at a point&rdquo;). Atoms are discrete, so these limits only make sense for a volume large enough to contain many atoms but small compared with the sample. Knowing which limits are physical and which are idealisations is part of modelling judgement; numerically, the limit $\Delta x\to0$ is what mesh refinement approaches.</p>
+            </div>
+
+            <h2 id="derivative">3. The derivative<a class="anchor" href="#derivative" aria-label="Link to this section">#</a></h2>
+            <h3 id="def-deriv">Definition and meaning<a class="anchor" href="#def-deriv" aria-label="Link to this section">#</a></h3>
+            <div class="note def"><strong>Definition (derivative)</strong>
+            <p>$$f'(x)=\frac{\mathrm{d}f}{\mathrm{d}x}=\lim_{h\to0}\frac{f(x+h)-f(x)}{h}.$$
+            Geometrically it is the slope of the tangent line to the graph at $x$. Physically it is the instantaneous rate of change of $f$ with respect to $x$.</p>
+            </div>
+            <p>Three equivalent ways to read $f'(x)$ are worth keeping in mind, because different problems call for different ones:</p>
+            <ul>
+                <li><strong>Slope</strong>: the tangent line is $y=f(a)+f'(a)(x-a)$.</li>
+                <li><strong>Rate</strong>: if $x$ is time, $f'$ is a velocity, a heating rate, a reaction rate.</li>
+                <li><strong>Sensitivity</strong>: a small change $\mathrm{d}x$ in the input changes the output by $\mathrm{d}f\approx f'(x)\,\mathrm{d}x$. This is how errors propagate (see <a href="statistics-and-data-fitting.html">M11</a>) and how forces follow from energies.</li>
+            </ul>
+            <p>A function must be continuous to be differentiable, but not conversely: $|x|$ is continuous at $0$ with a corner, and has no derivative there. Energy functions with such kinks (for example in some machine-learned or tabulated potentials) give discontinuous forces, which cause trouble in molecular dynamics.</p>
+
+            <h3 id="rules">Rules of differentiation<a class="anchor" href="#rules" aria-label="Link to this section">#</a></h3>
+            <p>The limit definition is used once, to build up these rules; after that you only apply the rules.</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Rules of differentiation (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Rule</th><th>Formula</th></tr></thead>
+                <tbody>
+                    <tr><td>Constant multiple, sum</td><td>$(cf)'=cf'$, $(f+g)'=f'+g'$</td></tr>
+                    <tr><td>Product</td><td>$(fg)'=f'g+fg'$</td></tr>
+                    <tr><td>Quotient</td><td>$\left(\dfrac fg\right)'=\dfrac{f'g-fg'}{g^2}$</td></tr>
+                    <tr><td>Chain</td><td>$\dfrac{\mathrm{d}}{\mathrm{d}x}f(g(x))=f'(g(x))\,g'(x)$</td></tr>
+                    <tr><td>Inverse function</td><td>$(f^{-1})'(y)=\dfrac{1}{f'(x)}$ where $y=f(x)$</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>Standard derivatives to memorise:</p>
+            $$\begin{aligned}
+            (x^n)'&amp;=nx^{n-1}, &amp; (e^x)'&amp;=e^x, &amp; (\ln x)'&amp;=\frac1x,\\
+            (\sin x)'&amp;=\cos x, &amp; (\cos x)'&amp;=-\sin x, &amp; (\tan x)'&amp;=\sec^2x,\\
+            (\sinh x)'&amp;=\cosh x, &amp; (\cosh x)'&amp;=\sinh x, &amp; (\tanh x)'&amp;=1-\tanh^2x,\\
+            (a^x)'&amp;=a^x\ln a, &amp; (\arctan x)'&amp;=\frac{1}{1+x^2}, &amp; (\arcsin x)'&amp;=\frac{1}{\sqrt{1-x^2}}.
+            \end{aligned}$$
+            <p>The chain rule is the one you will use most. It is the statement that rates multiply: if $y$ changes $3$ times as fast as $u$ and $u$ changes $5$ times as fast as $x$, then $y$ changes $15$ times as fast as $x$.</p>
+
+            <div class="example">
+                <strong>Worked example 3.1: chain and product rules together</strong>
+                <p class="given">Differentiate $f(x)=x^2e^{-3x}$ and find where $f'(x)=0$.</p>
+                <p>Product rule with $u=x^2$, $v=e^{-3x}$. Here $u'=2x$ and, by the chain rule, $v'=-3e^{-3x}$. Then
+                $$f'(x)=2x\,e^{-3x}+x^2(-3e^{-3x})=e^{-3x}\,(2x-3x^2)=x(2-3x)\,e^{-3x}.$$
+                Since $e^{-3x}$ is never zero, $f'=0$ only for $x=0$ and $x=2/3$.</p>
+            </div>
+
+            <h3 id="log-diff">Implicit and logarithmic differentiation<a class="anchor" href="#log-diff" aria-label="Link to this section">#</a></h3>
+            <p>When $y$ is defined only implicitly by an equation $F(x,y)=0$, differentiate both sides with respect to $x$, remembering that $y$ depends on $x$ (so $\mathrm{d}(y^2)/\mathrm{d}x=2y\,y'$), and solve for $y'$. For products and powers, <strong>logarithmic differentiation</strong> is quicker: take $\ln$ first, because $\ln$ turns products into sums and powers into multiples. The identity
+            $$\frac{\mathrm{d}}{\mathrm{d}x}\ln f=\frac{f'}{f}$$
+            is the <em>relative</em> rate of change of $f$, which is often the quantity you actually care about.</p>
+            <div class="example">
+                <strong>Worked example 3.2: the Arrhenius rate</strong>
+                <p class="given">A thermally activated rate is $k(T)=A\exp\!\bigl(-E_a/(k_\mathrm{B}T)\bigr)$. How sensitive is $k$ to temperature?</p>
+                <p>Take the logarithm: $\ln k=\ln A-\dfrac{E_a}{k_\mathrm{B}}\dfrac1T$. Differentiate with respect to $T$:
+                $$\frac{\mathrm{d}\ln k}{\mathrm{d}T}=\frac{E_a}{k_\mathrm{B}T^2}\quad\Longrightarrow\quad \frac{\mathrm{d}k}{k}=\frac{E_a}{k_\mathrm{B}T}\,\frac{\mathrm{d}T}{T}.$$
+                The factor $E_a/(k_\mathrm{B}T)$ (typically $10$ to $40$) multiplies the relative change in temperature. A 1% rise in $T$ changes the rate by roughly $10$ to $40$%. This is why a tiny temperature error ruins a kinetic prediction. Also, $\ln k$ against $1/T$ is a straight line of slope $-E_a/k_\mathrm{B}$: the basis of the Arrhenius plot.</p>
+            </div>
+
+            <h3 id="deriv-apps">Linear approximation and differentials<a class="anchor" href="#deriv-apps" aria-label="Link to this section">#</a></h3>
+            <p>Near any point $a$ a differentiable function is almost linear: $f(x)\approx f(a)+f'(a)(x-a)$, with an error that shrinks faster than $(x-a)$. This <em>linearisation</em> is the basic tool for estimating how outputs respond to small input changes. For example, $\sqrt{1+\epsilon}\approx1+\epsilon/2$, $(1+\epsilon)^n\approx1+n\epsilon$, $e^\epsilon\approx1+\epsilon$ and $\ln(1+\epsilon)\approx\epsilon$ for small $\epsilon$. Section 7 shows how to make these approximations systematic and to bound their error.</p>
+
+            <h2 id="applications">4. Using derivatives: extrema, stability and root finding<a class="anchor" href="#applications" aria-label="Link to this section">#</a></h2>
+            <h3 id="extrema">Stationary points and the second derivative test<a class="anchor" href="#extrema" aria-label="Link to this section">#</a></h3>
+            <p>A <strong>stationary point</strong> of $f$ is a point where $f'(x_0)=0$. The second derivative classifies it:</p>
+            <ul>
+                <li>$f''(x_0)&gt;0$: local minimum (the graph is cup-shaped).</li>
+                <li>$f''(x_0)&lt;0$: local maximum.</li>
+                <li>$f''(x_0)=0$: inconclusive; examine higher derivatives or the sign of $f'$ either side.</li>
+            </ul>
+            <p>If $f$ is a potential energy $U(x)$, then the <em>force</em> is $F=-U'(x)$. A stationary point is therefore an <strong>equilibrium</strong> (zero force). It is <strong>stable</strong> if it is a minimum ($U''&gt;0$: displacing the system produces a restoring force) and <strong>unstable</strong> if it is a maximum. The value $k=U''(x_0)$ is the <strong>stiffness</strong> (force constant), the quantity from which vibration frequencies follow (<a href="ordinary-differential-equations.html">M7</a>).</p>
+
+            <div class="example">
+                <strong>Worked example 4.1: the Lennard-Jones potential</strong>
+                <p class="given">The Lennard-Jones potential $U(r)=4\varepsilon\bigl[(\sigma/r)^{12}-(\sigma/r)^{6}\bigr]$ models a pair of neutral atoms. Find the equilibrium separation, the well depth and the stiffness.</p>
+                <p><strong>Step 1: stationary point.</strong> $U'(r)=4\varepsilon\bigl[-12\sigma^{12}r^{-13}+6\sigma^6r^{-7}\bigr]=0$, so $12\sigma^{12}r^{-13}=6\sigma^6r^{-7}$, i.e. $r^6=2\sigma^6$ and
+                $$r_0=2^{1/6}\sigma\approx1.122\,\sigma.$$
+                <strong>Step 2: depth.</strong> At $r_0$, $(\sigma/r_0)^6=1/2$ and $(\sigma/r_0)^{12}=1/4$, so $U(r_0)=4\varepsilon(1/4-1/2)=-\varepsilon$.</p>
+                <p><strong>Step 3: stiffness.</strong> $U''(r)=4\varepsilon\bigl[156\sigma^{12}r^{-14}-42\sigma^6r^{-8}\bigr]$. At $r_0$ use $r_0^2=2^{1/3}\sigma^2$, $\sigma^{12}/r_0^{12}=1/4$, $\sigma^6/r_0^6=1/2$:
+                $$U''(r_0)=\frac{4\varepsilon}{2^{1/3}\sigma^2}\Bigl[\frac{156}{4}-\frac{42}{2}\Bigr]=\frac{72\,\varepsilon}{2^{1/3}\sigma^2}\approx57.1\,\frac{\varepsilon}{\sigma^2}&gt;0.$$
+                So $r_0$ is a stable minimum: the atoms sit about $1.12\sigma$ apart in a pair, and a small displacement $x$ costs energy $\tfrac12 k x^2$ with $k\approx57.1\,\varepsilon/\sigma^2$.</p>
+            </div>
+
+            <h3 id="newton">Newton&rsquo;s method<a class="anchor" href="#newton" aria-label="Link to this section">#</a></h3>
+            <p>To solve $f(x)=0$ numerically, replace $f$ by its tangent line at a guess $x_n$ and take the root of that line as the next guess:
+            $$x_{n+1}=x_n-\frac{f(x_n)}{f'(x_n)}.$$
+            Near a simple root the number of correct digits roughly <em>doubles</em> each step (quadratic convergence), which is why Newton-type methods are used inside electronic-structure solvers, geometry optimisers and implicit time steppers. It can fail if $f'(x_n)\approx0$ (the tangent is nearly horizontal and throws you far away) or if the starting guess is poor.</p>
+            <div class="example">
+                <strong>Worked example 4.2: a square root by Newton&rsquo;s method</strong>
+                <p class="given">Compute $\sqrt5$ by solving $f(x)=x^2-5=0$ starting from $x_0=2$.</p>
+                <p>Here $f'(x)=2x$, so $x_{n+1}=x_n-\dfrac{x_n^2-5}{2x_n}=\dfrac12\Bigl(x_n+\dfrac5{x_n}\Bigr)$. Then
+                $x_1=\tfrac12(2+2.5)=2.25$, $x_2=\tfrac12(2.25+2.2222)=2.236111$, $x_3=2.2360680$, and $\sqrt5=2.2360680\ldots$. The error falls from $0.236$ to $0.0139$ to $4.3\times10^{-5}$ to $4\times10^{-10}$: it is roughly squared each time.</p>
+            </div>
+
+            <h2 id="integrals">5. Integration<a class="anchor" href="#integrals" aria-label="Link to this section">#</a></h2>
+            <h3 id="integral-def">The definite integral and the fundamental theorem<a class="anchor" href="#integral-def" aria-label="Link to this section">#</a></h3>
+            <p>The <strong>definite integral</strong> $\int_a^b f(x)\,\mathrm{d}x$ is the limit of Riemann sums $\sum_i f(x_i)\Delta x$ as the strips become infinitely thin: the signed area under the graph. Anything that is a &ldquo;sum of many small contributions&rdquo; is an integral: work done is $\int F\,\mathrm{d}x$, charge is $\int\rho\,\mathrm{d}V$, a thermal average is $\int A(x)p(x)\,\mathrm{d}x$.</p>
+            <div class="note thm"><strong>Fundamental theorem of calculus</strong>
+            <p>(i) If $F(x)=\displaystyle\int_a^x f(t)\,\mathrm{d}t$ then $F'(x)=f(x)$. (ii) If $F'=f$ then $\displaystyle\int_a^b f(x)\,\mathrm{d}x=F(b)-F(a)$.</p>
+            </div>
+            <p>So integration and differentiation undo each other, and evaluating a definite integral reduces to finding an <em>antiderivative</em> $F$. Useful properties: linearity; $\int_a^b=-\int_b^a$; $\int_a^b=\int_a^c+\int_c^b$; and the <strong>mean value</strong> of $f$ on $[a,b]$ is $\bar f=\dfrac1{b-a}\displaystyle\int_a^bf\,\mathrm{d}x$.</p>
+            <p>Each derivative in the table of section 3 reverses to an integral: $\int x^n\mathrm{d}x=\dfrac{x^{n+1}}{n+1}$ ($n\ne-1$), $\int\dfrac{\mathrm{d}x}{x}=\ln|x|$, $\int e^{ax}\mathrm{d}x=\dfrac{e^{ax}}{a}$, $\int\sin x\,\mathrm{d}x=-\cos x$, $\int\cos x\,\mathrm{d}x=\sin x$, $\int\dfrac{\mathrm{d}x}{1+x^2}=\arctan x$.</p>
+
+            <h3 id="techniques">Two techniques that do most of the work<a class="anchor" href="#techniques" aria-label="Link to this section">#</a></h3>
+            <p><strong>Substitution</strong> is the chain rule backwards: if $u=g(x)$ then $\int f(g(x))g'(x)\,\mathrm{d}x=\int f(u)\,\mathrm{d}u$. For definite integrals change the limits too, so no back-substitution is needed.</p>
+            <p><strong>Integration by parts</strong> is the product rule backwards:
+            $$\int u\,\mathrm{d}v=uv-\int v\,\mathrm{d}u,\qquad\text{or}\qquad \int_a^b u\,v'\,\mathrm{d}x=\bigl[uv\bigr]_a^b-\int_a^b u'v\,\mathrm{d}x.$$
+            Choose $u$ to be the factor that becomes simpler when differentiated (a polynomial, or a log) and $\mathrm{d}v$ the factor you can integrate (an exponential, sine or cosine). Integration by parts also underlies the weak form of the finite element method (<a href="calculus-of-variations-and-optimisation.html">M12</a>), where it moves a derivative from one function to another.</p>
+            <div class="example">
+                <strong>Worked example 5.1: by parts and by substitution</strong>
+                <p class="given">Evaluate (a) $\displaystyle\int_0^\infty x\,e^{-x}\,\mathrm{d}x$ and (b) $\displaystyle\int_0^{\pi/2}\sin^3x\cos x\,\mathrm{d}x$.</p>
+                <p>(a) Take $u=x$, $\mathrm{d}v=e^{-x}\mathrm{d}x$, so $\mathrm{d}u=\mathrm{d}x$, $v=-e^{-x}$:
+                $$\int_0^\infty xe^{-x}\mathrm{d}x=\bigl[-xe^{-x}\bigr]_0^\infty+\int_0^\infty e^{-x}\mathrm{d}x=0+1=1.$$
+                The boundary term vanishes because $xe^{-x}\to0$ as $x\to\infty$ (exponentials beat powers). (This is $\Gamma(2)=1!$.)</p>
+                <p>(b) Let $u=\sin x$, $\mathrm{d}u=\cos x\,\mathrm{d}x$. The limits become $u=0$ to $u=1$:
+                $\displaystyle\int_0^1u^3\,\mathrm{d}u=\tfrac14$.</p>
+            </div>
+
+            <h3 id="improper">Improper integrals and the Gaussian<a class="anchor" href="#improper" aria-label="Link to this section">#</a></h3>
+            <p>An integral over an infinite range, or of a function that blows up, is defined as a limit: $\int_a^\infty f\,\mathrm{d}x=\lim_{R\to\infty}\int_a^Rf\,\mathrm{d}x$. It <em>converges</em> if that limit is finite. For powers: $\int_1^\infty x^{-p}\mathrm{d}x$ converges only if $p&gt;1$, and $\int_0^1x^{-p}\mathrm{d}x$ only if $p&lt;1$. This matters in practice: for the $r^{-6}$ attraction in a Lennard-Jones solid, $\int_{R}^\infty r^{-6}\,r^2\,\mathrm{d}r$ converges, so a finite cut-off radius gives a small, correctable error, whereas for a $1/r$ Coulomb interaction the corresponding sum does not converge absolutely, which is why Ewald summation is needed.</p>
+            <div class="note thm"><strong>The Gaussian integral</strong>
+            <p>$$\int_{-\infty}^{\infty}e^{-a x^2}\,\mathrm{d}x=\sqrt{\frac{\pi}{a}}\quad(a&gt;0).$$
+            The standard trick squares the integral and evaluates the result in polar coordinates, which you will meet in <a href="multivariable-calculus.html">M2</a>. Differentiating this identity with respect to the parameter $a$ gives all the moments: $\displaystyle\int_{-\infty}^\infty x^2e^{-ax^2}\mathrm{d}x=\frac{\sqrt\pi}{2a^{3/2}}$, and similarly for higher even powers. Odd moments vanish by symmetry.</p>
+            </div>
+            <div class="note mat"><strong>In materials science</strong>
+            <p>A particle in a harmonic well of stiffness $k$ has Boltzmann weight $e^{-kx^2/(2k_\mathrm{B}T)}$, which is a Gaussian with $a=k/(2k_\mathrm{B}T)$. Problem 11 uses the integrals above to derive the equipartition result $\langle x^2\rangle=k_\mathrm{B}T/k$, which links the stiffness from section 4 to the size of thermal vibrations.</p>
+            </div>
+
+            <h3 id="numerical-int">Numerical integration<a class="anchor" href="#numerical-int" aria-label="Link to this section">#</a></h3>
+            <p>Most integrals have no closed form, and in simulation they are usually sums over data. Two rules cover nearly all needs. With $n$ strips of width $h=(b-a)/n$ and nodes $x_i=a+ih$:</p>
+            $$T_n=h\Bigl[\tfrac12f_0+f_1+\cdots+f_{n-1}+\tfrac12f_n\Bigr],\qquad S_n=\frac h3\bigl[f_0+4f_1+2f_2+4f_3+\cdots+4f_{n-1}+f_n\bigr]\ (n\ \text{even}).$$
+            <p>The <strong>trapezoid rule</strong> replaces the graph by straight segments and has error $\approx-\dfrac{(b-a)h^2}{12}f''(\xi)$, so it is <em>second order</em>: halving $h$ cuts the error by about $4$. <strong>Simpson&rsquo;s rule</strong> fits parabolas and has error $\approx-\dfrac{(b-a)h^4}{180}f^{(4)}(\xi)$, <em>fourth order</em>: halving $h$ cuts the error by $16$. Section 7 derives the trapezoid error from the Taylor series. For periodic functions integrated over a full period, the trapezoid rule is astonishingly accurate (it converges faster than any power of $h$), which is why plane-wave codes use uniform grids.</p>
+
+            <h2 id="series">6. Sequences and series<a class="anchor" href="#series" aria-label="Link to this section">#</a></h2>
+            <p>An infinite series $\sum_{n=0}^\infty a_n$ converges if its partial sums $S_N=\sum_{n=0}^Na_n$ approach a limit. The one you must know is the <strong>geometric series</strong>:
+            $$\sum_{n=0}^\infty r^n=\frac{1}{1-r}\quad(|r|&lt;1),\qquad \sum_{n=0}^{N}r^n=\frac{1-r^{N+1}}{1-r}.$$
+            Proof: multiply $S_N$ by $r$ and subtract. It sums the Boltzmann weights of a harmonic oscillator (Problem 10). To test convergence in general: if $a_n\not\to0$ the series diverges; the <strong>ratio test</strong> says that if $|a_{n+1}/a_n|\to L$ then the series converges for $L&lt;1$ and diverges for $L&gt;1$. A <strong>power series</strong> $\sum c_n(x-a)^n$ converges for $|x-a|&lt;R$ (the radius of convergence) and may be differentiated and integrated term by term inside that radius. That is what makes the next section work.</p>
+
+            <h2 id="taylor">7. Taylor series<a class="anchor" href="#taylor" aria-label="Link to this section">#</a></h2>
+            <h3 id="taylor-thm">Taylor&rsquo;s theorem<a class="anchor" href="#taylor-thm" aria-label="Link to this section">#</a></h3>
+            <p>Suppose you know a function and all its derivatives at one point $a$ and want its value nearby. The best polynomial of degree $n$ that matches $f$, $f'$, $\ldots$, $f^{(n)}$ at $a$ is the Taylor polynomial, and the theorem tells you the size of the leftover.</p>
+            <div class="note thm"><strong>Taylor&rsquo;s theorem (Lagrange form)</strong>
+            <p>If $f$ has $n+1$ continuous derivatives, then for some $\xi$ between $a$ and $x$
+            $$f(x)=\underbrace{\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k}_{\text{Taylor polynomial }P_n(x)}+\underbrace{\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-a)^{n+1}}_{\text{remainder }R_n}.$$
+            </p>
+            </div>
+            <p>The remainder is the crucial part. It says the error of the degree-$n$ approximation is bounded by $\max|f^{(n+1)}|\,|x-a|^{n+1}/(n+1)!$. In the form used for numerical work, with $x=a+h$,
+            $$f(a+h)=f(a)+hf'(a)+\frac{h^2}{2}f''(a)+\frac{h^3}{6}f'''(a)+\cdots=f(a)+hf'(a)+\frac{h^2}{2}f''(a)+O(h^3).$$
+            <strong>Big-O notation</strong>: $g(h)=O(h^p)$ means $|g(h)|\le Ch^p$ for small $h$ and some constant $C$. The power $p$ is the <em>order</em> and controls how fast things improve as $h\to0$.</p>
+            <p>The key series, valid about $a=0$ (the Maclaurin series), are:</p>
+            $$\begin{aligned}
+            e^x&amp;=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots&amp;&amp;\text{(all }x),\\
+            \sin x&amp;=x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots,\qquad \cos x=1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots&amp;&amp;\text{(all }x),\\
+            \frac1{1-x}&amp;=1+x+x^2+x^3+\cdots&amp;&amp;(|x|&lt;1),\\
+            \ln(1+x)&amp;=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots&amp;&amp;(-1&lt;x\le1),\\
+            (1+x)^\alpha&amp;=1+\alpha x+\frac{\alpha(\alpha-1)}{2!}x^2+\cdots&amp;&amp;(|x|&lt;1).
+            \end{aligned}$$
+            <p>New series come cheaply by substitution and by integrating or differentiating known ones: for instance $e^{-x^2}=1-x^2+x^4/2-\cdots$, and $\arctan x=x-x^3/3+x^5/5-\cdots$ follows by integrating $1/(1+x^2)$ term by term.</p>
+
+            <h3 id="harmonic">The harmonic approximation<a class="anchor" href="#harmonic" aria-label="Link to this section">#</a></h3>
+            <p>Let $U(x)$ have a minimum at $x_0$. Taylor-expand about $x_0$ and use $U'(x_0)=0$:
+            $$U(x_0+u)=U(x_0)+\tfrac12U''(x_0)\,u^2+\tfrac16U'''(x_0)\,u^3+\cdots .$$
+            Keeping the quadratic term gives the <strong>harmonic approximation</strong> $U\approx U_0+\tfrac12ku^2$ with $k=U''(x_0)$. The cubic term is the first <em>anharmonic</em> correction; it is responsible for thermal expansion (it makes the well asymmetric, so the mean position shifts as vibrations grow) and for phonon-phonon scattering that limits thermal conductivity. This single expansion is the foundation of lattice dynamics, of transition-state theory and of how geometry optimisers behave near convergence.</p>
+
+            <h3 id="fd">Finite differences from Taylor series<a class="anchor" href="#fd" aria-label="Link to this section">#</a></h3>
+            <p>A computer cannot take limits, so derivatives are approximated by differences. Taylor series both <em>produce</em> the formulas and <em>quantify</em> their errors. Expand $f(x\pm h)$:
+            $$f(x+h)=f+hf'+\tfrac12h^2f''+\tfrac16h^3f'''+\cdots,\qquad f(x-h)=f-hf'+\tfrac12h^2f''-\tfrac16h^3f'''+\cdots$$
+            Rearranging the first alone gives the <strong>forward difference</strong>
+            $$f'(x)=\frac{f(x+h)-f(x)}{h}-\tfrac12hf''(x)+\cdots\ =\ \frac{f(x+h)-f(x)}h+O(h),$$
+            first order. Subtracting the two expansions, the even terms cancel, giving the <strong>central difference</strong>
+            $$f'(x)=\frac{f(x+h)-f(x-h)}{2h}-\tfrac16h^2f'''(x)-\cdots=\frac{f(x+h)-f(x-h)}{2h}+O(h^2),$$
+            second order. Adding the two expansions cancels the odd terms and gives the second derivative:
+            $$f''(x)=\frac{f(x+h)-2f(x)+f(x-h)}{h^2}-\tfrac1{12}h^2f^{(4)}(x)-\cdots,$$
+            the stencil $(1,-2,1)/h^2$ at the heart of every grid-based diffusion and phase-field solver (<a href="partial-differential-equations.html">M9</a>). The trapezoid-rule error quoted in section 5 follows from the same machinery.</p>
+            <div class="note warn"><strong>A trap: smaller is not always better</strong>
+            <p>The truncation error shrinks with $h$, but a computer stores numbers with about $16$ significant digits, and $f(x+h)-f(x-h)$ subtracts two nearly equal numbers. The rounding error therefore grows like $\epsilon_\mathrm{mach}/h$. The total error is smallest at an intermediate $h$ (around $10^{-5}$ to $10^{-6}$ for a central difference in double precision). Stepping below that makes things worse, not better.</p>
+            </div>
+
+            <h2 id="summary-m1">8. How the pieces fit together<a class="anchor" href="#summary-m1" aria-label="Link to this section">#</a></h2>
+            <p>The same few ideas now connect a surprising range of topics. The derivative gives rates and forces ($F=-U'$). The second derivative classifies equilibria and sets stiffness and vibration frequency. Taylor series show that every smooth minimum is a parabola, justify finite differences, and measure the error of every numerical method by its order. The integral computes averages and totals, and the Gaussian integral turns Boltzmann statistics for a harmonic well into closed-form results. The next module extends each of these to functions of several variables, where the derivative becomes the gradient and the second derivative becomes the Hessian matrix.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>The derivative is a limit of slopes, and it measures sensitivity: $\mathrm{d}f \approx f&#x27;(x)\,\mathrm{d}x$ is how an error or a small change in an input propagates.</li>
+<li>Near a minimum of any smooth energy, the first derivative vanishes and the second derivative gives the stiffness, so the energy is a parabola: the harmonic approximation.</li>
+<li>The fundamental theorem links derivatives and integrals; integration by parts and substitution handle most integrals you meet, and the Gaussian integral $\sqrt{\pi}$ underlies the Boltzmann distribution.</li>
+<li>Taylor&#x27;s theorem with a remainder tells you not just the approximation but its error, and finite-difference formulas, numerical integration rules and Newton&#x27;s method are all Taylor series in disguise.</li>
+<li>The order of an error ($h$, $h^2$, $h^4$) tells you how fast it shrinks when the step is refined, and is the right way to compare numerical methods.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem on paper before opening the hint, and the hint before opening the solution. The labels show the level: <em>Basic</em> problems check the techniques, <em>Core</em> problems apply them to materials settings, and <em>Challenge</em> problems combine several ideas. Tick &ldquo;Mark as solved&rdquo; as you go (stored only in your browser).</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p1-1">
+            <div class="p-head"><span class="p-num">Problem 1.1</span><span class="p-level">Basic</span></div>
+            <p>Differentiate each function: (a) $g(x)=\ln(\sin x)$, (b) $h(x)=\dfrac{x}{1+x^2}$, (c) $q(x)=\sqrt{1+e^{2x}}$. Then find the stationary points of $h$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) and (c) are chain-rule problems: identify the inner function. (b) is a quotient.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Chain rule with outer $\ln u$, inner $u=\sin x$: $g'(x)=\dfrac{1}{\sin x}\cos x=\cot x$.</p>
+            <p>(b) Quotient rule: $h'(x)=\dfrac{1\cdot(1+x^2)-x\cdot2x}{(1+x^2)^2}=\dfrac{1-x^2}{(1+x^2)^2}$.</p>
+            <p>(c) Write $q=(1+e^{2x})^{1/2}$. Then $q'=\tfrac12(1+e^{2x})^{-1/2}\cdot2e^{2x}=\dfrac{e^{2x}}{\sqrt{1+e^{2x}}}$.</p>
+            <p>Stationary points of $h$: $h'=0$ requires $1-x^2=0$, so $x=\pm1$ (the denominator is never zero). Then $h(1)=1/2$ is a maximum and $h(-1)=-1/2$ a minimum, since $h'&gt;0$ for $|x|&lt;1$ and $h'&lt;0$ for $|x|&gt;1$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-2">
+            <div class="p-head"><span class="p-num">Problem 1.2</span><span class="p-level">Basic</span></div>
+            <p>Evaluate: (a) $\displaystyle\lim_{x\to0}\frac{\sin 3x}{x}$, (b) $\displaystyle\lim_{x\to0}\frac{e^{x}-1-x}{x^2}$, (c) $\displaystyle\lim_{x\to0^+}x\ln x$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Rewrite using $\sin u/u\to1$. (b) Use L&rsquo;H&ocirc;pital twice, or the series of $e^x$. (c) Write $x\ln x=\ln x/(1/x)$ so L&rsquo;H&ocirc;pital applies.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\dfrac{\sin3x}{x}=3\,\dfrac{\sin3x}{3x}\to3\cdot1=3$.</p>
+            <p>(b) Both numerator and denominator vanish. L&rsquo;H&ocirc;pital: $\dfrac{e^x-1}{2x}$, still $0/0$; again: $\dfrac{e^x}{2}\to\dfrac12$. (Check with the series: $e^x-1-x=x^2/2+x^3/6+\cdots$, so the ratio is $\tfrac12+x/6+\cdots\to\tfrac12$.)</p>
+            <p>(c) $x\ln x=\dfrac{\ln x}{1/x}$, which is $-\infty/\infty$ as $x\to0^+$. L&rsquo;H&ocirc;pital: $\dfrac{1/x}{-1/x^2}=-x\to0$. So the limit is $0$: powers beat logarithms, and this is why the entropy term $-p\ln p$ is taken to be $0$ when $p=0$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-3">
+            <div class="p-head"><span class="p-num">Problem 1.3</span><span class="p-level">Basic</span></div>
+            <p>Find and classify all stationary points of $f(x)=x^3-6x^2+9x+1$, and find its inflection point.</p>
+            <details class="hint"><summary>Hint</summary><p>Factorise $f'(x)$. An inflection point is where $f''$ changes sign.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$f'(x)=3x^2-12x+9=3(x-1)(x-3)$, so the stationary points are $x=1$ and $x=3$. Also $f''(x)=6x-12$.</p>
+            <p>At $x=1$: $f''=-6&lt;0$, a local <strong>maximum</strong>, with $f(1)=1-6+9+1=5$. At $x=3$: $f''=6&gt;0$, a local <strong>minimum</strong>, with $f(3)=27-54+27+1=1$.</p>
+            <p>$f''=0$ at $x=2$, and $f''$ changes sign there (negative to positive), so $x=2$ is an inflection point, $f(2)=8-24+18+1=3$. It lies halfway between the max and min, as for any cubic.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-4">
+            <div class="p-head"><span class="p-num">Problem 1.4</span><span class="p-level">Core</span></div>
+            <p>A reaction rate follows $k=A\exp\bigl(-E_a/(k_\mathrm{B}T)\bigr)$ with $E_a=1.00$ eV. (a) Show that $\mathrm{d}\ln k/\mathrm{d}T=E_a/(k_\mathrm{B}T^2)$. (b) At $T=800$ K, estimate the percentage change in $k$ when $T$ rises by 1% (to $808$ K), using the differential. (c) Compute the exact change and say why they differ. ($k_\mathrm{B}=8.617\times10^{-5}$ eV/K.)</p>
+            <details class="hint"><summary>Hint</summary><p>Use $\mathrm{d}k/k=\bigl[E_a/(k_\mathrm{B}T)\bigr]\,\mathrm{d}T/T$. For (c) compare $k(808)/k(800)$ directly.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\ln k=\ln A-\dfrac{E_a}{k_\mathrm{B}}T^{-1}$, so $\dfrac{\mathrm{d}\ln k}{\mathrm{d}T}=+\dfrac{E_a}{k_\mathrm{B}}T^{-2}$.</p>
+            <p>(b) $E_a/(k_\mathrm{B}T)=1.00/(8.617\times10^{-5}\times800)=14.51$. With $\mathrm{d}T/T=0.01$: $\mathrm{d}k/k\approx14.51\times0.01=0.145$, i.e. about <strong>14.5%</strong>.</p>
+            <p>(c) Exactly, $\ln\dfrac{k(808)}{k(800)}=\dfrac{E_a}{k_\mathrm{B}}\Bigl(\dfrac1{800}-\dfrac1{808}\Bigr)=11604.5\times1.2376\times10^{-5}=0.1436$, so the ratio is $e^{0.1436}=1.1544$: a <strong>15.4%</strong> rise.</p>
+            <p>They differ because the differential is only the first-order Taylor term. The exact change in $\ln k$ is $0.1436$, close to the linear $0.145$; but the change in $k$ itself is $e^{0.1436}-1=0.1436+\tfrac12(0.1436)^2+\cdots$, and that second-order term (about one percentage point) is what the linear estimate leaves out. A 1% error in temperature gives a 15% error in the rate: kinetic predictions are very sensitive to temperature.</p>
+            <p class="answer">Estimate 14.5%; exact 15.4%</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-5">
+            <div class="p-head"><span class="p-num">Problem 1.5</span><span class="p-level">Core</span></div>
+            <p>The Morse potential models a chemical bond: $U(r)=D\bigl(1-e^{-a(r-r_0)}\bigr)^2-D$, with $D,a&gt;0$. (a) Show that $r_0$ is the equilibrium separation and $U(r_0)=-D$. (b) Find the stiffness $k=U''(r_0)$. (c) Expand $U$ about $r_0$ to fourth order in $x=r-r_0$ and identify the harmonic and first anharmonic terms. (d) For $D=0.50$ eV and $a=1.5$ Å$^{-1}$ evaluate $k$.</p>
+            <details class="hint"><summary>Hint</summary><p>Let $s=e^{-ax}$. Then $U=D(1-s)^2-D$ and $\mathrm{d}s/\mathrm{d}x=-as$. For (c) use $e^{-ax}=1-ax+a^2x^2/2-\cdots$ and square $(1-s)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $x=r-r_0$ and $s=e^{-ax}$: $\dfrac{\mathrm{d}U}{\mathrm{d}x}=2D(1-s)\cdot\dfrac{\mathrm{d}(1-s)}{\mathrm{d}x}=2D(1-s)(as)$. This is zero at $s=1$, i.e. $x=0$ (the other factor $s=e^{-ax}$ never vanishes). At $x=0$, $U=D\cdot0-D=-D$.</p>
+            <p>(b) Differentiate again: $U''=2Da\,\dfrac{\mathrm{d}}{\mathrm{d}x}\bigl[s-s^2\bigr]=2Da\,(-as+2as^2)=2Da^2s(2s-1)$. At $s=1$: $k=2Da^2$.</p>
+            <p>(c) $1-s=ax-\tfrac12a^2x^2+\tfrac16a^3x^3-\cdots$. Squaring: $(1-s)^2=a^2x^2-a^3x^3+\Bigl(\tfrac14+\tfrac13\Bigr)a^4x^4+\cdots=a^2x^2-a^3x^3+\tfrac7{12}a^4x^4+\cdots$. Hence
+            $$U\approx-D+Da^2x^2-Da^3x^3+\tfrac7{12}Da^4x^4 .$$
+            The quadratic term $Da^2x^2=\tfrac12kx^2$ is the harmonic approximation; the <strong>negative cubic term</strong> $-Da^3x^3$ makes the well steeper for compression ($x&lt;0$) than for extension ($x&gt;0$), which is the origin of thermal expansion.</p>
+            <p>(d) $k=2\times0.50\times(1.5)^2=2.25$ eV/Å$^2$.</p>
+            <p class="answer">$k = 2Da^2 = 2.25$ eV/Å²</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-6">
+            <div class="p-head"><span class="p-num">Problem 1.6</span><span class="p-level">Core</span></div>
+            <p>For the Lennard-Jones potential of Example 4.1: (a) find the separation $r_i$ at which $U''(r)=0$ (the inflection point, where the attractive force is largest). (b) For argon ($\varepsilon=0.0103$ eV, $\sigma=3.40$ Å) compute $r_0$, $r_i$ and the stiffness $k$ in eV/Å$^2$ and in N/m (1 eV/Å$^2$ = 16.02 N/m).</p>
+            <details class="hint"><summary>Hint</summary><p>Set $156\sigma^{12}r^{-14}=42\sigma^6r^{-8}$ and solve for $r^6$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $U''=4\varepsilon\bigl[156\sigma^{12}r^{-14}-42\sigma^6r^{-8}\bigr]=0\Rightarrow r^6=\dfrac{156}{42}\sigma^6=\dfrac{26}{7}\sigma^6$, so
+            $$r_i=\Bigl(\frac{26}{7}\Bigr)^{1/6}\sigma\approx1.2445\,\sigma .$$
+            Since $U'=-F$ and $U''=-\mathrm{d}F/\mathrm{d}r$, a zero of $U''$ is an extremum of the force; here it is the point of maximum attraction, beyond $r_0$ (the bond is being stretched).</p>
+            <p>(b) $r_0=1.1225\times3.40=3.82$ Å and $r_i=1.2445\times3.40=4.23$ Å. The stiffness is $k=57.15\,\varepsilon/\sigma^2=57.15\times0.0103/11.56=0.0509$ eV/Å$^2$, which is $0.0509\times16.02=0.816$ N/m. (Compare a covalent bond at several hundred N/m: weak van der Waals bonding means soft, low-melting solids.)</p>
+            <p class="answer">$r_0=3.82$ Å, $r_i=4.23$ Å, $k=0.0509$ eV/Å² = 0.82 N/m</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-7">
+            <div class="p-head"><span class="p-num">Problem 1.7</span><span class="p-level">Core</span></div>
+            <p>(a) Derive Newton&rsquo;s iteration for the cube root of $c$ and carry out two steps for $c=10$ from $x_0=2$. (b) Let $e_n=x_n-x_*$ be the error. Show that for a simple root, $e_{n+1}\approx\dfrac{f''(x_*)}{2f'(x_*)}e_n^2$ (quadratic convergence).</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Solve $f(x)=x^3-c=0$. (b) Expand $f(x_n)$ and $f'(x_n)$ about the root $x_*$, where $f(x_*)=0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $f=x^3-c$, $f'=3x^2$, so $x_{n+1}=x_n-\dfrac{x_n^3-c}{3x_n^2}=\dfrac13\Bigl(2x_n+\dfrac{c}{x_n^2}\Bigr)$. With $c=10$, $x_0=2$: $x_1=\tfrac13(4+2.5)=2.1667$; $x_2=\tfrac13(4.3333+10/4.6944)=\tfrac13(4.3333+2.1302)=2.15450$. The true value is $10^{1/3}=2.154435$, so the error has gone from $0.12$ to $0.012$ to $7\times10^{-5}$.</p>
+            <p>(b) Write $x_n=x_*+e_n$. Taylor-expanding about $x_*$: $f(x_n)=f'e_n+\tfrac12f''e_n^2+\cdots$ and $f'(x_n)=f'+f''e_n+\cdots$ with $f',f''$ evaluated at $x_*$. Then
+            $$e_{n+1}=e_n-\frac{f'e_n+\tfrac12f''e_n^2}{f'+f''e_n}=e_n-e_n\frac{1+\tfrac{f''}{2f'}e_n}{1+\tfrac{f''}{f'}e_n}\approx e_n-e_n\Bigl(1-\frac{f''}{2f'}e_n\Bigr)=\frac{f''}{2f'}\,e_n^2 .$$
+            The error is squared at each step (times a constant), so the number of correct digits roughly doubles. The result needs $f'(x_*)\ne0$; for a double root, convergence drops to linear.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-8">
+            <div class="p-head"><span class="p-num">Problem 1.8</span><span class="p-level">Core</span></div>
+            <p>(a) Use Taylor series to show that the central difference $D_h f=\dfrac{f(x+h)-f(x-h)}{2h}$ has error $\tfrac16h^2f'''(x)+O(h^4)$. (b) For $f(x)=e^x$ at $x=0$ and $h=0.1$ compute $D_hf$ and compare the actual error with the prediction. (c) Derive the second-derivative stencil and its leading error, and test it on $f=\cos x$ at $x=0$ with $h=0.1$.</p>
+            <details class="hint"><summary>Hint</summary><p>Write out $f(x\pm h)$ to order $h^4$ and combine. For (b), $D_hf=\sinh(0.1)/0.1$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Subtract $f(x-h)$ from $f(x+h)$: the terms with even powers of $h$ cancel and the odd ones double, so $f(x+h)-f(x-h)=2hf'+\tfrac13h^3f'''+O(h^5)$. Dividing by $2h$: $D_hf=f'+\tfrac16h^2f'''+O(h^4)$.</p>
+            <p>(b) $D_hf=\dfrac{e^{0.1}-e^{-0.1}}{0.2}=\dfrac{\sinh0.1}{0.1}=1.001667$. The exact derivative is $1$, so the error is $1.667\times10^{-3}$. The prediction $\tfrac16h^2f'''=\tfrac16(0.01)(1)=1.667\times10^{-3}$. They agree to the digits shown.</p>
+            <p>(c) Adding the expansions: $f(x+h)+f(x-h)=2f+h^2f''+\tfrac1{12}h^4f^{(4)}+O(h^6)$, so
+            $$\frac{f(x+h)-2f(x)+f(x-h)}{h^2}=f''+\tfrac1{12}h^2f^{(4)}+O(h^4).$$
+            For $f=\cos x$ at $0$: the stencil gives $\dfrac{2\cos0.1-2}{0.01}=-0.99917$, versus the exact $f''(0)=-1$; the error $+8.3\times10^{-4}$ matches $\tfrac1{12}h^2f^{(4)}(0)=\tfrac1{12}(0.01)(1)=8.3\times10^{-4}$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-9">
+            <div class="p-head"><span class="p-num">Problem 1.9</span><span class="p-level">Core</span></div>
+            <p>Estimate $I=\displaystyle\int_0^1e^x\,\mathrm{d}x$ using the trapezoid rule $T_2$ and Simpson&rsquo;s rule $S_2$ with $n=2$ strips ($h=0.5$). Compare with the exact value and explain the difference in the errors.</p>
+            <details class="hint"><summary>Hint</summary><p>Nodes are $x=0,\,0.5,\,1$. Use the formulas in section 5.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Function values: $f(0)=1$, $f(0.5)=1.64872$, $f(1)=2.71828$.</p>
+            <p>$T_2=0.5\bigl[\tfrac12(1)+1.64872+\tfrac12(2.71828)\bigr]=0.5(3.50786)=1.75393$.</p>
+            <p>$S_2=\dfrac{0.5}{3}\bigl[1+4(1.64872)+2.71828\bigr]=\dfrac{0.5}{3}(10.31316)=1.71886$.</p>
+            <p>Exact: $e-1=1.71828$. Errors: trapezoid $+0.0356$ (overestimate, since $e^x$ is convex, so straight chords lie above it), Simpson $+0.00058$. The ratio $\approx60$ reflects the different orders: with $h=0.5$ the trapezoid error is $\approx\tfrac{(b-a)h^2}{12}f''=\tfrac{0.25}{12}\times\text{(about 1.7)}\approx0.036$, while Simpson&rsquo;s is $\approx\tfrac{h^4}{180}f^{(4)}\approx\tfrac{0.0625}{180}\times1.7\approx0.0006$.</p>
+            <p class="answer">$T_2=1.7539$, $S_2=1.7189$, exact $1.7183$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-10">
+            <div class="p-head"><span class="p-num">Problem 1.10</span><span class="p-level">Challenge</span></div>
+            <p>A quantum harmonic oscillator has energy levels $E_n=\hbar\omega\bigl(n+\tfrac12\bigr)$, $n=0,1,2,\ldots$ Its partition function is $Z=\sum_{n=0}^\infty e^{-\beta E_n}$ with $\beta=1/(k_\mathrm{B}T)$. (a) Sum the series to get $Z$ in closed form. (b) Using $\langle E\rangle=-\dfrac{\partial\ln Z}{\partial\beta}$, show $\langle E\rangle=\tfrac12\hbar\omega+\dfrac{\hbar\omega}{e^{\beta\hbar\omega}-1}$. (c) Show by Taylor expansion that $\langle E\rangle\to k_\mathrm{B}T$ when $k_\mathrm{B}T\gg\hbar\omega$, and that the first correction is $\tfrac{(\hbar\omega)^2}{12k_\mathrm{B}T}$, hence recovering the classical equipartition result for one oscillator.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) Factor out $e^{-\beta\hbar\omega/2}$; the remainder is a geometric series with ratio $r=e^{-\beta\hbar\omega}$. (c) Let $y=\beta\hbar\omega$ and expand $\dfrac{y}{e^y-1}=1-\dfrac y2+\dfrac{y^2}{12}-\cdots$ (you may derive the coefficients by expanding the denominator).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $Z=e^{-\beta\hbar\omega/2}\sum_{n=0}^\infty\bigl(e^{-\beta\hbar\omega}\bigr)^n=\dfrac{e^{-\beta\hbar\omega/2}}{1-e^{-\beta\hbar\omega}}$, valid because $0&lt;r&lt;1$. Equivalently $Z=\dfrac{1}{2\sinh(\beta\hbar\omega/2)}$.</p>
+            <p>(b) $\ln Z=-\tfrac12\beta\hbar\omega-\ln\bigl(1-e^{-\beta\hbar\omega}\bigr)$. Then $\langle E\rangle=-\dfrac{\partial\ln Z}{\partial\beta}=\tfrac12\hbar\omega+\dfrac{\hbar\omega e^{-\beta\hbar\omega}}{1-e^{-\beta\hbar\omega}}=\tfrac12\hbar\omega+\dfrac{\hbar\omega}{e^{\beta\hbar\omega}-1}$.</p>
+            <p>(c) Put $y=\beta\hbar\omega\ll1$. Expand $e^y-1=y\bigl(1+\tfrac y2+\tfrac{y^2}{6}+\cdots\bigr)$, so $\dfrac{y}{e^y-1}=\Bigl(1+\tfrac y2+\tfrac{y^2}6\Bigr)^{-1}=1-\tfrac y2+\Bigl(\tfrac{y^2}{4}-\tfrac{y^2}{6}\Bigr)+\cdots=1-\tfrac y2+\tfrac{y^2}{12}-\cdots$ using $(1+u)^{-1}=1-u+u^2-\cdots$. Therefore
+            $$\langle E\rangle=\tfrac12\hbar\omega+\frac{\hbar\omega}{y}\Bigl(1-\tfrac y2+\tfrac{y^2}{12}\Bigr)=\tfrac12\hbar\omega+k_\mathrm{B}T-\tfrac12\hbar\omega+\frac{\hbar\omega\,y}{12}=k_\mathrm{B}T+\frac{(\hbar\omega)^2}{12\,k_\mathrm{B}T}+\cdots$$
+            At high temperature each oscillator carries $k_\mathrm{B}T$ (kinetic plus potential, $\tfrac12k_\mathrm{B}T$ each): equipartition. The zero-point energy cancels at this order, and the leading quantum correction is small and positive. At low temperature $\langle E\rangle\to\tfrac12\hbar\omega$ instead, which is why heat capacities of solids freeze out and classical molecular dynamics overestimates them at low $T$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-11">
+            <div class="p-head"><span class="p-num">Problem 1.11</span><span class="p-level">Challenge</span></div>
+            <p>An atom in a harmonic well $U(x)=\tfrac12kx^2$ at temperature $T$ has position distribution $p(x)\propto e^{-U(x)/k_\mathrm{B}T}$. (a) Normalise $p(x)$. (b) Use the Gaussian integral and differentiation with respect to $a$ to show $\langle x^2\rangle=k_\mathrm{B}T/k$. (c) Hence show $\langle U\rangle=\tfrac12k_\mathrm{B}T$. (d) For the argon stiffness from Problem 1.6, estimate the root-mean-square displacement at $T=80$ K and compare it with $r_0$.</p>
+            <details class="hint"><summary>Hint</summary><p>Set $a=k/(2k_\mathrm{B}T)$. Define $I(a)=\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$ and differentiate under the integral sign: $-I'(a)=\int x^2e^{-ax^2}\mathrm{d}x$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $a=k/(2k_\mathrm{B}T)$, $p(x)=\sqrt{a/\pi}\;e^{-ax^2}$, since $\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$.</p>
+            <p>(b) Differentiate $I(a)=\sqrt\pi\,a^{-1/2}$ with respect to $a$: $I'(a)=-\tfrac12\sqrt\pi\,a^{-3/2}$. But $I'(a)=-\int x^2e^{-ax^2}\mathrm{d}x$, hence $\int x^2e^{-ax^2}\mathrm{d}x=\tfrac12\sqrt\pi\,a^{-3/2}$. Therefore
+            $$\langle x^2\rangle=\sqrt{\frac a\pi}\cdot\frac{\sqrt\pi}{2a^{3/2}}=\frac1{2a}=\frac{k_\mathrm{B}T}{k}.$$</p>
+            <p>(c) $\langle U\rangle=\tfrac12k\langle x^2\rangle=\tfrac12k_\mathrm{B}T$: each quadratic degree of freedom carries $\tfrac12k_\mathrm{B}T$ (equipartition).</p>
+            <p>(d) $k_\mathrm{B}T=8.617\times10^{-5}\times80=6.89\times10^{-3}$ eV. Then $\langle x^2\rangle=6.89\times10^{-3}/0.0509=0.135$ Å$^2$, so $x_\mathrm{rms}=0.37$ Å, about $10\%$ of $r_0=3.82$ Å. That is near the Lindemann criterion for melting (vibration amplitudes of order 10&ndash;15% of the spacing), consistent with argon melting at 84 K, so the harmonic estimate is already at its limit.</p>
+            <p class="answer">$\langle x^2\rangle=k_\mathrm{B}T/k$; $x_\mathrm{rms}\approx0.37$ Å (about 10% of $r_0$)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p1-12">
+            <div class="p-head"><span class="p-num">Problem 1.12</span><span class="p-level">Challenge</span></div>
+            <p>(a) Show that the central difference with step $h$ combined as $\dfrac{4D_{h/2}f-D_hf}{3}$ (Richardson extrapolation) cancels the $h^2$ error term. (b) Apply it to $f=e^x$ at $x=0$ with $h=0.2$ and compare with $D_{0.2}f$ and $D_{0.1}f$. (c) Explain why the idea works for any method whose error expands in known powers of $h$.</p>
+            <details class="hint"><summary>Hint</summary><p>From Problem 1.8, $D_hf=f'+c\,h^2+O(h^4)$ with $c=f'''/6$. Replace $h$ by $h/2$ and eliminate $c$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $D_hf=f'+ch^2+O(h^4)$ and $D_{h/2}f=f'+\tfrac14ch^2+O(h^4)$. Then $4D_{h/2}f-D_hf=3f'+\bigl(ch^2-ch^2\bigr)+O(h^4)=3f'+O(h^4)$, so $\dfrac{4D_{h/2}f-D_hf}{3}=f'+O(h^4)$: fourth order.</p>
+            <p>(b) For $e^x$ at 0: $D_{0.2}f=\sinh(0.2)/0.2=1.006680$ and $D_{0.1}f=\sinh(0.1)/0.1=1.001668$. The extrapolated value is $\dfrac{4(1.001668)-1.006680}{3}=\dfrac{4.006672-1.006680}{3}=0.999997$. Its error is about $-3\times10^{-6}$ (the leading term is $-h^4f^{(5)}/480$), versus $+1.7\times10^{-3}$ for $D_{0.1}f$ alone. The extrapolation reuses the function values already computed for $D_{0.1}$ and $D_{0.2}$, yet is several hundred times more accurate.</p>
+            <p>(c) If the error is $c_1h^{p_1}+c_2h^{p_2}+\cdots$ with known exponents, halving $h$ gives a second equation in the same unknown $c_1$; a linear combination eliminates it and leaves an error of the next order. Repeating gives Romberg integration and extrapolation in time-stepping.</p>
+            </details>
+            </div>
+
+            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Stewart, J., <em>Calculus: Early Transcendentals</em>, Cengage. A standard first-year text with many exercises.</li>
+                <li>Thomas, G. B., <em>Thomas&rsquo; Calculus</em>, Pearson.</li>
+                <li>Spivak, M., <em>Calculus</em>, Publish or Perish. A rigorous treatment if you want the proofs.</li>
+                <li>Boas, M. L., <em>Mathematical Methods in the Physical Sciences</em>, Wiley. Chapters 1&ndash;2 and 11 for series and the Gaussian integral.</li>
+                <li>Press, W. H. et al., <em>Numerical Recipes</em>, Cambridge University Press. Chapters on integration and root finding.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="your-first-simulation.html"><span class="dir">Previous topic</span>Your first simulation</a>
+<a class="next" href="multivariable-calculus.html"><span class="dir">Next topic</span>Calculus II: several variables and optimisation</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=b8b6cd84"></script>
+    <script src="../assets/glossary.js?v=c565f93c"></script>
+    <script src="../assets/site.js?v=feef663a" defer></script>
+</body>
+</html>

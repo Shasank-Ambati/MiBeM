@@ -55,6 +55,8 @@ def label_text(t):
         return "Background " + t["label"].lstrip("B")
     if t["series"] == "start":
         return "Start here " + t["label"].lstrip("S")
+    if t["series"] == "maths":
+        return "Maths module " + t["label"].lstrip("M")
     return "Topic " + t["label"]
 
 
@@ -124,7 +126,7 @@ def add_img_attrs(s, page_dir, lazy=True):
 
 
 # ----------------------------------------------------------------- templates
-def head(rel, title, desc, url, og_type="article"):
+def head(rel, title, desc, url, og_type="article", math=False):
     return f"""<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -145,8 +147,12 @@ def head(rel, title, desc, url, og_type="article"):
     <link rel="apple-touch-icon" href="{rel}assets/apple-touch-icon.png">
     <link rel="manifest" href="{rel}site.webmanifest">
     <script>try{{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}}catch(e){{}}</script>
-    <link rel="stylesheet" href="{rel}assets/style.css?v={ver('assets/style.css')}">
+    <link rel="stylesheet" href="{rel}assets/style.css?v={ver('assets/style.css')}">{katex_css(rel) if math else ""}
 </head>"""
+
+
+def katex_css(rel):
+    return f'\n    <link rel="stylesheet" href="{rel}assets/katex/katex.min.css?v={ver("assets/katex/katex.min.css")}">'
 
 
 def header(rel, links, cta=None):
@@ -167,8 +173,13 @@ def footer(rel):
     </div></footer>"""
 
 
-def scripts(rel, demos=False):
-    s = (f'<script src="{rel}assets/topics.js?v={ver("assets/topics.js")}"></script>\n'
+def scripts(rel, demos=False, math=False):
+    s = ""
+    if math:
+        s += (f'<script src="{rel}assets/katex/katex.min.js?v={ver("assets/katex/katex.min.js")}"></script>\n'
+              f'    <script src="{rel}assets/katex/auto-render.min.js?v={ver("assets/katex/auto-render.min.js")}"></script>\n'
+              f'    <script src="{rel}assets/math.js?v={ver("assets/math.js")}"></script>\n    ')
+    s += (f'<script src="{rel}assets/topics.js?v={ver("assets/topics.js")}"></script>\n'
          f'    <script src="{rel}assets/glossary.js?v={ver("assets/glossary.js")}"></script>\n'
          f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>')
     if demos:
@@ -218,7 +229,8 @@ def build_topic(t, i):
     next_t = TOPICS[i + 1] if i + 1 < len(TOPICS) else None
     leads = [x["id"] for x in TOPICS if t["id"] in x["builds"]]
 
-    s = re.sub(r"<head>.*?</head>", lambda m: head(rel, title, desc, url), s, count=1, flags=re.S)
+    math = t["series"] == "maths"
+    s = re.sub(r"<head>.*?</head>", lambda m: head(rel, title, desc, url, math=math), s, count=1, flags=re.S)
     s = re.sub(r"<body[^>]*>", f'<body data-topic="{t["id"]}">', s, count=1)
     cta = None
     hdr = header(rel, [(rel + "index.html#topics", "Topics"), (rel + "map.html", "Map"), (rel + "glossary.html", "Glossary")], cta)
@@ -229,6 +241,15 @@ def build_topic(t, i):
     s, n = re.subn(r'<p class="crumbs">.*?</p>', lambda m: crumbs, s, count=1, flags=re.S)
     assert n == 1, f"no breadcrumb in {t['slug']}"
     s = s.replace("<article>", '<article id="main">', 1)
+
+    if math:
+        chips = "".join(f'<a href="{x["slug"]}.html"{" class=\"here\" aria-current=\"page\"" if x["id"] == t["id"] else ""} title="{esc(x["title"])}">{x["label"]}</a>'
+                        for x in TOPICS if x["series"] == "maths")
+        cnav = f'<nav class="course-nav" aria-label="Maths course modules">{chips}</nav>'
+        if has_region(s, "coursenav"):
+            s = replace_region(s, "coursenav", cnav)
+        else:
+            s = re.sub(r'(<p class="crumbs">.*?</p>)', lambda m: m.group(1) + "\n            " + region("coursenav", cnav), s, count=1, flags=re.S)
 
     # facts strip after the lead paragraph
     builds = links_html(t["builds"], empty="Nothing: this is the place to start")
@@ -265,7 +286,7 @@ def build_topic(t, i):
         assert n == 1, f"no pager in {t['slug']}"
 
     s = re.sub(r"<footer class=\"site\">.*?</footer>.*?</body>",
-               lambda m: footer(rel) + "\n    " + scripts(rel, demos='class="demo"' in s) + "\n</body>", s, count=1, flags=re.S)
+               lambda m: footer(rel) + "\n    " + scripts(rel, demos='class="demo"' in s, math=math) + "\n</body>", s, count=1, flags=re.S)
     s = add_img_attrs(s, path.parent)
     s = add_anchors(s)
     s = wrap_tables(s)
@@ -274,7 +295,7 @@ def build_topic(t, i):
 
 # ----------------------------------------------------------------- landing + map
 def card_html(t):
-    bg = " bg" if t["series"] == "background" else ""
+    bg = " bg" if t["series"] in ("background", "maths") else ""
     chip = " blue" if t["tone"] == "b" else ""
     return f'''            <li><a class="topic-card" data-id="{t["id"]}" href="{t["path"]}">
                 <span class="num{bg}">{lab(t)}</span>
@@ -285,6 +306,7 @@ def card_html(t):
 
 def cards():
     groups = [("Start here: no background needed", "start", "Plain-language foundations for anyone starting from school-level maths and science. Read these in order."),
+              ("Maths course: university level, with problems", "maths", "A full course in the mathematics behind simulation: every concept explained and derived, worked examples, and graded problems with complete solutions. Twelve modules, in order."),
               ("Background: university-level refresher", "background", "Maths, physics, materials science, numerical methods and programming as the core topics use them."),
               ("Core topics", "core", "The methods themselves, in a sensible reading order.")]
     out = []
@@ -519,6 +541,8 @@ def build_search():
         p = Sections(t)
         p.feed((ROOT / t["path"]).read_text(encoding="utf-8"))
         for it in p.items:
+            if t["series"] == "maths":
+                it["x"] = re.sub(r"\\[a-zA-Z]+|[$\\{}^_]", " ", it["x"])
             it["x"] = re.sub(r"\s+", " ", it["x"]).strip()[:2400]
             entries.append(it)
     for g in load_glossary():

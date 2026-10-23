@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear algebra I: vectors, matrices and lattices - MiBeM</title>
+    <meta name="description" content="University-level linear algebra for materials modelling: vectors, linear systems and Gaussian elimination, matrices, determinants, bases and coordinate changes, orthogonality, with crystal lattices, reciprocal space and X-ray diffraction as running examples; twelve problems with full solutions.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/linear-algebra-foundations.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Linear algebra I: vectors, matrices and lattices - MiBeM">
+    <meta property="og:description" content="University-level linear algebra for materials modelling: vectors, linear systems and Gaussian elimination, matrices, determinants, bases and coordinate changes, orthogonality, with crystal lattices, reciprocal space and X-ray diffraction as running examples; twelve problems with full solutions.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/linear-algebra-foundations.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="27">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#vectors">1. Vectors</a></li>
+                <li><a href="#systems">2. Linear systems and Gaussian elimination</a></li>
+                <li><a href="#matrices">3. Matrices as linear maps</a></li>
+                <li><a href="#det">4. Determinants</a></li>
+                <li><a href="#basis">5. Bases and coordinates</a></li>
+                <li><a href="#recip">6. The reciprocal lattice</a></li>
+                <li><a href="#orth">7. Orthogonality and rotations</a></li>
+                <li><a href="#cond">8. Conditioning: when small errors are amplified</a></li>
+                <li><a href="#summary-m4">9. How the pieces fit together</a></li>
+                <li><a href="#check">10. Problems</a></li>
+                <li><a href="#refs">11. References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Maths course</span><span>Maths module 4</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" class="here" aria-current="page" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
+<!-- coursenav:end -->
+            <h1>Linear algebra I: vectors, matrices and lattices</h1>
+            <p class="lead">Crystals are lattices of points generated by three vectors; diffraction patterns are the reciprocal of that lattice; the stiffness of a solid is a matrix; the electronic structure problem is a matrix. Linear algebra is the mathematics of all of these. This module builds it from the ground up with a materials emphasis: lattices, coordinate changes, reciprocal space and X-ray diffraction appear throughout, and the second part of the subject (eigenvalues, in <a href="eigenvalues-and-decompositions.html">M5</a>) then rests on firm foundations.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="numbers-units-and-graphs.html">S1. Numbers, units, graphs</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="eigenvalues-and-decompositions.html">M5. Linear algebra II</a><br><a href="fourier-analysis.html">M8. Fourier analysis</a></dd></div>
+<div><dt>Category</dt><dd>Maths course</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Compute dot and cross products, angles, projections and volumes of parallelepipeds.</li>
+                    <li>Solve linear systems by Gaussian elimination and describe the solution set using rank.</li>
+                    <li>Multiply matrices, find inverses and determinants, and explain their geometric meaning.</li>
+                    <li>Work with bases, change coordinates between fractional and Cartesian, and compute cell volumes, distances and reciprocal lattices.</li>
+                    <li>Construct orthonormal bases and rotation matrices, and recognise an ill-conditioned problem.</li>
+                </ul>
+                <strong>You need:</strong> school algebra and trigonometry (<a href="numbers-units-and-graphs.html">S1</a>). No calculus is required here.
+            </div>
+
+            <h2 id="vectors">1. Vectors<a class="anchor" href="#vectors" aria-label="Link to this section">#</a></h2>
+            <h3 id="vec-basics">Vectors and the dot product<a class="anchor" href="#vec-basics" aria-label="Link to this section">#</a></h3>
+            <p>A vector $\mathbf v=(v_1,\ldots,v_n)$ in $\mathbb R^n$ is an ordered list of numbers; geometrically, an arrow from the origin. Vectors add component by component and can be multiplied by a scalar. The <strong>dot product</strong> and <strong>norm</strong> are
+            $$\mathbf a\cdot\mathbf b=\sum_ia_ib_i=|\mathbf a||\mathbf b|\cos\theta,\qquad|\mathbf a|=\sqrt{\mathbf a\cdot\mathbf a}.$$
+            Two vectors are <strong>orthogonal</strong> if $\mathbf a\cdot\mathbf b=0$. The angle between them is $\theta=\arccos\dfrac{\mathbf a\cdot\mathbf b}{|\mathbf a||\mathbf b|}$; the <strong>projection</strong> of $\mathbf b$ onto $\mathbf a$ is $\dfrac{\mathbf a\cdot\mathbf b}{\mathbf a\cdot\mathbf a}\,\mathbf a$, the component of $\mathbf b$ along $\mathbf a$. The Cauchy&ndash;Schwarz inequality $|\mathbf a\cdot\mathbf b|\le|\mathbf a||\mathbf b|$ guarantees that the cosine lies in $[-1,1]$.</p>
+            <h3 id="cross">Cross product and triple product<a class="anchor" href="#cross" aria-label="Link to this section">#</a></h3>
+            <p>In three dimensions the <strong>cross product</strong> is
+            $$\mathbf a\times\mathbf b=(a_2b_3-a_3b_2,\ a_3b_1-a_1b_3,\ a_1b_2-a_2b_1),$$
+            a vector perpendicular to both, with length $|\mathbf a||\mathbf b|\sin\theta$ equal to the area of the parallelogram they span, and direction given by the right-hand rule. It is anticommutative: $\mathbf b\times\mathbf a=-\mathbf a\times\mathbf b$. The <strong>scalar triple product</strong> $\mathbf a\cdot(\mathbf b\times\mathbf c)$ is the signed volume of the parallelepiped with edges $\mathbf a,\mathbf b,\mathbf c$ (positive if they form a right-handed set). The area normal $\mathbf n=\mathbf a\times\mathbf b/|\mathbf a\times\mathbf b|$ gives the normal to a crystal plane spanned by two vectors.</p>
+            <div class="note mat"><strong>In materials science</strong>
+            <p>Bond lengths and angles from atomic coordinates are dot products: for an atom at the origin bonded to atoms at $\mathbf u$ and $\mathbf v$, the bond angle is $\arccos\dfrac{\mathbf u\cdot\mathbf v}{|\mathbf u||\mathbf v|}$ (Problem 1). The volume of a unit cell with edge vectors $\mathbf a_1,\mathbf a_2,\mathbf a_3$ is $V=|\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)|$, which gives the density of any crystal (Problem 7).</p>
+            </div>
+
+            <h2 id="systems">2. Linear systems and Gaussian elimination<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>linear system</strong> of $m$ equations in $n$ unknowns,
+            $$a_{11}x_1+\cdots+a_{1n}x_n=b_1,\ \ \ldots,\ \ a_{m1}x_1+\cdots+a_{mn}x_n=b_m,$$
+            is written $A\mathbf x=\mathbf b$, with $A$ the $m\times n$ matrix of coefficients. Linear systems are everywhere: balancing chemical reactions, mass balance in a flow network, fitting a model, finite-element equations, and the self-consistent equations in electronic-structure codes.</p>
+            <h3 id="elim">The algorithm<a class="anchor" href="#elim" aria-label="Link to this section">#</a></h3>
+            <p>The three <strong>elementary row operations</strong>, which do not change the solution set, are: swap two rows; multiply a row by a nonzero number; add a multiple of one row to another. <strong>Gaussian elimination</strong> uses them to reduce the augmented matrix $[A\,|\,\mathbf b]$ to an upper-triangular (row echelon) form from which the unknowns are found by back-substitution. In a numerical code one chooses the largest available pivot (&ldquo;partial pivoting&rdquo;) to limit rounding error. Elimination costs about $\tfrac23n^3$ operations, which is why solving a dense system of $10^5$ unknowns is already expensive and why sparse structure matters in finite-element codes.</p>
+            <div class="example">
+                <strong>Worked example 2.1: elimination</strong>
+                <p class="given">Solve $x+2y+z=4$, $2x+5y+z=9$, $x+y+3z=8$.</p>
+                <p>Augmented matrix $\left[\begin{array}{ccc|c}1&amp;2&amp;1&amp;4\\2&amp;5&amp;1&amp;9\\1&amp;1&amp;3&amp;8\end{array}\right]$. Replace $R_2\to R_2-2R_1$ and $R_3\to R_3-R_1$: $\left[\begin{array}{ccc|c}1&amp;2&amp;1&amp;4\\0&amp;1&amp;-1&amp;1\\0&amp;-1&amp;2&amp;4\end{array}\right]$. Then $R_3\to R_3+R_2$: $\left[\begin{array}{ccc|c}1&amp;2&amp;1&amp;4\\0&amp;1&amp;-1&amp;1\\0&amp;0&amp;1&amp;5\end{array}\right]$. Back-substitute: $z=5$; $y=1+z=6$; $x=4-2y-z=4-12-5=-13$. Check in the second equation: $2(-13)+5(6)+5=9$. &check;</p>
+            </div>
+            <h3 id="rank">Rank and the solution set<a class="anchor" href="#rank" aria-label="Link to this section">#</a></h3>
+            <p>The <strong>rank</strong> of $A$ is the number of nonzero rows after elimination (the number of independent equations, equal to the number of independent columns). Three cases arise for a square $n\times n$ system:</p>
+            <ul>
+                <li>$\operatorname{rank}A=n$: a <strong>unique solution</strong> for every $\mathbf b$ ($A$ is invertible).</li>
+                <li>$\operatorname{rank}A&lt;n$ and $\mathbf b$ is consistent: <strong>infinitely many solutions</strong>, forming an affine family with $n-\operatorname{rank}A$ free parameters.</li>
+                <li>$\operatorname{rank}A&lt;n$ and $\mathbf b$ inconsistent (a row reads $0=c\neq0$): <strong>no solution</strong>.</li>
+            </ul>
+            <p>For a homogeneous system $A\mathbf x=\mathbf 0$ the solutions form the <strong>null space</strong>, of dimension $n-\operatorname{rank}A$ (<em>rank&ndash;nullity theorem</em>). Balancing a chemical equation is exactly a null-space problem (Problem 3).</p>
+
+            <h2 id="matrices">3. Matrices as linear maps<a class="anchor" href="#matrices" aria-label="Link to this section">#</a></h2>
+            <p>An $m\times n$ matrix $A$ defines a map $\mathbf x\mapsto A\mathbf x$ from $\mathbb R^n$ to $\mathbb R^m$ that is <strong>linear</strong>: $A(\alpha\mathbf x+\beta\mathbf y)=\alpha A\mathbf x+\beta A\mathbf y$. The columns of $A$ are the images of the standard basis vectors, which is the quickest way to write down a matrix for a given transformation. The product of an $m\times n$ and an $n\times p$ matrix is $(AB)_{ij}=\sum_kA_{ik}B_{kj}$, and it represents <em>doing $B$ first, then $A$</em>. Matrix multiplication is associative, $(AB)C=A(BC)$, and distributive, but <strong>not commutative</strong>: rotating then reflecting is generally not the same as reflecting then rotating.</p>
+            <p>The <strong>transpose</strong> $A^T$ swaps rows and columns, with $(AB)^T=B^TA^T$; a matrix is symmetric if $A^T=A$. The <strong>identity</strong> $I$ leaves everything unchanged. The <strong>inverse</strong> $A^{-1}$, if it exists, undoes $A$: $A^{-1}A=AA^{-1}=I$, and $(AB)^{-1}=B^{-1}A^{-1}$. For a $2\times2$ matrix,
+            $$\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}^{-1}=\frac1{ad-bc}\begin{pmatrix}d&amp;-b\\-c&amp;a\end{pmatrix},$$
+            which fails exactly when $ad-bc=0$.</p>
+            <p>Standard 2D transformations: rotation by $\theta$ (anticlockwise), reflection in the $x$-axis, shear and scaling:
+            $$R(\theta)=\begin{pmatrix}\cos\theta&amp;-\sin\theta\\\sin\theta&amp;\cos\theta\end{pmatrix},\quad M_x=\begin{pmatrix}1&amp;0\\0&amp;-1\end{pmatrix},\quad S=\begin{pmatrix}1&amp;\gamma\\0&amp;1\end{pmatrix},\quad D=\begin{pmatrix}s_x&amp;0\\0&amp;s_y\end{pmatrix}.$$
+            The shear $S$ with $\gamma=\tan(\text{angle})$ is the deformation of simple shear tests, and deforming a simulation cell by applying a matrix to its lattice vectors is how strain is imposed in simulations.</p>
+            <div class="note warn"><strong>Do not invert a matrix to solve an equation</strong>
+            <p>Mathematically $\mathbf x=A^{-1}\mathbf b$. Numerically, computing $A^{-1}$ is slower and less accurate than solving $A\mathbf x=\mathbf b$ by elimination (LU factorisation), and it destroys sparsity. Write &ldquo;solve&rdquo; in your code, not &ldquo;inv&rdquo;. If you need to solve with many right-hand sides, factorise once and reuse.</p>
+            </div>
+
+            <h2 id="det">4. Determinants<a class="anchor" href="#det" aria-label="Link to this section">#</a></h2>
+            <p>For a square matrix the <strong>determinant</strong> is a single number. For $2\times2$ and $3\times3$:
+            $$\det\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}=ad-bc,\qquad\det\begin{pmatrix}a&amp;b&amp;c\\d&amp;e&amp;f\\g&amp;h&amp;i\end{pmatrix}=a(ei-fh)-b(di-fg)+c(dh-eg).$$
+            In general one expands along a row or column, or (better) reduces to triangular form by elimination and multiplies the diagonal. Key properties: $\det(AB)=\det A\det B$; $\det A^T=\det A$; swapping two rows flips the sign; a row of zeros or two proportional rows gives $0$; $\det A^{-1}=1/\det A$; the determinant of a triangular matrix is the product of its diagonal.</p>
+            <div class="note thm"><strong>Geometric meaning</strong>
+            <p>$|\det A|$ is the factor by which the map $\mathbf x\mapsto A\mathbf x$ multiplies areas (2D) or volumes (3D); the sign says whether orientation is preserved ($+$) or reversed ($-$, a reflection). The columns of $A$ span a parallelepiped of volume $|\det A|$. $\det A=0$ exactly when the map flattens space onto a lower dimension, equivalently when $A$ is singular (not invertible) and its columns are linearly dependent.</p>
+            </div>
+            <p>This is why the cell volume of a crystal is $V=|\det[\mathbf a_1\ \mathbf a_2\ \mathbf a_3]|=|\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)|$, and why a deformation gradient $F$ has $\det F=V/V_0$ (the volume ratio) and a physically admissible one has $\det F&gt;0$.</p>
+
+            <h2 id="basis">5. Bases and coordinates<a class="anchor" href="#basis" aria-label="Link to this section">#</a></h2>
+            <h3 id="indep">Linear independence and basis<a class="anchor" href="#indep" aria-label="Link to this section">#</a></h3>
+            <p>Vectors $\mathbf v_1,\ldots,\mathbf v_k$ are <strong>linearly independent</strong> if the only solution of $c_1\mathbf v_1+\cdots+c_k\mathbf v_k=\mathbf 0$ is $c_i=0$ for all $i$; none is a combination of the others. Their <strong>span</strong> is the set of all combinations. A <strong>basis</strong> of a space is a set of independent vectors that spans it, and the number of vectors is the <strong>dimension</strong>. For $n$ vectors in $\mathbb R^n$ placed as the columns of a matrix, independence is equivalent to $\det\neq0$. Every vector then has unique <strong>coordinates</strong> in the basis.</p>
+            <h3 id="lattice">Crystal lattices<a class="anchor" href="#lattice" aria-label="Link to this section">#</a></h3>
+            <p>A crystal lattice is the set of points $\mathbf R=n_1\mathbf a_1+n_2\mathbf a_2+n_3\mathbf a_3$ with integers $n_i$, where $\mathbf a_1,\mathbf a_2,\mathbf a_3$ are the <strong>primitive lattice vectors</strong>: a (non-orthogonal) basis of $\mathbb R^3$. Collect them as the columns of the <strong>lattice matrix</strong> $A=[\mathbf a_1\ \mathbf a_2\ \mathbf a_3]$. A position written with <strong>fractional coordinates</strong> $\mathbf f=(f_1,f_2,f_3)$ has Cartesian position
+            $$\mathbf r=A\mathbf f=f_1\mathbf a_1+f_2\mathbf a_2+f_3\mathbf a_3,\qquad\mathbf f=A^{-1}\mathbf r .$$
+            Structure files (POSCAR, CIF) store fractional coordinates because they are the same in every strained version of the cell, and fractional coordinates inside the unit cell lie between $0$ and $1$. The squared distance between two points with fractional separation $\Delta\mathbf f$ is
+            $$|\Delta\mathbf r|^2=\Delta\mathbf f^{T}(A^TA)\Delta\mathbf f=\Delta\mathbf f^{T}G\,\Delta\mathbf f,\qquad G_{ij}=\mathbf a_i\cdot\mathbf a_j,$$
+            where $G$ is the <strong>metric tensor</strong>: its diagonal holds the squared lattice parameters $a^2,b^2,c^2$ and its off-diagonal terms involve the cell angles.</p>
+            <div class="example">
+                <strong>Worked example 5.1: the FCC primitive cell</strong>
+                <p class="given">The primitive vectors of the face-centred cubic lattice with cubic edge $a$ are $\mathbf a_1=\tfrac a2(0,1,1)$, $\mathbf a_2=\tfrac a2(1,0,1)$, $\mathbf a_3=\tfrac a2(1,1,0)$. Find the primitive-cell volume and the number of atoms per conventional cube.</p>
+                <p>$V=|\det A|$ with $A=\tfrac a2\begin{pmatrix}0&amp;1&amp;1\\1&amp;0&amp;1\\1&amp;1&amp;0\end{pmatrix}$. The determinant of the integer matrix is $0(0-1)-1(0-1)+1(1-0)=2$, and scaling a $3\times3$ matrix by $a/2$ multiplies the determinant by $(a/2)^3$: $V=\dfrac{a^3}{8}\times2=\dfrac{a^3}{4}$. The conventional cube has volume $a^3$, which therefore contains $a^3/(a^3/4)=4$ primitive cells, hence $4$ lattice points. Since FCC has one atom per lattice point, the cube holds $4$ atoms: $8$ corners shared by $8$ cubes and $6$ face centres shared by $2$ gives $8\cdot\tfrac18+6\cdot\tfrac12=4$. &check;</p>
+            </div>
+
+            <h2 id="recip">6. The reciprocal lattice<a class="anchor" href="#recip" aria-label="Link to this section">#</a></h2>
+            <p>Diffraction experiments and plane-wave electronic-structure codes work in <em>reciprocal space</em>. The <strong>reciprocal lattice</strong> has basis vectors $\mathbf b_1,\mathbf b_2,\mathbf b_3$ defined by
+            $$\mathbf a_i\cdot\mathbf b_j=2\pi\,\delta_{ij},\qquad\text{explicitly}\quad\mathbf b_1=2\pi\frac{\mathbf a_2\times\mathbf a_3}{\mathbf a_1\cdot(\mathbf a_2\times\mathbf a_3)}\ \text{(and cyclic)},$$
+            or in matrix form, with columns $\mathbf b_j$ in $B$: $B^TA=2\pi I$, so $B=2\pi\,A^{-T}$. A reciprocal lattice vector $\mathbf G=h\mathbf b_1+k\mathbf b_2+l\mathbf b_3$ (integers $h,k,l$) is <strong>perpendicular to the family of lattice planes with Miller indices $(hkl)$</strong>, and the spacing between adjacent planes is
+            $$d_{hkl}=\frac{2\pi}{|\mathbf G_{hkl}|}.$$
+            For a cubic lattice, $\mathbf G=\tfrac{2\pi}{a}(h,k,l)$ and so $d_{hkl}=\dfrac{a}{\sqrt{h^2+k^2+l^2}}$.</p>
+            <div class="note mat"><strong>In materials science: Bragg&rsquo;s law and the Brillouin zone</strong>
+            <p>X-rays of wavelength $\lambda$ reflect strongly from planes of spacing $d$ at angles satisfying <strong>Bragg&rsquo;s law</strong> $\lambda=2d\sin\theta$. In reciprocal-space language this is the Laue condition that the change in wavevector equals a reciprocal lattice vector. The reciprocal of FCC is body-centred cubic and vice versa (Problem 9), and the Wigner&ndash;Seitz cell of the reciprocal lattice is the <strong>first Brillouin zone</strong>, the region in which $\mathbf k$-points are sampled in DFT (<a href="density-functional-theory.html">Density functional theory</a>) and phonon calculations. Doubling a real-space cell halves the reciprocal one, which is why larger supercells need fewer $\mathbf k$-points.</p>
+            </div>
+
+            <h2 id="orth">7. Orthogonality and rotations<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h2>
+            <p>A set of vectors is <strong>orthonormal</strong> if they are mutually orthogonal unit vectors. A matrix $Q$ whose columns are orthonormal is an <strong>orthogonal matrix</strong>: $Q^TQ=I$, so $Q^{-1}=Q^T$, and it preserves lengths and angles, $|Q\mathbf x|=|\mathbf x|$. Its determinant is $\pm1$: $+1$ for a proper <strong>rotation</strong>, $-1$ for a reflection or inversion. The point-group operations of a crystal are orthogonal matrices, which is why symmetry analysis is linear algebra. The rotation matrices of section 3 are orthogonal; a rotation by $\theta$ about the $z$-axis in three dimensions is $\begin{pmatrix}\cos\theta&amp;-\sin\theta&amp;0\\\sin\theta&amp;\cos\theta&amp;0\\0&amp;0&amp;1\end{pmatrix}$.</p>
+            <p>Given any independent set, the <strong>Gram&ndash;Schmidt process</strong> builds an orthonormal one: take $\mathbf e_1=\mathbf v_1/|\mathbf v_1|$, then subtract from each subsequent vector its projections on the earlier $\mathbf e$&rsquo;s and normalise:
+            $$\mathbf w_k=\mathbf v_k-\sum_{j&lt;k}(\mathbf e_j\cdot\mathbf v_k)\mathbf e_j,\qquad\mathbf e_k=\mathbf w_k/|\mathbf w_k| .$$
+            Applied to the columns of $A$ this gives the QR factorisation $A=QR$, with $R$ upper-triangular, which is how lattice vectors are rotated into the standard orientation used by codes (first vector along $x$, second in the $xy$-plane) and a stable way to solve least-squares problems (<a href="statistics-and-data-fitting.html">M11</a>). The <strong>orthogonal projection</strong> onto a unit vector $\mathbf e$ is the matrix $P=\mathbf e\mathbf e^T$ ($P^2=P$).</p>
+
+            <h2 id="cond">8. Conditioning: when small errors are amplified<a class="anchor" href="#cond" aria-label="Link to this section">#</a></h2>
+            <p>Solving $A\mathbf x=\mathbf b$ on a computer is exact only up to rounding, and the data $\mathbf b$ are usually uncertain anyway. A system is <strong>ill-conditioned</strong> if a tiny change in $\mathbf b$ (or $A$) causes a large change in $\mathbf x$. The sensitivity is measured by the <strong>condition number</strong> $\kappa(A)=\sigma_\mathrm{max}/\sigma_\mathrm{min}$, the ratio of the largest to the smallest stretching factor of the map (the singular values, see <a href="eigenvalues-and-decompositions.html">M5</a>). Roughly, the relative error in $\mathbf x$ can be $\kappa$ times the relative error in $\mathbf b$, so you lose about $\log_{10}\kappa$ digits of accuracy. Nearly dependent columns make $\kappa$ huge: nearly parallel lattice vectors, nearly collinear descriptors in a regression, or an over-complete basis set in an electronic-structure code (a nearly singular overlap matrix). Problem 12 shows an example.</p>
+
+            <h2 id="summary-m4">9. How the pieces fit together<a class="anchor" href="#summary-m4" aria-label="Link to this section">#</a></h2>
+            <p>Linear systems and their rank classify when equations can be solved; matrices are maps whose determinant measures volume scaling; a basis of lattice vectors gives coordinates, cell volume and the metric; the reciprocal lattice is the inverse-transpose of the lattice matrix and governs diffraction and Brillouin zones; orthogonal matrices are rotations and reflections; conditioning warns when numbers cannot be trusted. The sequel asks the central question about a matrix: which directions does it only stretch, and by how much?</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A system $A\mathbf{x}=\mathbf{b}$ is solved by Gaussian elimination in $O(n^3)$ operations; it has a unique solution, none, or infinitely many, according to the rank of $A$, and in practice one solves rather than inverts.</li>
+<li>A matrix is a linear map and multiplication is composition, so in general $AB\neq BA$; the determinant is the factor by which the map scales volume, and it vanishes exactly when the map collapses space (the matrix is singular).</li>
+<li>Columns of the lattice matrix $A$ are the basis vectors $\mathbf{a}_i$: Cartesian position is $\mathbf{r}=A\mathbf{f}$ for fractional coordinates $\mathbf{f}$, the cell volume is $|\det A|$, and distances use the metric $G=A^{T}A$.</li>
+<li>The reciprocal lattice matrix is $B=2\pi A^{-T}$ so that $\mathbf{a}_i\cdot\mathbf{b}_j=2\pi\delta_{ij}$; a plane $(hkl)$ has normal $\mathbf{G}_{hkl}$ and spacing $d=2\pi/|\mathbf{G}_{hkl}|$, which with Bragg&#x27;s law explains diffraction patterns.</li>
+<li>Orthogonal matrices ($Q^{T}Q=I$) preserve lengths and angles and represent rotations and reflections; an ill-conditioned matrix (huge ratio of largest to smallest stretch) makes solutions hypersensitive to small errors.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">10. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p4-1">
+            <div class="p-head"><span class="p-num">Problem 4.1</span><span class="p-level">Basic</span></div>
+            <p>In a water molecule, with the oxygen atom at the origin, the two hydrogen atoms lie at $\mathbf u=(0.757,\,0.586,\,0)$ &Aring; and $\mathbf v=(-0.757,\,0.586,\,0)$ &Aring;. Find the O&ndash;H bond length and the H&ndash;O&ndash;H bond angle. Also find a vector perpendicular to the molecular plane.</p>
+            <details class="hint"><summary>Hint</summary><p>Bond angle: $\cos\theta=\mathbf u\cdot\mathbf v/(|\mathbf u||\mathbf v|)$. A normal to the plane: $\mathbf u\times\mathbf v$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$|\mathbf u|^2=0.757^2+0.586^2=0.5730+0.3434=0.9164$, so the bond length is $|\mathbf u|=|\mathbf v|=0.957$ &Aring;. The dot product is $\mathbf u\cdot\mathbf v=-0.5730+0.3434=-0.2296$. Hence $\cos\theta=-0.2296/0.9164=-0.2506$ and $\theta=\arccos(-0.2506)=104.5^\circ$, the experimental water angle.</p>
+            <p>$\mathbf u\times\mathbf v=(0.586\cdot0-0\cdot0.586,\ 0\cdot(-0.757)-0.757\cdot0,\ 0.757\cdot0.586-0.586\cdot(-0.757))=(0,\,0,\,0.887)$, along $z$: perpendicular to the $xy$-plane of the molecule, with length $|\mathbf u||\mathbf v|\sin\theta=0.9164\times0.968=0.887$, as expected.</p>
+            <p class="answer">0.957 Å, 104.5°, normal along $z$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-2">
+            <div class="p-head"><span class="p-num">Problem 4.2</span><span class="p-level">Basic</span></div>
+            <p>Solve by Gaussian elimination: $2x+y-z=8$, $-3x-y+2z=-11$, $-2x+y+2z=-3$. Then compute the determinant of the coefficient matrix from the elimination.</p>
+            <details class="hint"><summary>Hint</summary><p>Eliminate $x$ from rows 2 and 3 using row 1 (multipliers $\tfrac32$ and $1$). The determinant is the product of the pivots (with a sign change for each row swap; there are none here).</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Augmented matrix: $\left[\begin{array}{ccc|c}2&amp;1&amp;-1&amp;8\\-3&amp;-1&amp;2&amp;-11\\-2&amp;1&amp;2&amp;-3\end{array}\right]$. $R_2\to R_2+\tfrac32R_1$: $(0,\ \tfrac12,\ \tfrac12\,|\,1)$. $R_3\to R_3+R_1$: $(0,\ 2,\ 1\,|\,5)$. Next eliminate below the second pivot $\tfrac12$: $R_3\to R_3-4R_2$: $(0,\ 0,\ 1-2\,|\,5-4)=(0,0,-1\,|\,1)$.</p>
+            <p>Back-substitution: $-z=1\Rightarrow z=-1$; $\tfrac12y+\tfrac12z=1\Rightarrow y=2-z=3$; $2x+y-z=8\Rightarrow2x=8-3-1=4\Rightarrow x=2$. Solution $(x,y,z)=(2,3,-1)$. Check row 3: $-4+3-2=-3$. &check;</p>
+            <p>Pivots are $2$, $\tfrac12$, $-1$, so $\det=2\times\tfrac12\times(-1)=-1$. Non-zero, so the system has a unique solution for every right-hand side.</p>
+            <p class="answer">$(2,3,-1)$; $\det=-1$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-3">
+            <div class="p-head"><span class="p-num">Problem 4.3</span><span class="p-level">Core</span></div>
+            <p>Balance the reaction $a\,\mathrm{Fe}+b\,\mathrm{O}_2\to c\,\mathrm{Fe}_2\mathrm{O}_3$ by writing atom conservation as a homogeneous linear system and finding its null space. Why is there a one-parameter family of solutions, and how do you choose the physical one? Then do the same for $a\,\mathrm{Al}+b\,\mathrm{Fe}_2\mathrm{O}_3\to c\,\mathrm{Al}_2\mathrm{O}_3+d\,\mathrm{Fe}$ (the thermite reaction).</p>
+            <details class="hint"><summary>Hint</summary><p>One equation per element: count atoms on the left minus atoms on the right. Choose the smallest positive integers.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Fe: $a-2c=0$. O: $2b-3c=0$. So $A\mathbf x=\mathbf0$ with unknowns $(a,b,c)$ and $A=\begin{pmatrix}1&amp;0&amp;-2\\0&amp;2&amp;-3\end{pmatrix}$, rank $2$ and $3$ unknowns, so the null space has dimension $3-2=1$: all solutions are multiples of one vector. Taking $c=t$: $a=2t$, $b=\tfrac32t$. The family is $t\,(2,\tfrac32,1)$, because multiplying a balanced equation by any factor leaves it balanced. Choose $t=2$ for the smallest integers: $(a,b,c)=(4,3,2)$, i.e. $4\mathrm{Fe}+3\mathrm{O}_2\to2\mathrm{Fe}_2\mathrm{O}_3$.</p>
+            <p>Thermite: Al: $a-2c=0$; Fe: $2b-d=0$; O: $3b-3c=0$. Unknowns $(a,b,c,d)$: three equations, rank $3$, one-dimensional null space. From O: $b=c$; from Al: $a=2c$; from Fe: $d=2b=2c$. Take $c=1$: $(a,b,c,d)=(2,1,1,2)$: $2\mathrm{Al}+\mathrm{Fe}_2\mathrm{O}_3\to\mathrm{Al}_2\mathrm{O}_3+2\mathrm{Fe}$.</p>
+            <p class="answer">$4\mathrm{Fe}+3\mathrm{O}_2\to2\mathrm{Fe}_2\mathrm{O}_3$; $2\mathrm{Al}+\mathrm{Fe}_2\mathrm{O}_3\to\mathrm{Al}_2\mathrm{O}_3+2\mathrm{Fe}$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-4">
+            <div class="p-head"><span class="p-num">Problem 4.4</span><span class="p-level">Basic</span></div>
+            <p>Let $A=\begin{pmatrix}1&amp;2\\3&amp;4\end{pmatrix}$ and $B=\begin{pmatrix}0&amp;1\\1&amp;0\end{pmatrix}$. (a) Compute $AB$ and $BA$ and describe what $B$ does. (b) Find $\det A$ and $A^{-1}$. (c) Solve $A\mathbf x=(5,6)^T$. (d) Verify $(AB)^{-1}=B^{-1}A^{-1}$.</p>
+            <details class="hint"><summary>Hint</summary><p>$B$ swaps coordinates. For the inverse use the $2\times2$ formula.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $AB=\begin{pmatrix}2&amp;1\\4&amp;3\end{pmatrix}$ (columns of $A$ swapped) and $BA=\begin{pmatrix}3&amp;4\\1&amp;2\end{pmatrix}$ (rows of $A$ swapped). They differ, so multiplication is not commutative. $B$ reflects in the line $y=x$.</p>
+            <p>(b) $\det A=1\cdot4-2\cdot3=-2$ (negative: $A$ reverses orientation, and scales area by $2$). $A^{-1}=\dfrac1{-2}\begin{pmatrix}4&amp;-2\\-3&amp;1\end{pmatrix}=\begin{pmatrix}-2&amp;1\\1.5&amp;-0.5\end{pmatrix}$.</p>
+            <p>(c) $\mathbf x=A^{-1}(5,6)^T=(-10+6,\ 7.5-3)=(-4,\ 4.5)$. Check: $-4+2(4.5)=5$ and $3(-4)+4(4.5)=6$. &check;</p>
+            <p>(d) $B^{-1}=B$ (swapping twice is the identity). $B^{-1}A^{-1}=B\begin{pmatrix}-2&amp;1\\1.5&amp;-0.5\end{pmatrix}=\begin{pmatrix}1.5&amp;-0.5\\-2&amp;1\end{pmatrix}$. And $\det(AB)=2\cdot3-1\cdot4=2$, so $(AB)^{-1}=\tfrac12\begin{pmatrix}3&amp;-1\\-4&amp;2\end{pmatrix}=\begin{pmatrix}1.5&amp;-0.5\\-2&amp;1\end{pmatrix}$. Equal. &check;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-5">
+            <div class="p-head"><span class="p-num">Problem 4.5</span><span class="p-level">Core</span></div>
+            <p>(a) Show that $R(\alpha)R(\beta)=R(\alpha+\beta)$ for 2D rotation matrices, and hence recover the angle-addition formulas for $\sin$ and $\cos$. (b) Show that $R(\theta)$ is orthogonal with $\det=+1$. (c) Rotate the point $(1,0,0)$ by $60^\circ$ about the $z$-axis. (d) A cubic crystal is rotated by $45^\circ$ about $z$. Where does the $[100]$ direction go, and what is the new direction of the $[110]$ direction?</p>
+            <details class="hint"><summary>Hint</summary><p>Multiply the matrices and compare entries with $R(\alpha+\beta)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $R(\alpha)R(\beta)=\begin{pmatrix}\cos\alpha\cos\beta-\sin\alpha\sin\beta&amp;-(\cos\alpha\sin\beta+\sin\alpha\cos\beta)\\\sin\alpha\cos\beta+\cos\alpha\sin\beta&amp;\cos\alpha\cos\beta-\sin\alpha\sin\beta\end{pmatrix}$. Comparing with $R(\alpha+\beta)$ entrywise gives $\cos(\alpha+\beta)=\cos\alpha\cos\beta-\sin\alpha\sin\beta$ and $\sin(\alpha+\beta)=\sin\alpha\cos\beta+\cos\alpha\sin\beta$. Composition of rotations is a rotation by the sum of angles, and rotations in a plane commute.</p>
+            <p>(b) $R^TR=\begin{pmatrix}\cos\theta&amp;\sin\theta\\-\sin\theta&amp;\cos\theta\end{pmatrix}\begin{pmatrix}\cos\theta&amp;-\sin\theta\\\sin\theta&amp;\cos\theta\end{pmatrix}=\begin{pmatrix}1&amp;0\\0&amp;1\end{pmatrix}$ and $\det R=\cos^2\theta+\sin^2\theta=1$.</p>
+            <p>(c) The first column of the $z$-rotation matrix: $(\cos60^\circ,\sin60^\circ,0)=(\tfrac12,\ \tfrac{\sqrt3}2,\ 0)$.</p>
+            <p>(d) $[100]=(1,0,0)\to(\tfrac{\sqrt2}2,\tfrac{\sqrt2}2,0)$, i.e. it now lies along the old $[110]$ direction. The old $[110]$, i.e. $(1,1,0)/\sqrt2$, becomes $R(45^\circ)(1,1)/\sqrt2=\bigl(\cos45^\circ-\sin45^\circ,\ \sin45^\circ+\cos45^\circ\bigr)/\sqrt2=(0,1)$, i.e. the old $[010]$ direction of the lab frame. Both results show how a rotation of the crystal relative to the lab changes the indices of a direction when measured in the lab frame, the issue behind texture and orientation-matrix conventions.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-6">
+            <div class="p-head"><span class="p-num">Problem 4.6</span><span class="p-level">Core</span></div>
+            <p>Show that the three vectors $\mathbf a_1=\tfrac a2(0,1,1)$, $\mathbf a_2=\tfrac a2(1,0,1)$, $\mathbf a_3=\tfrac a2(1,1,0)$ are linearly independent, and write the lattice point $(a,a,0)$ as an integer combination of them. Compute the nearest-neighbour distance and the number of nearest neighbours of a lattice point, and verify the packing fraction of FCC, $\pi/(3\sqrt2)\approx0.7405$.</p>
+            <details class="hint"><summary>Hint</summary><p>Nearest neighbours are the lattice vectors of shortest length. Hard spheres touch along a face diagonal.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Independent: $\det\bigl[\tfrac a2\,(\ldots)\bigr]=a^3/4\neq0$ (Example 5.1).</p>
+            <p>Express $(a,a,0)=n_1\mathbf a_1+n_2\mathbf a_2+n_3\mathbf a_3$: $x$: $\tfrac a2(n_2+n_3)=a$; $y$: $\tfrac a2(n_1+n_3)=a$; $z$: $\tfrac a2(n_1+n_2)=0$. So $n_2+n_3=2$, $n_1+n_3=2$, $n_1+n_2=0$: adding the first two and subtracting the third, $2n_3=4$, $n_3=2$, $n_2=0$, $n_1=0$. So $(a,a,0)=2\mathbf a_3$: integers, as it must be for a lattice point.</p>
+            <p>Shortest vectors: $|\mathbf a_i|=\tfrac a2\sqrt2=a/\sqrt2$, and the same length for $\mathbf a_i-\mathbf a_j$, e.g. $\mathbf a_1-\mathbf a_2=\tfrac a2(-1,1,0)$. The twelve vectors $\tfrac a2(\pm1,\pm1,0)$ and permutations all have length $a/\sqrt2$: the coordination number is $12$ and the nearest-neighbour distance $d=a/\sqrt2=0.707a$.</p>
+            <p>Packing: spheres of radius $d/2=a/(2\sqrt2)$ touch; sphere volume $\tfrac43\pi\bigl(a/(2\sqrt2)\bigr)^3=\tfrac43\pi\,\dfrac{a^3}{16\sqrt2}=\dfrac{\pi a^3}{12\sqrt2}$. Four per cube: $\dfrac{4\pi a^3}{12\sqrt2}=\dfrac{\pi a^3}{3\sqrt2}$. Divided by $a^3$: $\dfrac\pi{3\sqrt2}=0.7405$. &check;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-7">
+            <div class="p-head"><span class="p-num">Problem 4.7</span><span class="p-level">Core</span></div>
+            <p>Hexagonal close-packed titanium has the cell vectors $\mathbf a_1=(a,0,0)$, $\mathbf a_2=(-\tfrac a2,\tfrac{\sqrt3}2a,0)$, $\mathbf a_3=(0,0,c)$ with $a=2.95$ &Aring; and $c=4.68$ &Aring;. (a) Compute the cell volume as a determinant. (b) With $2$ atoms per cell and atomic mass $47.87$ u, find the density in g/cm$^3$. (c) Find the angle between $\mathbf a_1$ and $\mathbf a_2$ and the metric tensor $G$. ($1$ u $=1.6605\times10^{-24}$ g.)</p>
+            <details class="hint"><summary>Hint</summary><p>The matrix is block-triangular, so $\det=\bigl(a\cdot\tfrac{\sqrt3}2a\bigr)c$. Convert &Aring;$^3$ to cm$^3$ with $1$ &Aring;$^3=10^{-24}$ cm$^3$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $A=\begin{pmatrix}a&amp;-a/2&amp;0\\0&amp;\sqrt3a/2&amp;0\\0&amp;0&amp;c\end{pmatrix}$ is upper triangular, so $\det A=a\cdot\tfrac{\sqrt3}2a\cdot c=\tfrac{\sqrt3}2a^2c=0.8660\times8.7025\times4.68=35.27$ &Aring;$^3$.</p>
+            <p>(b) Mass per cell: $2\times47.87\times1.6605\times10^{-24}$ g $=1.590\times10^{-22}$ g. Volume: $35.27\times10^{-24}$ cm$^3$. Density $=1.590\times10^{-22}/3.527\times10^{-23}=4.51$ g/cm$^3$ (experiment: $4.506$).</p>
+            <p>(c) $\mathbf a_1\cdot\mathbf a_2=-\tfrac a2\cdot a=-a^2/2$, $|\mathbf a_1|=|\mathbf a_2|=a$, so $\cos\gamma=-\tfrac12$ and $\gamma=120^\circ$. Metric: $G=A^TA=\begin{pmatrix}a^2&amp;-a^2/2&amp;0\\-a^2/2&amp;a^2&amp;0\\0&amp;0&amp;c^2\end{pmatrix}=\begin{pmatrix}8.70&amp;-4.35&amp;0\\-4.35&amp;8.70&amp;0\\0&amp;0&amp;21.90\end{pmatrix}$ &Aring;$^2$.</p>
+            <p class="answer">$V=35.27$ Å³; $\rho=4.51$ g/cm³; $\gamma=120^\circ$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-8">
+            <div class="p-head"><span class="p-num">Problem 4.8</span><span class="p-level">Core</span></div>
+            <p>A 2D hexagonal supercell has $\mathbf a_1=(4,0)$ &Aring; and $\mathbf a_2=(-2,\,2\sqrt3)$ &Aring; (a $120^\circ$ cell). Two atoms have fractional coordinates $\mathbf f_A=(0.1,0.1)$ and $\mathbf f_B=(0.9,0.8)$. (a) What is the distance between them <em>without</em> using periodicity? (b) Apply the minimum-image convention by wrapping $\Delta\mathbf f$ into $[-\tfrac12,\tfrac12)$ and find the distance. (c) Check the neighbouring images to confirm this is the minimum, and explain why in skewed cells one should check neighbours.</p>
+            <details class="hint"><summary>Hint</summary><p>$\Delta\mathbf f=\mathbf f_B-\mathbf f_A=(0.8,0.7)$. Convert to Cartesian by multiplying by the lattice matrix.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\Delta\mathbf f=(0.8,0.7)$, so $\Delta\mathbf r=0.8(4,0)+0.7(-2,3.4641)=(3.2-1.4,\ 2.4249)=(1.8,\ 2.4249)$, length $\sqrt{3.24+5.88}=3.02$ &Aring;.</p>
+            <p>(b) Wrap: $\Delta\mathbf f\to(0.8-1,\ 0.7-1)=(-0.2,\ -0.3)$. Then $\Delta\mathbf r=-0.2(4,0)-0.3(-2,3.4641)=(-0.8+0.6,\ -1.0392)=(-0.2,\ -1.0392)$, length $\sqrt{0.04+1.0800}=1.058$ &Aring;. The atoms are actually very close across the boundary.</p>
+            <p>(c) Other images: $(0.8,-0.3)\to(3.2+0.6,\ -1.039)=(3.8,-1.04)$, length $3.94$; $(-0.2,0.7)\to(-0.8-1.4,\ 2.425)=(-2.2,2.425)$, length $3.27$. All longer than $1.058$, so the wrapped vector is the minimum image here. In a strongly skewed cell, though, wrapping each fractional coordinate independently can pick an image that is not the shortest, because the cell is not a rectangle in Cartesian space; robust codes test the $27$ ($3^3$) neighbouring images, or reduce the cell first (Niggli or Minkowski reduction).</p>
+            <p class="answer">3.02 Å without periodicity; 1.058 Å with minimum image</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-9">
+            <div class="p-head"><span class="p-num">Problem 4.9</span><span class="p-level">Challenge</span></div>
+            <p>(a) For the FCC primitive vectors of Problem 4.6, compute the reciprocal vectors $\mathbf b_1,\mathbf b_2,\mathbf b_3$. (b) Show they are the primitive vectors of a body-centred cubic lattice and find the side of its conventional cube. (c) Verify $\mathbf a_i\cdot\mathbf b_j=2\pi\delta_{ij}$ for $i=j=1$ and $i=1$, $j=2$. (d) Find the volume of the reciprocal primitive cell and relate it to $V=a^3/4$.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathbf b_1=2\pi(\mathbf a_2\times\mathbf a_3)/V$, then cycle the indices. A BCC lattice with cube side $s$ has primitive vectors such as $\tfrac s2(-1,1,1)$, $\tfrac s2(1,-1,1)$, $\tfrac s2(1,1,-1)$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\mathbf a_2\times\mathbf a_3=\tfrac{a^2}4(1,0,1)\times(1,1,0)=\tfrac{a^2}4(0\cdot0-1\cdot1,\ 1\cdot1-1\cdot0,\ 1\cdot1-0\cdot1)=\tfrac{a^2}4(-1,1,1)$. With $V=a^3/4$: $\mathbf b_1=2\pi\dfrac{a^2/4}{a^3/4}(-1,1,1)=\dfrac{2\pi}a(-1,1,1)$. Cycling the indices (or computing $\mathbf a_3\times\mathbf a_1$ and $\mathbf a_1\times\mathbf a_2$): $\mathbf b_2=\dfrac{2\pi}a(1,-1,1)$ and $\mathbf b_3=\dfrac{2\pi}a(1,1,-1)$.</p>
+            <p>(b) These have the form $\tfrac s2(-1,1,1)$, etc., with $\tfrac s2=\dfrac{2\pi}a$, i.e. $s=\dfrac{4\pi}a$: a BCC lattice (points at cube corners and centre) with conventional cube of side $4\pi/a$.</p>
+            <p>(c) $\mathbf a_1\cdot\mathbf b_1=\tfrac a2(0,1,1)\cdot\tfrac{2\pi}a(-1,1,1)=\pi(0+1+1)=2\pi$. &check; $\mathbf a_1\cdot\mathbf b_2=\pi(0,1,1)\cdot(1,-1,1)=\pi(0-1+1)=0$. &check;</p>
+            <p>(d) The reciprocal primitive volume is $(2\pi)^3/V=(2\pi)^3\cdot4/a^3$. Directly: the conventional BCC cube has volume $(4\pi/a)^3=64\pi^3/a^3$ and holds $2$ lattice points, so the primitive volume is $32\pi^3/a^3=(2\pi)^3\cdot4/a^3$. &check; In general $V_\mathrm{recip}=(2\pi)^3/V$: the larger the real cell, the smaller its Brillouin zone.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-10">
+            <div class="p-head"><span class="p-num">Problem 4.10</span><span class="p-level">Core</span></div>
+            <p>Aluminium is FCC with $a=4.05$ &Aring;. (a) Show that for a cubic lattice $d_{hkl}=a/\sqrt{h^2+k^2+l^2}$ using $d=2\pi/|\mathbf G|$. (b) Compute $d_{111}$ and $d_{200}$. (c) For Cu K$\alpha$ X-rays ($\lambda=1.5406$ &Aring;) find the Bragg angles $\theta$ and the diffraction angles $2\theta$. (d) Why are the reflections $(100)$ and $(110)$ absent for FCC?</p>
+            <details class="hint"><summary>Hint</summary><p>Bragg: $\lambda=2d\sin\theta$. For (d), the FCC structure factor is non-zero only if $h,k,l$ are all odd or all even.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) For a simple cubic lattice, $\mathbf b_i=\tfrac{2\pi}a\hat{\mathbf x}_i$, so $\mathbf G=\tfrac{2\pi}a(h,k,l)$, $|\mathbf G|=\tfrac{2\pi}a\sqrt{h^2+k^2+l^2}$, and $d=2\pi/|\mathbf G|=a/\sqrt{h^2+k^2+l^2}$. (Using the conventional cubic cell with Miller indices defined relative to it.)</p>
+            <p>(b) $d_{111}=4.05/\sqrt3=2.338$ &Aring;; $d_{200}=4.05/2=2.025$ &Aring;.</p>
+            <p>(c) $\sin\theta_{111}=\dfrac{1.5406}{2(2.338)}=0.3295\Rightarrow\theta=19.24^\circ$, $2\theta=38.5^\circ$. $\sin\theta_{200}=\dfrac{1.5406}{2(2.025)}=0.3804\Rightarrow\theta=22.36^\circ$, $2\theta=44.7^\circ$. These are the two strongest peaks in a powder pattern of aluminium.</p>
+            <p>(d) In FCC the conventional cube contains lattice points at $(0,0,0)$, $(\tfrac12,\tfrac12,0)$, $(\tfrac12,0,\tfrac12)$, $(0,\tfrac12,\tfrac12)$. The structure factor is $F=1+e^{i\pi(h+k)}+e^{i\pi(h+l)}+e^{i\pi(k+l)}$. For $(100)$: $1-1-1+1=0$. For $(110)$: $1+1-1-1=0$. For $(111)$: $1+1+1+1=4$, and for $(200)$: $4$. So only reflections with $h,k,l$ all odd or all even appear: the first FCC peaks are $(111),(200),(220),(311),\ldots$, and a quick check of the index sequence of a pattern tells you whether a cubic metal is FCC or BCC.</p>
+            <p class="answer">$d_{111}=2.338$ Å, $d_{200}=2.025$ Å; $2\theta=38.5^\circ,\ 44.7^\circ$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-11">
+            <div class="p-head"><span class="p-num">Problem 4.11</span><span class="p-level">Core</span></div>
+            <p>Apply Gram&ndash;Schmidt to $\mathbf v_1=(1,1,0)$, $\mathbf v_2=(1,0,1)$, $\mathbf v_3=(0,1,1)$ to obtain an orthonormal basis $\mathbf e_1,\mathbf e_2,\mathbf e_3$. Check orthonormality, and find the projection of $\mathbf p=(2,0,0)$ onto $\mathbf e_1$ and the remaining perpendicular component.</p>
+            <details class="hint"><summary>Hint</summary><p>$\mathbf e_1=\mathbf v_1/\sqrt2$. Each subsequent step subtracts projections onto the previous $\mathbf e$&rsquo;s.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\mathbf e_1=\tfrac1{\sqrt2}(1,1,0)$.</p>
+            <p>$\mathbf v_2\cdot\mathbf e_1=\tfrac1{\sqrt2}$, so $\mathbf w_2=\mathbf v_2-\tfrac1{\sqrt2}\mathbf e_1=(1,0,1)-\tfrac12(1,1,0)=(\tfrac12,-\tfrac12,1)$, with $|\mathbf w_2|=\sqrt{\tfrac14+\tfrac14+1}=\sqrt{\tfrac32}$. Thus $\mathbf e_2=\tfrac1{\sqrt6}(1,-1,2)$.</p>
+            <p>$\mathbf v_3\cdot\mathbf e_1=\tfrac1{\sqrt2}$; $\mathbf v_3\cdot\mathbf e_2=\tfrac1{\sqrt6}(0-1+2)=\tfrac1{\sqrt6}$. $\mathbf w_3=(0,1,1)-\tfrac12(1,1,0)-\tfrac16(1,-1,2)=\bigl(-\tfrac12-\tfrac16,\ 1-\tfrac12+\tfrac16,\ 1-\tfrac13\bigr)=\bigl(-\tfrac23,\tfrac23,\tfrac23\bigr)$, length $\tfrac23\sqrt3$, so $\mathbf e_3=\tfrac1{\sqrt3}(-1,1,1)$.</p>
+            <p>Check: $\mathbf e_1\cdot\mathbf e_2=\tfrac{1}{\sqrt{12}}(1-1+0)=0$; $\mathbf e_1\cdot\mathbf e_3=\tfrac1{\sqrt6}(-1+1)=0$; $\mathbf e_2\cdot\mathbf e_3=\tfrac1{\sqrt{18}}(-1-1+2)=0$; and each has norm $1$. &check;</p>
+            <p>Projection of $\mathbf p=(2,0,0)$ on $\mathbf e_1$: $(\mathbf p\cdot\mathbf e_1)\mathbf e_1=\tfrac2{\sqrt2}\cdot\tfrac1{\sqrt2}(1,1,0)=(1,1,0)$. Perpendicular part: $\mathbf p-(1,1,0)=(1,-1,0)$, which is orthogonal to $\mathbf e_1$: $(1,-1,0)\cdot(1,1,0)=0$. &check;</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p4-12">
+            <div class="p-head"><span class="p-num">Problem 4.12</span><span class="p-level">Challenge</span></div>
+            <p>Consider $A=\begin{pmatrix}1&amp;1\\1&amp;1.0001\end{pmatrix}$. (a) Solve $A\mathbf x=(2,\ 2.0001)^T$. (b) Solve it again with $\mathbf b'=(2,\ 2.0002)^T$ and compare the changes in $\mathbf b$ and $\mathbf x$. (c) Estimate the condition number from the determinant and the matrix size, and interpret the result in terms of a regression with two nearly identical descriptors.</p>
+            <details class="hint"><summary>Hint</summary><p>Subtract the first equation from the second to isolate $y$. The relative change of $\mathbf b$ is tiny; compare it with the relative change in $\mathbf x$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Subtract equation 1 from equation 2: $0.0001\,y=0.0001\Rightarrow y=1$, then $x=2-y=1$. So $\mathbf x=(1,1)$.</p>
+            <p>(b) Now $0.0001\,y=0.0002\Rightarrow y=2$, $x=0$: $\mathbf x'=(0,2)$. The relative change in $\mathbf b$ is $|\Delta\mathbf b|/|\mathbf b|=0.0001/2.83\approx3.5\times10^{-5}$, but the relative change in $\mathbf x$ is $|\Delta\mathbf x|/|\mathbf x|=\sqrt2/\sqrt2=1$ (a 100% change): amplification by about $3\times10^4$.</p>
+            <p>(c) $\det A=1.0001-1=10^{-4}$, tiny compared with the size of the entries, so $A$ is nearly singular: its eigenvalues are $\approx2.00005$ and $\approx5.0\times10^{-5}$, giving $\kappa\approx2/(5\times10^{-5})=4\times10^4$, consistent with the amplification seen (about 4 digits lost). In a regression with two nearly collinear descriptors (columns $(1,1)$ and $(1,1.0001)$), the data cannot tell the two contributions apart: tiny noise swaps weight between them, producing huge, opposite-signed coefficients (the sum is stable, the difference is not). Remedies: drop or combine descriptors, regularise (ridge regression, <a href="statistics-and-data-fitting.html">M11</a>), or collect data that separates them.</p>
+            <p class="answer">$(1,1)\to(0,2)$; $\kappa\approx4\times10^4$</p>
+            </details>
+            </div>
+
+            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Strang, G., <em>Introduction to Linear Algebra</em>, Wellesley&ndash;Cambridge Press: the best single book for this module; video lectures freely available.</li>
+                <li>Lay, D. C., <em>Linear Algebra and Its Applications</em>, Pearson.</li>
+                <li>Trefethen, L. N. and Bau, D., <em>Numerical Linear Algebra</em>, SIAM: conditioning, QR and stability.</li>
+                <li>Kittel, C., <em>Introduction to Solid State Physics</em>, Wiley: the reciprocal lattice, Bragg diffraction and Brillouin zones.</li>
+                <li>Ashcroft, N. W. and Mermin, N. D., <em>Solid State Physics</em>, Saunders: chapters 4&ndash;6 on lattices and reciprocal space.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="vector-calculus.html"><span class="dir">Previous topic</span>Vector calculus: fields, fluxes and conservation laws</a>
+<a class="next" href="eigenvalues-and-decompositions.html"><span class="dir">Next topic</span>Linear algebra II: eigenvalues and decompositions</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=b8b6cd84"></script>
+    <script src="../assets/glossary.js?v=c565f93c"></script>
+    <script src="../assets/site.js?v=feef663a" defer></script>
+</body>
+</html>

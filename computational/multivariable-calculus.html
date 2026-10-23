@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus II: several variables and optimisation - MiBeM</title>
+    <meta name="description" content="University-level multivariable calculus for materials modelling: partial derivatives, the chain rule, gradients and forces, Hessians and saddle points, Lagrange multipliers (with the Boltzmann distribution derived), and multiple integrals; twelve problems with full solutions.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/multivariable-calculus.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Calculus II: several variables and optimisation - MiBeM">
+    <meta property="og:description" content="University-level multivariable calculus for materials modelling: partial derivatives, the chain rule, gradients and forces, Hessians and saddle points, Lagrange multipliers (with the Boltzmann distribution derived), and multiple integrals; twelve problems with full solutions.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/multivariable-calculus.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="25">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../index.html#topics">Topics</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#fields">1. Functions of several variables</a></li>
+                <li><a href="#partials">2. Partial derivatives</a></li>
+                <li><a href="#chain">3. The chain rule and implicit differentiation</a></li>
+                <li><a href="#gradient">4. The gradient, directional derivatives and forces</a></li>
+                <li><a href="#hessian">5. Stationary points: the Hessian</a></li>
+                <li><a href="#lagrange">6. Constrained optimisation: Lagrange multipliers</a></li>
+                <li><a href="#multiple">7. Multiple integrals</a></li>
+                <li><a href="#summary-m2">8. How the pieces fit together</a></li>
+                <li><a href="#check">9. Problems</a></li>
+                <li><a href="#refs">10. References and further reading</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../index.html#topics">Topics</a><span>/</span><span class="chip blue">Maths course</span><span>Maths module 2</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Maths course modules"><a href="calculus-single-variable.html" title="Calculus I: functions of one variable">M1</a><a href="multivariable-calculus.html" class="here" aria-current="page" title="Calculus II: several variables and optimisation">M2</a><a href="vector-calculus.html" title="Vector calculus: fields, fluxes and conservation laws">M3</a><a href="linear-algebra-foundations.html" title="Linear algebra I: vectors, matrices and lattices">M4</a><a href="eigenvalues-and-decompositions.html" title="Linear algebra II: eigenvalues and decompositions">M5</a><a href="tensors-stress-and-strain.html" title="Tensors: stress, strain and anisotropy">M6</a><a href="ordinary-differential-equations.html" title="Ordinary differential equations">M7</a><a href="fourier-analysis.html" title="Fourier series and transforms">M8</a><a href="partial-differential-equations.html" title="Partial differential equations">M9</a><a href="probability-for-simulation.html" title="Probability and distributions">M10</a><a href="statistics-and-data-fitting.html" title="Statistics, error analysis and fitting">M11</a><a href="calculus-of-variations-and-optimisation.html" title="Calculus of variations and optimisation">M12</a></nav>
+<!-- coursenav:end -->
+            <h1>Calculus II: several variables and optimisation</h1>
+            <p class="lead">Real systems depend on many variables at once: the energy of a crystal depends on every atomic coordinate, a free energy on temperature, pressure and composition, a temperature field on position and time. This module extends single-variable calculus to functions of several variables. You will learn to differentiate them, to find and classify their minima and saddle points, to optimise under constraints, and to integrate over regions of space, using the same ideas that sit inside every force calculation, structure optimiser and thermodynamic derivation in this series.</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="calculus-single-variable.html">M1. Calculus I</a></dd></div>
+<div><dt>Leads to</dt><dd><a href="vector-calculus.html">M3. Vector calculus</a><br><a href="calculus-of-variations-and-optimisation.html">M12. Variational methods</a></dd></div>
+<div><dt>Category</dt><dd>Maths course</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>After this module you should be able to:</strong>
+                <ul>
+                    <li>Compute partial and total derivatives, apply the multivariable chain rule, and use thermodynamic identities with a held-fixed variable.</li>
+                    <li>Compute gradients and directional derivatives and use them to find forces from potentials and to describe level sets.</li>
+                    <li>Build the Hessian, classify stationary points (minimum, maximum, saddle), and explain the role of saddles as transition states.</li>
+                    <li>Solve constrained optimisation problems with Lagrange multipliers, including the derivation of the Boltzmann distribution.</li>
+                    <li>Evaluate double and triple integrals, change variables with the Jacobian, and use polar and spherical coordinates.</li>
+                </ul>
+                <strong>You need:</strong> <a href="calculus-single-variable.html">M1. Calculus I</a>, in particular derivative rules, Taylor series and Gaussian integrals.
+            </div>
+
+            <h2 id="fields">1. Functions of several variables<a class="anchor" href="#fields" aria-label="Link to this section">#</a></h2>
+            <p>A <strong>scalar field</strong> assigns a number to every point: $f(x,y)$, $f(x,y,z)$, or $f(x_1,\ldots,x_n)$. Examples you will meet: the potential energy $U(\mathbf r_1,\ldots,\mathbf r_N)$ of $N$ atoms (a function of $3N$ variables), the temperature $T(x,y,z,t)$ in a part, the Gibbs energy $G(T,P,x)$ of a phase, a concentration field $c(\mathbf r,t)$.</p>
+            <p>Functions of two variables are drawn as surfaces $z=f(x,y)$ or, more usefully, as <strong>contour maps</strong>: curves of constant $f$ (<em>level curves</em>, or <em>level surfaces</em> in 3D). A contour plot of a potential energy surface (PES) shows valleys (stable states), passes between valleys (saddles) and hills. High-dimensional functions cannot be drawn; we study them through the derivatives below, which work in any number of dimensions.</p>
+
+            <h2 id="partials">2. Partial derivatives<a class="anchor" href="#partials" aria-label="Link to this section">#</a></h2>
+            <h3 id="partial-def">Definition and notation<a class="anchor" href="#partial-def" aria-label="Link to this section">#</a></h3>
+            <div class="note def"><strong>Definition (partial derivative)</strong>
+            <p>The partial derivative of $f(x,y)$ with respect to $x$ is the ordinary derivative with $y$ held constant:
+            $$\frac{\partial f}{\partial x}=\lim_{h\to0}\frac{f(x+h,y)-f(x,y)}{h},$$
+            and similarly for $y$. Alternative notations: $f_x$, $\partial_xf$.</p>
+            </div>
+            <p>In practice: to compute $\partial f/\partial x$, treat every other variable as a constant and differentiate as usual. Example: for $f=x^2y+e^{xy}$, $f_x=2xy+y\,e^{xy}$ and $f_y=x^2+x\,e^{xy}$.</p>
+            <p><strong>Mixed partials commute.</strong> If $f_{xy}$ and $f_{yx}$ are continuous then
+            $$\frac{\partial^2f}{\partial x\,\partial y}=\frac{\partial^2f}{\partial y\,\partial x}.$$
+            In the example, $f_{xy}=\partial_y(2xy+ye^{xy})=2x+e^{xy}+xy\,e^{xy}$ and $f_{yx}=\partial_x(x^2+xe^{xy})=2x+e^{xy}+xy\,e^{xy}$. This innocent fact is the source of the <em>Maxwell relations</em> of thermodynamics (section 3).</p>
+
+            <h3 id="differential">The total differential<a class="anchor" href="#differential" aria-label="Link to this section">#</a></h3>
+            <p>The linear approximation extends directly: for small changes, $f(x+\mathrm{d}x,\,y+\mathrm{d}y)-f(x,y)\approx\mathrm{d}f$, where
+            $$\mathrm{d}f=\frac{\partial f}{\partial x}\,\mathrm{d}x+\frac{\partial f}{\partial y}\,\mathrm{d}y.$$
+            Each term is the contribution from one variable; the total is their sum. This is the rule for combining errors (they add, weighted by sensitivities) and the origin of the fundamental thermodynamic relations. For example, the Gibbs energy of a closed system obeys
+            $$\mathrm{d}G=-S\,\mathrm{d}T+V\,\mathrm{d}P,\qquad\text{so}\qquad S=-\Bigl(\frac{\partial G}{\partial T}\Bigr)_P,\quad V=\Bigl(\frac{\partial G}{\partial P}\Bigr)_T .$$
+            In thermodynamics the subscript on a partial derivative names the variables held fixed. It is not decoration: $(\partial U/\partial T)_V=C_V$ but $(\partial U/\partial T)_P=C_P-P(\partial V/\partial T)_P$, which differ. Always state what is held constant.</p>
+            <div class="note mat"><strong>In materials science: Maxwell relations</strong>
+            <p>Because $G$ is a state function, $\partial^2G/\partial T\,\partial P=\partial^2G/\partial P\,\partial T$. Substituting $S=-G_T$ and $V=G_P$ gives
+            $$\Bigl(\frac{\partial S}{\partial P}\Bigr)_T=-\Bigl(\frac{\partial V}{\partial T}\Bigr)_P .$$
+            The left side is hard to measure; the right side is the thermal expansion coefficient (times $V$), which is easy. Problem 12 puts it to work.</p>
+            </div>
+
+            <h2 id="chain">3. The chain rule and implicit differentiation<a class="anchor" href="#chain" aria-label="Link to this section">#</a></h2>
+            <p>If $f=f(x,y)$ and both $x$ and $y$ depend on a parameter $t$, then
+            $$\frac{\mathrm{d}f}{\mathrm{d}t}=\frac{\partial f}{\partial x}\frac{\mathrm{d}x}{\mathrm{d}t}+\frac{\partial f}{\partial y}\frac{\mathrm{d}y}{\mathrm{d}t}.$$
+            If instead $x=x(s,t)$ and $y=y(s,t)$, then $\dfrac{\partial f}{\partial s}=\dfrac{\partial f}{\partial x}\dfrac{\partial x}{\partial s}+\dfrac{\partial f}{\partial y}\dfrac{\partial y}{\partial s}$, and similarly for $t$. The pattern is always: sum over every route through which $f$ depends on the variable.</p>
+            <div class="example">
+                <strong>Worked example 3.1: energy along a path</strong>
+                <p class="given">An atom moves along $x(t)=\cos t$, $y(t)=\sin t$ in a potential $U(x,y)=x^2+3y^2$. Find $\mathrm{d}U/\mathrm{d}t$.</p>
+                <p>$U_x=2x$, $U_y=6y$, $\dot x=-\sin t$, $\dot y=\cos t$. So
+                $$\frac{\mathrm{d}U}{\mathrm{d}t}=2\cos t\,(-\sin t)+6\sin t\cos t=4\sin t\cos t=2\sin2t.$$
+                Check by substituting first: $U=\cos^2t+3\sin^2t=1+2\sin^2t$, so $\mathrm{d}U/\mathrm{d}t=4\sin t\cos t$. &check;</p>
+            </div>
+            <h3 id="implicit">Implicit and cyclic relations<a class="anchor" href="#implicit" aria-label="Link to this section">#</a></h3>
+            <p>If $F(x,y,z)=0$ defines $z$ implicitly as a function of $x$ and $y$, differentiating the identity $F(x,y,z(x,y))=0$ with respect to $x$ at fixed $y$ gives $F_x+F_z\,z_x=0$, so
+            $$\Bigl(\frac{\partial z}{\partial x}\Bigr)_y=-\frac{F_x}{F_z}.$$
+            Applying this to three variables linked by an equation of state gives the <strong>cyclic (triple-product) relation</strong>:
+            $$\Bigl(\frac{\partial x}{\partial y}\Bigr)_z\Bigl(\frac{\partial y}{\partial z}\Bigr)_x\Bigl(\frac{\partial z}{\partial x}\Bigr)_y=-1 .$$
+            It is surprising the first time: the product is $-1$, not $+1$, because the &ldquo;cancelling&rdquo; of $\partial x$, $\partial y$, $\partial z$ is not a real fraction cancellation when different variables are held fixed.</p>
+            <div class="example">
+                <strong>Worked example 3.2: the cyclic relation for the ideal gas</strong>
+                <p class="given">Verify the cyclic relation for $PV=nRT$ with variables $(P,V,T)$.</p>
+                <p>$P=nRT/V\Rightarrow(\partial P/\partial V)_T=-nRT/V^2$. $V=nRT/P\Rightarrow(\partial V/\partial T)_P=nR/P$. $T=PV/nR\Rightarrow(\partial T/\partial P)_V=V/nR$. The product is
+                $$-\frac{nRT}{V^2}\cdot\frac{nR}{P}\cdot\frac{V}{nR}=-\frac{nRT}{PV}=-1 .$$
+                A practical use: the bulk modulus $K=-V(\partial P/\partial V)_T$ can be found from the (easier to measure) thermal expansion $\alpha$ and the pressure coefficient via $(\partial P/\partial V)_T=-(\partial P/\partial T)_V/(\partial V/\partial T)_P$.</p>
+            </div>
+
+            <h2 id="gradient">4. The gradient, directional derivatives and forces<a class="anchor" href="#gradient" aria-label="Link to this section">#</a></h2>
+            <h3 id="grad-def">The gradient vector<a class="anchor" href="#grad-def" aria-label="Link to this section">#</a></h3>
+            <div class="note def"><strong>Definition (gradient)</strong>
+            <p>The gradient of $f(x,y,z)$ is the vector of its partial derivatives:
+            $$\nabla f=\Bigl(\frac{\partial f}{\partial x},\,\frac{\partial f}{\partial y},\,\frac{\partial f}{\partial z}\Bigr).$$</p>
+            </div>
+            <p>The <strong>directional derivative</strong> of $f$ along a unit vector $\hat{\mathbf u}$ (the slope you feel when walking in direction $\hat{\mathbf u}$) is
+            $$D_{\hat{\mathbf u}}f=\nabla f\cdot\hat{\mathbf u}=|\nabla f|\cos\theta,$$
+            where $\theta$ is the angle between $\nabla f$ and $\hat{\mathbf u}$. From this, three facts follow at once:</p>
+            <ul>
+                <li><strong>$\nabla f$ points in the direction of steepest ascent</strong> ($\cos\theta=1$), and its length $|\nabla f|$ is the maximum slope.</li>
+                <li>The slope is zero ($\cos\theta=0$) perpendicular to $\nabla f$, so <strong>$\nabla f$ is perpendicular to the level curve</strong> (or level surface) through that point.</li>
+                <li>$-\nabla f$ points steepest <em>downhill</em>. Following it is steepest descent, the simplest geometry optimiser (<a href="calculus-of-variations-and-optimisation.html">M12</a>).</li>
+            </ul>
+            <div class="note mat"><strong>In materials science: force is minus the gradient of energy</strong>
+            <p>For a potential energy $U(\mathbf r_1,\ldots,\mathbf r_N)$, the force on atom $i$ is
+            $$\mathbf F_i=-\nabla_{\mathbf r_i}U=-\Bigl(\frac{\partial U}{\partial x_i},\frac{\partial U}{\partial y_i},\frac{\partial U}{\partial z_i}\Bigr).$$
+            Every molecular dynamics and every relaxation code computes this vector, either analytically or by automatic differentiation of a machine-learned potential. In density functional theory the same quantity is the Hellmann&ndash;Feynman force. Diffusion flux $\mathbf J=-D\nabla c$ and heat flux $\mathbf q=-\kappa\nabla T$ have the same structure: things flow &ldquo;down&rdquo; the gradient.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 4.1: force from a central pair potential</strong>
+                <p class="given">An atom at position $\mathbf r=(x,y,z)$ relative to another has energy $U(r)$ depending only on the distance $r=\sqrt{x^2+y^2+z^2}$. Find the force.</p>
+                <p>By the chain rule $\partial U/\partial x=U'(r)\,\partial r/\partial x=U'(r)\,x/r$, and likewise for $y,z$. Therefore
+                $$\nabla U=U'(r)\,\frac{\mathbf r}{r}=U'(r)\,\hat{\mathbf r},\qquad\mathbf F=-U'(r)\,\hat{\mathbf r}.$$
+                The force is along the line joining the atoms, with magnitude $|U'(r)|$: repulsive if $U'&lt;0$ (energy falls as atoms separate), attractive if $U'&gt;0$. All pair potentials in simulations (Lennard-Jones, Morse, Coulomb) work this way.</p>
+            </div>
+
+            <h2 id="hessian">5. Stationary points: the Hessian<a class="anchor" href="#hessian" aria-label="Link to this section">#</a></h2>
+            <h3 id="taylor2">Taylor expansion in several variables<a class="anchor" href="#taylor2" aria-label="Link to this section">#</a></h3>
+            <p>Writing the displacement as a vector $\mathbf h$, the second-order Taylor expansion about $\mathbf x_0$ is
+            $$f(\mathbf x_0+\mathbf h)=f(\mathbf x_0)+\nabla f(\mathbf x_0)\cdot\mathbf h+\tfrac12\,\mathbf h^{T}\mathsf H\,\mathbf h+O(|\mathbf h|^3),$$
+            where the <strong>Hessian matrix</strong> collects all second derivatives, $H_{ij}=\dfrac{\partial^2f}{\partial x_i\,\partial x_j}$. It is symmetric because mixed partials commute. For two variables,
+            $$\mathsf H=\begin{pmatrix}f_{xx}&amp;f_{xy}\\f_{xy}&amp;f_{yy}\end{pmatrix}.$$
+            At a <strong>stationary (critical) point</strong> $\nabla f=0$ the linear term disappears, so the Hessian alone decides the local shape: $f\approx f_0+\tfrac12\mathbf h^T\mathsf H\mathbf h$. This is the multi-dimensional harmonic approximation of <a href="calculus-single-variable.html">M1</a>.</p>
+            <h3 id="classify">Classification<a class="anchor" href="#classify" aria-label="Link to this section">#</a></h3>
+            <p>The quadratic form $\mathbf h^T\mathsf H\mathbf h$ is positive for every $\mathbf h\neq0$ (the Hessian is <em>positive definite</em>) exactly when all eigenvalues of $\mathsf H$ are positive (see <a href="eigenvalues-and-decompositions.html">M5</a>). For two variables there is a quick test with the discriminant $D=f_{xx}f_{yy}-f_{xy}^2=\det\mathsf H$:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Classification (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>Condition</th><th>Type</th><th>Eigenvalues of $\mathsf H$</th></tr></thead>
+                <tbody>
+                    <tr><td>$D&gt;0$ and $f_{xx}&gt;0$</td><td>Local minimum</td><td>both positive</td></tr>
+                    <tr><td>$D&gt;0$ and $f_{xx}&lt;0$</td><td>Local maximum</td><td>both negative</td></tr>
+                    <tr><td>$D&lt;0$</td><td>Saddle point</td><td>one positive, one negative</td></tr>
+                    <tr><td>$D=0$</td><td>Inconclusive</td><td>at least one zero</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <div class="note mat"><strong>In materials science: minima, saddles and transition states</strong>
+            <p>On a potential energy surface, minima are stable configurations (a crystal, a defect, a molecule). A <strong>first-order saddle point</strong> (Hessian with exactly one negative eigenvalue) is a pass between two minima and is the <strong>transition state</strong> of a reaction or a diffusion hop: the energy difference to the nearest minima is the <em>activation energy</em>, which sets the rate through the Arrhenius law. Methods such as the nudged elastic band and dimer method search for exactly these points. A relaxation that ends on a saddle rather than a minimum has an imaginary vibrational frequency (a negative Hessian eigenvalue): the structure is unstable.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 5.1: a double well</strong>
+                <p class="given">Classify the stationary points of $f(x,y)=x^4-2x^2+y^2$.</p>
+                <p>$f_x=4x^3-4x=4x(x^2-1)$ and $f_y=2y$. Stationary points: $y=0$ and $x\in\{0,\pm1\}$. The Hessian is $\begin{pmatrix}12x^2-4&amp;0\\0&amp;2\end{pmatrix}$, so $D=2(12x^2-4)$.</p>
+                <p>At $(\pm1,0)$: $D=16&gt;0$ and $f_{xx}=8&gt;0$, so <strong>minima</strong> with $f=-1$. At $(0,0)$: $D=-8&lt;0$, a <strong>saddle</strong> with $f=0$, lying between the two minima. The barrier is $f(0,0)-f(\pm1,0)=1$: this is the cartoon of an atom hopping between two sites, with the saddle as the transition state.</p>
+            </div>
+
+            <h2 id="lagrange">6. Constrained optimisation: Lagrange multipliers<a class="anchor" href="#lagrange" aria-label="Link to this section">#</a></h2>
+            <p>Often you must extremise $f$ subject to a constraint $g(\mathbf x)=0$: minimise energy at fixed composition, maximise entropy at fixed mean energy, minimise surface area at fixed volume. Along the constraint curve, $f$ is stationary when its level curve is <em>tangent</em> to the constraint curve, i.e. when $\nabla f$ and $\nabla g$ are parallel.</p>
+            <div class="note thm"><strong>Method of Lagrange multipliers</strong>
+            <p>To find extrema of $f$ subject to $g=0$, solve
+            $$\nabla f=\lambda\,\nabla g,\qquad g(\mathbf x)=0$$
+            for $\mathbf x$ and the multiplier $\lambda$. Equivalently, find the stationary points of $\mathcal L=f-\lambda g$ with respect to $\mathbf x$ and $\lambda$. With several constraints $g_k=0$, use one multiplier each: $\nabla f=\sum_k\lambda_k\nabla g_k$.</p>
+            </div>
+            <p>The multiplier is not just a device: $\lambda$ measures how fast the optimum value changes if the constraint is relaxed, $\lambda=\mathrm{d}f_\mathrm{opt}/\mathrm{d}c$ for $g=c$. In thermodynamics the multipliers of the energy and number constraints become $1/T$ and $\mu/T$.</p>
+            <div class="example">
+                <strong>Worked example 6.1: the Boltzmann distribution</strong>
+                <p class="given">A system has states $i$ with energies $E_i$ and probabilities $p_i$. Maximise the entropy $S=-k_\mathrm{B}\sum_ip_i\ln p_i$ subject to $\sum_ip_i=1$ and $\sum_ip_iE_i=U$.</p>
+                <p>Form $\mathcal L=-\sum_ip_i\ln p_i-\alpha\bigl(\sum_ip_i-1\bigr)-\beta\bigl(\sum_ip_iE_i-U\bigr)$ (dropping the constant $k_\mathrm{B}$, which does not change where the maximum is). Setting $\partial\mathcal L/\partial p_i=0$:
+                $$-\ln p_i-1-\alpha-\beta E_i=0\ \Longrightarrow\ p_i=e^{-1-\alpha}\,e^{-\beta E_i}.$$
+                The constant is fixed by normalisation, giving $p_i=e^{-\beta E_i}/Z$ with $Z=\sum_ie^{-\beta E_i}$. The multiplier $\beta$ is fixed by the energy constraint; comparing $\mathrm{d}S/\mathrm{d}U=1/T$ shows $\beta=1/(k_\mathrm{B}T)$. The Boltzmann distribution is therefore the <em>least biased</em> probability assignment consistent with a known average energy (the maximum-entropy principle). Problem 9 evaluates it for a three-level system.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 6.2: the cube minimises surface area</strong>
+                <p class="given">Of all boxes with volume $V$, which has the least surface area? Minimise $A=2(ab+bc+ca)$ subject to $abc=V$.</p>
+                <p>$\nabla A=2(b+c,\ a+c,\ a+b)$ and $\nabla(abc)=(bc,\ ac,\ ab)$. The conditions $\nabla A=\lambda\nabla(abc)$, after multiplying the three equations by $a$, $b$, $c$ respectively, read
+                $$2a(b+c)=\lambda abc,\quad 2b(a+c)=\lambda abc,\quad 2c(a+b)=\lambda abc,$$
+                so $a(b+c)=b(a+c)\Rightarrow ac=bc\Rightarrow a=b$, and likewise $b=c$. The optimum is a cube, $a=b=c=V^{1/3}$ with $A=6V^{2/3}$. Problem 8 repeats this with different surface energies on different faces and gets the Wulff shape of a crystal.</p>
+            </div>
+
+            <h2 id="multiple">7. Multiple integrals<a class="anchor" href="#multiple" aria-label="Link to this section">#</a></h2>
+            <h3 id="double">Double and triple integrals<a class="anchor" href="#double" aria-label="Link to this section">#</a></h3>
+            <p>The integral of $f(x,y)$ over a region $R$ of the plane, $\iint_Rf\,\mathrm{d}A$, is the volume under the surface (more generally a total of &ldquo;density times area&rdquo;). For a rectangle it is evaluated as an <em>iterated integral</em>, and the order does not matter (<strong>Fubini&rsquo;s theorem</strong>):
+            $$\iint_Rf\,\mathrm{d}A=\int_a^b\!\Bigl(\int_c^df(x,y)\,\mathrm{d}y\Bigr)\mathrm{d}x=\int_c^d\!\Bigl(\int_a^bf(x,y)\,\mathrm{d}x\Bigr)\mathrm{d}y .$$
+            For a non-rectangular region, the inner limits depend on the outer variable. Sketching the region and choosing the order that makes the inner integral easy is the whole art. Triple integrals $\iiint f\,\mathrm{d}V$ work the same way, with the mass of a body $\iiint\rho\,\mathrm{d}V$ and thermal averages over position as the standard uses.</p>
+            <div class="example">
+                <strong>Worked example 7.1: reversing the order</strong>
+                <p class="given">Evaluate $\displaystyle\int_0^1\!\!\int_x^1e^{y^2}\,\mathrm{d}y\,\mathrm{d}x$.</p>
+                <p>The inner integral $\int e^{y^2}\mathrm{d}y$ has no elementary form. The region is the triangle $0\le x\le y\le1$. Describe it the other way: $y$ runs from $0$ to $1$ and, for each $y$, $x$ runs from $0$ to $y$:
+                $$\int_0^1\!\!\int_0^ye^{y^2}\,\mathrm{d}x\,\mathrm{d}y=\int_0^1y\,e^{y^2}\,\mathrm{d}y=\Bigl[\tfrac12e^{y^2}\Bigr]_0^1=\tfrac12(e-1)\approx0.859.$$</p>
+            </div>
+            <h3 id="jacobian">Change of variables and the Jacobian<a class="anchor" href="#jacobian" aria-label="Link to this section">#</a></h3>
+            <p>When the region or integrand has a symmetry, change to better coordinates $(u,v)$ with $x=x(u,v)$, $y=y(u,v)$. Areas scale by the absolute value of the <strong>Jacobian determinant</strong>:
+            $$\mathrm{d}x\,\mathrm{d}y=\left|\frac{\partial(x,y)}{\partial(u,v)}\right|\mathrm{d}u\,\mathrm{d}v,\qquad\frac{\partial(x,y)}{\partial(u,v)}=\begin{vmatrix}x_u&amp;x_v\\y_u&amp;y_v\end{vmatrix}.$$
+            The three coordinate systems you will use most:</p>
+            <div class="table-scroll">
+            <div class="table-scroll" role="region" aria-label="Change of variables and the Jacobian (scrollable table)" tabindex="0"><table>
+                <thead><tr><th>System</th><th>Coordinates</th><th>Volume element</th></tr></thead>
+                <tbody>
+                    <tr><td>Polar (2D)</td><td>$x=r\cos\theta$, $y=r\sin\theta$</td><td>$\mathrm{d}A=r\,\mathrm{d}r\,\mathrm{d}\theta$</td></tr>
+                    <tr><td>Cylindrical</td><td>$x=r\cos\theta$, $y=r\sin\theta$, $z$</td><td>$\mathrm{d}V=r\,\mathrm{d}r\,\mathrm{d}\theta\,\mathrm{d}z$</td></tr>
+                    <tr><td>Spherical</td><td>$x=r\sin\theta\cos\phi$, $y=r\sin\theta\sin\phi$, $z=r\cos\theta$</td><td>$\mathrm{d}V=r^2\sin\theta\,\mathrm{d}r\,\mathrm{d}\theta\,\mathrm{d}\phi$</td></tr>
+                </tbody>
+            </table></div>
+            </div>
+            <p>(In spherical coordinates, $\theta\in[0,\pi]$ is the polar angle from the $z$-axis and $\phi\in[0,2\pi)$ the azimuth.) For polar coordinates, $\begin{vmatrix}\cos\theta&amp;-r\sin\theta\\\sin\theta&amp;r\cos\theta\end{vmatrix}=r$, which is why the extra factor $r$ appears: a ring of radius $r$ has circumference $2\pi r$.</p>
+            <div class="example">
+                <strong>Worked example 7.2: the Gaussian integral</strong>
+                <p class="given">Show $\displaystyle I=\int_{-\infty}^{\infty}e^{-x^2}\,\mathrm{d}x=\sqrt\pi$.</p>
+                <p>Square it and treat the two factors as integrals over $x$ and $y$:
+                $$I^2=\int\!\!\int_{\mathbb R^2}e^{-(x^2+y^2)}\,\mathrm{d}x\,\mathrm{d}y=\int_0^{2\pi}\!\!\int_0^\infty e^{-r^2}\,r\,\mathrm{d}r\,\mathrm{d}\theta=2\pi\Bigl[-\tfrac12e^{-r^2}\Bigr]_0^\infty=\pi.$$
+                So $I=\sqrt\pi$ (positive, since the integrand is). Scaling $x\to\sqrt a\,x$ gives $\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$, the result used throughout statistical mechanics.</p>
+            </div>
+            <div class="example">
+                <strong>Worked example 7.3: the Maxwell speed distribution</strong>
+                <p class="given">Atoms of mass $m$ at temperature $T$ have velocity probability density $f(\mathbf v)=\bigl(\tfrac{m}{2\pi k_\mathrm{B}T}\bigr)^{3/2}e^{-m|\mathbf v|^2/(2k_\mathrm{B}T)}$. Find the distribution of speeds $v=|\mathbf v|$ and the mean speed.</p>
+                <p>The density depends only on $v$, so integrate over the angles in spherical velocity coordinates, where $\mathrm{d}^3v=v^2\sin\theta\,\mathrm{d}v\,\mathrm{d}\theta\,\mathrm{d}\phi$. The angular integral is $\int_0^\pi\sin\theta\,\mathrm{d}\theta\int_0^{2\pi}\mathrm{d}\phi=4\pi$ (the area of the unit sphere), so
+                $$F(v)\,\mathrm{d}v=4\pi\,v^2\Bigl(\frac{m}{2\pi k_\mathrm{B}T}\Bigr)^{3/2}e^{-mv^2/(2k_\mathrm{B}T)}\,\mathrm{d}v .$$
+                With $b=m/(2k_\mathrm{B}T)$ the integral $\int_0^\infty v^3e^{-bv^2}\mathrm{d}v=\dfrac1{2b^2}$ (substitute $u=v^2$) gives $\langle v\rangle=4\pi(b/\pi)^{3/2}/(2b^2)=\sqrt{8k_\mathrm{B}T/(\pi m)}$. The factor $v^2$ from the volume element is why the distribution vanishes at $v=0$ even though the velocity density is largest there: there are few ways to have almost no speed, and many to have a moderate one.</p>
+            </div>
+
+            <h2 id="summary-m2">8. How the pieces fit together<a class="anchor" href="#summary-m2" aria-label="Link to this section">#</a></h2>
+            <p>A function of many variables is understood through its gradient (the slope, which gives forces and fluxes) and its Hessian (the curvature, which gives stiffness, stability and transition states). Constraints are handled by Lagrange multipliers, which in statistical mechanics turn into temperature and chemical potential. Integrals over several variables, with the right Jacobian, are how averages over positions or velocities are computed. The next module packages the gradient together with the divergence and curl into <em>vector calculus</em>, which expresses conservation laws and produces the diffusion equation.</p>
+
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A partial derivative holds the other variables fixed; in thermodynamics the subscript says what is held fixed, and it matters, e.g. $(\partial U/\partial T)_V \neq (\partial U/\partial T)_P$.</li>
+<li>The gradient $\nabla f$ points uphill, is perpendicular to level curves, and has magnitude equal to the steepest slope; a force is the negative gradient of a potential energy, $\mathbf{F}=-\nabla U$.</li>
+<li>The Hessian matrix of second derivatives classifies stationary points: all positive eigenvalues is a minimum, all negative a maximum, mixed signs a saddle (a transition state has exactly one negative eigenvalue).</li>
+<li>Lagrange multipliers solve constrained optimisation, and maximising entropy under a fixed mean energy gives the Boltzmann distribution $p_i\propto e^{-\beta E_i}$.</li>
+<li>Changing variables in a multiple integral needs the Jacobian ($r\,\mathrm{d}r\,\mathrm{d}\theta$ in the plane, $r^2\sin\theta\,\mathrm{d}r\,\mathrm{d}\theta\,\mathrm{d}\phi$ in space); it turns the Gaussian integral and the Maxwell speed distribution into one-line calculations.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">9. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <p>Try each problem before opening the hint, and the hint before the solution. Basic problems check the techniques; Core problems apply them to materials settings; Challenge problems combine several ideas.</p>
+            <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
+
+            <div class="problem" id="p2-1">
+            <div class="p-head"><span class="p-num">Problem 2.1</span><span class="p-level">Basic</span></div>
+            <p>For $f(x,y)=x^3y^2-\ln(xy)$ with $x,y&gt;0$: (a) compute $f_x$, $f_y$, $f_{xx}$, $f_{yy}$, $f_{xy}$; (b) verify $f_{xy}=f_{yx}$; (c) write the total differential $\mathrm{d}f$ at $(1,2)$.</p>
+            <details class="hint"><summary>Hint</summary><p>Write $\ln(xy)=\ln x+\ln y$ before differentiating.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Write $f=x^3y^2-\ln x-\ln y$.</p>
+            <p>(a) $f_x=3x^2y^2-\dfrac1x$, $f_y=2x^3y-\dfrac1y$, $f_{xx}=6xy^2+\dfrac1{x^2}$, $f_{yy}=2x^3+\dfrac1{y^2}$, $f_{xy}=\partial_y(3x^2y^2-1/x)=6x^2y$.</p>
+            <p>(b) $f_{yx}=\partial_x(2x^3y-1/y)=6x^2y=f_{xy}$. &check;</p>
+            <p>(c) At $(1,2)$: $f_x=3\cdot4-1=11$ and $f_y=2\cdot2-\tfrac12=3.5$. So $\mathrm{d}f=11\,\mathrm{d}x+3.5\,\mathrm{d}y$.</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-2">
+            <div class="p-head"><span class="p-num">Problem 2.2</span><span class="p-level">Basic</span></div>
+            <p>The density of a material is computed as $\rho=m/V$ with $V=abc$ for a measured sample with $a=2.00$, $b=3.00$, $c=1.00$ cm (each $\pm0.01$ cm) and $m=47.0\pm0.1$ g. (a) Compute $\rho$. (b) Use the total differential (relative form) to estimate the worst-case relative error in $\rho$.</p>
+            <details class="hint"><summary>Hint</summary><p>For a product or quotient, $\mathrm{d}\rho/\rho=\mathrm{d}m/m-\mathrm{d}a/a-\mathrm{d}b/b-\mathrm{d}c/c$, since $\mathrm{d}\ln\rho=\sum\mathrm{d}\ln(\text{factors})^{\pm1}$. In the worst case all the errors add in magnitude.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $V=2.00\times3.00\times1.00=6.00$ cm$^3$, so $\rho=47.0/6.00=7.83$ g/cm$^3$ (close to iron).</p>
+            <p>(b) $\ln\rho=\ln m-\ln a-\ln b-\ln c$, so $\dfrac{\mathrm{d}\rho}{\rho}=\dfrac{\mathrm{d}m}{m}-\dfrac{\mathrm{d}a}{a}-\dfrac{\mathrm{d}b}{b}-\dfrac{\mathrm{d}c}{c}$. Worst case (all magnitudes add): $\dfrac{0.1}{47.0}+\dfrac{0.01}{2.00}+\dfrac{0.01}{3.00}+\dfrac{0.01}{1.00}=0.00213+0.00500+0.00333+0.01000=0.0205$. So $\rho=7.83\pm0.16$ g/cm$^3$ (about $2\%$). The smallest dimension dominates the error: measure thin directions more carefully. (In <a href="statistics-and-data-fitting.html">M11</a> you will see that independent errors normally combine in quadrature, giving a smaller estimate than this worst case.)</p>
+            <p class="answer">$\rho=7.83$ g/cm³, worst-case relative error $\approx2.1\%$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-3">
+            <div class="p-head"><span class="p-num">Problem 2.3</span><span class="p-level">Basic</span></div>
+            <p>Let $u(x,y)=x^2-y^2$ and use polar coordinates $x=r\cos\theta$, $y=r\sin\theta$. (a) Find $\partial u/\partial r$ and $\partial u/\partial\theta$ with the chain rule. (b) Check by writing $u$ in terms of $r,\theta$ directly.</p>
+            <details class="hint"><summary>Hint</summary><p>$\partial x/\partial r=\cos\theta$, $\partial y/\partial r=\sin\theta$, $\partial x/\partial\theta=-r\sin\theta$, $\partial y/\partial\theta=r\cos\theta$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $u_x=2x$, $u_y=-2y$. Then
+            $u_r=u_x\cos\theta+u_y\sin\theta=2r\cos^2\theta-2r\sin^2\theta=2r\cos2\theta$, and
+            $u_\theta=u_x(-r\sin\theta)+u_y(r\cos\theta)=-2r^2\cos\theta\sin\theta-2r^2\sin\theta\cos\theta=-2r^2\sin2\theta$.</p>
+            <p>(b) $u=r^2\cos^2\theta-r^2\sin^2\theta=r^2\cos2\theta$, so $u_r=2r\cos2\theta$ and $u_\theta=-2r^2\sin2\theta$. &check; (This $u$ is also a harmonic function, $\nabla^2u=0$, which you will use in <a href="partial-differential-equations.html">M9</a>.)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-4">
+            <div class="p-head"><span class="p-num">Problem 2.4</span><span class="p-level">Core</span></div>
+            <p>A plate has temperature $T(x,y)=100-x^2-2y^2$ (in &deg;C, with $x,y$ in cm). At the point $(1,1)$: (a) find $\nabla T$ and the direction in which temperature increases fastest; (b) find the rate of change of temperature (&deg;C/cm) when moving in the direction $(1,1)/\sqrt2$; (c) give a direction along which $T$ does not change; (d) if the thermal conductivity is $\kappa=50$ W m$^{-1}$K$^{-1}$, give the heat flux vector $\mathbf q=-\kappa\nabla T$ at $(1,1)$.</p>
+            <details class="hint"><summary>Hint</summary><p>Level curves of $T$ are perpendicular to $\nabla T$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\nabla T=(-2x,-4y)=(-2,-4)$ at $(1,1)$. Temperature rises fastest in the direction $(-1,-2)/\sqrt5$ (toward the hot centre at the origin), at the rate $|\nabla T|=\sqrt{20}=4.47$ &deg;C/cm.</p>
+            <p>(b) $D_{\hat u}T=\nabla T\cdot\hat u=(-2,-4)\cdot(1,1)/\sqrt2=-6/\sqrt2=-4.24$ &deg;C/cm: moving away from the centre, the plate cools.</p>
+            <p>(c) A direction perpendicular to $\nabla T$, for example $(2,-1)/\sqrt5$ (check: $(-2)(2)+(-4)(-1)=0$). This is tangent to the isotherm through $(1,1)$.</p>
+            <p>(d) Convert to SI first: $\nabla T=(-2,-4)$ &deg;C/cm $=(-200,-400)$ K/m. Then $\mathbf q=-\kappa\nabla T=-50\,(-200,-400)=(10\,000,\ 20\,000)$ W/m$^2$, with magnitude $22.4$ kW/m$^2$. It points away from the hot centre, down the temperature gradient, as heat flows from hot to cold.</p>
+            <p class="answer">$\nabla T=(-2,-4)$; $D_u T=-4.24$ °C/cm; $\mathbf q=(1,2)\times10^4$ W/m²</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-5">
+            <div class="p-head"><span class="p-num">Problem 2.5</span><span class="p-level">Core</span></div>
+            <p>In reduced units ($\varepsilon=\sigma=1$) two atoms interact via $U(r)=4\bigl(r^{-12}-r^{-6}\bigr)$. The second atom sits at $\mathbf r=(1,1,1)$ relative to the first. (a) Show that the force on it is $\mathbf F=(48r^{-14}-24r^{-8})\,\mathbf r$. (b) Evaluate $\mathbf F$ at $\mathbf r=(1,1,1)$ and say whether it is attractive or repulsive.</p>
+            <details class="hint"><summary>Hint</summary><p>Use Example 4.1: $\mathbf F=-U'(r)\,\mathbf r/r$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $U'(r)=4\bigl(-12r^{-13}+6r^{-7}\bigr)=-48r^{-13}+24r^{-7}$. Then $\mathbf F=-U'(r)\,\mathbf r/r=(48r^{-13}-24r^{-7})\,\mathbf r/r=(48r^{-14}-24r^{-8})\,\mathbf r$.</p>
+            <p>(b) $r=\sqrt3$, so $r^{-14}=3^{-7}=4.572\times10^{-4}$ and $r^{-8}=3^{-4}=0.012346$. The prefactor is $48(4.572\times10^{-4})-24(0.012346)=0.021948-0.296296=-0.27435$. Hence $\mathbf F=-0.2743\,(1,1,1)$: each component is $-0.274$ and $|\mathbf F|=0.475$. The force on atom 2 points back toward atom 1 (the negative of its position vector), so the interaction is <strong>attractive</strong>: $r=1.73&gt;r_0=1.12$, beyond the minimum. As a check, $r=1.73$ is also beyond the inflection point $1.24$ found in <a href="calculus-single-variable.html">M1</a>, where the attraction is largest, so it is decaying.</p>
+            <p class="answer">$\mathbf F=-0.274\,(1,1,1)$, magnitude $0.475$, attractive</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-6">
+            <div class="p-head"><span class="p-num">Problem 2.6</span><span class="p-level">Core</span></div>
+            <p>Find and classify all stationary points of $f(x,y)=x^4+y^4-2x^2-2y^2$. If this were a potential energy surface, which points are stable states and which are transition states? What is the lowest barrier between two minima?</p>
+            <details class="hint"><summary>Hint</summary><p>The function separates into $g(x)+g(y)$ with $g(t)=t^4-2t^2$, so the Hessian is diagonal.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$f_x=4x^3-4x=4x(x-1)(x+1)$ and $f_y=4y(y-1)(y+1)$, so stationary points have $x,y\in\{-1,0,1\}$: nine points. The Hessian is diagonal with $f_{xx}=12x^2-4$ and $f_{yy}=12y^2-4$, so each eigenvalue is $+8$ if the coordinate is $\pm1$ and $-4$ if it is $0$.</p>
+            <div class="table-scroll" role="region" aria-label="9. Problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Points</th><th>Hessian eigenvalues</th><th>Type</th><th>$f$</th></tr></thead>
+            <tbody>
+            <tr><td>$(\pm1,\pm1)$ (4 points)</td><td>$+8,+8$</td><td>minimum</td><td>$-2$</td></tr>
+            <tr><td>$(\pm1,0)$, $(0,\pm1)$ (4 points)</td><td>$+8,-4$</td><td>first-order saddle</td><td>$-1$</td></tr>
+            <tr><td>$(0,0)$</td><td>$-4,-4$</td><td>maximum</td><td>$0$</td></tr>
+            </tbody></table></div>
+            <p>The four minima are the stable states; the four first-order saddles (exactly one negative eigenvalue) are transition states, each connecting two neighbouring minima, for instance $(1,1)\to(1,-1)$ via $(1,0)$. The lowest barrier is $f(\text{saddle})-f(\text{min})=-1-(-2)=1$. The maximum at the origin (two negative eigenvalues, an &ldquo;index-2 saddle&rdquo; in chemical language) is not a transition state: no lowest-energy path between minima passes through it. (The surface is a model of an atom or ion hopping between four equivalent sites.)</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-7">
+            <div class="p-head"><span class="p-num">Problem 2.7</span><span class="p-level">Core</span></div>
+            <p>(a) Maximise $f(x,y)=xy$ subject to $x+2y=8$ using a Lagrange multiplier, and interpret $\lambda$. (b) Find the point on the line $x+2y=8$ closest to the origin using the same method. </p>
+            <details class="hint"><summary>Hint</summary><p>For (b) minimise $x^2+y^2$. Check (a) by substituting $x=8-2y$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\nabla f=(y,x)$, $\nabla g=(1,2)$ with $g=x+2y-8$. Then $y=\lambda$, $x=2\lambda$, and the constraint gives $2\lambda+2\lambda=8$, so $\lambda=2$, $x=4$, $y=2$, $f=8$. Check: with $x=8-2y$, $f=8y-2y^2$ has a maximum at $y=2$. &check; Interpretation: if the constraint is relaxed to $x+2y=8+\delta$, the maximum becomes $f_\mathrm{max}(c)=c^2/8$, whose derivative at $c=8$ is $c/4=2=\lambda$: the multiplier is the sensitivity of the optimum to the constraint.</p>
+            <p>(b) Minimise $x^2+y^2$: $(2x,2y)=\lambda(1,2)$, so $x=\lambda/2$, $y=\lambda$. Constraint: $\lambda/2+2\lambda=8\Rightarrow\lambda=3.2$, giving $(x,y)=(1.6,3.2)$ and distance $\sqrt{1.6^2+3.2^2}=3.58$. This agrees with the point-to-line distance formula $8/\sqrt{1^2+2^2}=3.578$. &check;</p>
+            <p class="answer">(a) $(4,2)$, $f=8$, $\lambda=2$; (b) $(1.6,3.2)$, distance $3.58$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-8">
+            <div class="p-head"><span class="p-num">Problem 2.8</span><span class="p-level">Challenge</span></div>
+            <p>A crystal particle is a rectangular box with side lengths $a,b,c$ and fixed volume $V=abc$. The pair of faces perpendicular to the $a$-direction (each of area $bc$) has surface energy $\gamma_a$ per unit area, and similarly $\gamma_b$, $\gamma_c$. The total surface energy is $E=2\bigl(\gamma_abc+\gamma_bac+\gamma_cab\bigr)$. Minimise $E$ at fixed $V$ and show that $a:b:c=\gamma_a:\gamma_b:\gamma_c$ (the Wulff construction: the distance between a pair of faces is proportional to their surface energy). Find the minimum energy for $\gamma_a=1,\gamma_b=2,\gamma_c=4$ J/m$^2$ and $V=8\times10^{-27}$ m$^3$.</p>
+            <details class="hint"><summary>Hint</summary><p>Multiply the three stationarity equations by $a$, $b$, $c$ respectively and compare. Let $X=\gamma_abc$, $Y=\gamma_bac$, $Z=\gamma_cab$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>$\mathcal L=E-\lambda(abc-V)$. The conditions:
+            $$2(\gamma_bc+\gamma_cb)=\lambda bc,\qquad2(\gamma_ac+\gamma_ca)=\lambda ac,\qquad2(\gamma_ab+\gamma_ba)=\lambda ab .$$
+            Multiply the first by $a$, the second by $b$, the third by $c$ and set $X=\gamma_abc$, $Y=\gamma_bac$, $Z=\gamma_cab$: they become $2(Y+Z)=\lambda abc$, $2(X+Z)=\lambda abc$, $2(X+Y)=\lambda abc$. Hence $Y+Z=X+Z=X+Y$, so $X=Y=Z$.</p>
+            <p>$X=Y$ means $\gamma_abc=\gamma_bac$, i.e. $\gamma_ab=\gamma_ba$, so $a/\gamma_a=b/\gamma_b$; likewise $b/\gamma_b=c/\gamma_c$. Therefore $a:b:c=\gamma_a:\gamma_b:\gamma_c$: the box is longest between the faces with the <em>highest</em> energy, which are therefore the smallest in area. (Low-energy faces dominate the shape.)</p>
+            <p>Numbers: let $a=s\gamma_a$, etc.: $a=s,\ b=2s,\ c=4s$. Then $V=8s^3=8\times10^{-27}$, so $s=10^{-9}$ m and $(a,b,c)=(1,2,4)$ nm. Energy: $E=2\bigl(1\cdot(2\cdot4)+2\cdot(1\cdot4)+4\cdot(1\cdot2)\bigr)\times10^{-18}=2(8+8+8)\times10^{-18}=4.8\times10^{-17}$ J. (Equal $X=Y=Z$ terms, as the theory predicts.)</p>
+            <p class="answer">$a:b:c=\gamma_a:\gamma_b:\gamma_c$; $(a,b,c)=(1,2,4)$ nm; $E_\mathrm{min}=4.8\times10^{-17}$ J</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-9">
+            <div class="p-head"><span class="p-num">Problem 2.9</span><span class="p-level">Challenge</span></div>
+            <p>A system has three states with energies $E=0,1,2$ (in units where $k_\mathrm{B}T$ will be measured in the same units). (a) Use the Boltzmann form $p_i\propto x^{E_i}$ with $x=e^{-\beta}$ and find $x$, $\beta$ and the three probabilities if the mean energy is $\langle E\rangle=0.5$. (b) What would the mean energy be if the three states were equally likely, and what temperature (value of $\beta$) does that correspond to?</p>
+            <details class="hint"><summary>Hint</summary><p>$\langle E\rangle=(x+2x^2)/(1+x+x^2)$. Set this equal to $0.5$ and solve the resulting quadratic for $x&gt;0$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) With $Z=1+x+x^2$: $\langle E\rangle=\dfrac{0\cdot1+1\cdot x+2x^2}{1+x+x^2}=0.5$. Cross-multiplying: $x+2x^2=0.5+0.5x+0.5x^2\Rightarrow1.5x^2+0.5x-0.5=0\Rightarrow3x^2+x-1=0$, so $x=\dfrac{-1+\sqrt{13}}{6}=0.4343$ (the positive root). Then $\beta=-\ln x=0.834$ (so $k_\mathrm{B}T=1/\beta=1.20$ in these units). $Z=1+0.4343+0.1886=1.6229$ and
+            $p_0=0.616$, $p_1=0.268$, $p_2=0.116$ (sum $1.000$). Check: $\langle E\rangle=0.268+2(0.116)=0.500$. &check;</p>
+            <p>(b) Equal probabilities have $\langle E\rangle=(0+1+2)/3=1$, which corresponds to $x=1$, i.e. $\beta=0$: infinite temperature, the maximum-entropy state with <em>no</em> energy constraint. Mean energies below $1$ need $\beta&gt;0$ (positive temperature); a mean energy above $1$ would need $\beta&lt;0$ (a population inversion, negative temperature).</p>
+            <p class="answer">$x=0.434$, $\beta=0.834$; $p=(0.616,0.268,0.116)$; equal probabilities at $\beta=0$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-10">
+            <div class="p-head"><span class="p-num">Problem 2.10</span><span class="p-level">Core</span></div>
+            <p>(a) Evaluate $\displaystyle\iint_Rxy\,\mathrm{d}A$ where $R$ is the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$. (b) Use polar coordinates to evaluate $\displaystyle\iint_{x^2+y^2\le R_0^2}e^{-(x^2+y^2)}\,\mathrm{d}A$ and find its limit as $R_0\to\infty$.</p>
+            <details class="hint"><summary>Hint</summary><p>(a) The triangle is $0\le y\le x\le1$. (b) Remember the Jacobian $r$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) $\displaystyle\int_0^1\!\!\int_0^xxy\,\mathrm{d}y\,\mathrm{d}x=\int_0^1x\cdot\frac{x^2}2\,\mathrm{d}x=\int_0^1\frac{x^3}{2}\,\mathrm{d}x=\frac18$.</p>
+            <p>(b) $\displaystyle\int_0^{2\pi}\!\!\int_0^{R_0}e^{-r^2}r\,\mathrm{d}r\,\mathrm{d}\theta=2\pi\cdot\tfrac12\bigl(1-e^{-R_0^2}\bigr)=\pi\bigl(1-e^{-R_0^2}\bigr)$. As $R_0\to\infty$ this tends to $\pi$, the result of Example 7.2. The integrand is the same Gaussian, but in polar coordinates it has the elementary antiderivative $-\tfrac12e^{-r^2}$ thanks to the extra factor $r$.</p>
+            <p class="answer">(a) $1/8$; (b) $\pi(1-e^{-R_0^2})\to\pi$</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-11">
+            <div class="p-head"><span class="p-num">Problem 2.11</span><span class="p-level">Core</span></div>
+            <p>For argon gas ($m=39.95$ u $=6.634\times10^{-26}$ kg) at $T=300$ K, use the Maxwell speed distribution of Example 7.3 to compute (a) the mean speed $\langle v\rangle$, (b) the most probable speed $v_\mathrm{p}$ (the maximum of $F(v)$), and (c) the root-mean-square speed $v_\mathrm{rms}=\sqrt{\langle v^2\rangle}$. Use $\int_0^\infty v^4e^{-bv^2}\mathrm{d}v=\dfrac{3\sqrt\pi}{8b^{5/2}}$. ($k_\mathrm{B}=1.381\times10^{-23}$ J/K.)</p>
+            <details class="hint"><summary>Hint</summary><p>For (b) set $\mathrm{d}F/\mathrm{d}v=0$: $F\propto v^2e^{-bv^2}$. For (c), $\langle v^2\rangle=4\pi(b/\pi)^{3/2}\int_0^\infty v^4e^{-bv^2}\mathrm{d}v$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>Let $b=m/(2k_\mathrm{B}T)$ and $k_\mathrm{B}T=4.143\times10^{-21}$ J.</p>
+            <p>(a) From Example 7.3, $\langle v\rangle=\sqrt{\dfrac{8k_\mathrm{B}T}{\pi m}}=\sqrt{\dfrac{8(4.143\times10^{-21})}{\pi(6.634\times10^{-26})}}=\sqrt{1.590\times10^5}=399$ m/s.</p>
+            <p>(b) $\dfrac{\mathrm{d}}{\mathrm{d}v}\bigl(v^2e^{-bv^2}\bigr)=(2v-2bv^3)e^{-bv^2}=0\Rightarrow v_\mathrm{p}=1/\sqrt b=\sqrt{\dfrac{2k_\mathrm{B}T}{m}}=\sqrt{1.249\times10^5}=353$ m/s.</p>
+            <p>(c) $\langle v^2\rangle=4\pi\Bigl(\dfrac b\pi\Bigr)^{3/2}\dfrac{3\sqrt\pi}{8b^{5/2}}=\dfrac{3}{2b}=\dfrac{3k_\mathrm{B}T}{m}$, so $v_\mathrm{rms}=\sqrt{\dfrac{3k_\mathrm{B}T}{m}}=\sqrt{1.873\times10^5}=433$ m/s. This agrees with the equipartition result $\tfrac12m\langle v^2\rangle=\tfrac32k_\mathrm{B}T$.</p>
+            <p>The ordering $v_\mathrm{p}&lt;\langle v\rangle&lt;v_\mathrm{rms}$ (ratios $1:1.128:1.225$) reflects the tail towards high speeds. In molecular dynamics, the initial velocities of atoms are drawn from exactly this distribution.</p>
+            <p class="answer">$\langle v\rangle=399$, $v_\mathrm{p}=353$, $v_\mathrm{rms}=433$ m/s</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p2-12">
+            <div class="p-head"><span class="p-num">Problem 2.12</span><span class="p-level">Challenge</span></div>
+            <p>(a) From $\mathrm{d}G=-S\,\mathrm{d}T+V\,\mathrm{d}P$ derive the Maxwell relation $(\partial S/\partial P)_T=-(\partial V/\partial T)_P$. (b) For one mole of ideal gas, find $S(T,P)-S(T,P_0)$ by integrating the relation along an isotherm. (c) A solid has volumetric thermal expansion coefficient $\alpha=\dfrac1V(\partial V/\partial T)_P=3.0\times10^{-5}$ K$^{-1}$ and molar volume $7.1\times10^{-6}$ m$^3$/mol (iron-like). By how much does its molar entropy change when the pressure is raised by $1$ GPa at constant $T$?</p>
+            <details class="hint"><summary>Hint</summary><p>(a) $S=-G_T$ and $V=G_P$; then $S_P=-G_{TP}$ and $V_T=G_{PT}$. (c) Treat $V$ and $\alpha$ as constant over the pressure range.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Reading off the differential: $S=-(\partial G/\partial T)_P$ and $V=(\partial G/\partial P)_T$. Then $(\partial S/\partial P)_T=-\dfrac{\partial^2G}{\partial P\,\partial T}$ and $(\partial V/\partial T)_P=\dfrac{\partial^2G}{\partial T\,\partial P}$. Mixed partials commute, so $(\partial S/\partial P)_T=-(\partial V/\partial T)_P$.</p>
+            <p>(b) For one mole, $V=RT/P$ and $(\partial V/\partial T)_P=R/P$. So $(\partial S/\partial P)_T=-R/P$, and integrating at constant $T$: $S(T,P)-S(T,P_0)=-R\ln(P/P_0)$. Compressing a gas lowers its entropy, as expected.</p>
+            <p>(c) $(\partial S/\partial P)_T=-V\alpha=-(7.1\times10^{-6})(3.0\times10^{-5})=-2.13\times10^{-10}$ J K$^{-1}$ mol$^{-1}$ Pa$^{-1}$. Over $1$ GPa ($10^9$ Pa): $\Delta S=-0.213$ J K$^{-1}$ mol$^{-1}$. This is tiny compared with the molar entropy of iron (about $27$ J K$^{-1}$ mol$^{-1}$): pressure changes the entropy of a solid very little, which is why the $P\Delta V$ and $-TS$ contributions to $G$ matter so differently for solids and gases, and why CALPHAD models (<a href="thermodynamics-and-calphad.html">Thermodynamics and CALPHAD</a>) often neglect pressure for condensed phases at ambient conditions.</p>
+            <p class="answer">(b) $-R\ln(P/P_0)$; (c) $\Delta S\approx-0.21$ J K⁻¹ mol⁻¹</p>
+            </details>
+            </div>
+
+            <h2 id="refs">10. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Stewart, J., <em>Calculus: Early Transcendentals</em>, chapters on partial derivatives and multiple integrals.</li>
+                <li>Marsden, J. E. and Tromba, A. J., <em>Vector Calculus</em>, Freeman.</li>
+                <li>Boas, M. L., <em>Mathematical Methods in the Physical Sciences</em>, Wiley: chapters 4 and 5.</li>
+                <li>Callen, H. B., <em>Thermodynamics and an Introduction to Thermostatistics</em>, Wiley: Legendre transforms and Maxwell relations.</li>
+                <li>Jaynes, E. T., &ldquo;Information theory and statistical mechanics&rdquo;, <em>Physical Review</em> 106 (1957): the maximum-entropy derivation of the Boltzmann distribution.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next topic">
+<a class="prev" href="calculus-single-variable.html"><span class="dir">Previous topic</span>Calculus I: functions of one variable</a>
+<a class="next" href="vector-calculus.html"><span class="dir">Next topic</span>Vector calculus: fields, fluxes and conservation laws</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A reference series on computational materials science for materials scientists and metallurgists.</p></div>
+        <nav><a href="../index.html#topics">All topics</a><a href="../map.html">Topic map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=b8b6cd84"></script>
+    <script src="../assets/glossary.js?v=c565f93c"></script>
+    <script src="../assets/site.js?v=feef663a" defer></script>
+</body>
+</html>

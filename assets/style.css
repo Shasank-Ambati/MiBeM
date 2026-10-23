@@ -722,3 +722,57 @@ dl.glossary dd { max-width: 74ch; }
 .quiz-out ol { margin: 6px 0 6px 20px; }
 @media (max-width: 1100px) { .paths { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .paths { grid-template-columns: 1fr; } }
+
+/* ---------- maths course: typeset maths, boxes, worked examples, problem sets ---------- */
+.katex { font-size: 1.06em; }
+.katex-display { margin: 18px 0; padding: 4px 0; overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+.katex-display > .katex { white-space: normal; }
+article .katex-display { text-align: center; }
+details .katex-display { margin: 12px 0; }
+
+.note { border: 1px solid var(--border); border-left: 5px solid var(--blue); background: var(--surface); border-radius: 12px; padding: 12px 20px 6px; margin: 20px 0; max-width: 74ch; }
+.note > strong:first-child { display: block; font-family: var(--sans); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: 4px; }
+.note p { margin: 8px 0; }
+.note.def { border-left-color: var(--blue); }
+.note.thm { border-left-color: #6b4fbb; background: color-mix(in srgb, #6b4fbb 6%, var(--surface)); }
+.note.thm > strong:first-child { color: #6b4fbb; }
+.note.warn { border-left-color: #c0392b; background: color-mix(in srgb, #c0392b 6%, var(--surface)); }
+.note.warn > strong:first-child { color: #c0392b; }
+.note.mat { border-left-color: var(--accent); background: var(--accent-soft); }
+.note.mat > strong:first-child { color: var(--accent-strong); }
+:root[data-theme="dark"] .note.thm > strong:first-child { color: #b9a4f2; }
+:root[data-theme="dark"] .note.warn > strong:first-child { color: #ff8f80; }
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .note.thm > strong:first-child { color: #b9a4f2; }
+    :root:not([data-theme="light"]) .note.warn > strong:first-child { color: #ff8f80; }
+}
+
+.example { border: 1px solid var(--border); border-top: 4px solid var(--accent); background: var(--surface); border-radius: 12px; padding: 14px 22px 8px; margin: 26px 0; max-width: 78ch; box-shadow: var(--shadow); }
+.example > strong:first-child { display: block; font-family: var(--sans); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-strong); margin-bottom: 6px; }
+.example .given { font-weight: 600; }
+.example ol, .example ul { padding-left: 22px; }
+.example p { margin: 8px 0; }
+
+.prob-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; font-family: var(--sans); font-size: .9rem; margin: 10px 0 22px; max-width: 74ch; }
+.prob-summary .track { flex: 1 1 160px; height: 8px; border-radius: 99px; background: var(--border); overflow: hidden; }
+.prob-summary .track i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+.problem { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); margin: 22px 0; padding: 0 22px 8px; max-width: 78ch; box-shadow: var(--shadow); }
+.problem.is-done { border-color: var(--accent); }
+.problem .p-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 0 8px; border-bottom: 1px solid var(--border); font-family: var(--sans); }
+.problem .p-num { font-weight: 800; color: var(--accent-strong); }
+.problem .p-level { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 9px; border-radius: 99px; background: var(--blue-soft); color: var(--blue); }
+.problem .p-level.core { background: var(--accent-soft); color: var(--accent-strong); }
+.problem .p-level.hard { background: color-mix(in srgb, #6b4fbb 14%, var(--surface)); color: #6b4fbb; }
+:root[data-theme="dark"] .problem .p-level.hard { color: #b9a4f2; }
+.problem .p-done { margin-left: auto; font-size: .82rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.problem > p, .problem > .p-body > p { margin: 12px 0; }
+.problem details { margin: 10px 0; max-width: none; }
+.problem details.hint summary::before { content: "i"; font-style: italic; }
+.problem details.solution summary::before { content: "="; }
+.problem details.hint[open] summary::before, .problem details.solution[open] summary::before { content: "\2713"; font-style: normal; }
+.problem details > :not(summary) { margin-left: 18px; margin-right: 18px; }
+.problem .answer { font-family: var(--sans); font-weight: 700; margin: 12px 18px 14px; padding: 8px 12px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-strong); display: inline-block; }
+.course-nav { display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--sans); font-size: .82rem; margin: 6px 0 0; }
+.course-nav a { padding: 2px 10px; border: 1px solid var(--border); border-radius: 99px; text-decoration: none; background: var(--surface); }
+.course-nav a.here { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+@media print { .problem details { display: block; } }

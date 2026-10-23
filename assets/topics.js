@@ -167,6 +167,294 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 24,
+    "label": "M1",
+    "series": "maths",
+    "slug": "calculus-single-variable",
+    "short": "Calculus I",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 23,
+    "title": "Calculus I: functions of one variable",
+    "blurb": "Limits, derivatives, integrals and Taylor series, taught properly, with the harmonic approximation, Newton's method and Gaussian integrals as applications.",
+    "builds": [
+      19
+    ],
+    "related": [
+      2,
+      15
+    ],
+    "takeaways": [
+      "The derivative is a limit of slopes, and it measures sensitivity: $\\mathrm{d}f \\approx f'(x)\\,\\mathrm{d}x$ is how an error or a small change in an input propagates.",
+      "Near a minimum of any smooth energy, the first derivative vanishes and the second derivative gives the stiffness, so the energy is a parabola: the harmonic approximation.",
+      "The fundamental theorem links derivatives and integrals; integration by parts and substitution handle most integrals you meet, and the Gaussian integral $\\sqrt{\\pi}$ underlies the Boltzmann distribution.",
+      "Taylor's theorem with a remainder tells you not just the approximation but its error, and finite-difference formulas, numerical integration rules and Newton's method are all Taylor series in disguise.",
+      "The order of an error ($h$, $h^2$, $h^4$) tells you how fast it shrinks when the step is refined, and is the right way to compare numerical methods."
+    ]
+  },
+  {
+    "id": 25,
+    "label": "M2",
+    "series": "maths",
+    "slug": "multivariable-calculus",
+    "short": "Calculus II",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 21,
+    "title": "Calculus II: several variables and optimisation",
+    "blurb": "Partial derivatives, the chain rule, gradients, Hessians, constrained optimisation with Lagrange multipliers, and multiple integrals.",
+    "builds": [
+      24
+    ],
+    "related": [
+      4,
+      6
+    ],
+    "takeaways": [
+      "A partial derivative holds the other variables fixed; in thermodynamics the subscript says what is held fixed, and it matters, e.g. $(\\partial U/\\partial T)_V \\neq (\\partial U/\\partial T)_P$.",
+      "The gradient $\\nabla f$ points uphill, is perpendicular to level curves, and has magnitude equal to the steepest slope; a force is the negative gradient of a potential energy, $\\mathbf{F}=-\\nabla U$.",
+      "The Hessian matrix of second derivatives classifies stationary points: all positive eigenvalues is a minimum, all negative a maximum, mixed signs a saddle (a transition state has exactly one negative eigenvalue).",
+      "Lagrange multipliers solve constrained optimisation, and maximising entropy under a fixed mean energy gives the Boltzmann distribution $p_i\\propto e^{-\\beta E_i}$.",
+      "Changing variables in a multiple integral needs the Jacobian ($r\\,\\mathrm{d}r\\,\\mathrm{d}\\theta$ in the plane, $r^2\\sin\\theta\\,\\mathrm{d}r\\,\\mathrm{d}\\theta\\,\\mathrm{d}\\phi$ in space); it turns the Gaussian integral and the Maxwell speed distribution into one-line calculations."
+    ]
+  },
+  {
+    "id": 26,
+    "label": "M3",
+    "series": "maths",
+    "slug": "vector-calculus",
+    "short": "Vector calculus",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 20,
+    "title": "Vector calculus: fields, fluxes and conservation laws",
+    "blurb": "Gradient, divergence, curl and Laplacian, line and surface integrals, the divergence theorem, and how they produce the continuity and diffusion equations.",
+    "builds": [
+      25
+    ],
+    "related": [
+      8,
+      9
+    ],
+    "takeaways": [
+      "A vector field assigns a vector to every point; the gradient turns a scalar potential into a conservative vector field, and a field is conservative exactly when its curl vanishes (on a simply connected region).",
+      "Divergence measures net outflow per unit volume (sources and sinks); curl measures local rotation; the Laplacian $\\nabla^2 f=\\nabla\\cdot\\nabla f$ measures how much $f$ differs from its neighbours' average.",
+      "The divergence theorem $\\int_V\\nabla\\cdot\\mathbf{F}\\,\\mathrm{d}V=\\oint_{\\partial V}\\mathbf{F}\\cdot\\mathbf{n}\\,\\mathrm{d}S$ converts a statement about a volume into one about its boundary, and vice versa; Stokes' theorem does the same for circulation.",
+      "Conservation of a quantity plus the divergence theorem gives the continuity equation $\\partial_t c+\\nabla\\cdot\\mathbf{J}=0$; with Fick's law $\\mathbf{J}=-D\\nabla c$ this is the diffusion equation $\\partial_t c=\\nabla\\cdot(D\\nabla c)$.",
+      "In curvilinear coordinates, operators gain geometric factors, e.g. $\\nabla^2f=\\frac1{r^2}\\partial_r(r^2\\partial_rf)$ for a spherically symmetric function, which gives the $1/r$ steady-state solutions."
+    ]
+  },
+  {
+    "id": 27,
+    "label": "M4",
+    "series": "maths",
+    "slug": "linear-algebra-foundations",
+    "short": "Linear algebra I",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 21,
+    "title": "Linear algebra I: vectors, matrices and lattices",
+    "blurb": "Vectors, linear systems, matrix algebra, determinants, bases and coordinate changes, with crystal lattices as the running example.",
+    "builds": [
+      18
+    ],
+    "related": [
+      2
+    ],
+    "takeaways": [
+      "A system $A\\mathbf{x}=\\mathbf{b}$ is solved by Gaussian elimination in $O(n^3)$ operations; it has a unique solution, none, or infinitely many, according to the rank of $A$, and in practice one solves rather than inverts.",
+      "A matrix is a linear map and multiplication is composition, so in general $AB\\neq BA$; the determinant is the factor by which the map scales volume, and it vanishes exactly when the map collapses space (the matrix is singular).",
+      "Columns of the lattice matrix $A$ are the basis vectors $\\mathbf{a}_i$: Cartesian position is $\\mathbf{r}=A\\mathbf{f}$ for fractional coordinates $\\mathbf{f}$, the cell volume is $|\\det A|$, and distances use the metric $G=A^{T}A$.",
+      "The reciprocal lattice matrix is $B=2\\pi A^{-T}$ so that $\\mathbf{a}_i\\cdot\\mathbf{b}_j=2\\pi\\delta_{ij}$; a plane $(hkl)$ has normal $\\mathbf{G}_{hkl}$ and spacing $d=2\\pi/|\\mathbf{G}_{hkl}|$, which with Bragg's law explains diffraction patterns.",
+      "Orthogonal matrices ($Q^{T}Q=I$) preserve lengths and angles and represent rotations and reflections; an ill-conditioned matrix (huge ratio of largest to smallest stretch) makes solutions hypersensitive to small errors."
+    ]
+  },
+  {
+    "id": 28,
+    "label": "M5",
+    "series": "maths",
+    "slug": "eigenvalues-and-decompositions",
+    "short": "Linear algebra II",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 5,
+    "title": "Linear algebra II: eigenvalues and decompositions",
+    "blurb": "Eigenvalues, diagonalisation, symmetric matrices, quadratic forms, definiteness, the SVD, and why they give vibrations, stability and principal components.",
+    "builds": [
+      27
+    ],
+    "related": [
+      5,
+      11
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 29,
+    "label": "M6",
+    "series": "maths",
+    "slug": "tensors-stress-and-strain",
+    "short": "Tensors",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 5,
+    "title": "Tensors: stress, strain and anisotropy",
+    "blurb": "Index notation, tensor transformation, stress and strain, principal values, von Mises stress, Hooke's law and crystal symmetry.",
+    "builds": [
+      28,
+      26
+    ],
+    "related": [
+      2,
+      10
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 30,
+    "label": "M7",
+    "series": "maths",
+    "slug": "ordinary-differential-equations",
+    "short": "ODEs",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 5,
+    "title": "Ordinary differential equations",
+    "blurb": "First-order and linear second-order equations, oscillators, systems and phase planes, stability, stiffness and time-stepping.",
+    "builds": [
+      24,
+      28
+    ],
+    "related": [
+      6,
+      15
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 31,
+    "label": "M8",
+    "series": "maths",
+    "slug": "fourier-analysis",
+    "short": "Fourier analysis",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 5,
+    "title": "Fourier series and transforms",
+    "blurb": "Complex exponentials, Fourier series, the transform, convolution, the discrete transform, and reciprocal space.",
+    "builds": [
+      24,
+      27
+    ],
+    "related": [
+      2,
+      5
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 32,
+    "label": "M9",
+    "series": "maths",
+    "slug": "partial-differential-equations",
+    "short": "PDEs",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 5,
+    "title": "Partial differential equations",
+    "blurb": "The diffusion, wave and Laplace equations: classification, boundary conditions, separation of variables, similarity solutions and Fourier methods.",
+    "builds": [
+      26,
+      30,
+      31
+    ],
+    "related": [
+      8,
+      9,
+      10
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 33,
+    "label": "M10",
+    "series": "maths",
+    "slug": "probability-for-simulation",
+    "short": "Probability",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 5,
+    "title": "Probability and distributions",
+    "blurb": "Random variables, expectation and variance, the key distributions, the central limit theorem, and the Boltzmann distribution.",
+    "builds": [
+      24
+    ],
+    "related": [
+      3,
+      7
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 34,
+    "label": "M11",
+    "series": "maths",
+    "slug": "statistics-and-data-fitting",
+    "short": "Statistics",
+    "part": "Maths course",
+    "tone": "a",
+    "minutes": 5,
+    "title": "Statistics, error analysis and fitting",
+    "blurb": "Estimators, error bars and propagation, correlated samples, least squares, regression, regularisation and model comparison.",
+    "builds": [
+      33,
+      28
+    ],
+    "related": [
+      7,
+      11
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
+    "id": 35,
+    "label": "M12",
+    "series": "maths",
+    "slug": "calculus-of-variations-and-optimisation",
+    "short": "Variational methods",
+    "part": "Maths course",
+    "tone": "b",
+    "minutes": 5,
+    "title": "Calculus of variations and optimisation",
+    "blurb": "Functionals, the Euler-Lagrange equation, functional derivatives, weak forms, and gradient-based and Newton-type optimisation.",
+    "builds": [
+      25,
+      30
+    ],
+    "related": [
+      9,
+      10,
+      5
+    ],
+    "takeaways": [
+      "(to be written)"
+    ]
+  },
+  {
     "id": 12,
     "label": "B1",
     "series": "background",
