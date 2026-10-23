@@ -1,0 +1,5 @@
+counterpoise-corrected interaction energy E(Ar2) - 2 E(Ar in the dimer basis), meV   (experiment: minimum -12.3 meV at 3.76 A)
+  R (A)         HF       LDA       PBE     B3LYP       MP2   CCSD(T)
+   3.00     177.90     12.18    115.02    137.87     94.09    103.69
+   3.40      42.61    -30.91     14.17     31.51      2.06      6.11
+   3.76      11.42    -23.22     -3.75     10.30    -10.42     -8.37

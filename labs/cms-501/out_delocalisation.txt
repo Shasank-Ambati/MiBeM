@@ -8,3 +8,6 @@ energy of H2+ relative to (H atom + proton) computed with the same method, in eV
    3.00     -0.414    -1.802    -1.941    -1.648
    4.00     -0.098    -1.872    -2.042    -1.676
    6.00     -0.007    -2.123    -2.298    -1.869    (two different solutions, up to 0.02 eV apart)
+   8.00     -0.001     0.026     0.006    -1.987    (two different solutions, up to 0.02 eV apart)
+  12.00     -0.000     0.012     0.008    -2.107
+(H atom energies in Hartree: HF -0.49995, LDA -0.47862, PBE -0.49993, B3LYP -0.50239; exact -0.5)

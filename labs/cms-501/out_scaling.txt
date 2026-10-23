@@ -1,5 +1,7 @@
    n(H2)   atoms   basis functions   t(HF) (s)   t(PBE) (s)   E(HF)/atom (Ha)
-      2      4          20            0.74        2.37        -0.53782
-      4      8          40            0.87        5.61        -0.52446
-      8     16          80            2.30       11.68        -0.51763
-     16     32         160            8.20       32.01        -0.51413
+      2      4          20            0.18        1.07        -0.53782
+      4      8          40            0.30        2.54        -0.52446
+      8     16          80            1.10        5.59        -0.51763
+     16     32         160            3.38       14.83        -0.51413
+     24     48         240            7.86       26.46        -0.51294
+exponent of the time against the number of basis functions (last four sizes): HF 1.80, PBE 1.32
