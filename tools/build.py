@@ -184,6 +184,8 @@ def scripts(rel, demos=False, math=False):
          f'    <script src="{rel}assets/site.js?v={ver("assets/site.js")}" defer></script>')
     if demos:
         s += f'\n    <script src="{rel}assets/demos.js?v={ver("assets/demos.js")}" defer></script>'
+        if math:
+            s += f'\n    <script src="{rel}assets/mathdemos.js?v={ver("assets/mathdemos.js")}" defer></script>'
     return s
 
 

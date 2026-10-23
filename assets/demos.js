@@ -938,11 +938,12 @@
   }
 
   var REG = { boltzmann: boltzmann, gibbs: gibbs, ising: ising, diffusion: diffusion, lj: lj, fourier: fourier, box: box, fdstep: fdstep, placement: placement, units: units, graphs: graphs, tangent: tangent, area: area, bond: bond, crystal2d: crystal2d, oscillator: oscillator, jiggle: jiggle, coins: coins, cooling: cooling, walkers: walkers };
+  window.MIBEM_DEMO = { REG: REG, redraws: redraws, css: css, colours: colours, el: el, shell: shell, slider: slider, button: button, checkbox: checkbox, setRead: setRead, fmtN: fmtN, axes: axes };
   function boot() {
     doc.querySelectorAll(".demo[data-demo]").forEach(function (h) { var f = REG[h.getAttribute("data-demo")]; if (f) { try { f(h); } catch (e) { h.innerHTML = '<div class="demo-body"><p class="demo-note">This demo could not start in your browser.</p></div>'; if (window.console) console.error(e); } } });
     var redrawAll = function () { redraws.forEach(function (f) { f(); }); };
     new MutationObserver(redrawAll).observe(doc.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     if (window.matchMedia) { var mq = matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", redrawAll); }
   }
-  if (doc.readyState === "loading") doc.addEventListener("DOMContentLoaded", boot); else boot();
+  if (doc.readyState === "complete") boot(); else doc.addEventListener("DOMContentLoaded", boot);
 })();

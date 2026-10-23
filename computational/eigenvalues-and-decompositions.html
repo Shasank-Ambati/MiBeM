@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="28">
@@ -89,12 +89,15 @@
             $$\det(A-\lambda I)=0,$$
             the <strong>characteristic equation</strong>, a polynomial of degree $n$ in $\lambda$ with $n$ roots (counted with multiplicity, possibly complex). For each root, solve $(A-\lambda I)\mathbf v=\mathbf0$ for the eigenvector, which is determined only up to a scalar multiple; usually one normalises it to length $1$. Two checks are always worth making:
             $$\sum_i\lambda_i=\operatorname{tr}A=\sum_iA_{ii},\qquad\prod_i\lambda_i=\det A .$$
-            For a $2\times2$ matrix, $\lambda^2-(\operatorname{tr}A)\,\lambda+\det A=0$, so $\lambda=\tfrac12\bigl(\operatorname{tr}A\pm\sqrt{(\operatorname{tr}A)^2-4\det A}\bigr)$.</p>
+            For a $2\times2$ matrix, $\lambda^2-(\operatorname{tr}A)\,\allowbreak \lambda+\det A=0$, so $\lambda=\tfrac12\bigl(\operatorname{tr}A\pm\sqrt{(\operatorname{tr}A)^2-4\det A}\bigr)$.</p>
             <div class="example">
                 <strong>Worked example 1.1: a $2\times2$ eigenproblem</strong>
                 <p class="given">Find the eigenvalues and eigenvectors of $A=\begin{pmatrix}2&amp;1\\1&amp;2\end{pmatrix}$.</p>
                 <p>$\operatorname{tr}A=4$, $\det A=3$, so $\lambda^2-4\lambda+3=0$ gives $\lambda=1,3$. For $\lambda=3$: $(A-3I)\mathbf v=\begin{pmatrix}-1&amp;1\\1&amp;-1\end{pmatrix}\mathbf v=\mathbf0$ gives $v_1=v_2$, so $\mathbf v=\tfrac1{\sqrt2}(1,1)$. For $\lambda=1$: $\begin{pmatrix}1&amp;1\\1&amp;1\end{pmatrix}\mathbf v=\mathbf0$ gives $v_2=-v_1$, so $\mathbf v=\tfrac1{\sqrt2}(1,-1)$. The two eigenvectors are orthogonal. Geometrically $A$ stretches by $3$ along the diagonal $(1,1)$ and by $1$ along $(1,-1)$: the unit circle becomes an ellipse with those axes.</p>
             </div>
+
+            <div class="demo" data-demo="ellipse"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <p>Matrices need not have real eigenvalues: a rotation by $\theta$ has $\lambda=e^{\pm i\theta}$ (no real direction is preserved). Some matrices have fewer independent eigenvectors than $n$ ("defective" matrices, such as $\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}$), but the symmetric matrices of physics never do.</p>
 
             <h2 id="diag">2. Diagonalisation<a class="anchor" href="#diag" aria-label="Link to this section">#</a></h2>
@@ -109,7 +112,7 @@
             $$A=Q\Lambda Q^{T}=\sum_i\lambda_i\,\mathbf q_i\mathbf q_i^{T},$$
             with $Q$ orthogonal ($Q^TQ=I$). The second form writes $A$ as a sum of eigenvalues times projectors onto the eigenvectors.</p>
             </div>
-            <p><em>Why orthogonal?</em> If $A\mathbf u=\lambda\mathbf u$ and $A\mathbf w=\mu\mathbf w$ with $\lambda\ne\mu$, then $\lambda\,\mathbf w\cdot\mathbf u=\mathbf w\cdot A\mathbf u=A\mathbf w\cdot\mathbf u=\mu\,\mathbf w\cdot\mathbf u$ (using symmetry), so $(\lambda-\mu)\,\mathbf w\cdot\mathbf u=0$ and $\mathbf w\cdot\mathbf u=0$. The same argument with complex conjugates shows the eigenvalues are real. Repeated eigenvalues (degeneracy) leave a free choice of orthonormal basis within the degenerate subspace, which is exactly the freedom of orienting degenerate vibrational modes or $d$-orbitals.</p>
+            <p><em>Why orthogonal?</em> If $A\mathbf u=\lambda\mathbf u$ and $A\mathbf w=\mu\mathbf w$ with $\lambda\ne\mu$, then $\lambda\,\allowbreak \mathbf w\cdot\mathbf u=\mathbf w\cdot A\mathbf u=A\mathbf w\cdot\mathbf u=\mu\,\allowbreak \mathbf w\cdot\mathbf u$ (using symmetry), so $(\lambda-\mu)\,\allowbreak \mathbf w\cdot\mathbf u=0$ and $\mathbf w\cdot\mathbf u=0$. The same argument with complex conjugates shows the eigenvalues are real. Repeated eigenvalues (degeneracy) leave a free choice of orthonormal basis within the degenerate subspace, which is exactly the freedom of orienting degenerate vibrational modes or $d$-orbitals.</p>
             <p>Symmetric (or, for complex matrices, Hermitian) matrices are not a special case but the typical case in physics, because they come from second derivatives of energies and from observables:</p>
             <ul>
                 <li><strong>Hamiltonian</strong> $H$: real energies; orthogonal states (section 7).</li>
@@ -140,7 +143,7 @@
             </div>
 
             <h2 id="modes">5. Coupled oscillators and normal modes<a class="anchor" href="#modes" aria-label="Link to this section">#</a></h2>
-            <p>Consider $n$ masses with positions $x_i$ (measured from equilibrium) connected by springs, with potential energy $U=\tfrac12\mathbf x^TK\mathbf x$ and kinetic energy $T=\tfrac12\sum m_i\dot x_i^2$. With equal masses $m$, Newton&rsquo;s equations are $m\ddot{\mathbf x}=-K\mathbf x$, where $K$ (the Hessian of $U$, or <em>force-constant matrix</em>) is symmetric. Try $\mathbf x(t)=\mathbf v\,\cos(\omega t)$: then $-m\omega^2\mathbf v=-K\mathbf v$, i.e.
+            <p>Consider $n$ masses with positions $x_i$ (measured from equilibrium) connected by springs, with potential energy $U=\tfrac12\mathbf x^TK\mathbf x$ and kinetic energy $T=\tfrac12\sum m_i\dot x_i^2$. With equal masses $m$, Newton&rsquo;s equations are $m\ddot{\mathbf x}=-K\mathbf x$, where $K$ (the Hessian of $U$, or <em>force-constant matrix</em>) is symmetric. Try $\mathbf x(t)=\mathbf v\,\allowbreak \cos(\omega t)$: then $-m\omega^2\mathbf v=-K\mathbf v$, i.e.
             $$K\mathbf v=m\omega^2\mathbf v .$$
             This is an eigenproblem: <strong>each eigenvector of $K$ is a normal mode</strong> in which all atoms oscillate in phase at a single frequency, with $\omega_i=\sqrt{\lambda_i/m}$ where $\lambda_i$ are the eigenvalues. Because $K$ is symmetric, the modes are orthogonal and independent: any motion is a superposition of them. (For unequal masses, rescale to $D_{ij}=K_{ij}/\sqrt{m_im_j}$, the <em>dynamical matrix</em>.) A positive-definite $K$ gives real frequencies; a negative eigenvalue gives $\omega^2&lt;0$, i.e. exponential growth, an instability.</p>
             <div class="example">
@@ -150,6 +153,9 @@
                 $$\omega_1=\sqrt{k/m}\ \ (\text{in-phase: both move together, the middle spring is not stretched}),\qquad\omega_2=\sqrt{3k/m}\ \ (\text{out-of-phase}).$$
                 This is the two-atom model of a lattice with a low-frequency &ldquo;acoustic&rdquo; mode and a higher-frequency &ldquo;optical&rdquo; mode; an $N$-atom chain gives $N$ modes forming the phonon dispersion (Problem 9).</p>
             </div>
+
+            <div class="demo" data-demo="modes"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <h3 id="odes">Linear dynamical systems<a class="anchor" href="#odes" aria-label="Link to this section">#</a></h3>
             <p>The same technique solves any linear system $\dot{\mathbf y}=A\mathbf y$. Expand $\mathbf y$ in the eigenvectors, $\mathbf y=\sum_ic_i(t)\mathbf v_i$, and the equations decouple: $\dot c_i=\lambda_ic_i$, so
             $$\mathbf y(t)=\sum_ic_i(0)\,e^{\lambda_it}\mathbf v_i=e^{At}\mathbf y(0),\qquad e^{At}=Pe^{\Lambda t}P^{-1}.$$
@@ -202,7 +208,7 @@
             <p>Find the eigenvalues and normalised eigenvectors of $A=\begin{pmatrix}4&amp;1\\2&amp;3\end{pmatrix}$. Verify that the sum of eigenvalues equals the trace and their product the determinant. Is $A$ symmetric? Are the eigenvectors orthogonal?</p>
             <details class="hint"><summary>Hint</summary><p>Characteristic equation: $\lambda^2-7\lambda+10=0$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>$\operatorname{tr}A=7$, $\det A=12-2=10$, so $\lambda^2-7\lambda+10=0\Rightarrow\lambda=2,5$. Sum $=7$ &check;, product $=10$ &check;.</p>
+            <p>$\operatorname{tr}A=7$, $\det A=12-2=10$, so $\lambda^2-7\lambda+10=0\Rightarrow\lambda=2,\allowbreak 5$. Sum $=7$ &check;, product $=10$ &check;.</p>
             <p>$\lambda=5$: $(A-5I)\mathbf v=\begin{pmatrix}-1&amp;1\\2&amp;-2\end{pmatrix}\mathbf v=\mathbf0\Rightarrow v_2=v_1$, $\mathbf v=\tfrac1{\sqrt2}(1,1)$. $\lambda=2$: $\begin{pmatrix}2&amp;1\\2&amp;1\end{pmatrix}\mathbf v=\mathbf0\Rightarrow v_2=-2v_1$, $\mathbf v=\tfrac1{\sqrt5}(1,-2)$.</p>
             <p>$A$ is not symmetric, and the eigenvectors are not orthogonal: $(1,1)\cdot(1,-2)=-1\ne0$. Both eigenvalues are real and distinct, so $A$ is diagonalisable, but the eigenbasis is skewed. (Orthogonality of eigenvectors is a property of symmetric matrices.)</p>
             </details>
@@ -261,7 +267,7 @@
             <p>Two identical masses ($m=1.0\times10^{-25}$ kg) connect to fixed walls and to each other by three springs of stiffness $k=10$ N/m (Example 5.1). (a) Find the two normal-mode frequencies in THz ($\nu=\omega/2\pi$). (b) The system starts at rest with $x_1(0)=1$ pm, $x_2(0)=0$. Find $x_1(t)$ and $x_2(t)$ and describe the energy exchange (beats).</p>
             <details class="hint"><summary>Hint</summary><p>Write the initial state as a combination of the two mode vectors: $(1,0)=\tfrac12(1,1)+\tfrac12(1,-1)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $\omega_1=\sqrt{k/m}=\sqrt{10/10^{-25}}=\sqrt{10^{26}}=10^{13}$ rad/s, i.e. $\nu_1=\omega_1/2\pi=1.59$ THz. $\omega_2=\sqrt3\,\omega_1=1.732\times10^{13}$ rad/s, $\nu_2=2.76$ THz.</p>
+            <p>(a) $\omega_1=\sqrt{k/m}=\sqrt{10/10^{-25}}=\sqrt{10^{26}}=10^{13}$ rad/s, i.e. $\nu_1=\omega_1/2\pi=1.59$ THz. $\omega_2=\sqrt3\,\allowbreak \omega_1=1.732\times10^{13}$ rad/s, $\nu_2=2.76$ THz.</p>
             <p>(b) Initial conditions: $(x_1,x_2)=\tfrac12(1,1)+\tfrac12(1,-1)$ in units of $1$ pm, zero velocity, so each mode is excited with amplitude $\tfrac12$ pm and no phase: $x_1(t)=\tfrac12\bigl[\cos\omega_1t+\cos\omega_2t\bigr]$, $x_2(t)=\tfrac12\bigl[\cos\omega_1t-\cos\omega_2t\bigr]$ pm. Using sum-to-product, $x_1=\cos\bigl(\tfrac{\omega_1+\omega_2}2t\bigr)\cos\bigl(\tfrac{\omega_2-\omega_1}2t\bigr)$ and $x_2=\sin\bigl(\tfrac{\omega_1+\omega_2}2t\bigr)\sin\bigl(\tfrac{\omega_2-\omega_1}2t\bigr)$: fast oscillation at the mean frequency, modulated by a slow envelope at $\tfrac12(\omega_2-\omega_1)=3.66\times10^{12}$ rad/s. Energy sloshes back and forth between the two masses with period $2\pi/(\omega_2-\omega_1)=0.86$ ps: the first signs of heat conduction by phonons in a larger chain.</p>
             </details>
             </div>
@@ -289,10 +295,10 @@
 
             <div class="problem" id="p5-9">
             <div class="p-head"><span class="p-num">Problem 5.9</span><span class="p-level">Challenge</span></div>
-            <p>A ring of $N$ identical atoms (mass $m$) joined by springs of stiffness $k$ has the force-constant matrix $K$ with $2k$ on the diagonal and $-k$ on the cyclic neighbours. (a) Show that $\mathbf v^{(q)}_j=e^{iqja}$ with $q=2\pi n/(Na)$ is an eigenvector, and find the eigenvalues. (b) Derive the phonon dispersion $\omega(q)=2\sqrt{k/m}\,\bigl|\sin(qa/2)\bigr|$ and its long-wavelength limit (sound velocity). (c) For $k=10$ N/m, $m=10^{-25}$ kg, $a=2.5$ &Aring; find $\omega_\mathrm{max}$ and the sound velocity.</p>
+            <p>A ring of $N$ identical atoms (mass $m$) joined by springs of stiffness $k$ has the force-constant matrix $K$ with $2k$ on the diagonal and $-k$ on the cyclic neighbours. (a) Show that $\mathbf v^{(q)}_j=e^{iqja}$ with $q=2\pi n/(Na)$ is an eigenvector, and find the eigenvalues. (b) Derive the phonon dispersion $\omega(q)=2\sqrt{k/m}\,\allowbreak \bigl|\sin(qa/2)\bigr|$ and its long-wavelength limit (sound velocity). (c) For $k=10$ N/m, $m=10^{-25}$ kg, $a=2.5$ &Aring; find $\omega_\mathrm{max}$ and the sound velocity.</p>
             <details class="hint"><summary>Hint</summary><p>$(K\mathbf v)_j=2kv_j-kv_{j+1}-kv_{j-1}$. Substitute $v_j=e^{iqja}$ and factor out $e^{iqja}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $(K\mathbf v)_j=k\bigl[2-e^{iqa}-e^{-iqa}\bigr]e^{iqja}=k\bigl[2-2\cos qa\bigr]v_j=4k\sin^2(qa/2)\,v_j$. So every plane wave is an eigenvector with eigenvalue $\lambda(q)=4k\sin^2(qa/2)$. Periodicity $v_{j+N}=v_j$ requires $qNa=2\pi n$, giving $N$ distinct $q$ (values differing by $2\pi/a$ are equivalent): $N$ eigenvectors, the full set. (This is a circulant matrix, diagonalised by the discrete Fourier transform: <a href="fourier-analysis.html">M8</a>.)</p>
+            <p>(a) $(K\mathbf v)_j=k\bigl[2-e^{iqa}-e^{-iqa}\bigr]e^{iqja}=k\bigl[2-2\cos qa\bigr]v_j=4k\sin^2(qa/2)\,\allowbreak v_j$. So every plane wave is an eigenvector with eigenvalue $\lambda(q)=4k\sin^2(qa/2)$. Periodicity $v_{j+N}=v_j$ requires $qNa=2\pi n$, giving $N$ distinct $q$ (values differing by $2\pi/a$ are equivalent): $N$ eigenvectors, the full set. (This is a circulant matrix, diagonalised by the discrete Fourier transform: <a href="fourier-analysis.html">M8</a>.)</p>
             <p>(b) $\omega^2=\lambda/m=\dfrac{4k}m\sin^2(qa/2)$, so $\omega(q)=2\sqrt{k/m}\,|\sin(qa/2)|$. For small $q$, $\sin(qa/2)\approx qa/2$ and $\omega\approx a\sqrt{k/m}\,q=c\,q$: linear dispersion, with sound velocity $c=a\sqrt{k/m}$. The $n=0$ eigenvalue is $0$: the rigid translation mode.</p>
             <p>(c) $\omega_\mathrm{max}=2\sqrt{k/m}=2\times10^{13}$ rad/s ($3.2$ THz) at $qa=\pi$ (the zone boundary, neighbours moving in opposite directions). $c=a\sqrt{k/m}=2.5\times10^{-10}\times10^{13}=2.5\times10^3$ m/s, typical of a solid. The bandwidth and slope of the dispersion are set by one number, the stiffness of the bond, tying the Hessian eigenvalues to the experimentally measured vibration spectrum.</p>
             </details>
@@ -327,7 +333,7 @@
             <details class="hint"><summary>Hint</summary><p>Try $(1,1,1)$ and $(1,0,-1)$; the third eigenvector is orthogonal to both.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $M=W/w$ is symmetric. $M(1,1,1)^T=0$, so $\lambda_0=0$. $M(1,0,-1)^T=(-1,\ 1-1,\ 1)=(-1,0,1)=-(1,0,-1)$, so $\lambda_1=-1$. Third: orthogonal to both, $(1,-2,1)$: $M(1,-2,1)^T=(-1-2,\ 1+4+1,\ -2-1)=(-3,6,-3)=-3(1,-2,1)$, so $\lambda_2=-3$. Eigenvalues $0,-1,-3$ (trace $-4$ &check;).</p>
-            <p>(b) Normalised: $\mathbf e_0=\tfrac1{\sqrt3}(1,1,1)$, $\mathbf e_1=\tfrac1{\sqrt2}(1,0,-1)$, $\mathbf e_2=\tfrac1{\sqrt6}(1,-2,1)$. $\mathbf p(0)=(1,0,0)$ has coefficients $\mathbf e_i\cdot\mathbf p(0)=\tfrac1{\sqrt3},\tfrac1{\sqrt2},\tfrac1{\sqrt6}$. So $\mathbf p(t)=\tfrac13(1,1,1)+\tfrac12(1,0,-1)e^{-wt}+\tfrac16(1,-2,1)e^{-3wt}$. Check at $t=0$: first component $\tfrac13+\tfrac12+\tfrac16=1$ &check;, second $\tfrac13-\tfrac13=0$ &check;, third $\tfrac13-\tfrac12+\tfrac16=0$ &check;.</p>
+            <p>(b) Normalised: $\mathbf e_0=\tfrac1{\sqrt3}(1,1,1)$, $\mathbf e_1=\tfrac1{\sqrt2}(1,0,-1)$, $\mathbf e_2=\tfrac1{\sqrt6}(1,-2,1)$. $\mathbf p(0)=(1,0,0)$ has coefficients $\mathbf e_i\cdot\mathbf p(0)=\tfrac1{\sqrt3},\allowbreak \tfrac1{\sqrt2},\allowbreak \tfrac1{\sqrt6}$. So $\mathbf p(t)=\tfrac13(1,1,1)+\tfrac12(1,0,-1)e^{-wt}+\tfrac16(1,-2,1)e^{-3wt}$. Check at $t=0$: first component $\tfrac13+\tfrac12+\tfrac16=1$ &check;, second $\tfrac13-\tfrac13=0$ &check;, third $\tfrac13-\tfrac12+\tfrac16=0$ &check;.</p>
             <p>(c) Equilibrium: $\mathbf p_\infty=\tfrac13(1,1,1)$ (uniform, because all rates are equal: detailed balance). The slowest decaying mode has $\lambda=-1$, so $\tau=1/w$: the time to spread across the chain is of order one hop time times the number of sites squared (compare the diffusive $L^2/D$). The total probability $\sum p_i=1$ is conserved by the zero eigenvalue.</p>
             </details>
             </div>
@@ -363,5 +369,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

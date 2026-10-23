@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="30">
@@ -86,7 +86,7 @@
 
             <h2 id="first">2. First-order equations<a class="anchor" href="#first" aria-label="Link to this section">#</a></h2>
             <h3 id="separable">Separable equations<a class="anchor" href="#separable" aria-label="Link to this section">#</a></h3>
-            <p>If $\dot y=g(y)h(t)$, separate and integrate: $\int\dfrac{\mathrm{d}y}{g(y)}=\int h(t)\,\mathrm{d}t$. The most important case in kinetics is the <strong>rate law</strong> $\dot c=-kc^m$ (reaction order $m$). For $m=1$: $c=c_0e^{-kt}$, with half-life $t_{1/2}=\ln2/k$ independent of $c_0$. For $m=2$: $\dfrac{\mathrm{d}c}{c^2}=-k\,\mathrm{d}t\Rightarrow\dfrac1c=\dfrac1{c_0}+kt$, so $c=\dfrac{c_0}{1+kc_0t}$ and the half-life $t_{1/2}=1/(kc_0)$ <em>depends on</em> $c_0$: that dependence is how reaction orders are determined experimentally.</p>
+            <p>If $\dot y=g(y)h(t)$, separate and integrate: $\int\dfrac{\mathrm{d}y}{g(y)}=\int h(t)\,\allowbreak \mathrm{d}t$. The most important case in kinetics is the <strong>rate law</strong> $\dot c=-kc^m$ (reaction order $m$). For $m=1$: $c=c_0e^{-kt}$, with half-life $t_{1/2}=\ln2/k$ independent of $c_0$. For $m=2$: $\dfrac{\mathrm{d}c}{c^2}=-k\,\allowbreak \mathrm{d}t\Rightarrow\dfrac1c=\dfrac1{c_0}+kt$, so $c=\dfrac{c_0}{1+kc_0t}$ and the half-life $t_{1/2}=1/(kc_0)$ <em>depends on</em> $c_0$: that dependence is how reaction orders are determined experimentally.</p>
             <div class="example">
                 <strong>Worked example 2.1: the Avrami (JMAK) equation</strong>
                 <p class="given">A solid-state transformation nucleates and grows in many places. If the particles did not impinge on each other, the transformed fraction would be the &ldquo;extended&rdquo; fraction $X_\mathrm{ex}(t)=(kt)^n$. Account for impingement and find the real fraction $X(t)$.</p>
@@ -99,7 +99,7 @@
             <h3 id="fixed1">Fixed points and stability in one variable<a class="anchor" href="#fixed1" aria-label="Link to this section">#</a></h3>
             <p>For an autonomous $\dot y=f(y)$, the <strong>fixed points</strong> (equilibria) satisfy $f(y^*)=0$. Linearise: with $y=y^*+\delta$, $\dot\delta\approx f'(y^*)\,\delta$, so $\delta\propto e^{f'(y^*)t}$. The fixed point is <strong>stable</strong> if $f'(y^*)&lt;0$ and <strong>unstable</strong> if $f'(y^*)&gt;0$, with relaxation time $1/|f'(y^*)|$. The same sign test that identifies a minimum of an energy $U$ (with $f=-U'$ and $f'=-U''$) shows up here: a minimum is a stable fixed point of the gradient flow $\dot y=-U'(y)$. When $f'(y^*)\to0$ the relaxation time diverges: <strong>critical slowing down</strong>, a hallmark of phase transitions.</p>
             <div class="note mat"><strong>In materials science: relaxation of an order parameter</strong>
-            <p>Landau theory writes the free energy of an order parameter $\eta$ as $F=\tfrac12A\eta^2+\tfrac14b\eta^4$ with $A=a(T-T_c)$ and $b&gt;0$. The simplest relaxational dynamics is $\dot\eta=-\Gamma\,\partial F/\partial\eta=-\Gamma(A\eta+b\eta^3)$, the zero-dimensional form of the Allen&ndash;Cahn equation of the phase-field method. Above $T_c$ ($A&gt;0$) the only fixed point is $\eta=0$, stable with rate $\Gamma A$. Below $T_c$ ($A&lt;0$), $\eta=0$ becomes unstable and two stable fixed points $\eta=\pm\sqrt{|A|/b}$ appear (a pitchfork bifurcation). The relaxation rate vanishes as $T\to T_c$ from either side, so near the transition ordering becomes slower (Problem 4).</p>
+            <p>Landau theory writes the free energy of an order parameter $\eta$ as $F=\tfrac12A\eta^2+\tfrac14b\eta^4$ with $A=a(T-T_c)$ and $b&gt;0$. The simplest relaxational dynamics is $\dot\eta=-\Gamma\,\allowbreak \partial F/\partial\eta=-\Gamma(A\eta+b\eta^3)$, the zero-dimensional form of the Allen&ndash;Cahn equation of the phase-field method. Above $T_c$ ($A&gt;0$) the only fixed point is $\eta=0$, stable with rate $\Gamma A$. Below $T_c$ ($A&lt;0$), $\eta=0$ becomes unstable and two stable fixed points $\eta=\pm\sqrt{|A|/b}$ appear (a pitchfork bifurcation). The relaxation rate vanishes as $T\to T_c$ from either side, so near the transition ordering becomes slower (Problem 4).</p>
             </div>
 
             <h2 id="second">3. Linear second-order equations: oscillators<a class="anchor" href="#second" aria-label="Link to this section">#</a></h2>
@@ -125,7 +125,7 @@
             <h3 id="driven">The driven oscillator and resonance<a class="anchor" href="#driven" aria-label="Link to this section">#</a></h3>
             <p>Add a sinusoidal drive, $\ddot x+\gamma\dot x+\omega_0^2x=F\cos\omega t$. The solution is the sum of the decaying transient above and a <strong>steady-state</strong> response at the drive frequency, $x_p=X(\omega)\cos(\omega t-\delta)$, with
             $$X(\omega)=\frac{F}{\sqrt{(\omega_0^2-\omega^2)^2+\gamma^2\omega^2}},\qquad\tan\delta=\frac{\gamma\omega}{\omega_0^2-\omega^2}.$$
-            The amplitude peaks near $\omega=\omega_0$ (exactly at $\omega_r=\sqrt{\omega_0^2-\gamma^2/2}$), where $X\approx F/(\gamma\omega_0)=Q\times F/\omega_0^2$: the static displacement magnified by $Q$. The width of the peak (full width at half maximum) is about $\gamma$. The phase lags by $\delta=\pi/2$ at resonance. Using complex exponentials, $F\cos\omega t=\operatorname{Re}\,Fe^{i\omega t}$ and $x_p=\operatorname{Re}\,\dfrac{Fe^{i\omega t}}{\omega_0^2-\omega^2+i\gamma\omega}$, which is the standard trick. This Lorentzian line shape is the shape of every spectral line broadened by damping: infrared and Raman absorption by lattice vibrations, ferromagnetic resonance, NMR.</p>
+            The amplitude peaks near $\omega=\omega_0$ (exactly at $\omega_r=\sqrt{\omega_0^2-\gamma^2/2}$), where $X\approx F/(\gamma\omega_0)=Q\times F/\omega_0^2$: the static displacement magnified by $Q$. The width of the peak (full width at half maximum) is about $\gamma$. The phase lags by $\delta=\pi/2$ at resonance. Using complex exponentials, $F\cos\omega t=\operatorname{Re}\,\allowbreak Fe^{i\omega t}$ and $x_p=\operatorname{Re}\,\allowbreak \dfrac{Fe^{i\omega t}}{\omega_0^2-\omega^2+i\gamma\omega}$, which is the standard trick. This Lorentzian line shape is the shape of every spectral line broadened by damping: infrared and Raman absorption by lattice vibrations, ferromagnetic resonance, NMR.</p>
 
             <h2 id="systems">4. Systems of ODEs and the phase plane<a class="anchor" href="#systems" aria-label="Link to this section">#</a></h2>
             <p>A linear system $\dot{\mathbf y}=A\mathbf y$ with constant matrix $A$ is solved by the eigenvalue method of <a href="eigenvalues-and-decompositions.html">M5</a>: if $A\mathbf v_i=\lambda_i\mathbf v_i$ then $\mathbf y(t)=\sum_ic_ie^{\lambda_it}\mathbf v_i$, the $c_i$ fixed by $\mathbf y(0)$. For a two-variable system the behaviour near the origin is classified by the trace $\tau=\operatorname{tr}A$ and determinant $\Delta=\det A$, because $\lambda=\tfrac12\bigl(\tau\pm\sqrt{\tau^2-4\Delta}\bigr)$:</p>
@@ -144,6 +144,9 @@
             </div>
             <h3 id="nonlin">Nonlinear systems: linearisation<a class="anchor" href="#nonlin" aria-label="Link to this section">#</a></h3>
             <p>For a nonlinear $\dot{\mathbf y}=\mathbf f(\mathbf y)$ find the fixed points $\mathbf f(\mathbf y^*)=\mathbf0$ and linearise: $\dot{\boldsymbol\delta}=J\boldsymbol\delta$ with the <strong>Jacobian</strong> $J_{ij}=\partial f_i/\partial y_j$ evaluated at $\mathbf y^*$. If all eigenvalues of $J$ have non-zero real part, the fixed point has the same type and stability as the linear system. Eigenvalues with zero real part (centres) need a closer look, for example a conserved quantity. This is the same procedure as for the Hessian at a minimum of an energy surface, with a gradient flow $\dot{\mathbf y}=-\nabla U$ having $J=-H$.</p>
+
+            <div class="demo" data-demo="phaseplane"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <div class="example">
                 <strong>Worked example 4.1: consecutive reactions</strong>
                 <p class="given">For $\mathrm A\xrightarrow{k_1}\mathrm B\xrightarrow{k_2}\mathrm C$ with $a(0)=a_0$, $b(0)=c(0)=0$, find $b(t)$ and the time of maximum $b$.</p>
@@ -175,6 +178,9 @@
             <div class="note mat"><strong>In materials science: choosing the time step</strong>
             <p>The fastest motion in most organic and hydrated materials is the O&ndash;H or C&ndash;H stretch (about $3000$&ndash;$3600$ cm$^{-1}$, period $\approx10$ fs), which forces $h\approx0.5$&ndash;$1$ fs; constraining those bonds or replacing H by D (or redistributing mass) allows $2$&ndash;$4$ fs. In metals and ionic solids the highest phonon periods are $\gtrsim50$ fs and $h=2$&ndash;$5$ fs suffices. A $1$ ns trajectory at $1$ fs needs $10^6$ steps, which is why MD accessible time scales (nanoseconds to microseconds) fall so far short of laboratory seconds, and why accelerated sampling methods exist (<a href="molecular-dynamics.html">Molecular dynamics</a>).</p>
             </div>
+
+            <div class="demo" data-demo="integrators"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="summary-m7">6. How the pieces fit together<a class="anchor" href="#summary-m7" aria-label="Link to this section">#</a></h2>
             <p>First-order equations capture relaxation and kinetics; second-order linear ones capture oscillation, damping and resonance; systems unify both through eigenvalues and the phase plane; and linearisation extends the story to nonlinear problems, with the Jacobian playing the role the Hessian plays for energy minima. Numerically, the step size is set by accuracy (the order of the method) and by stability (the largest eigenvalue magnitude), and structure-preserving integrators win for long Hamiltonian runs. Time is only one variable; next we study functions as sums of waves, which will let us solve equations in space as well.</p>
@@ -248,7 +254,7 @@
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\omega_0=\sqrt5=2.236$, $\gamma=2$, $\zeta=\gamma/(2\omega_0)=0.447&lt;1$ (underdamped), $\omega_d=\sqrt{5-1}=2$.</p>
             <p>(b) $x=e^{-t}(A\cos2t+B\sin2t)$. $x(0)=A=1$. $\dot x=-e^{-t}(A\cos2t+B\sin2t)+e^{-t}(-2A\sin2t+2B\cos2t)$, so $\dot x(0)=-A+2B=0\Rightarrow B=\tfrac12$. Therefore $x(t)=e^{-t}\bigl(\cos2t+\tfrac12\sin2t\bigr)$.</p>
-            <p>(c) The envelope is $\sqrt{1+\tfrac14}\,e^{-t}=1.12\,e^{-t}$, which falls below $0.01$ when $t&gt;\ln112=4.7$ s. The period is $2\pi/\omega_d=\pi=3.14$ s, so about $1.5$ periods: heavily damped ($Q=\omega_0/\gamma=1.1$).</p>
+            <p>(c) The envelope is $\sqrt{1+\tfrac14}\,\allowbreak e^{-t}=1.12\,\allowbreak e^{-t}$, which falls below $0.01$ when $t&gt;\ln112=4.7$ s. The period is $2\pi/\omega_d=\pi=3.14$ s, so about $1.5$ periods: heavily damped ($Q=\omega_0/\gamma=1.1$).</p>
             <p>(d) Overdamped when $\gamma&gt;2\omega_0=2\sqrt5=4.47$.</p>
             </details>
             </div>
@@ -368,5 +374,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

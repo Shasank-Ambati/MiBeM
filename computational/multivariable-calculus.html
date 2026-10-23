@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="25">
@@ -92,7 +92,7 @@
             <p>In practice: to compute $\partial f/\partial x$, treat every other variable as a constant and differentiate as usual. Example: for $f=x^2y+e^{xy}$, $f_x=2xy+y\,e^{xy}$ and $f_y=x^2+x\,e^{xy}$.</p>
             <p><strong>Mixed partials commute.</strong> If $f_{xy}$ and $f_{yx}$ are continuous then
             $$\frac{\partial^2f}{\partial x\,\partial y}=\frac{\partial^2f}{\partial y\,\partial x}.$$
-            In the example, $f_{xy}=\partial_y(2xy+ye^{xy})=2x+e^{xy}+xy\,e^{xy}$ and $f_{yx}=\partial_x(x^2+xe^{xy})=2x+e^{xy}+xy\,e^{xy}$. This innocent fact is the source of the <em>Maxwell relations</em> of thermodynamics (section 3).</p>
+            In the example, $f_{xy}=\partial_y(2xy+ye^{xy})=2x+e^{xy}+xy\,\allowbreak e^{xy}$ and $f_{yx}=\partial_x(x^2+xe^{xy})=2x+e^{xy}+xy\,\allowbreak e^{xy}$. This innocent fact is the source of the <em>Maxwell relations</em> of thermodynamics (section 3).</p>
 
             <h3 id="differential">The total differential<a class="anchor" href="#differential" aria-label="Link to this section">#</a></h3>
             <p>The linear approximation extends directly: for small changes, $f(x+\mathrm{d}x,\,y+\mathrm{d}y)-f(x,y)\approx\mathrm{d}f$, where
@@ -101,7 +101,7 @@
             $$\mathrm{d}G=-S\,\mathrm{d}T+V\,\mathrm{d}P,\qquad\text{so}\qquad S=-\Bigl(\frac{\partial G}{\partial T}\Bigr)_P,\quad V=\Bigl(\frac{\partial G}{\partial P}\Bigr)_T .$$
             In thermodynamics the subscript on a partial derivative names the variables held fixed. It is not decoration: $(\partial U/\partial T)_V=C_V$ but $(\partial U/\partial T)_P=C_P-P(\partial V/\partial T)_P$, which differ. Always state what is held constant.</p>
             <div class="note mat"><strong>In materials science: Maxwell relations</strong>
-            <p>Because $G$ is a state function, $\partial^2G/\partial T\,\partial P=\partial^2G/\partial P\,\partial T$. Substituting $S=-G_T$ and $V=G_P$ gives
+            <p>Because $G$ is a state function, $\partial^2G/\partial T\,\allowbreak \partial P=\partial^2G/\partial P\,\allowbreak \partial T$. Substituting $S=-G_T$ and $V=G_P$ gives
             $$\Bigl(\frac{\partial S}{\partial P}\Bigr)_T=-\Bigl(\frac{\partial V}{\partial T}\Bigr)_P .$$
             The left side is hard to measure; the right side is the thermal expansion coefficient (times $V$), which is easy. Problem 12 puts it to work.</p>
             </div>
@@ -153,7 +153,7 @@
             <div class="example">
                 <strong>Worked example 4.1: force from a central pair potential</strong>
                 <p class="given">An atom at position $\mathbf r=(x,y,z)$ relative to another has energy $U(r)$ depending only on the distance $r=\sqrt{x^2+y^2+z^2}$. Find the force.</p>
-                <p>By the chain rule $\partial U/\partial x=U'(r)\,\partial r/\partial x=U'(r)\,x/r$, and likewise for $y,z$. Therefore
+                <p>By the chain rule $\partial U/\partial x=U'(r)\,\allowbreak \partial r/\partial x=U'(r)\,\allowbreak x/r$, and likewise for $y,z$. Therefore
                 $$\nabla U=U'(r)\,\frac{\mathbf r}{r}=U'(r)\,\hat{\mathbf r},\qquad\mathbf F=-U'(r)\,\hat{\mathbf r}.$$
                 The force is along the line joining the atoms, with magnitude $|U'(r)|$: repulsive if $U'&lt;0$ (energy falls as atoms separate), attractive if $U'&gt;0$. All pair potentials in simulations (Lennard-Jones, Morse, Coulomb) work this way.</p>
             </div>
@@ -188,6 +188,9 @@
                 <p>At $(\pm1,0)$: $D=16&gt;0$ and $f_{xx}=8&gt;0$, so <strong>minima</strong> with $f=-1$. At $(0,0)$: $D=-8&lt;0$, a <strong>saddle</strong> with $f=0$, lying between the two minima. The barrier is $f(0,0)-f(\pm1,0)=1$: this is the cartoon of an atom hopping between two sites, with the saddle as the transition state.</p>
             </div>
 
+            <div class="demo" data-demo="contour"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
+
             <h2 id="lagrange">6. Constrained optimisation: Lagrange multipliers<a class="anchor" href="#lagrange" aria-label="Link to this section">#</a></h2>
             <p>Often you must extremise $f$ subject to a constraint $g(\mathbf x)=0$: minimise energy at fixed composition, maximise entropy at fixed mean energy, minimise surface area at fixed volume. Along the constraint curve, $f$ is stationary when its level curve is <em>tangent</em> to the constraint curve, i.e. when $\nabla f$ and $\nabla g$ are parallel.</p>
             <div class="note thm"><strong>Method of Lagrange multipliers</strong>
@@ -218,7 +221,7 @@
             For a non-rectangular region, the inner limits depend on the outer variable. Sketching the region and choosing the order that makes the inner integral easy is the whole art. Triple integrals $\iiint f\,\mathrm{d}V$ work the same way, with the mass of a body $\iiint\rho\,\mathrm{d}V$ and thermal averages over position as the standard uses.</p>
             <div class="example">
                 <strong>Worked example 7.1: reversing the order</strong>
-                <p class="given">Evaluate $\displaystyle\int_0^1\!\!\int_x^1e^{y^2}\,\mathrm{d}y\,\mathrm{d}x$.</p>
+                <p class="given">Evaluate $\displaystyle\int_0^1\!\!\int_x^1e^{y^2}\,\allowbreak \mathrm{d}y\,\allowbreak \mathrm{d}x$.</p>
                 <p>The inner integral $\int e^{y^2}\mathrm{d}y$ has no elementary form. The region is the triangle $0\le x\le y\le1$. Describe it the other way: $y$ runs from $0$ to $1$ and, for each $y$, $x$ runs from $0$ to $y$:
                 $$\int_0^1\!\!\int_0^ye^{y^2}\,\mathrm{d}x\,\mathrm{d}y=\int_0^1y\,e^{y^2}\,\mathrm{d}y=\Bigl[\tfrac12e^{y^2}\Bigr]_0^1=\tfrac12(e-1)\approx0.859.$$</p>
             </div>
@@ -230,16 +233,16 @@
             <div class="table-scroll" role="region" aria-label="Change of variables and the Jacobian (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>System</th><th>Coordinates</th><th>Volume element</th></tr></thead>
                 <tbody>
-                    <tr><td>Polar (2D)</td><td>$x=r\cos\theta$, $y=r\sin\theta$</td><td>$\mathrm{d}A=r\,\mathrm{d}r\,\mathrm{d}\theta$</td></tr>
-                    <tr><td>Cylindrical</td><td>$x=r\cos\theta$, $y=r\sin\theta$, $z$</td><td>$\mathrm{d}V=r\,\mathrm{d}r\,\mathrm{d}\theta\,\mathrm{d}z$</td></tr>
-                    <tr><td>Spherical</td><td>$x=r\sin\theta\cos\phi$, $y=r\sin\theta\sin\phi$, $z=r\cos\theta$</td><td>$\mathrm{d}V=r^2\sin\theta\,\mathrm{d}r\,\mathrm{d}\theta\,\mathrm{d}\phi$</td></tr>
+                    <tr><td>Polar (2D)</td><td>$x=r\cos\theta$, $y=r\sin\theta$</td><td>$\mathrm{d}A=r\,\allowbreak \mathrm{d}r\,\allowbreak \mathrm{d}\theta$</td></tr>
+                    <tr><td>Cylindrical</td><td>$x=r\cos\theta$, $y=r\sin\theta$, $z$</td><td>$\mathrm{d}V=r\,\allowbreak \mathrm{d}r\,\allowbreak \mathrm{d}\theta\,\allowbreak \mathrm{d}z$</td></tr>
+                    <tr><td>Spherical</td><td>$x=r\sin\theta\cos\phi$, $y=r\sin\theta\sin\phi$, $z=r\cos\theta$</td><td>$\mathrm{d}V=r^2\sin\theta\,\allowbreak \mathrm{d}r\,\allowbreak \mathrm{d}\theta\,\allowbreak \mathrm{d}\phi$</td></tr>
                 </tbody>
             </table></div>
             </div>
             <p>(In spherical coordinates, $\theta\in[0,\pi]$ is the polar angle from the $z$-axis and $\phi\in[0,2\pi)$ the azimuth.) For polar coordinates, $\begin{vmatrix}\cos\theta&amp;-r\sin\theta\\\sin\theta&amp;r\cos\theta\end{vmatrix}=r$, which is why the extra factor $r$ appears: a ring of radius $r$ has circumference $2\pi r$.</p>
             <div class="example">
                 <strong>Worked example 7.2: the Gaussian integral</strong>
-                <p class="given">Show $\displaystyle I=\int_{-\infty}^{\infty}e^{-x^2}\,\mathrm{d}x=\sqrt\pi$.</p>
+                <p class="given">Show $\displaystyle I=\int_{-\infty}^{\infty}e^{-x^2}\,\allowbreak \mathrm{d}x=\sqrt\pi$.</p>
                 <p>Square it and treat the two factors as integrals over $x$ and $y$:
                 $$I^2=\int\!\!\int_{\mathbb R^2}e^{-(x^2+y^2)}\,\mathrm{d}x\,\mathrm{d}y=\int_0^{2\pi}\!\!\int_0^\infty e^{-r^2}\,r\,\mathrm{d}r\,\mathrm{d}\theta=2\pi\Bigl[-\tfrac12e^{-r^2}\Bigr]_0^\infty=\pi.$$
                 So $I=\sqrt\pi$ (positive, since the integrand is). Scaling $x\to\sqrt a\,x$ gives $\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$, the result used throughout statistical mechanics.</p>
@@ -247,7 +250,7 @@
             <div class="example">
                 <strong>Worked example 7.3: the Maxwell speed distribution</strong>
                 <p class="given">Atoms of mass $m$ at temperature $T$ have velocity probability density $f(\mathbf v)=\bigl(\tfrac{m}{2\pi k_\mathrm{B}T}\bigr)^{3/2}e^{-m|\mathbf v|^2/(2k_\mathrm{B}T)}$. Find the distribution of speeds $v=|\mathbf v|$ and the mean speed.</p>
-                <p>The density depends only on $v$, so integrate over the angles in spherical velocity coordinates, where $\mathrm{d}^3v=v^2\sin\theta\,\mathrm{d}v\,\mathrm{d}\theta\,\mathrm{d}\phi$. The angular integral is $\int_0^\pi\sin\theta\,\mathrm{d}\theta\int_0^{2\pi}\mathrm{d}\phi=4\pi$ (the area of the unit sphere), so
+                <p>The density depends only on $v$, so integrate over the angles in spherical velocity coordinates, where $\mathrm{d}^3v=v^2\sin\theta\,\allowbreak \mathrm{d}v\,\allowbreak \mathrm{d}\theta\,\allowbreak \mathrm{d}\phi$. The angular integral is $\int_0^\pi\sin\theta\,\allowbreak \mathrm{d}\theta\int_0^{2\pi}\mathrm{d}\phi=4\pi$ (the area of the unit sphere), so
                 $$F(v)\,\mathrm{d}v=4\pi\,v^2\Bigl(\frac{m}{2\pi k_\mathrm{B}T}\Bigr)^{3/2}e^{-mv^2/(2k_\mathrm{B}T)}\,\mathrm{d}v .$$
                 With $b=m/(2k_\mathrm{B}T)$ the integral $\int_0^\infty v^3e^{-bv^2}\mathrm{d}v=\dfrac1{2b^2}$ (substitute $u=v^2$) gives $\langle v\rangle=4\pi(b/\pi)^{3/2}/(2b^2)=\sqrt{8k_\mathrm{B}T/(\pi m)}$. The factor $v^2$ from the volume element is why the distribution vanishes at $v=0$ even though the velocity density is largest there: there are few ways to have almost no speed, and many to have a moderate one.</p>
             </div>
@@ -278,7 +281,7 @@
             <p>Write $f=x^3y^2-\ln x-\ln y$.</p>
             <p>(a) $f_x=3x^2y^2-\dfrac1x$, $f_y=2x^3y-\dfrac1y$, $f_{xx}=6xy^2+\dfrac1{x^2}$, $f_{yy}=2x^3+\dfrac1{y^2}$, $f_{xy}=\partial_y(3x^2y^2-1/x)=6x^2y$.</p>
             <p>(b) $f_{yx}=\partial_x(2x^3y-1/y)=6x^2y=f_{xy}$. &check;</p>
-            <p>(c) At $(1,2)$: $f_x=3\cdot4-1=11$ and $f_y=2\cdot2-\tfrac12=3.5$. So $\mathrm{d}f=11\,\mathrm{d}x+3.5\,\mathrm{d}y$.</p>
+            <p>(c) At $(1,2)$: $f_x=3\cdot4-1=11$ and $f_y=2\cdot2-\tfrac12=3.5$. So $\mathrm{d}f=11\,\allowbreak \mathrm{d}x+3.5\,\allowbreak \mathrm{d}y$.</p>
             </details>
             </div>
 
@@ -313,17 +316,17 @@
             <p>(a) $\nabla T=(-2x,-4y)=(-2,-4)$ at $(1,1)$. Temperature rises fastest in the direction $(-1,-2)/\sqrt5$ (toward the hot centre at the origin), at the rate $|\nabla T|=\sqrt{20}=4.47$ &deg;C/cm.</p>
             <p>(b) $D_{\hat u}T=\nabla T\cdot\hat u=(-2,-4)\cdot(1,1)/\sqrt2=-6/\sqrt2=-4.24$ &deg;C/cm: moving away from the centre, the plate cools.</p>
             <p>(c) A direction perpendicular to $\nabla T$, for example $(2,-1)/\sqrt5$ (check: $(-2)(2)+(-4)(-1)=0$). This is tangent to the isotherm through $(1,1)$.</p>
-            <p>(d) Convert to SI first: $\nabla T=(-2,-4)$ &deg;C/cm $=(-200,-400)$ K/m. Then $\mathbf q=-\kappa\nabla T=-50\,(-200,-400)=(10\,000,\ 20\,000)$ W/m$^2$, with magnitude $22.4$ kW/m$^2$. It points away from the hot centre, down the temperature gradient, as heat flows from hot to cold.</p>
+            <p>(d) Convert to SI first: $\nabla T=(-2,-4)$ &deg;C/cm $=(-200,-400)$ K/m. Then $\mathbf q=-\kappa\nabla T=-50\,\allowbreak (-200,-400)=(10\,000,\ 20\,000)$ W/m$^2$, with magnitude $22.4$ kW/m$^2$. It points away from the hot centre, down the temperature gradient, as heat flows from hot to cold.</p>
             <p class="answer">$\nabla T=(-2,-4)$; $D_u T=-4.24$ °C/cm; $\mathbf q=(1,2)\times10^4$ W/m²</p>
             </details>
             </div>
 
             <div class="problem" id="p2-5">
             <div class="p-head"><span class="p-num">Problem 2.5</span><span class="p-level">Core</span></div>
-            <p>In reduced units ($\varepsilon=\sigma=1$) two atoms interact via $U(r)=4\bigl(r^{-12}-r^{-6}\bigr)$. The second atom sits at $\mathbf r=(1,1,1)$ relative to the first. (a) Show that the force on it is $\mathbf F=(48r^{-14}-24r^{-8})\,\mathbf r$. (b) Evaluate $\mathbf F$ at $\mathbf r=(1,1,1)$ and say whether it is attractive or repulsive.</p>
+            <p>In reduced units ($\varepsilon=\sigma=1$) two atoms interact via $U(r)=4\bigl(r^{-12}-r^{-6}\bigr)$. The second atom sits at $\mathbf r=(1,1,1)$ relative to the first. (a) Show that the force on it is $\mathbf F=(48r^{-14}-24r^{-8})\,\allowbreak \mathbf r$. (b) Evaluate $\mathbf F$ at $\mathbf r=(1,1,1)$ and say whether it is attractive or repulsive.</p>
             <details class="hint"><summary>Hint</summary><p>Use Example 4.1: $\mathbf F=-U'(r)\,\mathbf r/r$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $U'(r)=4\bigl(-12r^{-13}+6r^{-7}\bigr)=-48r^{-13}+24r^{-7}$. Then $\mathbf F=-U'(r)\,\mathbf r/r=(48r^{-13}-24r^{-7})\,\mathbf r/r=(48r^{-14}-24r^{-8})\,\mathbf r$.</p>
+            <p>(a) $U'(r)=4\bigl(-12r^{-13}+6r^{-7}\bigr)=-48r^{-13}+24r^{-7}$. Then $\mathbf F=-U'(r)\,\allowbreak \mathbf r/r=(48r^{-13}-24r^{-7})\,\allowbreak \mathbf r/r=(48r^{-14}-24r^{-8})\,\allowbreak \mathbf r$.</p>
             <p>(b) $r=\sqrt3$, so $r^{-14}=3^{-7}=4.572\times10^{-4}$ and $r^{-8}=3^{-4}=0.012346$. The prefactor is $48(4.572\times10^{-4})-24(0.012346)=0.021948-0.296296=-0.27435$. Hence $\mathbf F=-0.2743\,(1,1,1)$: each component is $-0.274$ and $|\mathbf F|=0.475$. The force on atom 2 points back toward atom 1 (the negative of its position vector), so the interaction is <strong>attractive</strong>: $r=1.73&gt;r_0=1.12$, beyond the minimum. As a check, $r=1.73$ is also beyond the inflection point $1.24$ found in <a href="calculus-single-variable.html">M1</a>, where the attraction is largest, so it is decaying.</p>
             <p class="answer">$\mathbf F=-0.274\,(1,1,1)$, magnitude $0.475$, attractive</p>
             </details>
@@ -385,11 +388,11 @@
 
             <div class="problem" id="p2-10">
             <div class="p-head"><span class="p-num">Problem 2.10</span><span class="p-level">Core</span></div>
-            <p>(a) Evaluate $\displaystyle\iint_Rxy\,\mathrm{d}A$ where $R$ is the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$. (b) Use polar coordinates to evaluate $\displaystyle\iint_{x^2+y^2\le R_0^2}e^{-(x^2+y^2)}\,\mathrm{d}A$ and find its limit as $R_0\to\infty$.</p>
+            <p>(a) Evaluate $\displaystyle\iint_Rxy\,\mathrm{d}A$ where $R$ is the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$. (b) Use polar coordinates to evaluate $\displaystyle\iint_{x^2+y^2\le R_0^2}e^{-(x^2+y^2)}\,\allowbreak \mathrm{d}A$ and find its limit as $R_0\to\infty$.</p>
             <details class="hint"><summary>Hint</summary><p>(a) The triangle is $0\le y\le x\le1$. (b) Remember the Jacobian $r$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $\displaystyle\int_0^1\!\!\int_0^xxy\,\mathrm{d}y\,\mathrm{d}x=\int_0^1x\cdot\frac{x^2}2\,\mathrm{d}x=\int_0^1\frac{x^3}{2}\,\mathrm{d}x=\frac18$.</p>
-            <p>(b) $\displaystyle\int_0^{2\pi}\!\!\int_0^{R_0}e^{-r^2}r\,\mathrm{d}r\,\mathrm{d}\theta=2\pi\cdot\tfrac12\bigl(1-e^{-R_0^2}\bigr)=\pi\bigl(1-e^{-R_0^2}\bigr)$. As $R_0\to\infty$ this tends to $\pi$, the result of Example 7.2. The integrand is the same Gaussian, but in polar coordinates it has the elementary antiderivative $-\tfrac12e^{-r^2}$ thanks to the extra factor $r$.</p>
+            <p>(a) $\displaystyle\int_0^1\!\!\int_0^xxy\,\allowbreak \mathrm{d}y\,\allowbreak \mathrm{d}x=\int_0^1x\cdot\frac{x^2}2\,\allowbreak \mathrm{d}x=\int_0^1\frac{x^3}{2}\,\allowbreak \mathrm{d}x=\frac18$.</p>
+            <p>(b) $\displaystyle\int_0^{2\pi}\!\!\int_0^{R_0}e^{-r^2}r\,\allowbreak \mathrm{d}r\,\allowbreak \mathrm{d}\theta=2\pi\cdot\tfrac12\bigl(1-e^{-R_0^2}\bigr)=\pi\bigl(1-e^{-R_0^2}\bigr)$. As $R_0\to\infty$ this tends to $\pi$, the result of Example 7.2. The integrand is the same Gaussian, but in polar coordinates it has the elementary antiderivative $-\tfrac12e^{-r^2}$ thanks to the extra factor $r$.</p>
             <p class="answer">(a) $1/8$; (b) $\pi(1-e^{-R_0^2})\to\pi$</p>
             </details>
             </div>
@@ -410,7 +413,7 @@
 
             <div class="problem" id="p2-12">
             <div class="p-head"><span class="p-num">Problem 2.12</span><span class="p-level">Challenge</span></div>
-            <p>(a) From $\mathrm{d}G=-S\,\mathrm{d}T+V\,\mathrm{d}P$ derive the Maxwell relation $(\partial S/\partial P)_T=-(\partial V/\partial T)_P$. (b) For one mole of ideal gas, find $S(T,P)-S(T,P_0)$ by integrating the relation along an isotherm. (c) A solid has volumetric thermal expansion coefficient $\alpha=\dfrac1V(\partial V/\partial T)_P=3.0\times10^{-5}$ K$^{-1}$ and molar volume $7.1\times10^{-6}$ m$^3$/mol (iron-like). By how much does its molar entropy change when the pressure is raised by $1$ GPa at constant $T$?</p>
+            <p>(a) From $\mathrm{d}G=-S\,\allowbreak \mathrm{d}T+V\,\allowbreak \mathrm{d}P$ derive the Maxwell relation $(\partial S/\partial P)_T=-(\partial V/\partial T)_P$. (b) For one mole of ideal gas, find $S(T,P)-S(T,P_0)$ by integrating the relation along an isotherm. (c) A solid has volumetric thermal expansion coefficient $\alpha=\dfrac1V(\partial V/\partial T)_P=3.0\times10^{-5}$ K$^{-1}$ and molar volume $7.1\times10^{-6}$ m$^3$/mol (iron-like). By how much does its molar entropy change when the pressure is raised by $1$ GPa at constant $T$?</p>
             <details class="hint"><summary>Hint</summary><p>(a) $S=-G_T$ and $V=G_P$; then $S_P=-G_{TP}$ and $V_T=G_{PT}$. (c) Treat $V$ and $\alpha$ as constant over the pressure range.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) Reading off the differential: $S=-(\partial G/\partial T)_P$ and $V=(\partial G/\partial P)_T$. Then $(\partial S/\partial P)_T=-\dfrac{\partial^2G}{\partial P\,\partial T}$ and $(\partial V/\partial T)_P=\dfrac{\partial^2G}{\partial T\,\partial P}$. Mixed partials commute, so $(\partial S/\partial P)_T=-(\partial V/\partial T)_P$.</p>
@@ -450,5 +453,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

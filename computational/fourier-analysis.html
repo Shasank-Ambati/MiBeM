@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="31">
@@ -82,7 +82,7 @@
             which can be checked by comparing the Taylor series of $e^{i\theta}$, $\cos\theta$ and $\sin\theta$ (<a href="calculus-single-variable.html">M1</a>). Consequences:</p>
             <ul>
                 <li>$|e^{i\theta}|=1$: the point moves around the unit circle; $e^{i\pi}=-1$ and $e^{2\pi i}=1$.</li>
-                <li>Multiplication adds angles and multiplies moduli, $re^{i\theta}\cdot se^{i\phi}=rs\,e^{i(\theta+\phi)}$: multiplying by $e^{i\phi}$ is a rotation by $\phi$. De Moivre: $(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta$.</li>
+                <li>Multiplication adds angles and multiplies moduli, $re^{i\theta}\cdot se^{i\phi}=rs\,\allowbreak e^{i(\theta+\phi)}$: multiplying by $e^{i\phi}$ is a rotation by $\phi$. De Moivre: $(\cos\theta+i\sin\theta)^n=\cos n\theta+i\sin n\theta$.</li>
                 <li>$\cos\theta=\dfrac{e^{i\theta}+e^{-i\theta}}2$, $\sin\theta=\dfrac{e^{i\theta}-e^{-i\theta}}{2i}$. Product and power identities for trigonometric functions follow by multiplying exponentials (Problem 1).</li>
                 <li>The <strong>$N$-th roots of unity</strong> $\omega_m=e^{2\pi im/N}$ ($m=0,\ldots,N-1$) are equally spaced on the unit circle. Their key property is $\displaystyle\sum_{m=0}^{N-1}e^{2\pi imn/N}=\begin{cases}N&amp;n\text{ a multiple of }N\\0&amp;\text{otherwise,}\end{cases}$ a geometric series that underlies the discrete Fourier transform.</li>
             </ul>
@@ -96,7 +96,7 @@
             <div class="note thm"><strong>Fourier series</strong>
             <p>A function of period $L$ that is piecewise smooth can be written
             $$f(x)=\sum_{n=-\infty}^{\infty}c_n\,e^{ik_nx},\qquad c_n=\frac1L\int_0^Lf(x)\,e^{-ik_nx}\,\mathrm dx .$$
-            $c_0$ is the mean of $f$. If $f$ is real, $c_{-n}=\bar c_n$, and the equivalent real form is $f=\tfrac12a_0+\sum_{n\ge1}\bigl(a_n\cos k_nx+b_n\sin k_nx\bigr)$ with $a_n=\tfrac2L\int f\cos k_nx\,\mathrm dx$ and $b_n=\tfrac2L\int f\sin k_nx\,\mathrm dx$.</p>
+            $c_0$ is the mean of $f$. If $f$ is real, $c_{-n}=\bar c_n$, and the equivalent real form is $f=\tfrac12a_0+\sum_{n\ge1}\bigl(a_n\cos k_nx+b_n\sin k_nx\bigr)$ with $a_n=\tfrac2L\int f\cos k_nx\,\allowbreak \mathrm dx$ and $b_n=\tfrac2L\int f\sin k_nx\,\allowbreak \mathrm dx$.</p>
             </div>
             <p>The coefficient formula follows by multiplying the series by $e^{-ik_mx}$ and integrating: orthogonality kills every term except $n=m$. <strong>Parseval&rsquo;s theorem</strong> says the mean square of $f$ equals the sum of squared coefficients:
             $$\frac1L\int_0^L|f|^2\,\mathrm dx=\sum_n|c_n|^2,$$
@@ -104,7 +104,7 @@
             <div class="example">
                 <strong>Worked example 2.1: the sawtooth and the Basel sum</strong>
                 <p class="given">Find the Fourier series of $f(x)=x$ on $(-\pi,\pi)$, extended periodically ($L=2\pi$), and use Parseval&rsquo;s theorem to sum $\sum1/n^2$.</p>
-                <p>$f$ is odd, so only sines: $b_n=\dfrac1\pi\displaystyle\int_{-\pi}^{\pi}x\sin nx\,\mathrm dx=\dfrac2\pi\int_0^\pi x\sin nx\,\mathrm dx$. By parts, $\int_0^\pi x\sin nx\,\mathrm dx=\Bigl[-\dfrac{x\cos nx}{n}\Bigr]_0^\pi+\int_0^\pi\dfrac{\cos nx}{n}\mathrm dx=-\dfrac{\pi(-1)^n}{n}+0$. Hence $b_n=\dfrac{2(-1)^{n+1}}{n}$ and
+                <p>$f$ is odd, so only sines: $b_n=\dfrac1\pi\displaystyle\int_{-\pi}^{\pi}x\sin nx\,\allowbreak \mathrm dx=\dfrac2\pi\int_0^\pi x\sin nx\,\allowbreak \mathrm dx$. By parts, $\int_0^\pi x\sin nx\,\allowbreak \mathrm dx=\Bigl[-\dfrac{x\cos nx}{n}\Bigr]_0^\pi+\int_0^\pi\dfrac{\cos nx}{n}\mathrm dx=-\dfrac{\pi(-1)^n}{n}+0$. Hence $b_n=\dfrac{2(-1)^{n+1}}{n}$ and
                 $$x=2\Bigl(\sin x-\frac{\sin2x}{2}+\frac{\sin3x}{3}-\cdots\Bigr).$$
                 Parseval (real form): mean square $\dfrac1{2\pi}\displaystyle\int_{-\pi}^\pi x^2\mathrm dx=\dfrac{\pi^2}{3}$ equals $\tfrac12\sum b_n^2=\tfrac12\sum\dfrac4{n^2}$. Therefore $\displaystyle\sum_{n=1}^\infty\frac1{n^2}=\frac{\pi^2}6$. The coefficients decay only like $1/n$ because the periodic extension has jumps at $x=\pm\pi$.</p>
             </div>
@@ -125,10 +125,13 @@
             <div class="example">
                 <strong>Worked example 2.2: the square wave</strong>
                 <p class="given">Expand $f(x)=+1$ on $(0,\pi)$, $-1$ on $(-\pi,0)$ (period $2\pi$).</p>
-                <p>$f$ is odd, so $b_n=\dfrac2\pi\displaystyle\int_0^\pi\sin nx\,\mathrm dx=\dfrac2{\pi n}\bigl(1-(-1)^n\bigr)$, which is $\dfrac4{\pi n}$ for odd $n$ and $0$ for even $n$:
+                <p>$f$ is odd, so $b_n=\dfrac2\pi\displaystyle\int_0^\pi\sin nx\,\allowbreak \mathrm dx=\dfrac2{\pi n}\bigl(1-(-1)^n\bigr)$, which is $\dfrac4{\pi n}$ for odd $n$ and $0$ for even $n$:
                 $$f(x)=\frac4\pi\Bigl(\sin x+\frac{\sin3x}{3}+\frac{\sin5x}{5}+\cdots\Bigr).$$
                 At $x=\pi/2$, $f=1$ and $\sin(n\pi/2)$ alternates $1,-1,\ldots$ for odd $n$, giving the Leibniz series $1-\tfrac13+\tfrac15-\cdots=\tfrac\pi4$. The partial sums peak at $1.179$ near the jump however many terms are used ($1.182$ with $5$ terms, $1.179$ with $100$): the Gibbs overshoot of $0.179$, or $8.95\%$ of the jump of $2$.</p>
             </div>
+
+            <div class="demo" data-demo="fourier"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="transform">3. The Fourier transform<a class="anchor" href="#transform" aria-label="Link to this section">#</a></h2>
             <p>Let the period $L\to\infty$: the spacing of the wavenumbers $k_n$ goes to zero, the sum becomes an integral, and a non-periodic function can be written as a continuous superposition of plane waves. With the convention used here,
@@ -142,7 +145,7 @@
                     <tr><td>Shift</td><td>$f(x-x_0)$</td><td>$e^{-ikx_0}F(k)$ (only a phase)</td></tr>
                     <tr><td>Scaling</td><td>$f(ax)$</td><td>$\dfrac1{|a|}F(k/a)$: narrow in $x$ means broad in $k$</td></tr>
                     <tr><td>Derivative</td><td>$f'(x)$</td><td>$ik\,F(k)$; so $\nabla^2\to-k^2$</td></tr>
-                    <tr><td>Convolution</td><td>$(f*g)(x)=\int f(x')g(x-x')\,\mathrm dx'$</td><td>$F(k)\,G(k)$</td></tr>
+                    <tr><td>Convolution</td><td>$(f*g)(x)=\int f(x')g(x-x')\,\allowbreak \mathrm dx'$</td><td>$F(k)\,G(k)$</td></tr>
                     <tr><td>Parseval</td><td>$\int|f|^2\mathrm dx$</td><td>$\dfrac1{2\pi}\int|F|^2\mathrm dk$</td></tr>
                     <tr><td>Real $f$</td><td>$f(x)$ real</td><td>$F(-k)=\overline{F(k)}$</td></tr>
                 </tbody>
@@ -156,7 +159,7 @@
                     <tr><td>$\delta(x)$</td><td>$1$</td><td>a point source contains all wavenumbers equally</td></tr>
                     <tr><td>$1$</td><td>$2\pi\,\delta(k)$</td><td>a uniform field has only $k=0$</td></tr>
                     <tr><td>$e^{ik_0x}$</td><td>$2\pi\,\delta(k-k_0)$</td><td>one plane wave, one line</td></tr>
-                    <tr><td>Gaussian $e^{-x^2/(2\sigma^2)}$</td><td>$\sigma\sqrt{2\pi}\,e^{-\sigma^2k^2/2}$</td><td>diffusion kernel; instrument resolution; the only self-transforming shape</td></tr>
+                    <tr><td>Gaussian $e^{-x^2/(2\sigma^2)}$</td><td>$\sigma\sqrt{2\pi}\,\allowbreak e^{-\sigma^2k^2/2}$</td><td>diffusion kernel; instrument resolution; the only self-transforming shape</td></tr>
                     <tr><td>Box: $1$ for $|x|&lt;a/2$, else $0$</td><td>$\dfrac{2\sin(ka/2)}{k}$</td><td>a finite crystal or slit; the sinc function</td></tr>
                     <tr><td>Exponential $e^{-|x|/\xi}$</td><td>$\dfrac{2\xi}{1+\xi^2k^2}$</td><td>Lorentzian line shape; correlation length $\xi$</td></tr>
                     <tr><td>Comb $\sum_n\delta(x-na)$</td><td>$\dfrac{2\pi}{a}\sum_m\delta\bigl(k-\tfrac{2\pi m}a\bigr)$</td><td>a lattice transforms into a reciprocal lattice</td></tr>
@@ -190,8 +193,11 @@
             <div class="note warn"><strong>Aliasing in simulation data</strong>
             <p>If you save an MD trajectory every $20$ fs (sampling rate $50$ THz, Nyquist $25$ THz, $\approx833$ cm$^{-1}$) and compute a vibrational spectrum, a C&ndash;H stretch at $3000$ cm$^{-1}$ ($89.9$ THz) is aliased into a spurious peak at $|89.9-100|=10.1$ THz, about $336$ cm$^{-1}$, in the middle of the low-frequency lattice region (Problem 9). Save velocities at least twice as often as the fastest vibration, or low-pass filter first. The same logic limits the real-space grid of a plane-wave or spectral calculation: features smaller than twice the grid spacing are invisible or aliased.</p>
             </div>
+
+            <div class="demo" data-demo="aliasing"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <h3 id="spectral">Spectral differentiation<a class="anchor" href="#spectral" aria-label="Link to this section">#</a></h3>
-            <p>Derivatives are exact and trivial in Fourier space, so a periodic derivative is computed as: transform, multiply by $ik$, transform back. For smooth periodic functions the error decreases faster than any power of $\Delta$ (&ldquo;spectral accuracy&rdquo;), whereas a finite difference has $O(\Delta^2)$ error. The effect of finite differences is visible in Fourier space: the three-point stencil $(f_{j+1}-2f_j+f_{j-1})/\Delta^2$ acting on $e^{ikx}$ returns $-\tfrac{4}{\Delta^2}\sin^2\tfrac{k\Delta}2\,e^{ikx}$ instead of $-k^2e^{ikx}$: the effective wavenumber is $k_\mathrm{eff}^2=\tfrac4{\Delta^2}\sin^2(k\Delta/2)$, correct only for $k\Delta\ll1$ (Problem 10). Spectral phase-field codes exploit this exactness and the speed of the FFT.</p>
+            <p>Derivatives are exact and trivial in Fourier space, so a periodic derivative is computed as: transform, multiply by $ik$, transform back. For smooth periodic functions the error decreases faster than any power of $\Delta$ (&ldquo;spectral accuracy&rdquo;), whereas a finite difference has $O(\Delta^2)$ error. The effect of finite differences is visible in Fourier space: the three-point stencil $(f_{j+1}-2f_j+f_{j-1})/\Delta^2$ acting on $e^{ikx}$ returns $-\tfrac{4}{\Delta^2}\sin^2\tfrac{k\Delta}2\,\allowbreak e^{ikx}$ instead of $-k^2e^{ikx}$: the effective wavenumber is $k_\mathrm{eff}^2=\tfrac4{\Delta^2}\sin^2(k\Delta/2)$, correct only for $k\Delta\ll1$ (Problem 10). Spectral phase-field codes exploit this exactness and the speed of the FFT.</p>
 
             <h2 id="recipspace">5. Reciprocal space, diffraction and Bloch waves<a class="anchor" href="#recipspace" aria-label="Link to this section">#</a></h2>
             <h3 id="diffraction">Diffraction is a Fourier transform<a class="anchor" href="#diffraction" aria-label="Link to this section">#</a></h3>
@@ -203,7 +209,7 @@
             <h3 id="bloch">Bloch&rsquo;s theorem and plane waves<a class="anchor" href="#bloch" aria-label="Link to this section">#</a></h3>
             <p>In a crystal the potential is periodic, $V(\mathbf r+\mathbf R)=V(\mathbf r)$, so its Fourier series contains only reciprocal lattice vectors: $V(\mathbf r)=\sum_{\mathbf G}V_{\mathbf G}e^{i\mathbf G\cdot\mathbf r}$. <strong>Bloch&rsquo;s theorem</strong> states that the electron wavefunctions can be chosen in the form
             $$\psi_{\mathbf k}(\mathbf r)=e^{i\mathbf k\cdot\mathbf r}\,u_{\mathbf k}(\mathbf r),\qquad u_{\mathbf k}(\mathbf r+\mathbf R)=u_{\mathbf k}(\mathbf r),$$
-            a plane wave times a function with the periodicity of the lattice. Expanding $u_{\mathbf k}$ in its own Fourier series gives $\psi_{\mathbf k}=\sum_{\mathbf G}c_{\mathbf k+\mathbf G}\,e^{i(\mathbf k+\mathbf G)\cdot\mathbf r}$: a <strong>plane-wave basis</strong>, the basis of most DFT codes for solids. It is truncated at a <em>cutoff energy</em> $E_\mathrm{cut}$, $\hbar^2|\mathbf k+\mathbf G|^2/2m\le E_\mathrm{cut}$, and the number of plane waves grows as $E_\mathrm{cut}^{3/2}V$. The wavevector $\mathbf k$ is only defined modulo $\mathbf G$ (<em>aliasing</em> again: $\mathbf k$ and $\mathbf k+\mathbf G$ label the same Bloch state), so it can be restricted to one cell of reciprocal space, the first <strong>Brillouin zone</strong>; integrals over it are done by sampling a grid of $\mathbf k$-points. Where the free-electron energies of $\mathbf k$ and $\mathbf k-\mathbf G$ coincide ($\mathbf k=\mathbf G/2$, the zone boundary), the potential component $V_{\mathbf G}$ couples them and opens an <strong>energy gap</strong> of $2|V_{\mathbf G}|$ (Problem 11): the origin of band gaps.</p>
+            a plane wave times a function with the periodicity of the lattice. Expanding $u_{\mathbf k}$ in its own Fourier series gives $\psi_{\mathbf k}=\sum_{\mathbf G}c_{\mathbf k+\mathbf G}\,\allowbreak e^{i(\mathbf k+\mathbf G)\cdot\mathbf r}$: a <strong>plane-wave basis</strong>, the basis of most DFT codes for solids. It is truncated at a <em>cutoff energy</em> $E_\mathrm{cut}$, $\hbar^2|\mathbf k+\mathbf G|^2/2m\le E_\mathrm{cut}$, and the number of plane waves grows as $E_\mathrm{cut}^{3/2}V$. The wavevector $\mathbf k$ is only defined modulo $\mathbf G$ (<em>aliasing</em> again: $\mathbf k$ and $\mathbf k+\mathbf G$ label the same Bloch state), so it can be restricted to one cell of reciprocal space, the first <strong>Brillouin zone</strong>; integrals over it are done by sampling a grid of $\mathbf k$-points. Where the free-electron energies of $\mathbf k$ and $\mathbf k-\mathbf G$ coincide ($\mathbf k=\mathbf G/2$, the zone boundary), the potential component $V_{\mathbf G}$ couples them and opens an <strong>energy gap</strong> of $2|V_{\mathbf G}|$ (Problem 11): the origin of band gaps.</p>
 
             <h2 id="summary-m8">6. How the pieces fit together<a class="anchor" href="#summary-m8" aria-label="Link to this section">#</a></h2>
             <p>Complex exponentials are the natural waves; Fourier series and transforms express any function in terms of them, and the dictionary &ldquo;derivative $\leftrightarrow\;ik$, convolution $\leftrightarrow$ product, width $\leftrightarrow$ inverse width&rdquo; turns hard operations into easy ones. The diffusion equation is solved mode by mode; sampled data are handled by the DFT and FFT with the limits of resolution and Nyquist; and in a crystal, Fourier space is reciprocal space, where diffraction peaks, Brillouin zones and plane-wave bases live. These tools return in the next module, where Fourier methods and separation of variables solve the classic partial differential equations.</p>
@@ -242,7 +248,7 @@
             <details class="hint"><summary>Hint</summary><p>$\cos^2x=\tfrac12(1+\cos2x)$ and $\cos2x=\tfrac12(e^{2ix}+e^{-2ix})$. Take period $2\pi$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>$\cos^2x=\tfrac12+\tfrac14e^{2ix}+\tfrac14e^{-2ix}$. With period $2\pi$ ($k_n=n$): $c_0=\tfrac12$, $c_{\pm2}=\tfrac14$, all other $c_n=0$. Only the mean and the second harmonic are present, as expected, since the squaring doubles the frequency.</p>
-            <p>Parseval: left side $\dfrac1{2\pi}\displaystyle\int_0^{2\pi}\cos^4x\,\mathrm dx=\tfrac38$ (using $\cos^4x=\tfrac38+\tfrac12\cos2x+\tfrac18\cos4x$, whose mean is $\tfrac38$). Right side $\sum|c_n|^2=\tfrac14+\tfrac1{16}+\tfrac1{16}=\tfrac38$. &check;</p>
+            <p>Parseval: left side $\dfrac1{2\pi}\displaystyle\int_0^{2\pi}\cos^4x\,\allowbreak \mathrm dx=\tfrac38$ (using $\cos^4x=\tfrac38+\tfrac12\cos2x+\tfrac18\cos4x$, whose mean is $\tfrac38$). Right side $\sum|c_n|^2=\tfrac14+\tfrac1{16}+\tfrac1{16}=\tfrac38$. &check;</p>
             </details>
             </div>
 
@@ -251,7 +257,7 @@
             <p>(a) Derive the Fourier series of the square wave (Example 2.2) and verify the amplitude of the third harmonic. (b) Use it at $x=\pi/2$ to obtain $\pi/4=1-\tfrac13+\tfrac15-\cdots$. (c) Use Parseval&rsquo;s theorem to find $\sum_{n\ \mathrm{odd}}1/n^2$. (d) What fraction of the signal power is in the fundamental harmonic?</p>
             <details class="hint"><summary>Hint</summary><p>For the square wave the mean square is $1$. Parseval (real form): mean square $=\tfrac12\sum b_n^2$ for a sine series.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $b_n=\dfrac2\pi\int_0^\pi\sin nx\,\mathrm dx=\dfrac2{\pi}\cdot\dfrac{1-\cos n\pi}{n}=\dfrac{2(1-(-1)^n)}{\pi n}$, so $b_1=\dfrac4\pi=1.273$, $b_3=\dfrac4{3\pi}=0.424$, $b_2=b_4=0$.</p>
+            <p>(a) $b_n=\dfrac2\pi\int_0^\pi\sin nx\,\allowbreak \mathrm dx=\dfrac2{\pi}\cdot\dfrac{1-\cos n\pi}{n}=\dfrac{2(1-(-1)^n)}{\pi n}$, so $b_1=\dfrac4\pi=1.273$, $b_3=\dfrac4{3\pi}=0.424$, $b_2=b_4=0$.</p>
             <p>(b) $x=\pi/2$: $1=\dfrac4\pi\Bigl(1-\tfrac13+\tfrac15-\cdots\Bigr)$, so $\tfrac\pi4=1-\tfrac13+\tfrac15-\cdots$ (the Leibniz series).</p>
             <p>(c) Mean square of $f$ is $1$ ($f^2=1$). Parseval: $1=\tfrac12\sum_{n\,\mathrm{odd}}\dfrac{16}{\pi^2n^2}$, so $\sum_{n\,\mathrm{odd}}\dfrac1{n^2}=\dfrac{\pi^2}8=1.2337$. (Consistent with $\sum1/n^2=\pi^2/6$: odd terms are $3/4$ of the total, $\tfrac34\cdot\tfrac{\pi^2}6=\tfrac{\pi^2}8$. &check;)</p>
             <p>(d) The fundamental carries $\tfrac12b_1^2=\tfrac12\cdot\dfrac{16}{\pi^2}=0.8106$: $81\%$ of the power. The third harmonic adds $\tfrac12(0.424)^2=0.090$ ($9\%$); the first two together carry $90\%$, and the slow $1/n^2$ fall-off of the power reflects the discontinuities.</p>
@@ -261,9 +267,9 @@
             <div class="problem" id="p8-4">
             <div class="p-head"><span class="p-num">Problem 8.4</span><span class="p-level">Core</span></div>
             <p>Expand $f(x)=x$ on $[0,\pi]$ in a <em>cosine</em> series (even extension to $[-\pi,\pi]$). (a) Find the coefficients. (b) How do they decay, and why is that faster than the sine series of the same function on $[0,\pi]$? (c) Evaluate at $x=0$ to obtain $\sum_{n\,\mathrm{odd}}1/n^2$. (d) Which boundary conditions suit a cosine series?</p>
-            <details class="hint"><summary>Hint</summary><p>$a_n=\dfrac2\pi\displaystyle\int_0^\pi x\cos nx\,\mathrm dx$; integrate by parts. The mean is $a_0/2=\pi/2$.</p></details>
+            <details class="hint"><summary>Hint</summary><p>$a_n=\dfrac2\pi\displaystyle\int_0^\pi x\cos nx\,\allowbreak \mathrm dx$; integrate by parts. The mean is $a_0/2=\pi/2$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $a_0=\dfrac2\pi\int_0^\pi x\,\mathrm dx=\pi$ (mean $\pi/2$). For $n\ge1$: $\int_0^\pi x\cos nx\,\mathrm dx=\Bigl[\dfrac{x\sin nx}n\Bigr]_0^\pi-\int_0^\pi\dfrac{\sin nx}{n}\mathrm dx=0+\Bigl[\dfrac{\cos nx}{n^2}\Bigr]_0^\pi=\dfrac{(-1)^n-1}{n^2}$. So $a_n=\dfrac{2((-1)^n-1)}{\pi n^2}=-\dfrac4{\pi n^2}$ for odd $n$, $0$ for even $n$:
+            <p>(a) $a_0=\dfrac2\pi\int_0^\pi x\,\allowbreak \mathrm dx=\pi$ (mean $\pi/2$). For $n\ge1$: $\int_0^\pi x\cos nx\,\allowbreak \mathrm dx=\Bigl[\dfrac{x\sin nx}n\Bigr]_0^\pi-\int_0^\pi\dfrac{\sin nx}{n}\mathrm dx=0+\Bigl[\dfrac{\cos nx}{n^2}\Bigr]_0^\pi=\dfrac{(-1)^n-1}{n^2}$. So $a_n=\dfrac{2((-1)^n-1)}{\pi n^2}=-\dfrac4{\pi n^2}$ for odd $n$, $0$ for even $n$:
             $$x=\frac\pi2-\frac4\pi\sum_{n\ \mathrm{odd}}\frac{\cos nx}{n^2}.$$</p>
             <p>(b) The coefficients decay as $1/n^2$. The even extension of $x$ is the triangle wave $|x|$, which is continuous (only its slope jumps), so the series converges faster than the sine series of Example 2.1 ($1/n$), whose odd extension has a jump at $\pm\pi$. A good extension is smooth: choose the series whose implied boundary behaviour matches the problem.</p>
             <p>(c) At $x=0$: $0=\dfrac\pi2-\dfrac4\pi\sum_{n\,\mathrm{odd}}\dfrac1{n^2}\Rightarrow\sum_{n\,\mathrm{odd}}\dfrac{1}{n^2}=\dfrac{\pi^2}8$. &check;</p>
@@ -274,10 +280,10 @@
             <div class="problem" id="p8-5">
             <div class="p-head"><span class="p-num">Problem 8.5</span><span class="p-level">Core</span></div>
             <p>(a) Compute the Fourier transform of the box function ($1$ for $|x|&lt;a/2$, $0$ otherwise) and find its first zero. (b) Use this to explain why a crystal of $N$ planes spaced by $d$ (length $L=Nd$) gives a diffraction peak of width $\Delta q\approx2\pi/L$, and derive the Scherrer width $\Delta(2\theta)=K\lambda/(L\cos\theta)$ with $K=0.89$ from $\Delta q\approx0.89\cdot2\pi/L$. (c) Compute the width for crystallites of $20$ nm with Cu K$\alpha$ ($\lambda=1.5406$ &Aring;) at $2\theta=38.5^\circ$ ($\theta=19.25^\circ$). Use $K=0.9$.</p>
-            <details class="hint"><summary>Hint</summary><p>(a) Integrate: $\int e^{-ikx}\mathrm dx=e^{-ikx}/(-ik)$, evaluated between $-a/2$ and $a/2$. (b) $q=4\pi\sin\theta/\lambda$, so $\mathrm dq=\dfrac{2\pi\cos\theta}{\lambda}\,\mathrm d(2\theta)$.</p></details>
+            <details class="hint"><summary>Hint</summary><p>(a) Integrate: $\int e^{-ikx}\mathrm dx=e^{-ikx}/(-ik)$, evaluated between $-a/2$ and $a/2$. (b) $q=4\pi\sin\theta/\lambda$, so $\mathrm dq=\dfrac{2\pi\cos\theta}{\lambda}\,\allowbreak \mathrm d(2\theta)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $F(k)=\displaystyle\int_{-a/2}^{a/2}e^{-ikx}\,\mathrm dx=\dfrac{e^{ika/2}-e^{-ika/2}}{ik}=\dfrac{2\sin(ka/2)}{k}=a\,\mathrm{sinc}(ka/2)$. It is zero first at $ka/2=\pi$, i.e. $k=2\pi/a$; the central peak has height $a$ and half-width of order $2\pi/a$. Narrow $a$ gives a broad $F$.</p>
-            <p>(b) A finite crystal is an infinite lattice times a box of length $L$: its transform is the reciprocal-lattice comb convolved with the sinc function, so each Bragg peak has the sinc$^2$ shape of width $\Delta q\approx0.89\cdot2\pi/L$ (the full width at half maximum of $\mathrm{sinc}^2(qL/2)$). Because $q=4\pi\sin\theta/\lambda$, $\mathrm dq=(2\pi\cos\theta/\lambda)\,\mathrm d(2\theta)$, hence $\Delta(2\theta)=\dfrac{\lambda}{2\pi\cos\theta}\Delta q=\dfrac{0.89\,\lambda}{L\cos\theta}$: the Scherrer equation.</p>
+            <p>(a) $F(k)=\displaystyle\int_{-a/2}^{a/2}e^{-ikx}\,\allowbreak \mathrm dx=\dfrac{e^{ika/2}-e^{-ika/2}}{ik}=\dfrac{2\sin(ka/2)}{k}=a\,\allowbreak \mathrm{sinc}(ka/2)$. It is zero first at $ka/2=\pi$, i.e. $k=2\pi/a$; the central peak has height $a$ and half-width of order $2\pi/a$. Narrow $a$ gives a broad $F$.</p>
+            <p>(b) A finite crystal is an infinite lattice times a box of length $L$: its transform is the reciprocal-lattice comb convolved with the sinc function, so each Bragg peak has the sinc$^2$ shape of width $\Delta q\approx0.89\cdot2\pi/L$ (the full width at half maximum of $\mathrm{sinc}^2(qL/2)$). Because $q=4\pi\sin\theta/\lambda$, $\mathrm dq=(2\pi\cos\theta/\lambda)\,\allowbreak \mathrm d(2\theta)$, hence $\Delta(2\theta)=\dfrac{\lambda}{2\pi\cos\theta}\Delta q=\dfrac{0.89\,\lambda}{L\cos\theta}$: the Scherrer equation.</p>
             <p>(c) $L=200$ &Aring;, $\cos19.25^\circ=0.944$: $\Delta(2\theta)=\dfrac{0.9(1.5406)}{200(0.944)}=7.34\times10^{-3}$ rad $=0.42^\circ$. Peaks wider than the instrument resolution ($\sim0.05^\circ$) signal nanocrystals; for $2$ nm the width would be $\approx4^\circ$. Strain and defects add broadening of their own, so the Scherrer size is a lower bound.</p>
             <p class="answer">$F=2\sin(ka/2)/k$; $\Delta(2\theta)=0.42^\circ$ for 20 nm</p>
             </details>
@@ -359,7 +365,7 @@
             <div class="problem" id="p8-12">
             <div class="p-head"><span class="p-num">Problem 8.12</span><span class="p-level">Challenge</span></div>
             <p>(a) A one-dimensional chain of $N$ identical scatterers with spacing $a$ has amplitude $A(q)=\sum_{n=0}^{N-1}e^{-iqna}$. Sum the geometric series and show that $I=|A|^2=\dfrac{\sin^2(Nqa/2)}{\sin^2(qa/2)}$. (b) Find the peak positions, peak heights, and the position of the first zero beside a peak. (c) For the BCC lattice described by a simple-cubic cell of side $a$ with atoms at $(0,0,0)$ and $(\tfrac12,\tfrac12,\tfrac12)$, find the structure factor and the absent reflections. (d) Do the same for the NaCl structure ($4$ Na at FCC positions, $4$ Cl displaced by $(\tfrac12,0,0)$) and show the strongest reflections for $h,k,l$ all odd depend on $f_\mathrm{Na}-f_\mathrm{Cl}$.</p>
-            <details class="hint"><summary>Hint</summary><p>(a) $|1-e^{-iNqa}|^2=2-2\cos Nqa=4\sin^2(Nqa/2)$. (c) $F=1+e^{-i\pi(h+k+l)}$. (d) Write $F=F_\mathrm{FCC}\,\bigl(f_\mathrm{Na}+f_\mathrm{Cl}e^{-i\pi h}\bigr)$.</p></details>
+            <details class="hint"><summary>Hint</summary><p>(a) $|1-e^{-iNqa}|^2=2-2\cos Nqa=4\sin^2(Nqa/2)$. (c) $F=1+e^{-i\pi(h+k+l)}$. (d) Write $F=F_\mathrm{FCC}\,\allowbreak \bigl(f_\mathrm{Na}+f_\mathrm{Cl}e^{-i\pi h}\bigr)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $A=\dfrac{1-e^{-iNqa}}{1-e^{-iqa}}$, so $|A|^2=\dfrac{2-2\cos Nqa}{2-2\cos qa}=\dfrac{4\sin^2(Nqa/2)}{4\sin^2(qa/2)}=\dfrac{\sin^2(Nqa/2)}{\sin^2(qa/2)}$.</p>
             <p>(b) Peaks where $\sin(qa/2)=0$, i.e. $q=2\pi m/a=G_m$, the reciprocal lattice: there each term of the sum is $1$ and $A=N$, so $I=N^2$ (the intensity grows as the <em>square</em> of the number of scatterers: coherent addition). The numerator first vanishes next to a peak when $Nqa/2$ moves by $\pi$: $\delta q=2\pi/(Na)=2\pi/L$. So the peak width is $\propto1/L$, in agreement with Problem 8.5. Between the peaks there are $N-2$ weak subsidiary maxima.</p>
@@ -399,5 +405,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

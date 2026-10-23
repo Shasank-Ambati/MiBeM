@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="24">
@@ -135,7 +135,7 @@
             <ul>
                 <li><strong>Slope</strong>: the tangent line is $y=f(a)+f'(a)(x-a)$.</li>
                 <li><strong>Rate</strong>: if $x$ is time, $f'$ is a velocity, a heating rate, a reaction rate.</li>
-                <li><strong>Sensitivity</strong>: a small change $\mathrm{d}x$ in the input changes the output by $\mathrm{d}f\approx f'(x)\,\mathrm{d}x$. This is how errors propagate (see <a href="statistics-and-data-fitting.html">M11</a>) and how forces follow from energies.</li>
+                <li><strong>Sensitivity</strong>: a small change $\mathrm{d}x$ in the input changes the output by $\mathrm{d}f\approx f'(x)\,\allowbreak \mathrm{d}x$. This is how errors propagate (see <a href="statistics-and-data-fitting.html">M11</a>) and how forces follow from energies.</li>
             </ul>
             <p>A function must be continuous to be differentiable, but not conversely: $|x|$ is continuous at $0$ with a corner, and has no derivative there. Energy functions with such kinks (for example in some machine-learned or tabulated potentials) give discontinuous forces, which cause trouble in molecular dynamics.</p>
 
@@ -148,7 +148,7 @@
                     <tr><td>Constant multiple, sum</td><td>$(cf)'=cf'$, $(f+g)'=f'+g'$</td></tr>
                     <tr><td>Product</td><td>$(fg)'=f'g+fg'$</td></tr>
                     <tr><td>Quotient</td><td>$\left(\dfrac fg\right)'=\dfrac{f'g-fg'}{g^2}$</td></tr>
-                    <tr><td>Chain</td><td>$\dfrac{\mathrm{d}}{\mathrm{d}x}f(g(x))=f'(g(x))\,g'(x)$</td></tr>
+                    <tr><td>Chain</td><td>$\dfrac{\mathrm{d}}{\mathrm{d}x}f(g(x))=f'(g(x))\,\allowbreak g'(x)$</td></tr>
                     <tr><td>Inverse function</td><td>$(f^{-1})'(y)=\dfrac{1}{f'(x)}$ where $y=f(x)$</td></tr>
                 </tbody>
             </table></div>
@@ -217,32 +217,35 @@
                 $x_1=\tfrac12(2+2.5)=2.25$, $x_2=\tfrac12(2.25+2.2222)=2.236111$, $x_3=2.2360680$, and $\sqrt5=2.2360680\ldots$. The error falls from $0.236$ to $0.0139$ to $4.3\times10^{-5}$ to $4\times10^{-10}$: it is roughly squared each time.</p>
             </div>
 
+            <div class="demo" data-demo="newton"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
+
             <h2 id="integrals">5. Integration<a class="anchor" href="#integrals" aria-label="Link to this section">#</a></h2>
             <h3 id="integral-def">The definite integral and the fundamental theorem<a class="anchor" href="#integral-def" aria-label="Link to this section">#</a></h3>
             <p>The <strong>definite integral</strong> $\int_a^b f(x)\,\mathrm{d}x$ is the limit of Riemann sums $\sum_i f(x_i)\Delta x$ as the strips become infinitely thin: the signed area under the graph. Anything that is a &ldquo;sum of many small contributions&rdquo; is an integral: work done is $\int F\,\mathrm{d}x$, charge is $\int\rho\,\mathrm{d}V$, a thermal average is $\int A(x)p(x)\,\mathrm{d}x$.</p>
             <div class="note thm"><strong>Fundamental theorem of calculus</strong>
-            <p>(i) If $F(x)=\displaystyle\int_a^x f(t)\,\mathrm{d}t$ then $F'(x)=f(x)$. (ii) If $F'=f$ then $\displaystyle\int_a^b f(x)\,\mathrm{d}x=F(b)-F(a)$.</p>
+            <p>(i) If $F(x)=\displaystyle\int_a^x f(t)\,\allowbreak \mathrm{d}t$ then $F'(x)=f(x)$. (ii) If $F'=f$ then $\displaystyle\int_a^b f(x)\,\allowbreak \mathrm{d}x=F(b)-F(a)$.</p>
             </div>
-            <p>So integration and differentiation undo each other, and evaluating a definite integral reduces to finding an <em>antiderivative</em> $F$. Useful properties: linearity; $\int_a^b=-\int_b^a$; $\int_a^b=\int_a^c+\int_c^b$; and the <strong>mean value</strong> of $f$ on $[a,b]$ is $\bar f=\dfrac1{b-a}\displaystyle\int_a^bf\,\mathrm{d}x$.</p>
+            <p>So integration and differentiation undo each other, and evaluating a definite integral reduces to finding an <em>antiderivative</em> $F$. Useful properties: linearity; $\int_a^b=-\int_b^a$; $\int_a^b=\int_a^c+\int_c^b$; and the <strong>mean value</strong> of $f$ on $[a,b]$ is $\bar f=\dfrac1{b-a}\displaystyle\int_a^bf\,\allowbreak \mathrm{d}x$.</p>
             <p>Each derivative in the table of section 3 reverses to an integral: $\int x^n\mathrm{d}x=\dfrac{x^{n+1}}{n+1}$ ($n\ne-1$), $\int\dfrac{\mathrm{d}x}{x}=\ln|x|$, $\int e^{ax}\mathrm{d}x=\dfrac{e^{ax}}{a}$, $\int\sin x\,\mathrm{d}x=-\cos x$, $\int\cos x\,\mathrm{d}x=\sin x$, $\int\dfrac{\mathrm{d}x}{1+x^2}=\arctan x$.</p>
 
             <h3 id="techniques">Two techniques that do most of the work<a class="anchor" href="#techniques" aria-label="Link to this section">#</a></h3>
-            <p><strong>Substitution</strong> is the chain rule backwards: if $u=g(x)$ then $\int f(g(x))g'(x)\,\mathrm{d}x=\int f(u)\,\mathrm{d}u$. For definite integrals change the limits too, so no back-substitution is needed.</p>
+            <p><strong>Substitution</strong> is the chain rule backwards: if $u=g(x)$ then $\int f(g(x))g'(x)\,\allowbreak \mathrm{d}x=\int f(u)\,\allowbreak \mathrm{d}u$. For definite integrals change the limits too, so no back-substitution is needed.</p>
             <p><strong>Integration by parts</strong> is the product rule backwards:
             $$\int u\,\mathrm{d}v=uv-\int v\,\mathrm{d}u,\qquad\text{or}\qquad \int_a^b u\,v'\,\mathrm{d}x=\bigl[uv\bigr]_a^b-\int_a^b u'v\,\mathrm{d}x.$$
             Choose $u$ to be the factor that becomes simpler when differentiated (a polynomial, or a log) and $\mathrm{d}v$ the factor you can integrate (an exponential, sine or cosine). Integration by parts also underlies the weak form of the finite element method (<a href="calculus-of-variations-and-optimisation.html">M12</a>), where it moves a derivative from one function to another.</p>
             <div class="example">
                 <strong>Worked example 5.1: by parts and by substitution</strong>
-                <p class="given">Evaluate (a) $\displaystyle\int_0^\infty x\,e^{-x}\,\mathrm{d}x$ and (b) $\displaystyle\int_0^{\pi/2}\sin^3x\cos x\,\mathrm{d}x$.</p>
+                <p class="given">Evaluate (a) $\displaystyle\int_0^\infty x\,\allowbreak e^{-x}\,\allowbreak \mathrm{d}x$ and (b) $\displaystyle\int_0^{\pi/2}\sin^3x\cos x\,\allowbreak \mathrm{d}x$.</p>
                 <p>(a) Take $u=x$, $\mathrm{d}v=e^{-x}\mathrm{d}x$, so $\mathrm{d}u=\mathrm{d}x$, $v=-e^{-x}$:
                 $$\int_0^\infty xe^{-x}\mathrm{d}x=\bigl[-xe^{-x}\bigr]_0^\infty+\int_0^\infty e^{-x}\mathrm{d}x=0+1=1.$$
                 The boundary term vanishes because $xe^{-x}\to0$ as $x\to\infty$ (exponentials beat powers). (This is $\Gamma(2)=1!$.)</p>
                 <p>(b) Let $u=\sin x$, $\mathrm{d}u=\cos x\,\mathrm{d}x$. The limits become $u=0$ to $u=1$:
-                $\displaystyle\int_0^1u^3\,\mathrm{d}u=\tfrac14$.</p>
+                $\displaystyle\int_0^1u^3\,\allowbreak \mathrm{d}u=\tfrac14$.</p>
             </div>
 
             <h3 id="improper">Improper integrals and the Gaussian<a class="anchor" href="#improper" aria-label="Link to this section">#</a></h3>
-            <p>An integral over an infinite range, or of a function that blows up, is defined as a limit: $\int_a^\infty f\,\mathrm{d}x=\lim_{R\to\infty}\int_a^Rf\,\mathrm{d}x$. It <em>converges</em> if that limit is finite. For powers: $\int_1^\infty x^{-p}\mathrm{d}x$ converges only if $p&gt;1$, and $\int_0^1x^{-p}\mathrm{d}x$ only if $p&lt;1$. This matters in practice: for the $r^{-6}$ attraction in a Lennard-Jones solid, $\int_{R}^\infty r^{-6}\,r^2\,\mathrm{d}r$ converges, so a finite cut-off radius gives a small, correctable error, whereas for a $1/r$ Coulomb interaction the corresponding sum does not converge absolutely, which is why Ewald summation is needed.</p>
+            <p>An integral over an infinite range, or of a function that blows up, is defined as a limit: $\int_a^\infty f\,\allowbreak \mathrm{d}x=\lim_{R\to\infty}\int_a^Rf\,\allowbreak \mathrm{d}x$. It <em>converges</em> if that limit is finite. For powers: $\int_1^\infty x^{-p}\mathrm{d}x$ converges only if $p&gt;1$, and $\int_0^1x^{-p}\mathrm{d}x$ only if $p&lt;1$. This matters in practice: for the $r^{-6}$ attraction in a Lennard-Jones solid, $\int_{R}^\infty r^{-6}\,\allowbreak r^2\,\allowbreak \mathrm{d}r$ converges, so a finite cut-off radius gives a small, correctable error, whereas for a $1/r$ Coulomb interaction the corresponding sum does not converge absolutely, which is why Ewald summation is needed.</p>
             <div class="note thm"><strong>The Gaussian integral</strong>
             <p>$$\int_{-\infty}^{\infty}e^{-a x^2}\,\mathrm{d}x=\sqrt{\frac{\pi}{a}}\quad(a&gt;0).$$
             The standard trick squares the integral and evaluates the result in polar coordinates, which you will meet in <a href="multivariable-calculus.html">M2</a>. Differentiating this identity with respect to the parameter $a$ gives all the moments: $\displaystyle\int_{-\infty}^\infty x^2e^{-ax^2}\mathrm{d}x=\frac{\sqrt\pi}{2a^{3/2}}$, and similarly for higher even powers. Odd moments vanish by symmetry.</p>
@@ -282,6 +285,9 @@
             \end{aligned}$$
             <p>New series come cheaply by substitution and by integrating or differentiating known ones: for instance $e^{-x^2}=1-x^2+x^4/2-\cdots$, and $\arctan x=x-x^3/3+x^5/5-\cdots$ follows by integrating $1/(1+x^2)$ term by term.</p>
 
+            <div class="demo" data-demo="taylor"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
+
             <h3 id="harmonic">The harmonic approximation<a class="anchor" href="#harmonic" aria-label="Link to this section">#</a></h3>
             <p>Let $U(x)$ have a minimum at $x_0$. Taylor-expand about $x_0$ and use $U'(x_0)=0$:
             $$U(x_0+u)=U(x_0)+\tfrac12U''(x_0)\,u^2+\tfrac16U'''(x_0)\,u^3+\cdots .$$
@@ -300,6 +306,9 @@
             <div class="note warn"><strong>A trap: smaller is not always better</strong>
             <p>The truncation error shrinks with $h$, but a computer stores numbers with about $16$ significant digits, and $f(x+h)-f(x-h)$ subtracts two nearly equal numbers. The rounding error therefore grows like $\epsilon_\mathrm{mach}/h$. The total error is smallest at an intermediate $h$ (around $10^{-5}$ to $10^{-6}$ for a central difference in double precision). Stepping below that makes things worse, not better.</p>
             </div>
+
+            <div class="demo" data-demo="fderr"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="summary-m1">8. How the pieces fit together<a class="anchor" href="#summary-m1" aria-label="Link to this section">#</a></h2>
             <p>The same few ideas now connect a surprising range of topics. The derivative gives rates and forces ($F=-U'$). The second derivative classifies equilibria and sets stiffness and vibration frequency. Taylor series show that every smooth minimum is a parabola, justify finite differences, and measure the error of every numerical method by its order. The integral computes averages and totals, and the Gaussian integral turns Boltzmann statistics for a harmonic well into closed-form results. The next module extends each of these to functions of several variables, where the derivative becomes the gradient and the second derivative becomes the Hessian matrix.</p>
@@ -336,7 +345,7 @@
             <p>Evaluate: (a) $\displaystyle\lim_{x\to0}\frac{\sin 3x}{x}$, (b) $\displaystyle\lim_{x\to0}\frac{e^{x}-1-x}{x^2}$, (c) $\displaystyle\lim_{x\to0^+}x\ln x$.</p>
             <details class="hint"><summary>Hint</summary><p>(a) Rewrite using $\sin u/u\to1$. (b) Use L&rsquo;H&ocirc;pital twice, or the series of $e^x$. (c) Write $x\ln x=\ln x/(1/x)$ so L&rsquo;H&ocirc;pital applies.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $\dfrac{\sin3x}{x}=3\,\dfrac{\sin3x}{3x}\to3\cdot1=3$.</p>
+            <p>(a) $\dfrac{\sin3x}{x}=3\,\allowbreak \dfrac{\sin3x}{3x}\to3\cdot1=3$.</p>
             <p>(b) Both numerator and denominator vanish. L&rsquo;H&ocirc;pital: $\dfrac{e^x-1}{2x}$, still $0/0$; again: $\dfrac{e^x}{2}\to\dfrac12$. (Check with the series: $e^x-1-x=x^2/2+x^3/6+\cdots$, so the ratio is $\tfrac12+x/6+\cdots\to\tfrac12$.)</p>
             <p>(c) $x\ln x=\dfrac{\ln x}{1/x}$, which is $-\infty/\infty$ as $x\to0^+$. L&rsquo;H&ocirc;pital: $\dfrac{1/x}{-1/x^2}=-x\to0$. So the limit is $0$: powers beat logarithms, and this is why the entropy term $-p\ln p$ is taken to be $0$ when $p=0$.</p>
             </details>
@@ -356,7 +365,7 @@
             <div class="problem" id="p1-4">
             <div class="p-head"><span class="p-num">Problem 1.4</span><span class="p-level">Core</span></div>
             <p>A reaction rate follows $k=A\exp\bigl(-E_a/(k_\mathrm{B}T)\bigr)$ with $E_a=1.00$ eV. (a) Show that $\mathrm{d}\ln k/\mathrm{d}T=E_a/(k_\mathrm{B}T^2)$. (b) At $T=800$ K, estimate the percentage change in $k$ when $T$ rises by 1% (to $808$ K), using the differential. (c) Compute the exact change and say why they differ. ($k_\mathrm{B}=8.617\times10^{-5}$ eV/K.)</p>
-            <details class="hint"><summary>Hint</summary><p>Use $\mathrm{d}k/k=\bigl[E_a/(k_\mathrm{B}T)\bigr]\,\mathrm{d}T/T$. For (c) compare $k(808)/k(800)$ directly.</p></details>
+            <details class="hint"><summary>Hint</summary><p>Use $\mathrm{d}k/k=\bigl[E_a/(k_\mathrm{B}T)\bigr]\,\allowbreak \mathrm{d}T/T$. For (c) compare $k(808)/k(800)$ directly.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\ln k=\ln A-\dfrac{E_a}{k_\mathrm{B}}T^{-1}$, so $\dfrac{\mathrm{d}\ln k}{\mathrm{d}T}=+\dfrac{E_a}{k_\mathrm{B}}T^{-2}$.</p>
             <p>(b) $E_a/(k_\mathrm{B}T)=1.00/(8.617\times10^{-5}\times800)=14.51$. With $\mathrm{d}T/T=0.01$: $\mathrm{d}k/k\approx14.51\times0.01=0.145$, i.e. about <strong>14.5%</strong>.</p>
@@ -372,7 +381,7 @@
             <details class="hint"><summary>Hint</summary><p>Let $s=e^{-ax}$. Then $U=D(1-s)^2-D$ and $\mathrm{d}s/\mathrm{d}x=-as$. For (c) use $e^{-ax}=1-ax+a^2x^2/2-\cdots$ and square $(1-s)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) With $x=r-r_0$ and $s=e^{-ax}$: $\dfrac{\mathrm{d}U}{\mathrm{d}x}=2D(1-s)\cdot\dfrac{\mathrm{d}(1-s)}{\mathrm{d}x}=2D(1-s)(as)$. This is zero at $s=1$, i.e. $x=0$ (the other factor $s=e^{-ax}$ never vanishes). At $x=0$, $U=D\cdot0-D=-D$.</p>
-            <p>(b) Differentiate again: $U''=2Da\,\dfrac{\mathrm{d}}{\mathrm{d}x}\bigl[s-s^2\bigr]=2Da\,(-as+2as^2)=2Da^2s(2s-1)$. At $s=1$: $k=2Da^2$.</p>
+            <p>(b) Differentiate again: $U''=2Da\,\allowbreak \dfrac{\mathrm{d}}{\mathrm{d}x}\bigl[s-s^2\bigr]=2Da\,\allowbreak (-as+2as^2)=2Da^2s(2s-1)$. At $s=1$: $k=2Da^2$.</p>
             <p>(c) $1-s=ax-\tfrac12a^2x^2+\tfrac16a^3x^3-\cdots$. Squaring: $(1-s)^2=a^2x^2-a^3x^3+\Bigl(\tfrac14+\tfrac13\Bigr)a^4x^4+\cdots=a^2x^2-a^3x^3+\tfrac7{12}a^4x^4+\cdots$. Hence
             $$U\approx-D+Da^2x^2-Da^3x^3+\tfrac7{12}Da^4x^4 .$$
             The quadratic term $Da^2x^2=\tfrac12kx^2$ is the harmonic approximation; the <strong>negative cubic term</strong> $-Da^3x^3$ makes the well steeper for compression ($x&lt;0$) than for extension ($x&gt;0$), which is the origin of thermal expansion.</p>
@@ -389,7 +398,7 @@
             <p>(a) $U''=4\varepsilon\bigl[156\sigma^{12}r^{-14}-42\sigma^6r^{-8}\bigr]=0\Rightarrow r^6=\dfrac{156}{42}\sigma^6=\dfrac{26}{7}\sigma^6$, so
             $$r_i=\Bigl(\frac{26}{7}\Bigr)^{1/6}\sigma\approx1.2445\,\sigma .$$
             Since $U'=-F$ and $U''=-\mathrm{d}F/\mathrm{d}r$, a zero of $U''$ is an extremum of the force; here it is the point of maximum attraction, beyond $r_0$ (the bond is being stretched).</p>
-            <p>(b) $r_0=1.1225\times3.40=3.82$ Å and $r_i=1.2445\times3.40=4.23$ Å. The stiffness is $k=57.15\,\varepsilon/\sigma^2=57.15\times0.0103/11.56=0.0509$ eV/Å$^2$, which is $0.0509\times16.02=0.816$ N/m. (Compare a covalent bond at several hundred N/m: weak van der Waals bonding means soft, low-melting solids.)</p>
+            <p>(b) $r_0=1.1225\times3.40=3.82$ Å and $r_i=1.2445\times3.40=4.23$ Å. The stiffness is $k=57.15\,\allowbreak \varepsilon/\sigma^2=57.15\times0.0103/11.56=0.0509$ eV/Å$^2$, which is $0.0509\times16.02=0.816$ N/m. (Compare a covalent bond at several hundred N/m: weak van der Waals bonding means soft, low-melting solids.)</p>
             <p class="answer">$r_0=3.82$ Å, $r_i=4.23$ Å, $k=0.0509$ eV/Å² = 0.82 N/m</p>
             </details>
             </div>
@@ -421,7 +430,7 @@
 
             <div class="problem" id="p1-9">
             <div class="p-head"><span class="p-num">Problem 1.9</span><span class="p-level">Core</span></div>
-            <p>Estimate $I=\displaystyle\int_0^1e^x\,\mathrm{d}x$ using the trapezoid rule $T_2$ and Simpson&rsquo;s rule $S_2$ with $n=2$ strips ($h=0.5$). Compare with the exact value and explain the difference in the errors.</p>
+            <p>Estimate $I=\displaystyle\int_0^1e^x\,\allowbreak \mathrm{d}x$ using the trapezoid rule $T_2$ and Simpson&rsquo;s rule $S_2$ with $n=2$ strips ($h=0.5$). Compare with the exact value and explain the difference in the errors.</p>
             <details class="hint"><summary>Hint</summary><p>Nodes are $x=0,\,0.5,\,1$. Use the formulas in section 5.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>Function values: $f(0)=1$, $f(0.5)=1.64872$, $f(1)=2.71828$.</p>
@@ -451,7 +460,7 @@
             <details class="hint"><summary>Hint</summary><p>Set $a=k/(2k_\mathrm{B}T)$. Define $I(a)=\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$ and differentiate under the integral sign: $-I'(a)=\int x^2e^{-ax^2}\mathrm{d}x$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) With $a=k/(2k_\mathrm{B}T)$, $p(x)=\sqrt{a/\pi}\;e^{-ax^2}$, since $\int e^{-ax^2}\mathrm{d}x=\sqrt{\pi/a}$.</p>
-            <p>(b) Differentiate $I(a)=\sqrt\pi\,a^{-1/2}$ with respect to $a$: $I'(a)=-\tfrac12\sqrt\pi\,a^{-3/2}$. But $I'(a)=-\int x^2e^{-ax^2}\mathrm{d}x$, hence $\int x^2e^{-ax^2}\mathrm{d}x=\tfrac12\sqrt\pi\,a^{-3/2}$. Therefore
+            <p>(b) Differentiate $I(a)=\sqrt\pi\,a^{-1/2}$ with respect to $a$: $I'(a)=-\tfrac12\sqrt\pi\,a^{-3/2}$. But $I'(a)=-\int x^2e^{-ax^2}\mathrm{d}x$, hence $\int x^2e^{-ax^2}\mathrm{d}x=\tfrac12\sqrt\pi\,\allowbreak a^{-3/2}$. Therefore
             $$\langle x^2\rangle=\sqrt{\frac a\pi}\cdot\frac{\sqrt\pi}{2a^{3/2}}=\frac1{2a}=\frac{k_\mathrm{B}T}{k}.$$</p>
             <p>(c) $\langle U\rangle=\tfrac12k\langle x^2\rangle=\tfrac12k_\mathrm{B}T$: each quadratic degree of freedom carries $\tfrac12k_\mathrm{B}T$ (equipartition).</p>
             <p>(d) $k_\mathrm{B}T=8.617\times10^{-5}\times80=6.89\times10^{-3}$ eV. Then $\langle x^2\rangle=6.89\times10^{-3}/0.0509=0.135$ Å$^2$, so $x_\mathrm{rms}=0.37$ Å, about $10\%$ of $r_0=3.82$ Å. That is near the Lindemann criterion for melting (vibration amplitudes of order 10&ndash;15% of the spacing), consistent with argon melting at 84 K, so the harmonic estimate is already at its limit.</p>
@@ -500,5 +509,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

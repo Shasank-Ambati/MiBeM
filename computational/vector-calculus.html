@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="26">
@@ -43,11 +43,11 @@
                 <li><a href="#curl">5. Curl</a></li>
                 <li><a href="#lap">6. The Laplacian</a></li>
                 <li><a href="#theorems">7. The integral theorems</a></li>
-                <li><a href="#conservation">7a. From conservation laws to equations</a></li>
-                <li><a href="#identities">8. Summary of identities</a></li>
-                <li><a href="#summary-m3">9. How the pieces fit together</a></li>
-                <li><a href="#check">10. Problems</a></li>
-                <li><a href="#refs">11. References and further reading</a></li>
+                <li><a href="#conservation">8. From conservation laws to equations</a></li>
+                <li><a href="#identities">9. Summary of identities</a></li>
+                <li><a href="#summary-m3">10. How the pieces fit together</a></li>
+                <li><a href="#check">11. Problems</a></li>
+                <li><a href="#refs">12. References and further reading</a></li>
             </ol>
         </aside>
 
@@ -104,14 +104,14 @@
             <div class="example">
                 <strong>Worked example 2.1: a conservative field</strong>
                 <p class="given">Compute $\int_C\mathbf F\cdot\mathrm{d}\mathbf r$ for $\mathbf F=(y,\,x)$ from $(0,0)$ to $(1,1)$ along (i) the straight line and (ii) the parabola $y=x^2$.</p>
-                <p>(i) $\mathbf r=(t,t)$, $\mathrm{d}\mathbf r=(1,1)\,\mathrm{d}t$, $\mathbf F=(t,t)$: $\int_0^1(t+t)\,\mathrm{d}t=1$. (ii) $\mathbf r=(t,t^2)$, $\mathrm{d}\mathbf r=(1,2t)\,\mathrm{d}t$, $\mathbf F=(t^2,t)$: $\int_0^1(t^2+2t^2)\,\mathrm{d}t=1$. Both give $1$ because $\mathbf F=\nabla(xy)$ and $xy$ goes from $0$ to $1$. Problem 4 shows what happens for a non-conservative field.</p>
+                <p>(i) $\mathbf r=(t,t)$, $\mathrm{d}\mathbf r=(1,1)\,\allowbreak \mathrm{d}t$, $\mathbf F=(t,t)$: $\int_0^1(t+t)\,\mathrm{d}t=1$. (ii) $\mathbf r=(t,t^2)$, $\mathrm{d}\mathbf r=(1,2t)\,\allowbreak \mathrm{d}t$, $\mathbf F=(t^2,t)$: $\int_0^1(t^2+2t^2)\,\mathrm{d}t=1$. Both give $1$ because $\mathbf F=\nabla(xy)$ and $xy$ goes from $0$ to $1$. Problem 4 shows what happens for a non-conservative field.</p>
             </div>
 
             <h2 id="flux">3. Surface integrals and flux<a class="anchor" href="#flux" aria-label="Link to this section">#</a></h2>
             <p>The <strong>flux</strong> of a vector field $\mathbf F$ through a surface $S$ with unit normal $\mathbf n$ is
             $$\Phi=\iint_S\mathbf F\cdot\mathbf n\,\mathrm{d}S .$$
             Only the component of $\mathbf F$ perpendicular to the surface counts. If $\mathbf F=\mathbf J$ is a particle flux (particles per area per time), then $\Phi$ is the number of particles crossing $S$ per unit time; for heat flux $\mathbf q$ it is the heat flow rate in watts. For a closed surface, $\mathbf n$ is taken to point outward, so $\Phi&gt;0$ means a net flow <em>out</em>.</p>
-            <p>For a sphere of radius $R$ centred on the origin, $\mathbf n=\hat{\mathbf r}$ and $\mathrm{d}S=R^2\sin\theta\,\mathrm{d}\theta\,\mathrm{d}\phi$, the total area being $4\pi R^2$. For a flat region the area element is just $\mathrm{d}x\,\mathrm{d}y$. In general, if the surface is parametrised as $\mathbf r(u,v)$ then $\mathbf n\,\mathrm{d}S=\dfrac{\partial\mathbf r}{\partial u}\times\dfrac{\partial\mathbf r}{\partial v}\,\mathrm{d}u\,\mathrm{d}v$.</p>
+            <p>For a sphere of radius $R$ centred on the origin, $\mathbf n=\hat{\mathbf r}$ and $\mathrm{d}S=R^2\sin\theta\,\allowbreak \mathrm{d}\theta\,\allowbreak \mathrm{d}\phi$, the total area being $4\pi R^2$. For a flat region the area element is just $\mathrm{d}x\,\mathrm{d}y$. In general, if the surface is parametrised as $\mathbf r(u,v)$ then $\mathbf n\,\allowbreak \mathrm{d}S=\dfrac{\partial\mathbf r}{\partial u}\times\dfrac{\partial\mathbf r}{\partial v}\,\allowbreak \mathrm{d}u\,\allowbreak \mathrm{d}v$.</p>
             <div class="example">
                 <strong>Worked example 3.1: flux through a sphere</strong>
                 <p class="given">Find the flux of $\mathbf F=\mathbf r/r^3$ (inverse-square field) through a sphere of radius $R$.</p>
@@ -123,12 +123,12 @@
             <p>$$\nabla\cdot\mathbf F=\frac{\partial F_x}{\partial x}+\frac{\partial F_y}{\partial y}+\frac{\partial F_z}{\partial z}.$$
             It is a scalar: the net outflow of $\mathbf F$ per unit volume at a point.</p>
             </div>
-            <p>Why does that formula measure outflow? Take a tiny box of sides $\Delta x,\Delta y,\Delta z$ centred at a point. The flux out through the two faces perpendicular to $x$ is $\bigl[F_x(x+\tfrac12\Delta x)-F_x(x-\tfrac12\Delta x)\bigr]\Delta y\,\Delta z\approx\dfrac{\partial F_x}{\partial x}\Delta x\Delta y\Delta z$. Adding the $y$ and $z$ faces and dividing by the volume $\Delta V$ gives $\nabla\cdot\mathbf F$. A positive divergence marks a <strong>source</strong> (more leaves than enters), a negative one a <strong>sink</strong>, and zero divergence a <strong>solenoidal</strong> (incompressible, source-free) field such as the flow of an incompressible liquid.</p>
-            <p>Useful results: $\nabla\cdot\mathbf r=3$; $\nabla\cdot\bigl(\phi\mathbf F\bigr)=\phi\,\nabla\cdot\mathbf F+\mathbf F\cdot\nabla\phi$ (product rule).</p>
+            <p>Why does that formula measure outflow? Take a tiny box of sides $\Delta x,\Delta y,\Delta z$ centred at a point. The flux out through the two faces perpendicular to $x$ is $\bigl[F_x(x+\tfrac12\Delta x)-F_x(x-\tfrac12\Delta x)\bigr]\Delta y\,\allowbreak \Delta z\approx\dfrac{\partial F_x}{\partial x}\Delta x\Delta y\Delta z$. Adding the $y$ and $z$ faces and dividing by the volume $\Delta V$ gives $\nabla\cdot\mathbf F$. A positive divergence marks a <strong>source</strong> (more leaves than enters), a negative one a <strong>sink</strong>, and zero divergence a <strong>solenoidal</strong> (incompressible, source-free) field such as the flow of an incompressible liquid.</p>
+            <p>Useful results: $\nabla\cdot\mathbf r=3$; $\nabla\cdot\bigl(\phi\mathbf F\bigr)=\phi\,\allowbreak \nabla\cdot\mathbf F+\mathbf F\cdot\nabla\phi$ (product rule).</p>
             <div class="example">
                 <strong>Worked example 4.1: the inverse-square field has no divergence away from the source</strong>
                 <p class="given">Show $\nabla\cdot(\mathbf r/r^3)=0$ for $\mathbf r\neq0$.</p>
-                <p>Use the product rule with $\phi=r^{-3}$: $\nabla\cdot(r^{-3}\mathbf r)=r^{-3}\,\nabla\cdot\mathbf r+\mathbf r\cdot\nabla(r^{-3})$. Here $\nabla\cdot\mathbf r=3$ and $\nabla(r^{-3})=-3r^{-4}\hat{\mathbf r}=-3r^{-5}\mathbf r$. So the result is $3r^{-3}-3r^{-5}\,\mathbf r\cdot\mathbf r=3r^{-3}-3r^{-3}=0$. All the flux $4\pi$ found in Example 3.1 therefore emerges from the single point $r=0$, where the field is singular.</p>
+                <p>Use the product rule with $\phi=r^{-3}$: $\nabla\cdot(r^{-3}\mathbf r)=r^{-3}\,\allowbreak \nabla\cdot\mathbf r+\mathbf r\cdot\nabla(r^{-3})$. Here $\nabla\cdot\mathbf r=3$ and $\nabla(r^{-3})=-3r^{-4}\hat{\mathbf r}=-3r^{-5}\mathbf r$. So the result is $3r^{-3}-3r^{-5}\,\allowbreak \mathbf r\cdot\mathbf r=3r^{-3}-3r^{-3}=0$. All the flux $4\pi$ found in Example 3.1 therefore emerges from the single point $r=0$, where the field is singular.</p>
             </div>
 
             <h2 id="curl">5. Curl<a class="anchor" href="#curl" aria-label="Link to this section">#</a></h2>
@@ -144,6 +144,9 @@
                 <p class="given">Is $\mathbf F=(2xy,\ x^2+3y^2)$ conservative? If so, find $\phi$ with $\mathbf F=\nabla\phi$.</p>
                 <p>In two dimensions the only curl component is $\partial_xF_y-\partial_yF_x=2x-2x=0$, so yes. Integrate: $\phi_x=2xy\Rightarrow\phi=x^2y+g(y)$. Then $\phi_y=x^2+g'(y)$ must equal $x^2+3y^2$, so $g'=3y^2$ and $g=y^3$. Thus $\phi=x^2y+y^3$ (plus any constant).</p>
             </div>
+
+            <div class="demo" data-demo="vecfield"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="lap">6. The Laplacian<a class="anchor" href="#lap" aria-label="Link to this section">#</a></h2>
             <p>The divergence of a gradient defines the <strong>Laplacian</strong>:
@@ -173,22 +176,22 @@
             <div class="note thm"><strong>Stokes&rsquo; theorem</strong>
             <p>For a surface $S$ with boundary curve $C$ (oriented by the right-hand rule relative to $\mathbf n$),
             $$\iint_S(\nabla\times\mathbf F)\cdot\mathbf n\,\mathrm{d}S=\oint_C\mathbf F\cdot\mathrm{d}\mathbf r .$$
-            The total rotation over a surface equals the circulation around its rim. In the plane this is Green&rsquo;s theorem, $\oint(F_x\,\mathrm{d}x+F_y\,\mathrm{d}y)=\iint(\partial_xF_y-\partial_yF_x)\,\mathrm{d}A$.</p>
+            The total rotation over a surface equals the circulation around its rim. In the plane this is Green&rsquo;s theorem, $\oint(F_x\,\mathrm{d}x+F_y\,\mathrm{d}y)=\iint(\partial_xF_y-\partial_yF_x)\,\allowbreak \mathrm{d}A$.</p>
             </div>
             <p>The divergence theorem is the statement that fluxes through internal faces between neighbouring small boxes cancel in pairs, so summing the boxes' net outflows leaves only the outer boundary. Stokes&rsquo; theorem works the same way with circulation around small loops. Together with the gradient theorem of section 2, all three say: <em>integrating a derivative over a region equals the quantity itself evaluated on the boundary</em>, a higher-dimensional version of the fundamental theorem of calculus.</p>
 
-            <h2 id="conservation">7a. From conservation laws to equations<a class="anchor" href="#conservation" aria-label="Link to this section">#</a></h2>
+            <h2 id="conservation">8. From conservation laws to equations<a class="anchor" href="#conservation" aria-label="Link to this section">#</a></h2>
             <p>Here is the most important use of these theorems in this series. Let $c(\mathbf r,t)$ be the concentration of a conserved species (atoms per unit volume) and $\mathbf J$ its flux. For any fixed volume $V$ with no sources inside, the amount in $V$ changes only because of what flows through the boundary:
             $$\frac{\mathrm{d}}{\mathrm{d}t}\iiint_Vc\,\mathrm{d}V=-\oiint_{\partial V}\mathbf J\cdot\mathbf n\,\mathrm{d}S=-\iiint_V\nabla\cdot\mathbf J\,\mathrm{d}V,$$
             using the divergence theorem. Move everything to one side: $\iiint_V\bigl(\partial_tc+\nabla\cdot\mathbf J\bigr)\mathrm{d}V=0$. This holds for <em>every</em> volume, however small, so the integrand itself must vanish:</p>
             $$\boxed{\ \frac{\partial c}{\partial t}+\nabla\cdot\mathbf J=0\ }\qquad\text{(continuity equation)}.$$
             <p>If a reaction creates the species at a rate $R$ per unit volume, the right-hand side becomes $+R$. The equation holds for any conserved quantity: mass, charge, energy (with $\mathbf J=\mathbf q$ the heat flux), probability. It says nothing yet about <em>how</em> the material moves; that requires a constitutive law. <strong>Fick&rsquo;s first law</strong> states that atoms flow down the concentration gradient, $\mathbf J=-D\nabla c$ (with $D$ the diffusion coefficient), and substituting gives <strong>Fick&rsquo;s second law</strong>:
             $$\frac{\partial c}{\partial t}=\nabla\cdot(D\nabla c)\ \xrightarrow{\ D\ \text{const}\ }\ \frac{\partial c}{\partial t}=D\,\nabla^2c .$$
-            For heat, $\mathbf q=-\kappa\nabla T$ and energy density $\rho c_p T$ give $\rho c_p\,\partial_tT=\nabla\cdot(\kappa\nabla T)$. In the phase-field method (<a href="phase-field-modelling.html">Phase-field modelling</a>) the flux is driven instead by the gradient of the <em>chemical potential</em>, $\mathbf J=-M\nabla\mu$, but the continuity equation is exactly the same. Notice the logic: the structure ($\partial_tc+\nabla\cdot\mathbf J=0$) is exact, from conservation alone; only the closure ($\mathbf J=-D\nabla c$) is a model.</p>
+            For heat, $\mathbf q=-\kappa\nabla T$ and energy density $\rho c_p T$ give $\rho c_p\,\allowbreak \partial_tT=\nabla\cdot(\kappa\nabla T)$. In the phase-field method (<a href="phase-field-modelling.html">Phase-field modelling</a>) the flux is driven instead by the gradient of the <em>chemical potential</em>, $\mathbf J=-M\nabla\mu$, but the continuity equation is exactly the same. Notice the logic: the structure ($\partial_tc+\nabla\cdot\mathbf J=0$) is exact, from conservation alone; only the closure ($\mathbf J=-D\nabla c$) is a model.</p>
 
-            <h2 id="identities">8. Summary of identities<a class="anchor" href="#identities" aria-label="Link to this section">#</a></h2>
+            <h2 id="identities">9. Summary of identities<a class="anchor" href="#identities" aria-label="Link to this section">#</a></h2>
             <div class="table-scroll">
-            <div class="table-scroll" role="region" aria-label="8. Summary of identities (scrollable table)" tabindex="0"><table>
+            <div class="table-scroll" role="region" aria-label="9. Summary of identities (scrollable table)" tabindex="0"><table>
                 <thead><tr><th>Identity</th><th>Comment</th></tr></thead>
                 <tbody>
                     <tr><td>$\nabla(fg)=f\nabla g+g\nabla f$</td><td>product rule</td></tr>
@@ -202,7 +205,7 @@
             </table></div>
             </div>
 
-            <h2 id="summary-m3">9. How the pieces fit together<a class="anchor" href="#summary-m3" aria-label="Link to this section">#</a></h2>
+            <h2 id="summary-m3">10. How the pieces fit together<a class="anchor" href="#summary-m3" aria-label="Link to this section">#</a></h2>
             <p>The gradient turns potentials into forces and concentrations into fluxes. The divergence measures sources and sinks, and combined with the divergence theorem converts &ldquo;conservation in every volume&rdquo; into the local continuity equation. The curl detects rotation and obstructs the existence of a potential. The Laplacian measures local deviation from the average and drives smoothing processes. These ideas set up the PDEs of <a href="partial-differential-equations.html">M9</a>. First, though, we need the linear algebra that underlies tensors, vibrations and numerical methods.</p>
 
             <!-- takeaways:start -->
@@ -216,7 +219,7 @@
 </ul></div>
 <!-- takeaways:end -->
 
-            <h2 id="check">10. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <h2 id="check">11. Problems<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
             <p>Attempt each problem before opening the hint, and the hint before the solution. Mark problems as solved to track your progress.</p>
             <div class="prob-summary"><span id="prob-count">0 solved</span><span class="track"><i id="prob-bar"></i></span></div>
 
@@ -260,18 +263,18 @@
             <p>The field $\mathbf F=(-y,\ x)$ is a rigid rotation. (a) Compute $\int\mathbf F\cdot\mathrm{d}\mathbf r$ from $(0,0)$ to $(1,1)$ along the straight line, and along the path $(0,0)\to(1,0)\to(1,1)$. Is $\mathbf F$ conservative? (b) Compute the circulation around the circle $x^2+y^2=R^2$ directly, and check it with Green&rsquo;s theorem.</p>
             <details class="hint"><summary>Hint</summary><p>For (b) parametrise $\mathbf r=(R\cos t,R\sin t)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) Straight line $\mathbf r=(t,t)$: $\mathbf F=(-t,t)$, $\mathrm{d}\mathbf r=(1,1)\mathrm{d}t$, so $\mathbf F\cdot\mathrm{d}\mathbf r=0$ and the integral is $0$. Along the $x$-axis leg ($y=0$, $\mathrm{d}y=0$): $\mathbf F\cdot\mathrm{d}\mathbf r=-y\,\mathrm{d}x=0$. Along $x=1$ ($\mathrm{d}x=0$): $\mathbf F\cdot\mathrm{d}\mathbf r=x\,\mathrm{d}y=\mathrm{d}y$, giving $\int_0^1\mathrm{d}y=1$. The two paths give $0$ and $1$, so $\mathbf F$ is <strong>not conservative</strong> (indeed $\partial_xF_y-\partial_yF_x=1-(-1)=2\ne0$).</p>
-            <p>(b) With $\mathbf r=(R\cos t,R\sin t)$: $\mathbf F=(-R\sin t,R\cos t)$ and $\mathrm{d}\mathbf r=(-R\sin t,R\cos t)\mathrm{d}t$, so $\mathbf F\cdot\mathrm{d}\mathbf r=R^2\,\mathrm{d}t$ and $\oint=2\pi R^2$. Green: $\iint(\partial_xF_y-\partial_yF_x)\,\mathrm{d}A=2\cdot\pi R^2$. &check; A field driving a particle round a loop does net work each time: this is how a non-conservative drive, such as an applied shear flow, pumps energy into a system.</p>
+            <p>(a) Straight line $\mathbf r=(t,t)$: $\mathbf F=(-t,t)$, $\mathrm{d}\mathbf r=(1,1)\mathrm{d}t$, so $\mathbf F\cdot\mathrm{d}\mathbf r=0$ and the integral is $0$. Along the $x$-axis leg ($y=0$, $\mathrm{d}y=0$): $\mathbf F\cdot\mathrm{d}\mathbf r=-y\,\allowbreak \mathrm{d}x=0$. Along $x=1$ ($\mathrm{d}x=0$): $\mathbf F\cdot\mathrm{d}\mathbf r=x\,\allowbreak \mathrm{d}y=\mathrm{d}y$, giving $\int_0^1\mathrm{d}y=1$. The two paths give $0$ and $1$, so $\mathbf F$ is <strong>not conservative</strong> (indeed $\partial_xF_y-\partial_yF_x=1-(-1)=2\ne0$).</p>
+            <p>(b) With $\mathbf r=(R\cos t,R\sin t)$: $\mathbf F=(-R\sin t,R\cos t)$ and $\mathrm{d}\mathbf r=(-R\sin t,R\cos t)\mathrm{d}t$, so $\mathbf F\cdot\mathrm{d}\mathbf r=R^2\,\allowbreak \mathrm{d}t$ and $\oint=2\pi R^2$. Green: $\iint(\partial_xF_y-\partial_yF_x)\,\allowbreak \mathrm{d}A=2\cdot\pi R^2$. &check; A field driving a particle round a loop does net work each time: this is how a non-conservative drive, such as an applied shear flow, pumps energy into a system.</p>
             </details>
             </div>
 
             <div class="problem" id="p3-5">
             <div class="p-head"><span class="p-num">Problem 3.5</span><span class="p-level">Core</span></div>
-            <p>Verify the divergence theorem for $\mathbf F=\mathbf r=(x,y,z)$ and the ball of radius $R$: compute the surface flux and the volume integral of the divergence, and compare. Then use the theorem to show that the volume of a region is $V=\tfrac13\oint\mathbf r\cdot\mathbf n\,\mathrm{d}S$.</p>
+            <p>Verify the divergence theorem for $\mathbf F=\mathbf r=(x,y,z)$ and the ball of radius $R$: compute the surface flux and the volume integral of the divergence, and compare. Then use the theorem to show that the volume of a region is $V=\tfrac13\oint\mathbf r\cdot\mathbf n\,\allowbreak \mathrm{d}S$.</p>
             <details class="hint"><summary>Hint</summary><p>On the sphere, $\mathbf n=\hat{\mathbf r}$, so $\mathbf F\cdot\mathbf n=r=R$. The volume of a ball is $\tfrac43\pi R^3$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>Surface: $\mathbf F\cdot\mathbf n=\mathbf r\cdot\hat{\mathbf r}=R$ on the sphere, so $\Phi=R\cdot4\pi R^2=4\pi R^3$. Volume: $\nabla\cdot\mathbf r=3$, so $\iiint3\,\mathrm{d}V=3\cdot\tfrac43\pi R^3=4\pi R^3$. Equal. &check;</p>
-            <p>For any region, $\iiint_V\nabla\cdot\mathbf r\,\mathrm{d}V=3V=\oint_{\partial V}\mathbf r\cdot\mathbf n\,\mathrm{d}S$, so $V=\tfrac13\oint\mathbf r\cdot\mathbf n\,\mathrm{d}S$. This formula is used in practice to compute the volume enclosed by a triangulated surface (for example the volume of a pore or a precipitate from a surface mesh): each triangle contributes one-third of its area times the distance of its plane from the origin.</p>
+            <p>Surface: $\mathbf F\cdot\mathbf n=\mathbf r\cdot\hat{\mathbf r}=R$ on the sphere, so $\Phi=R\cdot4\pi R^2=4\pi R^3$. Volume: $\nabla\cdot\mathbf r=3$, so $\iiint3\,\allowbreak \mathrm{d}V=3\cdot\tfrac43\pi R^3=4\pi R^3$. Equal. &check;</p>
+            <p>For any region, $\iiint_V\nabla\cdot\mathbf r\,\allowbreak \mathrm{d}V=3V=\oint_{\partial V}\mathbf r\cdot\mathbf n\,\allowbreak \mathrm{d}S$, so $V=\tfrac13\oint\mathbf r\cdot\mathbf n\,\allowbreak \mathrm{d}S$. This formula is used in practice to compute the volume enclosed by a triangulated surface (for example the volume of a pore or a precipitate from a surface mesh): each triangle contributes one-third of its area times the distance of its plane from the origin.</p>
             </details>
             </div>
 
@@ -280,7 +283,7 @@
             <p>Verify the divergence theorem for $\mathbf F=(x^2,y^2,z^2)$ and the unit cube $0\le x,y,z\le1$.</p>
             <details class="hint"><summary>Hint</summary><p>Six faces; only the faces at $x=1$, $y=1$, $z=1$ contribute, since $\mathbf F\cdot\mathbf n=0$ or $-x^2=0$ on the others.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>Volume side: $\nabla\cdot\mathbf F=2x+2y+2z$, and $\iiint(2x+2y+2z)\,\mathrm{d}V=2\bigl(\tfrac12+\tfrac12+\tfrac12\bigr)=3$ (each term integrates to $\tfrac12$ over the unit cube, times the unit extent of the other two directions).</p>
+            <p>Volume side: $\nabla\cdot\mathbf F=2x+2y+2z$, and $\iiint(2x+2y+2z)\,\allowbreak \mathrm{d}V=2\bigl(\tfrac12+\tfrac12+\tfrac12\bigr)=3$ (each term integrates to $\tfrac12$ over the unit cube, times the unit extent of the other two directions).</p>
             <p>Surface side: on the face $x=1$, $\mathbf n=\hat{\mathbf x}$ and $\mathbf F\cdot\mathbf n=x^2=1$, giving flux $1\cdot1=1$. On the face $x=0$, $\mathbf n=-\hat{\mathbf x}$ and $\mathbf F\cdot\mathbf n=-x^2=0$. The same for $y$ and $z$. The total is $1+1+1=3$. &check;</p>
             </details>
             </div>
@@ -291,7 +294,7 @@
             <details class="hint"><summary>Hint</summary><p>Steady state means $\partial_tc=0$, so $\mathrm{d}J/\mathrm{d}x=0$ in one dimension: the flux is uniform.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) In one dimension, $\partial_tc+\partial_xJ=0$ with $J=-D\,\partial_xc$. Steady state: $\partial_xJ=0$, so $J$ is constant, and with constant $D$, $\partial_xc=-J/D$ is constant: $c(x)$ is linear, $c(x)=c_1+(c_2-c_1)\,x/L$.</p>
-            <p>(b) $J=-D\,\dfrac{c_2-c_1}{L}=D\,\dfrac{c_1-c_2}{L}=\dfrac{(8\times10^{-12})(5.0)}{1.0\times10^{-3}}=4.0\times10^{-8}$ kg m$^{-2}$ s$^{-1}$, flowing from high to low concentration. In one hour: $4.0\times10^{-8}\times3600=1.44\times10^{-4}$ kg $=0.144$ g per m$^2$. A thicker plate transmits less in inverse proportion to $L$: permeation barriers work by increasing $L$ or decreasing $D$.</p>
+            <p>(b) $J=-D\,\allowbreak \dfrac{c_2-c_1}{L}=D\,\allowbreak \dfrac{c_1-c_2}{L}=\dfrac{(8\times10^{-12})(5.0)}{1.0\times10^{-3}}=4.0\times10^{-8}$ kg m$^{-2}$ s$^{-1}$, flowing from high to low concentration. In one hour: $4.0\times10^{-8}\times3600=1.44\times10^{-4}$ kg $=0.144$ g per m$^2$. A thicker plate transmits less in inverse proportion to $L$: permeation barriers work by increasing $L$ or decreasing $D$.</p>
             <p class="answer">$J=4.0\times10^{-8}$ kg m⁻² s⁻¹; 0.144 g/m² per hour</p>
             </details>
             </div>
@@ -309,11 +312,11 @@
 
             <div class="problem" id="p3-9">
             <div class="p-head"><span class="p-num">Problem 3.9</span><span class="p-level">Core</span></div>
-            <p>Show that $c(x,t)=\dfrac{1}{\sqrt{4\pi Dt}}\,\exp\!\Bigl(-\dfrac{x^2}{4Dt}\Bigr)$ satisfies $\partial_tc=D\,\partial_x^2c$, that $\int_{-\infty}^\infty c\,\mathrm{d}x=1$ for all $t&gt;0$, and that the variance is $\langle x^2\rangle=2Dt$. For $D=1.0\times10^{-12}$ m$^2$/s and $t=1$ hour, find the diffusion distance $\sqrt{2Dt}$.</p>
+            <p>Show that $c(x,t)=\dfrac{1}{\sqrt{4\pi Dt}}\,\allowbreak \exp\!\Bigl(-\dfrac{x^2}{4Dt}\Bigr)$ satisfies $\partial_tc=D\,\partial_x^2c$, that $\int_{-\infty}^\infty c\,\allowbreak \mathrm{d}x=1$ for all $t&gt;0$, and that the variance is $\langle x^2\rangle=2Dt$. For $D=1.0\times10^{-12}$ m$^2$/s and $t=1$ hour, find the diffusion distance $\sqrt{2Dt}$.</p>
             <details class="hint"><summary>Hint</summary><p>Let $s=4Dt$. Compute $c_t$ and $c_{xx}$ with the product and chain rules. For the variance use the Gaussian moments from <a href="calculus-single-variable.html">M1</a> (Problem 1.11).</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>Write $c=(\pi s)^{-1/2}e^{-x^2/s}$ with $s=4Dt$, so $\mathrm{d}s/\mathrm{d}t=4D$.</p>
-            <p>$\partial_tc=\dfrac{\mathrm{d}s}{\mathrm{d}t}\,\partial_sc=4D\Bigl[-\dfrac{1}{2s}+\dfrac{x^2}{s^2}\Bigr]c$. And $\partial_xc=-\dfrac{2x}{s}c$, $\partial_x^2c=\Bigl[-\dfrac2s+\dfrac{4x^2}{s^2}\Bigr]c$, so $D\,\partial_x^2c=4D\Bigl[-\dfrac1{2s}+\dfrac{x^2}{s^2}\Bigr]c$. These agree. &check;</p>
+            <p>$\partial_tc=\dfrac{\mathrm{d}s}{\mathrm{d}t}\,\allowbreak \partial_sc=4D\Bigl[-\dfrac{1}{2s}+\dfrac{x^2}{s^2}\Bigr]c$. And $\partial_xc=-\dfrac{2x}{s}c$, $\partial_x^2c=\Bigl[-\dfrac2s+\dfrac{4x^2}{s^2}\Bigr]c$, so $D\,\allowbreak \partial_x^2c=4D\Bigl[-\dfrac1{2s}+\dfrac{x^2}{s^2}\Bigr]c$. These agree. &check;</p>
             <p>Normalisation: $\int e^{-x^2/s}\mathrm{d}x=\sqrt{\pi s}$, so $\int c\,\mathrm{d}x=1$ at every $t$ (conservation of the diffused amount). Variance: $\langle x^2\rangle=\dfrac12s=2Dt$ (a Gaussian $e^{-x^2/s}=e^{-x^2/(2\sigma^2)}$ has $\sigma^2=s/2$).</p>
             <p>Numbers: $2Dt=2(10^{-12})(3600)=7.2\times10^{-9}$ m$^2$, so $\sqrt{2Dt}=8.5\times10^{-5}$ m $=85\ \mu$m. This is the rule of thumb &ldquo;distance $\sim\sqrt{Dt}$&rdquo;: diffusion distance grows only as the square root of time, so doubling the distance needs four times the time.</p>
             <p class="answer">$\sigma^2=2Dt$; $\sqrt{2Dt}\approx85\ \mu$m</p>
@@ -325,19 +328,19 @@
             <p>For $\mathbf F=(-y,\ x,\ z)$ verify Stokes&rsquo; theorem on the flat disc $x^2+y^2\le R^2$, $z=0$, with $\mathbf n=\hat{\mathbf z}$.</p>
             <details class="hint"><summary>Hint</summary><p>Compute $\nabla\times\mathbf F$ first. The boundary circle is $(R\cos t,R\sin t,0)$ traversed anticlockwise.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>$\nabla\times\mathbf F=(\partial_yF_z-\partial_zF_y,\ \partial_zF_x-\partial_xF_z,\ \partial_xF_y-\partial_yF_x)=(0,0,1-(-1))=(0,0,2)$. Surface integral: $\iint(\nabla\times\mathbf F)\cdot\hat{\mathbf z}\,\mathrm{d}A=2\pi R^2$.</p>
+            <p>$\nabla\times\mathbf F=(\partial_yF_z-\partial_zF_y,\ \partial_zF_x-\partial_xF_z,\ \partial_xF_y-\partial_yF_x)=(0,0,1-(-1))=(0,0,2)$. Surface integral: $\iint(\nabla\times\mathbf F)\cdot\hat{\mathbf z}\,\allowbreak \mathrm{d}A=2\pi R^2$.</p>
             <p>Line integral: on the circle $\mathbf F=(-R\sin t,R\cos t,0)$ and $\mathrm{d}\mathbf r=(-R\sin t,R\cos t,0)\mathrm{d}t$, so $\mathbf F\cdot\mathrm{d}\mathbf r=R^2\mathrm{d}t$ and $\oint=2\pi R^2$. &check; (The $z$-component of $\mathbf F$ does not contribute on the flat disc.)</p>
             </details>
             </div>
 
             <div class="problem" id="p3-11">
             <div class="p-head"><span class="p-num">Problem 3.11</span><span class="p-level">Challenge</span></div>
-            <p>A screw dislocation along the $z$-axis in an isotropic crystal produces the displacement $u_z=\dfrac{b}{2\pi}\,\theta$ (with $\theta$ the polar angle about the axis, $u_x=u_y=0$), where $b$ is the Burgers vector. (a) Show that $\nabla u_z=\dfrac{b}{2\pi r}\,\hat{\boldsymbol\theta}=\dfrac{b}{2\pi}\Bigl(\dfrac{-y}{x^2+y^2},\ \dfrac{x}{x^2+y^2}\Bigr)$. (b) Show this field has zero curl for $r\ne0$. (c) Compute $\oint\nabla u_z\cdot\mathrm{d}\mathbf l$ around a circle of radius $\rho$ about the axis. Why does this not contradict &ldquo;$\nabla\times\nabla f=0$ implies a zero closed integral&rdquo;? (d) For $b=0.25$ nm, find the strain $\gamma_{\theta z}=\tfrac{b}{2\pi\rho}$ at $\rho=2$ nm.</p>
+            <p>A screw dislocation along the $z$-axis in an isotropic crystal produces the displacement $u_z=\dfrac{b}{2\pi}\,\theta$ (with $\theta$ the polar angle about the axis, $u_x=u_y=0$), where $b$ is the Burgers vector. (a) Show that $\nabla u_z=\dfrac{b}{2\pi r}\,\allowbreak \hat{\boldsymbol\theta}=\dfrac{b}{2\pi}\Bigl(\dfrac{-y}{x^2+y^2},\ \dfrac{x}{x^2+y^2}\Bigr)$. (b) Show this field has zero curl for $r\ne0$. (c) Compute $\oint\nabla u_z\cdot\mathrm{d}\mathbf l$ around a circle of radius $\rho$ about the axis. Why does this not contradict &ldquo;$\nabla\times\nabla f=0$ implies a zero closed integral&rdquo;? (d) For $b=0.25$ nm, find the strain $\gamma_{\theta z}=\tfrac{b}{2\pi\rho}$ at $\rho=2$ nm.</p>
             <details class="hint"><summary>Hint</summary><p>$\theta=\arctan(y/x)$, so $\partial_x\theta=-y/(x^2+y^2)$ and $\partial_y\theta=x/(x^2+y^2)$. For (c) use $\mathbf r=\rho(\cos t,\sin t)$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\partial_x\theta=\dfrac{-y}{x^2+y^2}$, $\partial_y\theta=\dfrac{x}{x^2+y^2}$, so $\nabla u_z=\dfrac{b}{2\pi}\Bigl(\dfrac{-y}{r^2},\dfrac{x}{r^2}\Bigr)$. Since $\hat{\boldsymbol\theta}=(-y,x)/r$, this equals $\dfrac{b}{2\pi r}\hat{\boldsymbol\theta}$.</p>
             <p>(b) With $F_x=-y/r^2$ and $F_y=x/r^2$ ($r^2=x^2+y^2$): $\partial_xF_y=\dfrac{r^2-2x^2}{r^4}=\dfrac{y^2-x^2}{r^4}$ and $\partial_yF_x=-\dfrac{r^2-2y^2}{r^4}=\dfrac{y^2-x^2}{r^4}$. So $\partial_xF_y-\partial_yF_x=0$ for $r\neq0$.</p>
-            <p>(c) On the circle, $\nabla u_z\cdot\mathrm{d}\mathbf l=\dfrac{b}{2\pi\rho}\,\rho\,\mathrm{d}t=\dfrac{b}{2\pi}\mathrm{d}t$, so $\oint=b$ for <em>every</em> $\rho$. No contradiction: the identity $\oint\nabla f\cdot\mathrm{d}\mathbf l=0$ requires $f$ to be single-valued, and Stokes needs the curl to be defined throughout the surface. Here $\theta$ is multivalued (it increases by $2\pi$ going around the axis) and the field is singular on the axis, which is not part of a simply connected region. The curl vanishes everywhere except on the line $r=0$, where it is concentrated: $\nabla\times\nabla u_z=b\,\delta^{(2)}(x,y)\hat{\mathbf z}$. This is precisely the definition of a dislocation: a line carrying a Burgers vector $b=\oint\nabla u\cdot\mathrm{d}\mathbf l$ (the closure failure of a circuit round it).</p>
+            <p>(c) On the circle, $\nabla u_z\cdot\mathrm{d}\mathbf l=\dfrac{b}{2\pi\rho}\,\allowbreak \rho\,\allowbreak \mathrm{d}t=\dfrac{b}{2\pi}\mathrm{d}t$, so $\oint=b$ for <em>every</em> $\rho$. No contradiction: the identity $\oint\nabla f\cdot\mathrm{d}\mathbf l=0$ requires $f$ to be single-valued, and Stokes needs the curl to be defined throughout the surface. Here $\theta$ is multivalued (it increases by $2\pi$ going around the axis) and the field is singular on the axis, which is not part of a simply connected region. The curl vanishes everywhere except on the line $r=0$, where it is concentrated: $\nabla\times\nabla u_z=b\,\allowbreak \delta^{(2)}(x,y)\hat{\mathbf z}$. This is precisely the definition of a dislocation: a line carrying a Burgers vector $b=\oint\nabla u\cdot\mathrm{d}\mathbf l$ (the closure failure of a circuit round it).</p>
             <p>(d) $\gamma_{\theta z}=\dfrac{b}{2\pi\rho}=\dfrac{0.25}{2\pi\cdot2}=0.0199\approx2.0\%$. The strain falls as $1/\rho$: the long-range elastic field of a dislocation is why dislocations interact strongly over large distances, and why the core (where this blows up) needs atomistic treatment.</p>
             <p class="answer">$\oint\nabla u_z\cdot\mathrm{d}\mathbf l=b$; strain $\approx2.0\%$ at 2 nm</p>
             </details>
@@ -351,12 +354,12 @@
             <p>(a) Steady state: $\partial_tT=0$ so $\nabla\cdot\mathbf q=-\kappa\nabla^2T=0$. With spherical symmetry, $\dfrac1{r^2}\dfrac{\mathrm{d}}{\mathrm{d}r}\bigl(r^2T'\bigr)=0$, so $r^2T'=-B$ is constant, $T'=-B/r^2$ and $T=A+B/r$. The boundary conditions give $A+B/a=T_1$, $A+B/b=T_2$, so $B\bigl(\tfrac1a-\tfrac1b\bigr)=T_1-T_2$, i.e. $B=\dfrac{ab\,(T_1-T_2)}{b-a}$.</p>
             <p>(b) $q_r=-\kappa T'=\kappa B/r^2$, so $Q=4\pi r^2q_r=4\pi\kappa B=\dfrac{4\pi\kappa\,ab\,(T_1-T_2)}{b-a}$, independent of $r$ as required by $\nabla\cdot\mathbf q=0$ (the same heat crosses every sphere).</p>
             <p>(c) $Q=4\pi(1.0)\dfrac{(0.01)(0.02)}{0.01}(100)=4\pi(0.02)(100)=25.1$ W.</p>
-            <p>(d) In cylindrical symmetry, $\dfrac1r\dfrac{\mathrm{d}}{\mathrm{d}r}(rT')=0$, so $rT'=-B$ and $T=A+B'\ln r$, with $B'=\dfrac{T_2-T_1}{\ln(b/a)}$. The heat per unit length is $2\pi rq_r=-2\pi\kappa\,rT'=-2\pi\kappa B'=\dfrac{2\pi\kappa(T_1-T_2)}{\ln(b/a)}$. The same argument gives the steady permeation of hydrogen through a pipe wall (with $D$, $c$ in place of $\kappa$, $T$).</p>
+            <p>(d) In cylindrical symmetry, $\dfrac1r\dfrac{\mathrm{d}}{\mathrm{d}r}(rT')=0$, so $rT'=-B$ and $T=A+B'\ln r$, with $B'=\dfrac{T_2-T_1}{\ln(b/a)}$. The heat per unit length is $2\pi rq_r=-2\pi\kappa\,\allowbreak rT'=-2\pi\kappa B'=\dfrac{2\pi\kappa(T_1-T_2)}{\ln(b/a)}$. The same argument gives the steady permeation of hydrogen through a pipe wall (with $D$, $c$ in place of $\kappa$, $T$).</p>
             <p class="answer">$T=A+B/r$; $Q=4\pi\kappa ab(T_1-T_2)/(b-a)=25.1$ W</p>
             </details>
             </div>
 
-            <h2 id="refs">11. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <h2 id="refs">12. References and further reading<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
             <ul>
                 <li>Marsden, J. E. and Tromba, A. J., <em>Vector Calculus</em>, Freeman: a standard text on line and surface integrals and the integral theorems.</li>
                 <li>Schey, H. M., <em>Div, Grad, Curl, and All That</em>, Norton: a short, intuition-first introduction, with electromagnetic examples.</li>
@@ -386,5 +389,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

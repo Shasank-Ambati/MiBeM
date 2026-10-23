@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="27">
@@ -83,7 +83,7 @@
             <h3 id="vec-basics">Vectors and the dot product<a class="anchor" href="#vec-basics" aria-label="Link to this section">#</a></h3>
             <p>A vector $\mathbf v=(v_1,\ldots,v_n)$ in $\mathbb R^n$ is an ordered list of numbers; geometrically, an arrow from the origin. Vectors add component by component and can be multiplied by a scalar. The <strong>dot product</strong> and <strong>norm</strong> are
             $$\mathbf a\cdot\mathbf b=\sum_ia_ib_i=|\mathbf a||\mathbf b|\cos\theta,\qquad|\mathbf a|=\sqrt{\mathbf a\cdot\mathbf a}.$$
-            Two vectors are <strong>orthogonal</strong> if $\mathbf a\cdot\mathbf b=0$. The angle between them is $\theta=\arccos\dfrac{\mathbf a\cdot\mathbf b}{|\mathbf a||\mathbf b|}$; the <strong>projection</strong> of $\mathbf b$ onto $\mathbf a$ is $\dfrac{\mathbf a\cdot\mathbf b}{\mathbf a\cdot\mathbf a}\,\mathbf a$, the component of $\mathbf b$ along $\mathbf a$. The Cauchy&ndash;Schwarz inequality $|\mathbf a\cdot\mathbf b|\le|\mathbf a||\mathbf b|$ guarantees that the cosine lies in $[-1,1]$.</p>
+            Two vectors are <strong>orthogonal</strong> if $\mathbf a\cdot\mathbf b=0$. The angle between them is $\theta=\arccos\dfrac{\mathbf a\cdot\mathbf b}{|\mathbf a||\mathbf b|}$; the <strong>projection</strong> of $\mathbf b$ onto $\mathbf a$ is $\dfrac{\mathbf a\cdot\mathbf b}{\mathbf a\cdot\mathbf a}\,\allowbreak \mathbf a$, the component of $\mathbf b$ along $\mathbf a$. The Cauchy&ndash;Schwarz inequality $|\mathbf a\cdot\mathbf b|\le|\mathbf a||\mathbf b|$ guarantees that the cosine lies in $[-1,1]$.</p>
             <h3 id="cross">Cross product and triple product<a class="anchor" href="#cross" aria-label="Link to this section">#</a></h3>
             <p>In three dimensions the <strong>cross product</strong> is
             $$\mathbf a\times\mathbf b=(a_2b_3-a_3b_2,\ a_3b_1-a_1b_3,\ a_1b_2-a_2b_1),$$
@@ -158,6 +158,9 @@
             <p>X-rays of wavelength $\lambda$ reflect strongly from planes of spacing $d$ at angles satisfying <strong>Bragg&rsquo;s law</strong> $\lambda=2d\sin\theta$. In reciprocal-space language this is the Laue condition that the change in wavevector equals a reciprocal lattice vector. The reciprocal of FCC is body-centred cubic and vice versa (Problem 9), and the Wigner&ndash;Seitz cell of the reciprocal lattice is the <strong>first Brillouin zone</strong>, the region in which $\mathbf k$-points are sampled in DFT (<a href="density-functional-theory.html">Density functional theory</a>) and phonon calculations. Doubling a real-space cell halves the reciprocal one, which is why larger supercells need fewer $\mathbf k$-points.</p>
             </div>
 
+            <div class="demo" data-demo="lattice2d"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
+
             <h2 id="orth">7. Orthogonality and rotations<a class="anchor" href="#orth" aria-label="Link to this section">#</a></h2>
             <p>A set of vectors is <strong>orthonormal</strong> if they are mutually orthogonal unit vectors. A matrix $Q$ whose columns are orthonormal is an <strong>orthogonal matrix</strong>: $Q^TQ=I$, so $Q^{-1}=Q^T$, and it preserves lengths and angles, $|Q\mathbf x|=|\mathbf x|$. Its determinant is $\pm1$: $+1$ for a proper <strong>rotation</strong>, $-1$ for a reflection or inversion. The point-group operations of a crystal are orthogonal matrices, which is why symmetry analysis is linear algebra. The rotation matrices of section 3 are orthogonal; a rotation by $\theta$ about the $z$-axis in three dimensions is $\begin{pmatrix}\cos\theta&amp;-\sin\theta&amp;0\\\sin\theta&amp;\cos\theta&amp;0\\0&amp;0&amp;1\end{pmatrix}$.</p>
             <p>Given any independent set, the <strong>Gram&ndash;Schmidt process</strong> builds an orthonormal one: take $\mathbf e_1=\mathbf v_1/|\mathbf v_1|$, then subtract from each subsequent vector its projections on the earlier $\mathbf e$&rsquo;s and normalise:
@@ -210,7 +213,7 @@
 
             <div class="problem" id="p4-3">
             <div class="p-head"><span class="p-num">Problem 4.3</span><span class="p-level">Core</span></div>
-            <p>Balance the reaction $a\,\mathrm{Fe}+b\,\mathrm{O}_2\to c\,\mathrm{Fe}_2\mathrm{O}_3$ by writing atom conservation as a homogeneous linear system and finding its null space. Why is there a one-parameter family of solutions, and how do you choose the physical one? Then do the same for $a\,\mathrm{Al}+b\,\mathrm{Fe}_2\mathrm{O}_3\to c\,\mathrm{Al}_2\mathrm{O}_3+d\,\mathrm{Fe}$ (the thermite reaction).</p>
+            <p>Balance the reaction $a\,\allowbreak \mathrm{Fe}+b\,\allowbreak \mathrm{O}_2\to c\,\allowbreak \mathrm{Fe}_2\mathrm{O}_3$ by writing atom conservation as a homogeneous linear system and finding its null space. Why is there a one-parameter family of solutions, and how do you choose the physical one? Then do the same for $a\,\allowbreak \mathrm{Al}+b\,\allowbreak \mathrm{Fe}_2\mathrm{O}_3\to c\,\allowbreak \mathrm{Al}_2\mathrm{O}_3+d\,\allowbreak \mathrm{Fe}$ (the thermite reaction).</p>
             <details class="hint"><summary>Hint</summary><p>One equation per element: count atoms on the left minus atoms on the right. Choose the smallest positive integers.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>Fe: $a-2c=0$. O: $2b-3c=0$. So $A\mathbf x=\mathbf0$ with unknowns $(a,b,c)$ and $A=\begin{pmatrix}1&amp;0&amp;-2\\0&amp;2&amp;-3\end{pmatrix}$, rank $2$ and $3$ unknowns, so the null space has dimension $3-2=1$: all solutions are multiples of one vector. Taking $c=t$: $a=2t$, $b=\tfrac32t$. The family is $t\,(2,\tfrac32,1)$, because multiplying a balanced equation by any factor leaves it balanced. Choose $t=2$ for the smallest integers: $(a,b,c)=(4,3,2)$, i.e. $4\mathrm{Fe}+3\mathrm{O}_2\to2\mathrm{Fe}_2\mathrm{O}_3$.</p>
@@ -251,7 +254,7 @@
             <p>Independent: $\det\bigl[\tfrac a2\,(\ldots)\bigr]=a^3/4\neq0$ (Example 5.1).</p>
             <p>Express $(a,a,0)=n_1\mathbf a_1+n_2\mathbf a_2+n_3\mathbf a_3$: $x$: $\tfrac a2(n_2+n_3)=a$; $y$: $\tfrac a2(n_1+n_3)=a$; $z$: $\tfrac a2(n_1+n_2)=0$. So $n_2+n_3=2$, $n_1+n_3=2$, $n_1+n_2=0$: adding the first two and subtracting the third, $2n_3=4$, $n_3=2$, $n_2=0$, $n_1=0$. So $(a,a,0)=2\mathbf a_3$: integers, as it must be for a lattice point.</p>
             <p>Shortest vectors: $|\mathbf a_i|=\tfrac a2\sqrt2=a/\sqrt2$, and the same length for $\mathbf a_i-\mathbf a_j$, e.g. $\mathbf a_1-\mathbf a_2=\tfrac a2(-1,1,0)$. The twelve vectors $\tfrac a2(\pm1,\pm1,0)$ and permutations all have length $a/\sqrt2$: the coordination number is $12$ and the nearest-neighbour distance $d=a/\sqrt2=0.707a$.</p>
-            <p>Packing: spheres of radius $d/2=a/(2\sqrt2)$ touch; sphere volume $\tfrac43\pi\bigl(a/(2\sqrt2)\bigr)^3=\tfrac43\pi\,\dfrac{a^3}{16\sqrt2}=\dfrac{\pi a^3}{12\sqrt2}$. Four per cube: $\dfrac{4\pi a^3}{12\sqrt2}=\dfrac{\pi a^3}{3\sqrt2}$. Divided by $a^3$: $\dfrac\pi{3\sqrt2}=0.7405$. &check;</p>
+            <p>Packing: spheres of radius $d/2=a/(2\sqrt2)$ touch; sphere volume $\tfrac43\pi\bigl(a/(2\sqrt2)\bigr)^3=\tfrac43\pi\,\allowbreak \dfrac{a^3}{16\sqrt2}=\dfrac{\pi a^3}{12\sqrt2}$. Four per cube: $\dfrac{4\pi a^3}{12\sqrt2}=\dfrac{\pi a^3}{3\sqrt2}$. Divided by $a^3$: $\dfrac\pi{3\sqrt2}=0.7405$. &check;</p>
             </details>
             </div>
 
@@ -359,5 +362,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

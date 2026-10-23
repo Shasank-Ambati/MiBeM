@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="29">
@@ -84,7 +84,7 @@
                 <li>the <strong>stress</strong> $\sigma_{ij}$, which maps a surface normal to the force per area on that surface;</li>
                 <li>the <strong>strain</strong> $\varepsilon_{ij}$, which maps a displacement direction to its relative stretch;</li>
                 <li>the <strong>thermal conductivity</strong> $\kappa_{ij}$, with heat flux $q_i=-\kappa_{ij}\,\partial_jT$, so that heat does not necessarily flow along the temperature gradient in an anisotropic crystal; likewise the <strong>diffusion tensor</strong> $D_{ij}$ with $J_i=-D_{ij}\partial_jc$;</li>
-                <li>the <strong>thermal expansion tensor</strong> $\alpha_{ij}$, with strain $\varepsilon_{ij}=\alpha_{ij}\,\Delta T$.</li>
+                <li>the <strong>thermal expansion tensor</strong> $\alpha_{ij}$, with strain $\varepsilon_{ij}=\alpha_{ij}\,\allowbreak \Delta T$.</li>
             </ul>
             <p>Higher-rank tensors link tensors to tensors: the elastic stiffness $C_{ijkl}$ (rank 4) links stress to strain, and the piezoelectric tensor $d_{ijk}$ (rank 3) links an electric field to strain. What makes an array a tensor is its behaviour under a change of axes (section 3).</p>
 
@@ -110,7 +110,7 @@
             <div class="example">
                 <strong>Worked example 3.1: rotating a second-rank tensor</strong>
                 <p class="given">The tensor $T=\begin{pmatrix}3&amp;1\\1&amp;2\end{pmatrix}$ is given in axes $x,y$. Find its components in axes rotated $30^\circ$ anticlockwise, and check the invariants.</p>
-                <p>With $c=\cos30^\circ=0.8660$, $s=\sin30^\circ=0.5$: $T'_{11}=c^2T_{11}+2csT_{12}+s^2T_{22}=2.25+0.866+0.5=3.616$; $T'_{22}=s^2T_{11}-2csT_{12}+c^2T_{22}=0.75-0.866+1.5=1.384$; $T'_{12}=-cs\,T_{11}+(c^2-s^2)T_{12}+cs\,T_{22}=-1.299+0.5+0.866=0.067$. So $T'=\begin{pmatrix}3.616&amp;0.067\\0.067&amp;1.384\end{pmatrix}$. Trace: $3.616+1.384=5=3+2$ &check;. Determinant: $5.0049-0.0045=5.000=6-1$ &check;. The eigenvalues are $(5\pm\sqrt5)/2=3.618,1.382$, and the principal axis lies at $\tfrac12\arctan\dfrac{2T_{12}}{T_{11}-T_{22}}=31.7^\circ$, very close to the $30^\circ$ chosen, which is why $T'$ is nearly diagonal.</p>
+                <p>With $c=\cos30^\circ=0.8660$, $s=\sin30^\circ=0.5$: $T'_{11}=c^2T_{11}+2csT_{12}+s^2T_{22}=2.25+0.866+0.5=3.616$; $T'_{22}=s^2T_{11}-2csT_{12}+c^2T_{22}=0.75-0.866+1.5=1.384$; $T'_{12}=-cs\,\allowbreak T_{11}+(c^2-s^2)T_{12}+cs\,\allowbreak T_{22}=-1.299+0.5+0.866=0.067$. So $T'=\begin{pmatrix}3.616&amp;0.067\\0.067&amp;1.384\end{pmatrix}$. Trace: $3.616+1.384=5=3+2$ &check;. Determinant: $5.0049-0.0045=5.000=6-1$ &check;. The eigenvalues are $(5\pm\sqrt5)/2=3.618,1.382$, and the principal axis lies at $\tfrac12\arctan\dfrac{2T_{12}}{T_{11}-T_{22}}=31.7^\circ$, very close to the $30^\circ$ chosen, which is why $T'$ is nearly diagonal.</p>
             </div>
 
             <h2 id="stress">4. Stress<a class="anchor" href="#stress" aria-label="Link to this section">#</a></h2>
@@ -122,6 +122,9 @@
             <p>Because $\sigma$ is symmetric, it has three real eigenvalues $\sigma_1\ge\sigma_2\ge\sigma_3$ (the <strong>principal stresses</strong>) with orthogonal eigenvectors (<strong>principal directions</strong>), on which the shear vanishes. The maximum shear stress anywhere is $\tau_\mathrm{max}=\tfrac12(\sigma_1-\sigma_3)$, acting on planes at $45^\circ$ to the extreme principal directions. In two dimensions, with $\sigma_x,\sigma_y,\tau_{xy}$, the stress on a plane at angle $\theta$ is
             $$\sigma_{x'}=\frac{\sigma_x+\sigma_y}2+\frac{\sigma_x-\sigma_y}2\cos2\theta+\tau_{xy}\sin2\theta,\qquad\tau_{x'y'}=-\frac{\sigma_x-\sigma_y}2\sin2\theta+\tau_{xy}\cos2\theta,$$
             and these trace a circle (<strong>Mohr&rsquo;s circle</strong>) in the $(\sigma,\tau)$ plane with centre $\tfrac12(\sigma_x+\sigma_y)$ and radius $R=\sqrt{\bigl(\tfrac{\sigma_x-\sigma_y}2\bigr)^2+\tau_{xy}^2}$; the principal stresses are $\tfrac12(\sigma_x+\sigma_y)\pm R$, at the angle $\tan2\theta_p=2\tau_{xy}/(\sigma_x-\sigma_y)$.</p>
+
+            <div class="demo" data-demo="mohr"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <h3 id="devia">Hydrostatic and deviatoric parts, yield criteria<a class="anchor" href="#devia" aria-label="Link to this section">#</a></h3>
             <p>Split the stress into a part that changes volume and a part that changes shape:
             $$\sigma_{ij}=\sigma_m\delta_{ij}+s_{ij},\qquad\sigma_m=\tfrac13\sigma_{kk}\ \text{(mean stress, equal to minus the pressure)},\quad s_{kk}=0 .$$
@@ -171,6 +174,9 @@
             <div class="note mat"><strong>In materials science: where the constants come from</strong>
             <p>Elastic constants are computed from simulations by applying small strains to a cell and fitting the resulting stresses (or energies, $E=\tfrac12V\boldsymbol\varepsilon^TC\boldsymbol\varepsilon$) with DFT or interatomic potentials, one strain pattern per independent constant. The $6\times6$ matrix is then checked for positive definiteness (Born stability), and averaged over orientations for a polycrystal: the Voigt estimate $G_V=\tfrac15(C_{11}-C_{12}+3C_{44})$ assumes uniform strain and is an upper bound, the Reuss estimate $G_R=5/[4(S_{11}-S_{12})+3S_{44}]$ assumes uniform stress and is a lower bound, and their mean (Hill) is a common estimate (Problem 7).</p>
             </div>
+
+            <div class="demo" data-demo="cubicE"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="symmetry">7. Crystal symmetry and property tensors<a class="anchor" href="#symmetry" aria-label="Link to this section">#</a></h2>
             <p>A crystal looks the same after the operations of its <strong>point group</strong> (rotations, reflections, inversion), each an orthogonal matrix $Q$. <strong>Neumann&rsquo;s principle</strong>: any physical property of a crystal must be unchanged by every symmetry operation of the crystal. For a tensor property, this means $T=T'$ with $T'$ obtained from $T$ by the transformation of section 3 using each symmetry matrix $Q$. Each such condition cuts the number of independent components. For example, a symmetric second-rank tensor (conductivity, thermal expansion, diffusion) has six components for triclinic crystals, four for monoclinic, three for orthorhombic, two for tetragonal, hexagonal and trigonal crystals ($T=\operatorname{diag}(a,a,c)$), and <em>one</em> for cubic crystals: $T=a\,I$, isotropic, even though the crystal is not (Problem 10). So a cubic crystal conducts heat equally well in every direction, but a hexagonal one (zinc, graphite, titanium) has conductivities $\kappa_\perp\neq\kappa_\parallel$ along and across the unique axis, and thermal expansion $\alpha_\perp\ne\alpha_\parallel$, which is why such materials develop internal stresses on heating.</p>
@@ -262,8 +268,8 @@
             <details class="hint"><summary>Hint</summary><p>For (c) use $\sigma_{ij}=\lambda\varepsilon_{kk}\delta_{ij}+2\mu\varepsilon_{ij}$ with only $\varepsilon_{xx}\ne0$: $\sigma_{xx}=(\lambda+2\mu)\varepsilon_{xx}$ and $\sigma_{yy}=\lambda\varepsilon_{xx}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\mu=\dfrac{E}{2(1+\nu)}=76.9$ GPa; $\lambda=\dfrac{E\nu}{(1+\nu)(1-2\nu)}=\dfrac{60}{1.3\times0.4}=115.4$ GPa; $K=\dfrac{E}{3(1-2\nu)}=166.7$ GPa; $C_{11}=\lambda+2\mu=269.2$ GPa.</p>
-            <p>(b) $\varepsilon_{xx}=300/200\,000=1.5\times10^{-3}$; $\varepsilon_{yy}=\varepsilon_{zz}=-0.3(1.5\times10^{-3})=-4.5\times10^{-4}$. Volumetric: $1.5-0.45-0.45=0.6\times10^{-3}$, i.e. $\varepsilon_{xx}(1-2\nu)=6\times10^{-4}$. Check with $K$: mean stress $100$ MPa $=K\varepsilon_{kk}=166\,700\times6\times10^{-4}=100$ MPa. &check;</p>
-            <p>(c) With $\varepsilon_{yy}=\varepsilon_{zz}=0$: $\sigma_{xx}=C_{11}\varepsilon_{xx}$, so $\varepsilon_{xx}=300/269\,230=1.114\times10^{-3}$ (smaller than $1.5\times10^{-3}$: constraint stiffens the bar). $\sigma_{yy}=\sigma_{zz}=\lambda\varepsilon_{xx}=115.4\times10^3\times1.114\times10^{-3}=128.6$ MPa, i.e. $\sigma_{yy}=\dfrac{\nu}{1-\nu}\sigma_{xx}=0.4286\times300$. The effective modulus is $C_{11}=269$ GPa, $35\%$ higher than $E$. This is the constrained (&ldquo;oedometer&rdquo; or uniaxial-strain) modulus governing thin films on a rigid substrate and shock compression.</p>
+            <p>(b) $\varepsilon_{xx}=300/200\,\allowbreak 000=1.5\times10^{-3}$; $\varepsilon_{yy}=\varepsilon_{zz}=-0.3(1.5\times10^{-3})=-4.5\times10^{-4}$. Volumetric: $1.5-0.45-0.45=0.6\times10^{-3}$, i.e. $\varepsilon_{xx}(1-2\nu)=6\times10^{-4}$. Check with $K$: mean stress $100$ MPa $=K\varepsilon_{kk}=166\,\allowbreak 700\times6\times10^{-4}=100$ MPa. &check;</p>
+            <p>(c) With $\varepsilon_{yy}=\varepsilon_{zz}=0$: $\sigma_{xx}=C_{11}\varepsilon_{xx}$, so $\varepsilon_{xx}=300/269\,\allowbreak 230=1.114\times10^{-3}$ (smaller than $1.5\times10^{-3}$: constraint stiffens the bar). $\sigma_{yy}=\sigma_{zz}=\lambda\varepsilon_{xx}=115.4\times10^3\times1.114\times10^{-3}=128.6$ MPa, i.e. $\sigma_{yy}=\dfrac{\nu}{1-\nu}\sigma_{xx}=0.4286\times300$. The effective modulus is $C_{11}=269$ GPa, $35\%$ higher than $E$. This is the constrained (&ldquo;oedometer&rdquo; or uniaxial-strain) modulus governing thin films on a rigid substrate and shock compression.</p>
             <p class="answer">$\lambda=115.4$, $\mu=76.9$, $K=166.7$ GPa; $\sigma_{yy}=128.6$ MPa; $C_{11}=269$ GPa</p>
             </details>
             </div>
@@ -273,7 +279,7 @@
             <p>Aluminium has $C_{11}=108$, $C_{12}=62$, $C_{44}=28$ GPa. (a) Write the Voigt stress vector for the strain $\boldsymbol\varepsilon=(10^{-3},0,0,0,0,2\times10^{-3})$, and the stored energy density. (b) Compute the Voigt bounds on the polycrystalline shear modulus, the bulk modulus, and the Young&rsquo;s modulus and Poisson ratio of the isotropic aggregate (using Voigt $G$). Compare with the measured polycrystal $E\approx70$ GPa, $\nu\approx0.35$. (c) Calculate the Zener ratio.</p>
             <details class="hint"><summary>Hint</summary><p>$G_V=\tfrac15(C_{11}-C_{12}+3C_{44})$; $E=\dfrac{9BG}{3B+G}$; $\nu=\dfrac{3B-2G}{2(3B+G)}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $\sigma_1=108(10^{-3})=0.108$ GPa; $\sigma_2=\sigma_3=62(10^{-3})=0.062$ GPa; $\sigma_6=C_{44}\varepsilon_6=28(2\times10^{-3})=0.056$ GPa (here $\varepsilon_6=\gamma_{xy}=2\times10^{-3}$, i.e. $\varepsilon_{xy}=10^{-3}$). Energy density $W=\tfrac12\boldsymbol\sigma\cdot\boldsymbol\varepsilon=\tfrac12\bigl[0.108(10^{-3})+0.056(2\times10^{-3})\bigr]\,\text{GPa}=1.1\times10^{-4}$ GPa $=0.11$ MPa $=1.1\times10^5$ J/m$^3$.</p>
+            <p>(a) $\sigma_1=108(10^{-3})=0.108$ GPa; $\sigma_2=\sigma_3=62(10^{-3})=0.062$ GPa; $\sigma_6=C_{44}\varepsilon_6=28(2\times10^{-3})=0.056$ GPa (here $\varepsilon_6=\gamma_{xy}=2\times10^{-3}$, i.e. $\varepsilon_{xy}=10^{-3}$). Energy density $W=\tfrac12\boldsymbol\sigma\cdot\boldsymbol\varepsilon=\tfrac12\bigl[0.108(10^{-3})+0.056(2\times10^{-3})\bigr]\,\allowbreak \text{GPa}=1.1\times10^{-4}$ GPa $=0.11$ MPa $=1.1\times10^5$ J/m$^3$.</p>
             <p>(b) $B=(C_{11}+2C_{12})/3=77.3$ GPa. $G_V=\tfrac15(108-62+84)=26.0$ GPa; the Reuss value, from $S_{11}=0.01593$, $S_{12}=-0.00581$, $S_{44}=0.03571$ GPa$^{-1}$, is $G_R=5/[4(S_{11}-S_{12})+3S_{44}]=25.8$ GPa. They are almost equal because Al is nearly isotropic. Hill: $25.9$ GPa. Using $G=26.0$: $E=\dfrac{9(77.3)(26.0)}{3(77.3)+26.0}=\dfrac{18\,090}{257.9}=70.1$ GPa; $\nu=\dfrac{3(77.3)-2(26.0)}{2(257.9)}=\dfrac{179.9}{515.8}=0.349$. Excellent agreement with the measured $70$ GPa and $0.35$.</p>
             <p>(c) $A=\dfrac{2C_{44}}{C_{11}-C_{12}}=\dfrac{56}{46}=1.22$: close to $1$, nearly elastically isotropic, consistent with the small gap between the Voigt and Reuss bounds. Strongly anisotropic crystals (copper, $A=3.2$) have a wide gap between the two bounds.</p>
             </details>
@@ -298,7 +304,7 @@
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\nabla T=1000(0.7071,0,0.7071)=(707.1,0,707.1)$ K/m. $\mathbf q=-\kappa\nabla T=-(150\times707.1,\ 0,\ 100\times707.1)=(-106.1,\ 0,\ -70.7)$ kW/m$^2$, magnitude $127.5$ kW/m$^2$.</p>
             <p>(b) The direction of $-\nabla T$ is at $\arctan(1)=45^\circ$ from the $x$-axis (in the $xz$-plane), whereas $\mathbf q$ is at $\arctan(70.7/106.1)=33.7^\circ$. The heat flux is turned $11.3^\circ$ towards the direction of higher conductivity ($x$). Heat does not flow straight down the gradient in an anisotropic crystal; it prefers the easy direction.</p>
-            <p>(c) $-\mathbf q\cdot\nabla T=\kappa_{ij}\partial_iT\,\partial_jT=150(707.1)^2+100(707.1)^2=1.25\times10^8$ W K m$^{-3}$ $&gt;0$. In general $\kappa_{ij}\partial_iT\partial_jT&gt;0$ for every nonzero gradient exactly when $\kappa$ is positive definite (all principal conductivities positive), which the second law requires. (The symmetric part of $\kappa$ is what matters here; Onsager&rsquo;s relations show $\kappa$ is symmetric.) Note the symmetry parallel: this is the same positive-definiteness condition as the stability of the elastic energy.</p>
+            <p>(c) $-\mathbf q\cdot\nabla T=\kappa_{ij}\partial_iT\,\allowbreak \partial_jT=150(707.1)^2+100(707.1)^2=1.25\times10^8$ W K m$^{-3}$ $&gt;0$. In general $\kappa_{ij}\partial_iT\partial_jT&gt;0$ for every nonzero gradient exactly when $\kappa$ is positive definite (all principal conductivities positive), which the second law requires. (The symmetric part of $\kappa$ is what matters here; Onsager&rsquo;s relations show $\kappa$ is symmetric.) Note the symmetry parallel: this is the same positive-definiteness condition as the stability of the elastic energy.</p>
             </details>
             </div>
 
@@ -367,5 +373,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>

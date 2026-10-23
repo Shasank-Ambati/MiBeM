@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
     <link rel="manifest" href="../site.webmanifest">
     <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/style.css?v=dc1a17e2">
+    <link rel="stylesheet" href="../assets/style.css?v=8b682880">
     <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
 </head>
 <body data-topic="32">
@@ -102,7 +102,7 @@
                 <tbody>
                     <tr><td>Dirichlet</td><td>$u=g$</td><td>fixed value: a surface held at fixed temperature, or in equilibrium with a gas ($c_s$ set by the chemical potential)</td></tr>
                     <tr><td>Neumann</td><td>$\partial u/\partial n=q$</td><td>fixed flux; $q=0$ is an insulated (no-flux, reflecting) boundary and also a symmetry plane</td></tr>
-                    <tr><td>Robin (mixed)</td><td>$-\kappa\,\partial T/\partial n=h\,(T-T_\infty)$</td><td>convective or surface-reaction exchange with an environment, with transfer coefficient $h$</td></tr>
+                    <tr><td>Robin (mixed)</td><td>$-\kappa\,\allowbreak \partial T/\partial n=h\,\allowbreak (T-T_\infty)$</td><td>convective or surface-reaction exchange with an environment, with transfer coefficient $h$</td></tr>
                     <tr><td>Periodic</td><td>$u(x+L)=u(x)$</td><td>an infinite crystal or a periodic simulation cell</td></tr>
                 </tbody>
             </table></div>
@@ -122,8 +122,11 @@
             <div class="example">
                 <strong>Worked example 3.2: thin-film source and diffusion couple</strong>
                 <p class="given">(a) A thin layer of $M$ atoms per unit area is deposited on a surface and diffuses into a solid. (b) Two semi-infinite solids with concentrations $c_1$ and $c_2$ are welded at $x=0$ (a diffusion couple).</p>
-                <p>(a) Reflecting at the surface, the thin-film solution is the diffusion kernel of <a href="fourier-analysis.html">M8</a> doubled: $c(x,t)=\dfrac{M}{\sqrt{\pi Dt}}\,e^{-x^2/(4Dt)}$ for $x\ge0$ (the total $\int_0^\infty c\,\mathrm dx=M$ is conserved). Plotting $\ln c$ against $x^2$ gives a straight line of slope $-1/(4Dt)$, the standard way to measure $D$ from a tracer profile (Problem 4). (b) By linearity, $c(x,t)=\dfrac{c_1+c_2}{2}+\dfrac{c_1-c_2}{2}\operatorname{erf}\!\Bigl(\dfrac{x}{2\sqrt{Dt}}\Bigr)$ with $x$ measured from the weld: the interface stays at the mean concentration for ever, and the width of the interdiffusion zone grows as $\sqrt{Dt}$. When $D$ depends on concentration, as in most real alloys, the Boltzmann&ndash;Matano analysis extracts $D(c)$ from the measured profile, using the same similarity variable.</p>
+                <p>(a) Reflecting at the surface, the thin-film solution is the diffusion kernel of <a href="fourier-analysis.html">M8</a> doubled: $c(x,t)=\dfrac{M}{\sqrt{\pi Dt}}\,\allowbreak e^{-x^2/(4Dt)}$ for $x\ge0$ (the total $\int_0^\infty c\,\mathrm dx=M$ is conserved). Plotting $\ln c$ against $x^2$ gives a straight line of slope $-1/(4Dt)$, the standard way to measure $D$ from a tracer profile (Problem 4). (b) By linearity, $c(x,t)=\dfrac{c_1+c_2}{2}+\dfrac{c_1-c_2}{2}\operatorname{erf}\!\Bigl(\dfrac{x}{2\sqrt{Dt}}\Bigr)$ with $x$ measured from the weld: the interface stays at the mean concentration for ever, and the width of the interdiffusion zone grows as $\sqrt{Dt}$. When $D$ depends on concentration, as in most real alloys, the Boltzmann&ndash;Matano analysis extracts $D(c)$ from the measured profile, using the same similarity variable.</p>
             </div>
+
+            <div class="demo" data-demo="erfprofile"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
 
             <h2 id="separation">4. Separation of variables on a finite domain<a class="anchor" href="#separation" aria-label="Link to this section">#</a></h2>
             <p>For a bounded domain the profile has a length scale $L$ and similarity no longer works. The method of <strong>separation of variables</strong> looks for solutions $u(x,t)=X(x)T(t)$, which turns a linear PDE into two ODEs linked by a separation constant, and then superposes them.</p>
@@ -171,6 +174,9 @@
                 $$r=\frac{D\,\Delta t}{\Delta x^2}\le\frac12 .$$
                 For $r&gt;\tfrac12$ the highest-wavenumber mode is amplified by $|1-4r|&gt;1$ every step, with alternating sign: the familiar &ldquo;checkerboard&rdquo; blow-up. This is the stability limit of <a href="ordinary-differential-equations.html">M7</a>, $h&lt;2/\lambda$, with $\lambda=4D/\Delta x^2$ the largest eigenvalue of the discrete Laplacian (the same $k_\mathrm{eff}^2$ as in <a href="fourier-analysis.html">M8</a>). In two and three dimensions the limits are $r\le\tfrac14$ and $\tfrac16$.</p>
             </div>
+
+            <div class="demo" data-demo="ftcs"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <p>The restriction $\Delta t\le\Delta x^2/(2D)$ is severe: refining the grid by $10$ costs $100$ times more steps in time and $10$ times more points per dimension. <strong>Implicit</strong> schemes avoid it. In the backward-Euler scheme, $c_j^{n+1}-r(c_{j+1}^{n+1}-2c_j^{n+1}+c_{j-1}^{n+1})=c_j^n$, one solves a tridiagonal linear system at each step (cost $O(N)$ with the Thomas algorithm; <a href="linear-algebra-foundations.html">M4</a>), and $g=1/(1+4r\sin^2(\theta/2))$ satisfies $|g|\le1$ for all $r$. The Crank&ndash;Nicolson scheme averages the two and is second order in time. Spectral (Fourier) and finite element discretisations are discussed in the corresponding topics.</p>
 
             <h2 id="nonlinear">8. A nonlinear example: spinodal decomposition<a class="anchor" href="#nonlinear" aria-label="Link to this section">#</a></h2>
@@ -186,6 +192,9 @@
                 $$k_m^2=\frac{|f''|}{2\kappa},\qquad\sigma_m=\frac{M\,f''^2}{4\kappa},\qquad\lambda_m=\frac{2\pi}{k_m}=2\pi\sqrt{\frac{2\kappa}{|f''|}}.$$
                 The microstructure that appears is therefore a pattern with a <em>characteristic length</em> $\lambda_m$, set by the competition between the driving force ($|f''|$) and the interfacial energy ($\kappa$): the interconnected, fine-scale structure seen in spinodally decomposed alloys and glasses. It also shows <em>uphill diffusion</em>: the effective diffusivity $M f''$ is negative. Problem 11 puts in numbers.</p>
             </div>
+
+            <div class="demo" data-demo="spinodal"><div class="demo-body"><p class="demo-note">This interactive demo needs JavaScript to run.</p></div></div>
+
             <p>Beyond the linear regime nonlinear terms saturate the growth, and the pattern coarsens; that is the domain of the numerical phase-field method (<a href="phase-field-modelling.html">Phase-field modelling</a>), whose time step, as above, must resolve $\sigma_m$ and satisfy a stability limit that, for a fourth-order operator, scales as $\Delta x^4$ for explicit schemes (so semi-implicit spectral schemes are the norm).</p>
 
             <h2 id="summary-m9">9. How the pieces fit together<a class="anchor" href="#summary-m9" aria-label="Link to this section">#</a></h2>
@@ -259,7 +268,7 @@
             <details class="hint"><summary>Hint</summary><p>$\tau_1=L^2/(\pi^2D)$. First term: $0.8106\,e^{-t/\tau_1}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) $\tau_1=\dfrac{L^2}{\pi^2D}=\dfrac{(2\times10^{-3})^2}{9.870\times10^{-10}}=4.05\times10^3$ s $=68$ min.</p>
-            <p>(b) $0.8106\,e^{-t/\tau_1}=0.01\Rightarrow t=\tau_1\ln81.06=4053\times4.395=1.78\times10^4$ s $=4.9$ h.</p>
+            <p>(b) $0.8106\,\allowbreak e^{-t/\tau_1}=0.01\Rightarrow t=\tau_1\ln81.06=4053\times4.395=1.78\times10^4$ s $=4.9$ h.</p>
             <p>(c) The $n=3$ term is $\tfrac{0.8106}{9}e^{-9t/\tau_1}=0.0901e^{-39.6}\approx5\times10^{-19}$: utterly negligible; the first mode alone is accurate once $t\gtrsim\tau_1/4$. At early times, though, the series converges slowly and the erf solution of Example 3.1 is better, because the plate interior still &ldquo;sees&rdquo; no boundary.</p>
             <p>(d) $t\propto L^2$: a plate of $4$ mm takes $20$ h, and one of $1$ mm just $1.2$ h; baking out thick parts is slow, and the decay is a standard exponential (hence the &ldquo;time constant&rdquo; language). Real hydrogen in steel is slowed by trapping, which lowers the effective $D$ by orders of magnitude.</p>
             <p class="answer">$\tau_1=4.05$ ks; 1% left after 4.9 h; $t\propto L^2$</p>
@@ -307,7 +316,7 @@
             <p>Use the solution of Example 6.1 with $a=b$ to answer: (a) What is the value of $\phi$ at the centre of the square? (b) Show that the maximum principle holds. (c) If the top boundary has the pattern $V_0\sin(n\pi x/a)$ instead, how does the field decay into the interior, and how deep does it penetrate (distance for a factor $e^{-1}$)? (d) For a surface with a periodic roughness of wavelength $\lambda$ (so $k=2\pi/\lambda$), what is the penetration depth, and what does it imply about fine surface features?</p>
             <details class="hint"><summary>Hint</summary><p>For mode $n$: $\phi\propto\sinh(n\pi y/a)/\sinh(n\pi b/a)$, which near the top boundary behaves as $e^{-n\pi(b-y)/a}$ when $n\pi b/a\gg1$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $\phi(a/2,a/2)=V_0\sin(\pi/2)\dfrac{\sinh(\pi/2)}{\sinh\pi}=V_0\dfrac{2.301}{11.549}=0.199\,V_0$: about a fifth of the maximum boundary value, even though the centre is only half a side from the hot edge.</p>
+            <p>(a) $\phi(a/2,a/2)=V_0\sin(\pi/2)\dfrac{\sinh(\pi/2)}{\sinh\pi}=V_0\dfrac{2.301}{11.549}=0.199\,\allowbreak V_0$: about a fifth of the maximum boundary value, even though the centre is only half a side from the hot edge.</p>
             <p>(b) $\phi=V_0\sin(\pi x/a)\sinh(\pi y/a)/\sinh(\pi b/a)$ is zero on three sides and has maximum $V_0$ along the top edge (at $x=a/2$); for $y&lt;b$ the factor $\sinh(\pi y/a)/\sinh(\pi b/a)&lt;1$, so $\phi&lt;V_0$ in the interior: the extremum lies on the boundary. Also $\phi\ge0$ everywhere.</p>
             <p>(c) For mode $n$: $\phi_n\propto\sinh(n\pi y/a)/\sinh(n\pi b/a)\approx e^{-n\pi(b-y)/a}$ when $n\pi b/a$ is large. The decay length is $a/(n\pi)$.</p>
             <p>(d) With wavenumber $k=n\pi/a=2\pi/\lambda$, the field of a surface perturbation of wavelength $\lambda$ decays as $e^{-ky}$ with depth $y$, with penetration depth $1/k=\lambda/2\pi$. Fine roughness ($\lambda=100$ nm) is felt only within about $16$ nm of the surface; long-wavelength variations reach deep. Laplace-type fields (electrostatic, steady-state temperature, elastic fields from surface loads) act as low-pass filters of boundary data, which is why surface roughness matters for thin films only if it is comparable with the film thickness, and why inverse problems (inferring surface data from interior measurements) are ill-conditioned.</p>
@@ -320,7 +329,7 @@
             <details class="hint"><summary>Hint</summary><p>(a) Set $\phi=u/r$. (b) Scale: $\lambda_D\propto I^{-1/2}$, so $\lambda_D(0.001)=\lambda_D(0.1)\sqrt{100}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
             <p>(a) With $\phi=u/r$, $\nabla^2\phi=u''/r$, so $u''=\kappa^2u$ and $u=Ae^{-\kappa r}+Be^{\kappa r}$. Decay at infinity needs $B=0$, and matching the Coulomb behaviour as $r\to0$ gives $A=q/(4\pi\varepsilon)$: $\phi=\dfrac{q}{4\pi\varepsilon r}e^{-\kappa r}$, the screened (Yukawa) potential.</p>
-            <p>(b) The standard constant: at $298$ K in water ($\varepsilon_r=78.4$), $\lambda_D=0.304\,\mathrm{nm}/\sqrt{I[\mathrm{M}]}$. For $I=0.10$ M: $0.304/0.316=0.96$ nm. For $0.001$ M: $0.304/0.0316=9.6$ nm (ten times larger: $\sqrt{100}$). So in dilute solutions electrostatic interactions extend over tens of nanometres; in concentrated ones, screening reduces the range to a few atomic spacings, which is why electrolyte concentration controls colloidal stability and double-layer thickness at electrodes.</p>
+            <p>(b) The standard constant: at $298$ K in water ($\varepsilon_r=78.4$), $\lambda_D=0.304\,\allowbreak \mathrm{nm}/\sqrt{I[\mathrm{M}]}$. For $I=0.10$ M: $0.304/0.316=0.96$ nm. For $0.001$ M: $0.304/0.0316=9.6$ nm (ten times larger: $\sqrt{100}$). So in dilute solutions electrostatic interactions extend over tens of nanometres; in concentrated ones, screening reduces the range to a few atomic spacings, which is why electrolyte concentration controls colloidal stability and double-layer thickness at electrodes.</p>
             <p>(c) The screened potential relative to the bare Coulomb value is $e^{-\kappa r}$; at $r=3\lambda_D$ it is $e^{-3}=0.050$: $5\%$ remains.</p>
             <p>(d) In 1D, $\phi''=\kappa^2\phi$ gives $\phi=\phi_0e^{-\kappa x}$: pure exponential decay on the length $1/\kappa$ (the Gouy&ndash;Chapman diffuse layer next to a charged surface). The extra $1/r$ in 3D is just the geometric dilution of a point source. The same mathematics appears in the reaction&ndash;diffusion profile of <a href="ordinary-differential-equations.html">M7</a>, Example 4.2, with $\kappa=\sqrt{k/D}$.</p>
             </details>
@@ -344,7 +353,7 @@
             <p>(a) <em>Uniqueness.</em> Suppose $c_1$ and $c_2$ both solve $c_t=Dc_{xx}$ on $(0,L)$ with the same initial data and with $c=0$ at both ends. Let $w=c_1-c_2$ and $E(t)=\tfrac12\int_0^Lw^2\mathrm dx$. Show $\mathrm dE/\mathrm dt=-D\int_0^Lw_x^2\mathrm dx\le0$ and conclude $w\equiv0$. (b) <em>Backward diffusion.</em> If you try to run the diffusion equation backwards ($t\to-t$, i.e. $c_t=-Dc_{xx}$), what happens to a Fourier mode $e^{ikx}$? A measured profile contains noise of relative amplitude $10^{-6}$ at a wavelength of $0.1\ \mu$m; with $D=10^{-14}$ m$^2$/s, by what factor is this noise amplified when reconstructing the profile $1$ hour earlier? (c) Why can diffusion not be &ldquo;undone&rdquo; in practice?</p>
             <details class="hint"><summary>Hint</summary><p>(a) Integrate $\int ww_t=D\int ww_{xx}$ by parts. (b) The mode amplifies as $e^{+Dk^2t}$.</p></details>
             <details class="solution"><summary>Full solution</summary>
-            <p>(a) $w$ satisfies the same equation with $w(x,0)=0$, $w(0,t)=w(L,t)=0$. $\dfrac{\mathrm dE}{\mathrm dt}=\int_0^Lww_t\,\mathrm dx=D\int_0^Lww_{xx}\,\mathrm dx=D\bigl[ww_x\bigr]_0^L-D\int_0^Lw_x^2\,\mathrm dx=-D\int_0^Lw_x^2\,\mathrm dx\le0$, because the boundary term vanishes ($w=0$ at the ends). So $E$ never increases, and $E(0)=0$, $E\ge0$ force $E(t)=0$ for all $t$, i.e. $w\equiv0$. The solution is unique (integration by parts is the &ldquo;energy method&rdquo;, the same step that produces the weak form of FEM in <a href="calculus-of-variations-and-optimisation.html">M12</a>).</p>
+            <p>(a) $w$ satisfies the same equation with $w(x,0)=0$, $w(0,t)=w(L,t)=0$. $\dfrac{\mathrm dE}{\mathrm dt}=\int_0^Lww_t\,\allowbreak \mathrm dx=D\int_0^Lww_{xx}\,\allowbreak \mathrm dx=D\bigl[ww_x\bigr]_0^L-D\int_0^Lw_x^2\,\allowbreak \mathrm dx=-D\int_0^Lw_x^2\,\allowbreak \mathrm dx\le0$, because the boundary term vanishes ($w=0$ at the ends). So $E$ never increases, and $E(0)=0$, $E\ge0$ force $E(t)=0$ for all $t$, i.e. $w\equiv0$. The solution is unique (integration by parts is the &ldquo;energy method&rdquo;, the same step that produces the weak form of FEM in <a href="calculus-of-variations-and-optimisation.html">M12</a>).</p>
             <p>(b) Reversing time flips the sign: $\hat c(k,-t)=\hat c(k,0)\,e^{+Dk^2t}$, so each mode grows rather than decays, and the fastest for the shortest wavelengths. Here $k=2\pi/(10^{-7})=6.28\times10^7$ m$^{-1}$, $Dk^2t=10^{-14}\times3.95\times10^{15}\times3600=1.42\times10^{5}$. The amplification factor is $e^{1.4\times10^5}$: astronomically large (about $10^{62\,000}$), so any noise at that wavelength swamps the answer. Even at $\lambda=1\ \mu$m: $k^2$ is $100$ times smaller, $Dk^2t=1.4\times10^3$, still $e^{1400}$.</p>
             <p>(c) Diffusion irreversibly destroys the fine-scale information: the forward map multiplies short-wavelength content by $e^{-Dk^2t}$, which is effectively zero beyond a cutoff, so it cannot be recovered. The backward problem is <strong>ill-posed</strong> (the solution does not depend continuously on the data). In practice deconvolution of blurred data needs regularisation (truncating or damping the high-$k$ modes, as in the SVD truncation of <a href="eigenvalues-and-decompositions.html">M5</a> and the ridge regression of <a href="statistics-and-data-fitting.html">M11</a>), and this is also the mathematical face of the second law: diffusion increases entropy.</p>
             </details>
@@ -382,5 +391,7 @@
     <script src="../assets/topics.js?v=809ee252"></script>
     <script src="../assets/glossary.js?v=c565f93c"></script>
     <script src="../assets/site.js?v=feef663a" defer></script>
+    <script src="../assets/demos.js?v=b26fd2cd" defer></script>
+    <script src="../assets/mathdemos.js?v=777fdbc6" defer></script>
 </body>
 </html>
