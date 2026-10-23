@@ -1,0 +1,27 @@
+1. the forward problem: liquidus temperature as a function of the liquid interaction parameter L (liquid of x_B = 0.25 in equilibrium with alpha)
+      L (J/mol)    T_liquidus (K)
+             0        1009.33
+         -2500         988.51
+         -5000         969.30
+         -7500         951.37
+        -10000         934.49
+
+2. synthetic experimental liquidus (true L = -5000 J/mol, scatter 5 K)
+      x_B     T true (K)   T 'measured' (K)
+     0.120      1092.63        1092.64
+     0.145      1069.41        1070.90
+     0.170      1045.93        1044.56
+     0.195      1022.22        1017.77
+     0.220       998.28         996.01
+     0.245       974.15         969.19
+     0.270       949.82         950.12
+     0.295       925.33         932.03
+     0.320       900.69         898.23
+
+3. one-parameter fit L = a:  a = -5081 +- 244 J/mol;  chi^2 = 4.08 for 8 degrees of freedom (expect about 8)
+4. two-parameter fit L = a + b (T - 1000 K): a = -5232 +- 346 J/mol, b = -3.21 +- 5.09 J/(mol K) (true b = 0);  chi^2 = 3.67 for 7 d.o.f.;  correlation of a and b = 0.69
+
+5. what the uncertainty does to a prediction: liquidus temperature at x_B = 0.30 from 200 parameter sets drawn from the covariance of the one-parameter fit
+   true value 920.41 K;  fitted value 919.64 K;  spread of the prediction: +- 2.11 K (one standard deviation)
+   a parameter that is well determined by data near x = 0.3 predicts well there, but a prediction far from the data (e.g. at the eutectic composition) carries a larger uncertainty:
+   liquid of x_B = 0.40: fitted 819.93 K, spread +- 3.21 K

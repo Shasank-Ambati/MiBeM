@@ -373,7 +373,7 @@
                 4000      0.9999        0.016</code></pre>
             <p>The time grows as $n^3$ asymptotically: from $n=2000$ to $4000$ it increases by a factor of $5.2$ (less than the factor $8$ of the formula, because larger matrices use the multicore library more efficiently; the column showing time$/n^3$ falls from $0.21$ to $0.016$ ns before it levels out). At $n=4000$ the speed is $\tfrac23(4000)^3/1.0\text{ s}\approx43$ GFlop/s on this four-core machine. A dense matrix of $n=10^5$ needs $80$ GB of memory and $6.7\times10^{14}$ operations (a few hours on this machine): the practical limit of dense methods in simulation is $n\sim10^4$&ndash;$10^5$. Almost every matrix in a larger simulation is sparse, which is Lecture 5.</p>
             <h2 id="lsq">Lecture 4. Least squares: QR, SVD and why the normal equations are dangerous<a class="anchor" href="#lsq" aria-label="Link to this section">#</a></h2>
-            <p>Data fitting leads to <strong>overdetermined</strong> systems: $m$ equations for $n&lt;m$ unknowns, $V\mathbf c\approx\mathbf y$ with $V$ an $m\times n$ matrix (for a polynomial fit, the Vandermonde matrix $V_{ij}=x_i^{\,j}$). There is in general no exact solution; the <strong>least-squares solution</strong> minimises $\|V\mathbf c-\mathbf y\|_2^2$. Setting the gradient to zero gives the <strong>normal equations</strong> $V^TV\mathbf c=V^T\mathbf y$, an $n\times n$ linear system that can be solved by the methods of Lecture 3. They are the formulas you meet in statistics (<a href="statistics-and-data-fitting.html">MATH 205</a>) and they are numerically dangerous, for a simple reason: $\kappa(V^TV)=\kappa(V)^2$, so a fit that loses $8$ digits in $V$ loses $16$ in $V^TV$.</p>
+            <p>Data fitting leads to <strong>overdetermined</strong> systems: $m$ equations for $n&lt;m$ unknowns, $V\mathbf c\approx\mathbf y$ with $V$ an $m\times n$ matrix (for a polynomial fit, the Vandermonde matrix $V_{ij}=x_i^{\,j}$). There is in general no exact solution; the <strong>least-squares solution</strong> minimises $\|V\mathbf c-\mathbf y\|_2^2$. Setting the gradient to zero gives the <strong>normal equations</strong> $V^TV\mathbf c=V^T\mathbf y$, an $n\times n$ linear system that can be solved by the methods of Lecture 3. They are the formulas you meet in statistics (<a href="statistics-and-data-fitting.html">MATH 303</a>) and they are numerically dangerous, for a simple reason: $\kappa(V^TV)=\kappa(V)^2$, so a fit that loses $8$ digits in $V$ loses $16$ in $V^TV$.</p>
             <p>The stable alternatives use orthogonal transformations, which do not amplify errors:</p>
             <ul>
             <li><strong>QR factorisation.</strong> Write $V=QR$ with $Q$ having orthonormal columns ($Q^TQ=I$) and $R$ upper triangular (computed by Householder reflections, the same cost order as LU, $2mn^2$). Then $\|V\mathbf c-\mathbf y\|=\|R\mathbf c-Q^T\mathbf y\|$ plus a constant, and the solution is obtained by back substitution $R\mathbf c=Q^T\mathbf y$. The condition number involved is $\kappa(R)=\kappa(V)$, not its square.</li>
@@ -853,8 +853,8 @@
     <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
     <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
     <script src="../assets/math.js?v=30f9a112"></script>
-    <script src="../assets/topics.js?v=d98cf114"></script>
-    <script src="../assets/pathdata.js?v=bb1778c0"></script>
+    <script src="../assets/topics.js?v=c7f7c3c7"></script>
+    <script src="../assets/pathdata.js?v=d4ceca8f"></script>
     <script src="../assets/glossary.js?v=f0b43d1a"></script>
     <script src="../assets/site.js?v=bc0be6f7" defer></script>
     <script src="../assets/learn.js?v=7440bcd6" defer></script>

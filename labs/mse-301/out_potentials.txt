@@ -1,0 +1,19 @@
+1. thermodynamic functions of solid Al relative to 298.15 K (from Cp = 20.67 + 12.38e-3 T)
+      T (K)    H(T)-H(298) (J/mol)    S(T)-S(298) (J/mol/K)    G = H - T S (J/mol)    -dG/dT (numerical)   |  S - (-dG/dT)
+      300              45.1                  0.1508                      -0.1                 0.1508        3.8e-11
+      500            5169.5                 13.1855                   -1423.3                13.1855        6.0e-10
+      700           10789.1                 22.6164                   -5042.4                22.6164        2.6e-09
+      900           16903.9                 30.2871                  -10354.5                30.2871        1.3e-10
+   (G is measured from the state at 298.15 K with S(298) set to zero, so -dG/dT = S(T) - S(298); the Maxwell-type relation G = H - TS and S = -dG/dT hold to the accuracy of the differentiation)
+
+2. the driving force for solidification of Al: dG(T) = G_liquid - G_solid below the melting point
+   undercooling   exact dG (J/mol)   Turnbull dHm dT/Tm   Turnbull/exact   Hoffman dHm dT/Tm (T/Tm)
+       10 K             114.8             114.7            0.9998           113.5
+       50 K             574.1             573.7            0.9994           543.0
+      100 K            1147.8            1147.4            0.9997          1024.5
+      200 K            2286.0            2294.9            1.0039          1803.2
+      300 K            3396.6            3442.3            1.0135          2336.0
+   dG = G_liquid - G_solid is positive below Tm: the solid is more stable and dG is the driving force for solidification.  Turnbull's approximation dHm dT/Tm neglects the heat-capacity difference between liquid and solid; Hoffman's adds a factor T/Tm.
+
+3. heat of fusion from the Gibbs energies at the melting point: dG(Tm) = 0 and dH = Tm dS
+   dG(Tm) = 0.0e+00 J/mol,  dS(Tm) = dHm/Tm = 11.474 J/(mol K) = 1.380 R (Richards' rule: about R for many metals)

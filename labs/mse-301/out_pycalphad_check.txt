@@ -1,0 +1,34 @@
+pycalphad equilibria for the alloy x_B = 0.30 (phase, fraction, composition x_B):
+   T = 1000.0 K:  LIQUID 1.000  x = 0.3000
+   T =  900.0 K:  ALPHA  0.079  x = 0.0598   LIQUID 0.921  x = 0.3207
+   T =  801.0 K:  ALPHA  0.367  x = 0.0933   LIQUID 0.633  x = 0.4201
+   T =  795.0 K:  ALPHA  0.751  x = 0.0918   BETA   0.249  x = 0.9286
+   T =  600.0 K:  ALPHA  0.716  x = 0.0320   BETA   0.284  x = 0.9750
+
+the chemical potentials at 900 K (J/mol, relative to the reference states): the equal-potential condition
+   mu_A = -407.84, mu_B = -4817.43;  the tie line (alpha 0.0598, liquid 0.3208) of the hull construction has the common tangent with these intercepts
+   hull tie line: mu_A = -407.83, mu_B = -4817.37
+
+the eutectic: scan the temperature at x_B = 0.421
+   T =  803.0 K:  LIQUID (1.000)
+   T =  801.0 K:  LIQUID (1.000)
+   T =  800.5 K:  LIQUID (1.000)
+   T =  799.0 K:  ALPHA (0.607)  BETA (0.393)
+   T =  797.0 K:  ALPHA (0.607)  BETA (0.393)
+pycalphad equilibria for the alloy x_B = 0.30 (phase, fraction, composition x_B):
+   T = 1000.0 K:  LIQUID 1.000  x = 0.3000
+   T =  900.0 K:  ALPHA  0.079  x = 0.0598   LIQUID 0.921  x = 0.3207
+   T =  801.0 K:  ALPHA  0.367  x = 0.0933   LIQUID 0.633  x = 0.4201
+   T =  795.0 K:  ALPHA  0.751  x = 0.0918   BETA   0.249  x = 0.9286
+   T =  600.0 K:  ALPHA  0.716  x = 0.0320   BETA   0.284  x = 0.9750
+
+the chemical potentials at 900 K (J/mol, relative to the reference states): the equal-potential condition
+   mu_A = -407.84, mu_B = -4817.43;  the tie line (alpha 0.0598, liquid 0.3208) of the hull construction has the common tangent with these intercepts
+   hull tie line: mu_A = -407.83, mu_B = -4817.37
+
+the eutectic: scan the temperature at x_B = 0.421
+   T =  803.0 K:  LIQUID (1.000)
+   T =  801.0 K:  LIQUID (1.000)
+   T =  800.5 K:  LIQUID (1.000)
+   T =  799.0 K:  ALPHA (0.607)  BETA (0.393)
+   T =  797.0 K:  ALPHA (0.607)  BETA (0.393)

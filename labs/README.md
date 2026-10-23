@@ -10,6 +10,7 @@ Input files, scripts and figures for the hands-on labs of the site (`computation
 | `comp-101` | Code of the course COMP 101 (tests, I/O, profiling examples) | Python, numpy, pytest |
 | `lab-101` | Setting up a computational workstation | Python, git, numpy, matplotlib |
 | `lab-201` | Crystal structures in Python with ASE | ASE, spglib, numpy, matplotlib (no LAMMPS needed) |
+| `mse-301` | Code of the course MSE 301: thermodynamic functions, solutions, a model eutectic diagram (own hull code and pycalphad), a CALPHAD-style fit, nucleation | Python, numpy, scipy, matplotlib, pycalphad |
 | `lab-501` | Electronic structure: H2, water, silicon | PySCF, geomeTRIC, ASE, numpy |
 | `lab-504` | Monte Carlo of the Ising model | Python, numba, numpy, scipy, matplotlib |
 | `lab-505` | Phase diagrams with CALPHAD | pycalphad, numpy, matplotlib (own teaching database `teach.tdb`) |

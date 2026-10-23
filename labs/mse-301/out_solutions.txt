@@ -1,0 +1,32 @@
+1. ideal solution at 1000 K, x = 0.5: Gibbs energy of mixing and chemical potentials
+   dG_mix = -5763.1 J/mol = -T dS_mix with dS_mix = 5.7631 J/(mol K) = R ln 2 = 5.7631
+   mu_A - mu_A(pure) = -5763.1 J/mol = RT ln x_A;  activity a_A = exp(mu/RT) = 0.500
+
+2. Gibbs-Duhem check for a regular solution (w = 10 kJ/mol, T = 1000 K): (1-x) dmu_A/dx + x dmu_B/dx = 0
+   x = 0.1:  (1-x)dmuA/dx + x dmuB/dx = -1.14e-08 J/mol;   G - [(1-x)muA + x muB] =  0.00e+00;   muB - muA - dG/dx =  3.68e-07
+   x = 0.3:  (1-x)dmuA/dx + x dmuB/dx =  4.09e-07 J/mol;   G - [(1-x)muA + x muB] =  0.00e+00;   muB - muA - dG/dx = -1.53e-08
+   x = 0.5:  (1-x)dmuA/dx + x dmuB/dx =  4.55e-07 J/mol;   G - [(1-x)muA + x muB] =  0.00e+00;   muB - muA - dG/dx = -4.55e-07
+   x = 0.8:  (1-x)dmuA/dx + x dmuB/dx = -1.82e-07 J/mol;   G - [(1-x)muA + x muB] = -1.36e-12;   muB - muA - dG/dx = -8.60e-07
+
+3. activity coefficients of the regular solution: gamma_B = exp(w (1-x)^2/RT)  (w = 10 kJ/mol, T = 1000 K)
+   x_B =  0.010000   gamma_B = 3.2504   activity a_B = 0.03250
+   x_B =  0.100000   gamma_B = 2.6491   activity a_B = 0.26491
+   x_B =  0.500000   gamma_B = 1.3508   activity a_B = 0.67539
+   x_B =  0.900000   gamma_B = 1.0121   activity a_B = 0.91089
+   x_B =  1.000000   gamma_B = 1.0000   activity a_B = 1.00000
+   at infinite dilution gamma_B^infinity = exp(w/RT) = 3.3292 (Henry's law constant relative to Raoult's)
+
+4. stability: second derivative of G_mix and the miscibility gap (symmetric regular solution, Tc = w/(2R))
+   w = 20 kJ/mol  ->  critical temperature Tc = 1202.7 K
+      T (K)    T/Tc    binodal x   spinodal x   G''(0.5)/RT   (G''<0 inside the spinodal)
+     601.4    0.50     0.02125     0.14645       -4.000
+     841.9    0.70     0.08568     0.22614       -1.714
+     962.2    0.80     0.14479     0.27639       -1.000
+    1082.5    0.90     0.23729     0.34189       -0.444
+    1142.6    0.95     0.31026     0.38820       -0.211
+    1190.7    0.99     0.41374     0.45000       -0.040
+   check of the binodal at T/Tc = 0.8: common-tangent condition mu_A(x1) = mu_A(x2), mu_B(x1) = mu_B(x2):
+   x1 = 0.144794, x2 = 0.855206:  mu_A difference =  1.25e-12 J/mol,  mu_B difference =  2.73e-12 J/mol
+   critical exponent: near Tc the binodal width scales as sqrt(1 - T/Tc): at T/Tc = 0.99 the half-width 0.5 - x = 0.0863, mean-field prediction sqrt(3(1-T/Tc)) / 2 = 0.0866
+
+saved solutions.png

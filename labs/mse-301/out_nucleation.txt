@@ -1,0 +1,20 @@
+Al: Tm = 933.47 K, dHm = 10711.0 J/mol, Vm = 10.0 cm^3/mol -> dH_v = 1.071e+09 J/m^3;  gamma_sl = 0.093 J/m^2 (illustrative)
+
+1. critical nucleus: r* = 2 gamma/dGv,  dG* = 16 pi gamma^3/(3 dGv^2),  with dGv = dHv dT/Tm (Turnbull)
+   undercooling   dGv (J/m^3)    r* (nm)    atoms in nucleus   dG* (1e-19 J)    dG*/kT      exp(-dG*/kT)
+         5 K       5.737e+06    32.420          8595663       4094.474       31940.9     0.00e+00
+        20 K       2.295e+07     8.105           134307        255.905        2029.1     0.00e+00
+        50 K       5.737e+07     3.242             8596         40.945         335.7     1.65e-146
+       100 K       1.147e+08     1.621             1074         10.236          89.0     2.33e-39
+       150 K       1.721e+08     1.081              318          4.549          42.1     5.42e-19
+       200 K       2.295e+08     0.811              134          2.559          25.3     1.06e-11
+       250 K       2.869e+08     0.648               69          1.638          17.4     2.90e-08
+
+2. how much undercooling is needed before homogeneous nucleation becomes observable?
+   with dG*/kT = 60 (a common rule of thumb for observable nucleation; the exact number depends on the volume and the observation time) dT = 124 K = 0.132 Tm
+   (experiments on small clean droplets of many metals reach undercoolings of order 0.2 Tm, Turnbull's rule; the model value above uses an illustrative interfacial energy and the Turnbull driving force)
+
+3. effect of the interfacial energy: dT for dG*/kT = 60
+   gamma = 0.060 J/m^2: dT =   61.7 K (0.066 Tm)
+   gamma = 0.093 J/m^2: dT =  123.5 K (0.132 Tm)
+   gamma = 0.120 J/m^2: dT =  188.8 K (0.202 Tm)

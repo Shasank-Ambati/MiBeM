@@ -767,7 +767,7 @@ window.MIBEM_TOPICS = [
     "short": "Thermodynamics and CALPHAD",
     "part": "Materials science",
     "tone": "b",
-    "minutes": 12,
+    "minutes": 68,
     "title": "Thermodynamics and CALPHAD",
     "blurb": "Gibbs energy, the common tangent, solution models, phase diagrams and equilibrium calculation.",
     "builds": [
@@ -778,16 +778,19 @@ window.MIBEM_TOPICS = [
       5
     ],
     "takeaways": [
-      "Equilibrium means minimum Gibbs energy, equivalently equal chemical potentials. The common tangent gives phase compositions and the lever rule gives amounts.",
-      "For a regular solution the miscibility gap closes at Tc = Omega/2R; the spinodal lies inside the binodal.",
-      "CALPHAD fits a Gibbs energy model to every phase (Redlich-Kister terms, sublattices, magnetism) and stores the parameters in a database.",
-      "It delivers equilibria, solidification paths and driving forces. It does not deliver kinetics or geometry.",
-      "Database coverage limits accuracy, and multicomponent extrapolation from binary data needs checking."
+      "Equilibrium at fixed temperature and pressure is the minimum of the Gibbs energy G = H - TS, and the thermodynamic functions of a phase follow from its heat capacity: for solid aluminium (Cp = 20.67 + 0.01238 T) heating from 300 to 700 K raises the enthalpy by 10.7 kJ/mol and the entropy by 22.5 J/(mol K), and G = H - TS and S = -dG/dT are satisfied to the accuracy of the numerical derivative.",
+      "The driving force for solidification of a pure metal is dG = G(liquid) - G(solid) = dH_m dT/T_m to a very good approximation (1147 against 1148 J/mol at 100 K undercooling of Al, an error of 0.03 percent, growing to 1.4 percent at 300 K), and the entropy of fusion of Al is 11.47 J/(mol K) = 1.38 R.",
+      "A solution has the ideal entropy of mixing -R(x ln x + (1 - x) ln(1 - x)) (R ln 2 = 5.76 J/(mol K) at x = 0.5) and the regular-solution model adds an enthalpy w x (1 - x); the chemical potential of a component is the intercept of the tangent to G(x), obeys the Gibbs-Duhem relation x dmu_B + (1 - x) dmu_A = 0, and determines its activity (gamma_B = exp(w (1 - x)^2/RT) = 3.25 at x = 0.01 for w = 10 kJ/mol, 1000 K).",
+      "A regular solution with w > 0 has a miscibility gap below T_c = w/(2R) (1203 K for w = 20 kJ/mol): the binodal (common tangent, x = 0.1448 at T/T_c = 0.8) is where the phases coexist, the spinodal (G'' = 0, x = 0.2764) is the limit of metastability, and near T_c the half-width of the gap is sqrt(3(1 - T/T_c))/2 (0.0863 against 0.0866 at T/T_c = 0.99).",
+      "A binary phase diagram is the projection of the common tangents of all phase Gibbs-energy curves as functions of T: for a model eutectic alloy the lower convex hull gives liquidus, solidus, solvus, the eutectic at 799.9 K and x_B = 0.421, and the lever rule gives 36.8 percent primary alpha and 63.2 percent eutectic liquid for the alloy x_B = 0.30 just above the eutectic, in agreement with pycalphad on the same model to 4 digits (chemical potentials -407.84 against -407.83 J/mol).",
+      "The CALPHAD method describes each phase by a Gibbs-energy model (polynomial in T for pure elements, Redlich-Kister series for excess energies, sublattice models for compounds) with parameters fitted to all available data; fitting a liquid interaction parameter to nine noisy liquidus points gives -5081 +- 244 J/mol (true value -5000), and the parameter uncertainty translates into a prediction uncertainty of +-2 K on the liquidus at x_B = 0.30.",
+      "Nucleation needs a driving force: the critical radius is r* = 2 gamma/dG_v and the barrier 16 pi gamma^3/(3 dG_v^2), which for Al with an illustrative interfacial energy of 0.093 J/m^2 gives r* = 1.6 nm (1074 atoms) and a barrier of 89 kT at 100 K undercooling, and reaches 60 kT, a typical threshold for observable nucleation, at 124 K (0.13 T_m)."
     ],
     "label": "MSE 301",
     "code": "MSE 301",
     "dept": "MSE",
-    "level": 3
+    "level": 3,
+    "katex": true
   },
   {
     "id": 42,

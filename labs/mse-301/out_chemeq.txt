@@ -1,0 +1,20 @@
+1. oxidation  M + O2 -> MO2 with dG(T) = dH - T dS  (illustrative: dH = -900 kJ/mol O2, dS = -180 J/(mol K) per mol O2)
+      T (K)    dG (kJ/mol O2)    equilibrium p(O2) = exp(dG/RT) (bar)    log10 p(O2)
+       500         -810.0                 2.407e-85                    -84.6
+       800         -756.0                 4.357e-50                    -49.4
+      1000         -720.0                 2.465e-38                    -37.6
+      1200         -684.0                 1.686e-30                    -29.8
+      1500         -630.0                 1.153e-22                    -21.9
+   the slope of dG(T) is -dS = +180 J/(mol K): the Ellingham line rises with T because a gas is consumed (negative dS)
+
+2. competition between two oxides: M1 (dH = -900 kJ, dS = -180) and M2 (dH = -600 kJ, dS = -175, per mol O2): which reduces which?
+   T =   500 K: dG1 =   -810.0 kJ, dG2 =   -512.5 kJ -> M1 is the more stable oxide: M1 reduces the oxide M2O2
+   T =  1000 K: dG1 =   -720.0 kJ, dG2 =   -425.0 kJ -> M1 is the more stable oxide: M1 reduces the oxide M2O2
+   T =  1500 K: dG1 =   -630.0 kJ, dG2 =   -337.5 kJ -> M1 is the more stable oxide: M1 reduces the oxide M2O2
+   T =  2000 K: dG1 =   -540.0 kJ, dG2 =   -250.0 kJ -> M1 is the more stable oxide: M1 reduces the oxide M2O2
+   T =  2500 K: dG1 =   -450.0 kJ, dG2 =   -162.5 kJ -> M1 is the more stable oxide: M1 reduces the oxide M2O2
+   the lines are nearly parallel (similar dS), so the order of stability does not change; it would change only if they crossed (a difference of slopes)
+
+3. reaction in an ideal-gas mixture: A <-> 2B, dG0 = -2 kJ/mol at 500 K and a total pressure of 1 bar: equilibrium composition
+   K = exp(-dG0/RT) = 1.6178;  extent xi = 0.5366; mole fractions: x_A = 0.3015, x_B = 0.6985
+   at 10 bar (Le Chatelier: pressure favours fewer moles of gas): xi = 0.1972, x_A = 0.6706

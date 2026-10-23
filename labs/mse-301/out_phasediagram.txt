@@ -1,0 +1,27 @@
+1. the Gibbs-energy curves at three temperatures and the common tangents (tie lines)
+   T = 1100 K:
+      two-phase region alpha   + liquid : x_B from 0.0165 to 0.1120
+      two-phase region liquid  + beta   : x_B from 0.6602 to 0.9570
+   T = 900 K:
+      two-phase region alpha   + liquid : x_B from 0.0598 to 0.3208
+      two-phase region liquid  + beta   : x_B from 0.5002 to 0.9362
+   T = 700 K:
+      two-phase region alpha   + beta   : x_B from 0.0583 to 0.9542
+
+2. the eutectic: highest temperature at which the three-phase equilibrium alpha + liquid + beta exists
+   eutectic temperature T_E = 799.88 K;  just above it the liquid exists only near x_B = 0.421 (range 0.421-0.421)
+   below it the tie line joins: alpha x = 0.0933 / beta x = 0.9275
+
+3. the lever rule for an alloy x0 = 0.30 B at several temperatures
+   T =  1250.0 K: single phase
+   T =  1150.0 K: single phase
+   T =  1000.0 K: single phase
+   T =   900.0 K: alpha (x = 0.0598) fraction 0.080  +  liquid (x = 0.3208) fraction 0.920
+   T =   800.9 K: alpha (x = 0.0933) fraction 0.368  +  liquid (x = 0.4203) fraction 0.632
+   T =   794.9 K: alpha (x = 0.0918) fraction 0.751  +  beta (x = 0.9285) fraction 0.249
+   T =   600.0 K: alpha (x = 0.0320) fraction 0.716  +  beta (x = 0.9750) fraction 0.284
+
+4. solidification path of the x0 = 0.30 alloy on cooling (equilibrium): liquidus, start of solidification
+   liquidus temperature near 920.5 K; first solid has composition alpha x_B = 0.0545 (the liquid is liquid at x_B = 0.3005)
+
+saved diagram.png
