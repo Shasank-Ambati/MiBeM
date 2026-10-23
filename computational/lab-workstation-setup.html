@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab: Setting up a computational workstation - MiBeM</title>
+    <meta name="description" content="Hands-on setup of a computational materials-science workstation: the terminal, Python virtual environments, installing packages, a first reproducible script with a random walk, plotting, git version control, project layout and run records, background jobs and a SLURM template.">
+    <link rel="canonical" href="https://shasank-ambati.github.io/MiBeM/computational/lab-workstation-setup.html">
+    <meta name="theme-color" content="#2b6cb0">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="MiBeM">
+    <meta property="og:title" content="Lab: Setting up a computational workstation - MiBeM">
+    <meta property="og:description" content="Hands-on setup of a computational materials-science workstation: the terminal, Python virtual environments, installing packages, a first reproducible script with a random walk, plotting, git version control, project layout and run records, background jobs and a SLURM template.">
+    <meta property="og:url" content="https://shasank-ambati.github.io/MiBeM/computational/lab-workstation-setup.html">
+    <meta property="og:image" content="https://shasank-ambati.github.io/MiBeM/assets/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+    <link rel="icon" sizes="48x48" href="../assets/favicon.ico">
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+    <link rel="manifest" href="../site.webmanifest">
+    <script>try{var t=localStorage.getItem("mibem-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/style.css?v=68d93760">
+    <link rel="stylesheet" href="../assets/katex/katex.min.css?v=273f4869">
+</head>
+<body data-topic="49">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site"><div class="bar">
+        <a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="" width="28" height="28">MiBeM</a>
+        <nav><a href="../path.html">Learning path</a><a href="../curriculum.html">Curriculum</a><a href="../map.html">Map</a><a href="../glossary.html">Glossary</a><a href="../index.html#about">About</a></nav>
+    </div></header>
+
+    <div class="wrap">
+    <div class="layout">
+
+        <aside class="toc">
+            <strong>On this page</strong>
+            <ol>
+                <li><a href="#platform">Step 1. Choose where to work</a></li>
+                <li><a href="#shell">Step 2. The terminal in fifteen minutes</a></li>
+                <li><a href="#venv">Step 3. A Python environment for the project</a></li>
+                <li><a href="#script">Step 4. A first simulation script that keeps a record</a></li>
+                <li><a href="#plot">Step 5. Plot the result</a></li>
+                <li><a href="#git">Step 6. Version control with git</a></li>
+                <li><a href="#repro">Step 7. Reproducibility: build the environment again</a></li>
+                <li><a href="#jobs">Step 8. Long jobs: background runs and a cluster job script</a></li>
+                <li><a href="#errors">Step 9. Typical problems</a></li>
+                <li><a href="#check">Exercises</a></li>
+                <li><a href="#refs">Going further and references</a></li>
+            </ol>
+        </aside>
+
+        <article id="main">
+            <p class="crumbs"><a href="../curriculum.html">Curriculum</a><span>/</span><span class="chip">Computational labs</span><span>LAB 101</span></p>
+            <!-- coursenav:start -->
+<nav class="course-nav" aria-label="Computational labs courses"><span class="cn-dept">LAB</span><a href="lab-workstation-setup.html" class="here" aria-current="page" title="LAB 101: Lab: Setting up a computational workstation">101</a><a href="lab-structures-ase.html" title="LAB 201: Lab: Crystal structures in Python with ASE">201</a><a href="lab-phonons-phonopy.html" title="LAB 301: Lab: Phonons with phonopy">301</a><a href="lab-md-lammps-argon.html" title="LAB 502: Lab: Molecular dynamics of liquid argon with LAMMPS">502</a><a href="lab-md-lammps-copper.html" title="LAB 503: Lab: A metal with LAMMPS: copper with an EAM potential">503</a><a href="lab-ising-monte-carlo.html" title="LAB 504: Lab: Monte Carlo of the Ising model">504</a><a href="lab-calphad-pycalphad.html" title="LAB 505: Lab: Phase diagrams with CALPHAD and pycalphad">505</a></nav>
+<!-- coursenav:end -->
+            <h1>Lab: Setting up a computational workstation</h1>
+            <p class="lead">Before any simulation code, you need a working environment: a terminal in which you can navigate and run programs, a version of Python and its packages that does not change under your feet, a way to track the changes you make to your files, and a habit of recording how each result was produced. This lab builds that environment and uses it to run a very small simulation (a random walk) from start to finish. Everything is shown with real commands and real outputs from a Linux machine (Python 3.13, git 2.43); the same commands work on macOS, and on Windows through the Windows Subsystem for Linux (WSL).</p>
+
+            <!-- facts:start -->
+<dl class="facts">
+<div><dt>Reading time</dt><dd>about 21 min</dd></div>
+<div><dt>Builds on</dt><dd><a href="programming-and-workflow.html">COMP 101: Programming and workflow</a></dd></div>
+<div><dt>Leads to</dt><dd>&mdash;</dd></div>
+<div><dt>Level</dt><dd>Year 1: foundations</dd></div>
+</dl>
+<!-- facts:end -->
+
+            <div class="callout">
+                <strong>By the end of this lab you will be able to:</strong>
+                <ul>
+                    <li>Navigate and inspect files from the terminal and combine commands with pipes.</li>
+                    <li>Create a Python virtual environment, install packages in it, and record the versions.</li>
+                    <li>Run a script that saves its results and a run record, and plot the results.</li>
+                    <li>Use git to save versions, compare them, and try a change on a branch.</li>
+                    <li>Organise a project folder and reproduce a result in a fresh environment.</li>
+                    <li>Start a long job in the background and write a cluster job script.</li>
+                </ul>
+                <strong>Companion courses:</strong> <a href="programming-and-workflow.html">COMP 101</a> (programming), <a href="your-first-simulation.html">COMP 102</a> (your first simulation), <a href="probability-for-simulation.html">MATH 204</a> (the statistics of the random walk). <strong>Next:</strong> <a href="lab-structures-ase.html">LAB 201</a>.
+            </div>
+            <div class="lab-meta"><div><b>Time</b>2 hours</div><div><b>Software</b>a terminal, Python 3.9+, git</div><div><b>System</b>your laptop or a remote machine</div><div><b>Run time</b>seconds</div></div>
+            <h2 id="platform">Step 1. Choose where to work<a class="anchor" href="#platform" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 1. Choose where to work (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>System</th><th>How to get a terminal</th><th>Notes</th></tr></thead>
+            <tbody>
+            <tr><td>Linux</td><td>Terminal application of the distribution</td><td>The reference platform of nearly all simulation codes. Used for this page.</td></tr>
+            <tr><td>macOS</td><td>Terminal (Applications &rarr; Utilities); install the command-line tools with <code>xcode-select --install</code></td><td>The commands are the same as on Linux.</td></tr>
+            <tr><td>Windows</td><td>Install WSL (<code>wsl --install</code> in an administrator PowerShell), then open the Ubuntu app</td><td>Gives a complete Linux system. Native Windows works for Python alone, but many simulation programs are written for Linux. The commands of this page were <strong>not</strong> run on Windows.</td></tr>
+            <tr><td>Remote cluster</td><td><code>ssh username@cluster.university.edu</code></td><td>Where large jobs run (Step 8). You use the same terminal commands there.</td></tr>
+            </tbody></table></div>
+            <h2 id="shell">Step 2. The terminal in fifteen minutes<a class="anchor" href="#shell" aria-label="Link to this section">#</a></h2>
+            <p>The terminal runs a <em>shell</em> (usually bash or zsh) that reads a command, runs it, and prints the result. The most useful commands are in the following session, run in a project folder. (The user name and the path were shortened in the listing; the rest is the real output.) Read each command, predict the output, and then check:</p>
+            <pre class="out"><code>$ pwd
+            /home/student/project
+            $ ls
+            input
+            output
+            requirements.txt
+            scripts
+            $ ls -l scripts
+            total 8
+            -rw-r--r-- 1 student student  833 Oct 23 10:02 plot_msd.py
+            -rw-r--r-- 1 student student 1300 Oct 23 10:02 random_walk.py
+            $ cd output &amp;&amp; ls &amp;&amp; cd ..
+            msd.csv
+            msd.png
+            run.json
+            $ head -n 3 output/msd.csv
+            step,msd
+            1.000000000000000000e+00,1.000000000000000000e+00
+            2.000000000000000000e+00,2.019200000000000106e+00
+            $ wc -l output/msd.csv scripts/*.py
+              4001 output/msd.csv
+                12 scripts/plot_msd.py
+                21 scripts/random_walk.py
+              4034 total
+            $ grep -n &#x27;seed&#x27; scripts/random_walk.py
+            5:def run(n_walkers=2000, n_steps=1000, seed=42):
+            6:    rng = np.random.default_rng(seed)                       # a recorded seed makes the run reproducible
+            14:    n_walkers, n_steps, seed = 5000, 4000, 42
+            15:    msd = run(n_walkers, n_steps, seed)
+            18:    meta = {&quot;script&quot;: &quot;scripts/random_walk.py&quot;, &quot;n_walkers&quot;: n_walkers, &quot;n_steps&quot;: n_steps, &quot;seed&quot;: seed, &quot;slope&quot;: float(slope),
+            $ grep -c import scripts/*.py
+            scripts/plot_msd.py:2
+            scripts/random_walk.py:2
+            $ tail -n 1 output/msd.csv | cut -d, -f2
+            3.967165599999999813e+03
+            $ cut -d, -f2 output/msd.csv | sort -g | tail -n 1
+            3.968457600000000184e+03
+            $ which python; python -c &#x27;import sys; print(sys.prefix)&#x27;
+            /home/student/venv/bin/python
+            /home/student/venv
+            $ echo $VIRTUAL_ENV
+            /home/student/venv
+            $ python scripts/random_walk.py &gt; log.txt 2&gt;&amp;1; cat log.txt
+            MSD slope = 0.9867 (exact value 1)</code></pre>
+            <div class="table-scroll" role="region" aria-label="Step 2. The terminal in fifteen minutes (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Command</th><th>Meaning</th></tr></thead>
+            <tbody>
+            <tr><td><code>pwd</code>, <code>ls</code>, <code>ls -l</code>, <code>cd dir</code>, <code>cd ..</code></td><td>where am I; list files (with sizes, dates, permissions); change directory; go up one level</td></tr>
+            <tr><td><code>mkdir -p a/b</code>, <code>cp</code>, <code>mv</code>, <code>rm</code></td><td>make directories (and parents); copy; move or rename; delete (there is no recycle bin: <strong>deleting is permanent</strong>)</td></tr>
+            <tr><td><code>cat file</code>, <code>head -n 3 file</code>, <code>tail -n 1 file</code>, <code>less file</code></td><td>print a file; the first or last lines; page through a long file</td></tr>
+            <tr><td><code>wc -l file</code>, <code>grep text file</code>, <code>cut -d, -f2</code>, <code>sort -g</code></td><td>count lines; search; select a column; sort numerically</td></tr>
+            <tr><td><code>cmd1 | cmd2</code></td><td>pipe: the output of <code>cmd1</code> is the input of <code>cmd2</code> (see the last-column example in the session above)</td></tr>
+            <tr><td><code>cmd &gt; file</code>, <code>cmd &gt;&gt; file</code>, <code>2&gt;&amp;1</code></td><td>write the output to a file (overwrite, append); also redirect the error messages</td></tr>
+            <tr><td><code>which python</code>, <code>echo &#36;VAR</code></td><td>which program would run; show an environment variable</td></tr>
+            <tr><td>Tab key, up arrow, <code>Ctrl-C</code></td><td>complete a name; previous command; stop the running program</td></tr>
+            </tbody></table></div>
+            <p>Two habits will save you hours: use <strong>relative paths</strong> inside a project (<code>output/msd.csv</code>, not <code>/home/me/work/output/msd.csv</code>) so that the project can be moved, and never put spaces in file or folder names. And before deleting with a wildcard (<code>rm *.dat</code>), run <code>ls *.dat</code> first to see what the pattern matches.</p>
+            <h2 id="venv">Step 3. A Python environment for the project<a class="anchor" href="#venv" aria-label="Link to this section">#</a></h2>
+            <p>Scientific packages change: a new version of NumPy may give slightly different results or break a script. A <strong>virtual environment</strong> is a private folder containing a Python interpreter and the packages for one project, so that projects do not disturb each other and a result can be recreated later. Create it, activate it, install packages, and record the exact versions with <code>pip freeze</code>:</p>
+            <pre data-file="shell"><code>python3 -m venv venv               # create the environment in the folder &quot;venv&quot;
+            source venv/bin/activate           # activate it (Windows PowerShell: venv\Scripts\Activate.ps1)
+            pip install numpy matplotlib       # install packages into this environment only
+            python -c &quot;import numpy, matplotlib; print(&#x27;numpy&#x27;, numpy.__version__, &#x27; matplotlib&#x27;, matplotlib.__version__)&quot;
+            pip freeze &gt; requirements.txt      # record every installed package with its version
+            wc -l requirements.txt
+            head -5 requirements.txt</code></pre>
+            <pre class="out"><code>numpy 2.5.4  matplotlib 3.11.2
+            12 requirements.txt
+            contourpy==1.4.0
+            cycler==0.12.1
+            fonttools==4.67.0
+            kiwisolver==1.5.1
+            matplotlib==3.11.2</code></pre>
+            <p>The prompt of most shells changes to show <code>(venv)</code> while the environment is active, and <code>which python</code> now points inside it (see the session of Step 2: <code>/home/student/venv/bin/python</code>). To leave it, type <code>deactivate</code>. The file <code>requirements.txt</code> lists 12 packages, because installing <code>numpy</code> and <code>matplotlib</code> also installed their dependencies; whoever has this file can recreate the same environment with <code>pip install -r requirements.txt</code> (Step 6 does this). The alternative <strong>conda</strong> (from Miniforge, free) manages environments with <code>conda create -n name python=3.12</code> and <code>conda install -c conda-forge package</code>; it is the usual choice when a package needs compiled libraries that pip cannot provide, as for some simulation codes. The commands of conda were not run for this page.</p>
+            <h2 id="script">Step 4. A first simulation script that keeps a record<a class="anchor" href="#script" aria-label="Link to this section">#</a></h2>
+            <p>The script simulates $2000$ random walkers that each take $1000$ steps of $\pm1$ and computes the <strong>mean-square displacement</strong> (MSD) after each step. For a random walk $\langle x^2\rangle=n$ after $n$ steps, the signature of diffusion: in one dimension $\langle x^2\rangle=2Dt$ with $D=\tfrac12$ here (<a href="probability-for-simulation.html">MATH 204</a>). Observe three habits of a good script: the random-number generator is created from a <em>recorded seed</em> (so the run can be repeated exactly); the results go to a file in <code>output/</code>; and a <em>run record</em> (<code>run.json</code>) saves the parameters, the result, the versions of Python and NumPy, the machine and the time it took:</p>
+            <pre data-file="scripts/random_walk.py"><code>&quot;&quot;&quot;A random walk in one dimension: the mean-square displacement grows linearly with the number of steps (diffusion).&quot;&quot;&quot;
+            import json, platform, sys, time
+            import numpy as np
+
+            def run(n_walkers=2000, n_steps=1000, seed=42):
+                rng = np.random.default_rng(seed)                       # a recorded seed makes the run reproducible
+                steps = rng.choice([-1, 1], size=(n_walkers, n_steps))
+                x = np.cumsum(steps, axis=1)
+                msd = (x.astype(float) ** 2).mean(axis=0)               # mean-square displacement after each step
+                return msd
+
+            if __name__ == &quot;__main__&quot;:
+                t0 = time.time()
+                n_walkers, n_steps, seed = 2000, 1000, 42
+                msd = run(n_walkers, n_steps, seed)
+                slope = np.polyfit(np.arange(1, n_steps + 1), msd, 1)[0]    # for a simple random walk the exact slope is 1
+                np.savetxt(&quot;output/msd.csv&quot;, np.column_stack([np.arange(1, n_steps + 1), msd]), delimiter=&quot;,&quot;, header=&quot;step,msd&quot;, comments=&quot;&quot;)
+                meta = {&quot;script&quot;: &quot;scripts/random_walk.py&quot;, &quot;n_walkers&quot;: n_walkers, &quot;n_steps&quot;: n_steps, &quot;seed&quot;: seed, &quot;slope&quot;: float(slope),
+                        &quot;python&quot;: sys.version.split()[0], &quot;numpy&quot;: np.__version__, &quot;platform&quot;: platform.platform(), &quot;seconds&quot;: round(time.time() - t0, 2)}
+                json.dump(meta, open(&quot;output/run.json&quot;, &quot;w&quot;), indent=2)
+                print(&quot;MSD slope = %.4f (exact value 1)&quot; % slope)</code></pre>
+            <pre class="out"><code>MSD slope = 0.9629 (exact value 1)
+            ---
+            {
+              &quot;script&quot;: &quot;scripts/random_walk.py&quot;,
+              &quot;n_walkers&quot;: 2000,
+              &quot;n_steps&quot;: 1000,
+              &quot;seed&quot;: 42,
+              &quot;slope&quot;: 0.962865254829255,
+              &quot;python&quot;: &quot;3.13.16&quot;,
+              &quot;numpy&quot;: &quot;2.5.4&quot;,
+              &quot;platform&quot;: &quot;Linux-6.18.44-fc-v153-x86_64-with-glibc2.39&quot;,
+              &quot;seconds&quot;: 0.24
+            }
+            ---
+            step,msd
+            1.000000000000000000e+00,1.000000000000000000e+00
+            2.000000000000000000e+00,1.947999999999999954e+00
+            1001 output/msd.csv</code></pre>
+            <p>The fitted slope is $0.9629$, not exactly the theoretical $1$: with a finite number of walkers the result has a statistical error. That is the first law of simulation: <strong>a number from a stochastic simulation is an estimate with an error bar, not a fact</strong> (Exercise 1 measures it). The run took $0.24$ s. The file <code>msd.csv</code> has the format of numbers in scientific notation, which is exact but hard to read; <code>numpy.savetxt</code> has a <code>fmt</code> option to change it.</p>
+            <h2 id="plot">Step 5. Plot the result<a class="anchor" href="#plot" aria-label="Link to this section">#</a></h2>
+            <p>A figure is the fastest way to detect a mistake. The second script reads the CSV file, fits a straight line, and saves a PNG (the line <code>matplotlib.use("Agg")</code> selects the backend that writes files and needs no screen, which is what you need on a remote server):</p>
+            <pre data-file="scripts/plot_msd.py"><code>&quot;&quot;&quot;Plot the mean-square displacement of the random walk and fit the diffusion coefficient.&quot;&quot;&quot;
+            import numpy as np, matplotlib
+            matplotlib.use(&quot;Agg&quot;)                    # no display needed: write the figure to a file
+            import matplotlib.pyplot as plt
+
+            step, msd = np.loadtxt(&quot;output/msd.csv&quot;, delimiter=&quot;,&quot;, skiprows=1, unpack=True)
+            slope, intercept = np.polyfit(step, msd, 1)
+            D = slope / 2                            # in 1D, &lt;x^2&gt; = 2 D t with one step per unit time
+            fig, ax = plt.subplots(figsize=(5, 3.4))
+            ax.plot(step, msd, lw=1, label=&quot;simulation&quot;); ax.plot(step, slope * step + intercept, &quot;k--&quot;, lw=1, label=f&quot;fit: slope {slope:.3f}&quot;)
+            ax.set(xlabel=&quot;number of steps&quot;, ylabel=r&quot;$\langle x^2\rangle$&quot;); ax.legend(); fig.tight_layout(); fig.savefig(&quot;output/msd.png&quot;, dpi=130)
+            print(&quot;D = %.4f (steps^2 per step); exact value 0.5&quot; % D)</code></pre>
+            <pre class="out"><code>D = 0.4814 (steps^2 per step); exact value 0.5</code></pre>
+            <figure class="lab-fig"><img src="../assets/labs/lab-101/msd.png" alt="Mean-square displacement of a random walk against the number of steps" loading="lazy"><figcaption>The mean-square displacement of the random walk is a straight line: diffusion.</figcaption></figure>
+            <p>The curve is a straight line with a slope close to one; from $\langle x^2\rangle=2Dt$ the diffusion coefficient is $D=0.4814$ (against the exact $0.5$: $3.7\%$ low, the same error as the slope). Notice that the plot shows the fluctuations at large $n$ (the line is not perfectly smooth) and that they grow with $n$: fewer independent walkers contribute to an average at a given relative accuracy as the displacement grows, which is the reason why the diffusion coefficient is determined from the first part of the curve in real simulations (as in <a href="lab-md-lammps-argon.html">LAB 502</a>).</p>
+            <h2 id="git">Step 6. Version control with git<a class="anchor" href="#git" aria-label="Link to this section">#</a></h2>
+            <p>You will change your scripts hundreds of times. <strong>Git</strong> stores every saved state (<em>commit</em>) of a folder, lets you see what changed, and lets you return to any earlier state, which is what makes it possible to say &ldquo;this figure was made with the version of the script from last Tuesday&rdquo;. Create a repository, add a <code>.gitignore</code> for files that should not be saved (the environment, generated files), commit, change something, look at the difference, and try a change on a branch (a parallel line of history) that you then merge:</p>
+            <pre data-file="shell"><code>git init -b main                   # make this folder a repository
+            git config user.name &quot;Your Name&quot;   # once per machine (use --global)
+            git config user.email &quot;you@example.org&quot;
+            printf &#x27;venv/\n__pycache__/\noutput/msd.csv\noutput/msd.png\n&#x27; &gt; .gitignore
+            git status --short                 # what git sees
+            git add -A                         # stage everything that is not ignored
+            git commit -m &quot;Random walk script and run record&quot;
+            git log --oneline                  # the history
+            # ... edit the script: 2000 walkers -&gt; 5000 walkers ...
+            git diff scripts/random_walk.py    # what changed
+            git commit -am &quot;Use 5000 walkers&quot;  # -a: all modified tracked files
+            git checkout -b longer-walk        # new branch: try a longer walk
+            # ... edit: 1000 steps -&gt; 4000 steps ...
+            git commit -am &quot;Longer walks&quot;
+            git log --oneline --graph --all    # the history of all branches
+            git checkout main                  # go back to the main line
+            git merge longer-walk              # bring the change into main
+            git ls-files                       # the files that git tracks</code></pre>
+            <pre class="out"><code>?? .gitignore
+            ?? output/
+            ?? requirements.txt
+            ?? scripts/
+            98f4a4f Random walk script and run record
+            --- after editing the number of walkers:
+            @@ -11,7 +11,7 @@ def run(n_walkers=2000, n_steps=1000, seed=42):
+ 
+             if __name__ == &quot;__main__&quot;:
+                 t0 = time.time()
+            -    n_walkers, n_steps, seed = 2000, 1000, 42
+            +    n_walkers, n_steps, seed = 5000, 1000, 42
+                 msd = run(n_walkers, n_steps, seed)
+                 slope = np.polyfit(np.arange(1, n_steps + 1), msd, 1)[0]    # for a simple random walk the exact slope is 1
+                 np.savetxt(&quot;output/msd.csv&quot;, np.column_stack([np.arange(1, n_steps + 1), msd]), delimiter=&quot;,&quot;, header=&quot;step,msd&quot;, comments=&quot;&quot;)
+            MSD slope = 0.9991 (exact value 1)
+            MSD slope = 0.9867 (exact value 1)
+            * 7d99bf6 Longer walks
+            * 8163910 Use 5000 walkers
+            * 98f4a4f Random walk script and run record
+            7d99bf6 Longer walks
+            8163910 Use 5000 walkers
+            98f4a4f Random walk script and run record
+            .gitignore
+            output/run.json
+            requirements.txt
+            scripts/plot_msd.py
+            scripts/random_walk.py</code></pre>
+            <p>The output shows what git did: after <code>git init</code>, the four items are untracked (<code>??</code>); the first commit receives an identifier (<code>98f4a4f</code> here; yours will differ); <code>git diff</code> shows the removed line (<code>-</code>) and the added line (<code>+</code>); the merge is a &ldquo;fast-forward&rdquo; because main had not moved, so the history is a straight line. Only five files are tracked: the large generated files and the environment are ignored. The <em>rules for what to commit</em>: scripts, inputs, small records (<code>run.json</code>), the requirements file and documentation; <strong>not</strong> the virtual environment, large trajectories or other results that the scripts can regenerate. To undo an uncommitted edit, <code>git restore file</code>; to go back to an old version without losing the new one, <code>git checkout &lt;id&gt;</code> and then <code>git checkout main</code>. To share code, <code>git remote add origin &lt;url&gt;</code> and <code>git push</code> (GitHub, GitLab or a university server; credentials are required and were not set up here).</p>
+            <h2 id="repro">Step 7. Reproducibility: build the environment again<a class="anchor" href="#repro" aria-label="Link to this section">#</a></h2>
+            <p>The test of the whole setup is whether someone else (or you in six months) can reproduce the result. In a <em>new</em> virtual environment built from <code>requirements.txt</code>, the first version of the script gives:</p>
+            <pre data-file="shell"><code>python3 -m venv venv2 &amp;&amp; source venv2/bin/activate
+            pip install -r requirements.txt
+            git checkout 98f4a4f               # the first commit
+            python scripts/random_walk.py</code></pre>
+            <pre class="out"><code>MSD slope = 0.9629 (exact value 1)</code></pre>
+            <p>The same number as in Step 4 ($0.962865\ldots$ in <code>run.json</code>): the same seed, parameters and package versions give the same answer. This holds on the same computer; on another processor or operating system, floating-point sums can differ in the last digits, and programs that use parallel threads may differ in the order of operations (for molecular dynamics, the LAMMPS manual says that the same input on a different number of processors gives statistically but not numerically identical trajectories). The recommended project layout, used here, is:</p>
+            <pre data-file="layout"><code>project/
+              README.md          what the project is, how to run it, what each folder contains
+              requirements.txt   the exact package versions
+              input/             raw data, structure files, parameter files (never edit by hand after use)
+              scripts/           the code (run from the project root)
+              output/            results; each run also writes run.json
+              .gitignore</code></pre>
+            <h2 id="jobs">Step 8. Long jobs: background runs and a cluster job script<a class="anchor" href="#jobs" aria-label="Link to this section">#</a></h2>
+            <p>A simulation that lasts hours must survive the closing of your terminal. Three levels of tools, from simple to professional:</p>
+            <ul>
+            <li><code>nohup python scripts/random_walk.py &gt; log.txt 2&gt;&amp;1 &amp;</code> runs the command in the background, detached from the terminal; <code>tail -f log.txt</code> follows the output and <code>jobs</code> or <code>ps</code> shows it; <code>kill PID</code> stops it. (A command ending in <code>&amp;</code> that is not detached is stopped when you log out.)</li>
+            <li><code>tmux</code> (or <code>screen</code>) creates a persistent terminal session on a remote machine: <code>tmux new -s sim</code>, detach with <code>Ctrl-b d</code>, come back with <code>tmux attach -t sim</code>.</li>
+            <li>On a shared cluster you submit a <strong>job script</strong> to a scheduler such as SLURM: <code>sbatch job.sh</code>. The template below is for orientation: the directives (<code>#SBATCH</code>) and the module names depend on your cluster, so read its documentation. <strong>It was not executed here</strong> because the environment had no scheduler:</li>
+            </ul>
+            <pre data-file="job.sh (template, not run)"><code>#!/bin/bash
+            #SBATCH --job-name=random_walk
+            #SBATCH --time=00:10:00            # wall-clock limit
+            #SBATCH --ntasks=1
+            #SBATCH --cpus-per-task=1
+            #SBATCH --mem=2G
+            #SBATCH --array=1-10               # ten independent jobs, with SLURM_ARRAY_TASK_ID = 1..10
+            #SBATCH --output=logs/%x_%A_%a.out
+
+            source venv/bin/activate           # the same environment as on the laptop
+            python scripts/random_walk.py --seed &quot;$SLURM_ARRAY_TASK_ID&quot;</code></pre>
+            <p>(The script of Step 4 has the seed fixed in the code; the template assumes that you have added a <code>--seed</code> command-line option, Exercise 5.) A job array is the natural way to run the independent samples that a stochastic simulation needs for its error bars. Useful commands: <code>squeue -u &#36;USER</code> (my jobs), <code>scancel JOBID</code>, <code>sacct</code> (accounting). Remember that the login node of a cluster is for editing and submitting, not for running calculations.</p>
+            <h2 id="errors">Step 9. Typical problems<a class="anchor" href="#errors" aria-label="Link to this section">#</a></h2>
+            <div class="table-scroll" role="region" aria-label="Step 9. Typical problems (scrollable table)" tabindex="0"><table>
+            <thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+            <tbody>
+            <tr><td><code>command not found: python</code></td><td>Python not installed, or only <code>python3</code> exists</td><td>Use <code>python3</code>, or install Python (<code>sudo apt install python3 python3-venv</code> on Ubuntu)</td></tr>
+            <tr><td><code>ModuleNotFoundError: No module named 'numpy'</code></td><td>the environment is not active, or the package was installed in another one</td><td><code>source venv/bin/activate</code>; check <code>which python</code></td></tr>
+            <tr><td><code>error: externally-managed-environment</code> from pip</td><td>pip refuses to modify the system Python</td><td>Use a virtual environment (this is exactly its purpose)</td></tr>
+            <tr><td><code>FileNotFoundError: output/msd.csv</code></td><td>the script was started from the wrong folder, or the folder does not exist</td><td><code>pwd</code>; run from the project root; <code>mkdir -p output</code></td></tr>
+            <tr><td>Figure does not appear / <code>no display name</code></td><td>no screen on a remote machine</td><td><code>matplotlib.use("Agg")</code> and save to a file</td></tr>
+            <tr><td><code>Permission denied</code></td><td>no execute or write permission</td><td><code>ls -l</code>; <code>chmod +x script</code> for scripts</td></tr>
+            <tr><td>git refuses to switch branches because of local changes</td><td>a tracked file was modified (even by a script run)</td><td>commit the change, <code>git stash</code>, or <code>git restore</code> it; keep generated files out of git</td></tr>
+            <tr><td>Results differ from yesterday&rsquo;s</td><td>a different package version, seed or input</td><td>Compare <code>run.json</code> records; pin the versions</td></tr>
+            </tbody></table></div>
+            <!-- takeaways:start -->
+<div class="takeaways"><strong>Key takeaways</strong>
+<ul>
+<li>A reproducible computational project needs four habits from the first day: work in a terminal, keep each project in its own Python virtual environment with pinned package versions (pip freeze), keep scripts and inputs under version control with git, and let every run write a small record (seed, parameters, package versions, run time) next to its results.</li>
+<li>A random walk of 2000 walkers gave a mean-square-displacement slope of 0.9629 with seed 42, 0.9991 with 5000 walkers and 0.9867 with 5000 walkers of 4000 steps; the statistical scatter between seeds is 0.0286 for 2000 walkers, so a single run cannot be quoted with three decimals.</li>
+<li>The same script in a new virtual environment built from requirements.txt reproduces the result digit for digit (slope 0.962865...), which is what reproducibility means: same inputs, same seed, same software versions, same answer.</li>
+<li>Git records every change as a commit: git add and git commit save a state, git diff shows what changed, git log lists the history, and branches (git checkout -b) allow an experiment to be tried without touching the main line; large generated files and environments belong in .gitignore.</li>
+<li>Long simulations run in the background (nohup, tmux) or through a job scheduler such as SLURM on a cluster; whatever the system, the job must be able to be restarted and must record how it was started.</li>
+</ul></div>
+<!-- takeaways:end -->
+
+            <h2 id="check">Exercises<a class="anchor" href="#check" aria-label="Link to this section">#</a></h2>
+            <div class="problem" id="p101-1">
+            <div class="p-head"><span class="p-num">Problem 1</span><span class="p-level">Basic</span></div>
+            <p>Run the random-walk script with 10 different seeds ($1,\ldots,10$) for $N=500$, $2000$ and $8000$ walkers and compute the mean and the standard deviation of the fitted slope. (Results of this experiment: $N=500$: $0.9991\pm0.0447$; $N=2000$: $1.0167\pm0.0286$; $N=8000$: $1.0065\pm0.0169$.) (a) How does the scatter scale with $N$? (b) Estimate the number of walkers needed to quote the slope to $1\%$ (one standard deviation). (c) Why is the single run with seed 42 ($0.9629$) not wrong?</p>
+            <details class="hint"><summary>Hint</summary><p>For independent samples the error of an average falls as $1/\sqrt N$.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) Theory: the standard deviation falls as $N^{-1/2}$: from $N=500$ to $8000$ ($16\times$) the scatter should fall by $4\times$; the measured $0.0447\to0.0169$ is a factor of $2.6$. With only 10 seeds the standard deviation itself is uncertain by about $\pm22\%$ ($1/\sqrt{2(10-1)}$), so the measurements are compatible with the $N^{-1/2}$ law but do not prove it; more seeds would sharpen the test. (b) From $N=2000$ ($0.0286$) to $0.01$ needs $N=2000\times(2.86)^2\approx1.6\times10^4$ walkers, and from $N=8000$ ($0.0169$) $N=8000\times1.69^2=2.3\times10^4$; so about $2\times10^4$. (c) The seed-42 result is one sample from a distribution with a standard deviation of $0.03$: it lies $1.3$ standard deviations from the exact slope $1$, which is unremarkable. A single stochastic run must never be reported without an estimate of its error.</p>
+            <p class="answer">(a) $\propto N^{-1/2}$ (measured $2.6\times$ for $16\times N$, 10 seeds)  (b) about $2\times10^4$  (c) one sample of the distribution</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-2">
+            <div class="p-head"><span class="p-num">Problem 2</span><span class="p-level">Basic</span></div>
+            <p>After Step 6 the history has three commits. (a) Which command shows the difference between the first and the last commit? (b) You edit <code>scripts/random_walk.py</code> badly and want to return to the committed version. What do you type? (c) You want the version of the script from the first commit in a separate file without changing your branch. What do you type?</p>
+            <details class="hint"><summary>Hint</summary><p>Commits are identified by their (abbreviated) hash numbers shown by <code>git log --oneline</code>.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>git diff 98f4a4f HEAD</code> (or <code>git diff HEAD~2 HEAD</code>; here HEAD is the last commit; use the numbers shown by your own <code>git log</code>). (b) <code>git restore scripts/random_walk.py</code> (older git versions: <code>git checkout -- scripts/random_walk.py</code>), which discards the uncommitted changes of that file: be sure that you want that. (c) <code>git show 98f4a4f:scripts/random_walk.py &gt; old_version.py</code>.</p>
+            <p class="answer">(a) <code>git diff 98f4a4f HEAD</code>  (b) <code>git restore</code>  (c) <code>git show id:path &gt; file</code></p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-3">
+            <div class="p-head"><span class="p-num">Problem 3</span><span class="p-level">Core</span></div>
+            <p>(a) In Step 7, why does the second environment give exactly the same slope as the first? (b) Name three things that could make a re-run give a different number although the script is unchanged. (c) What would you add to <code>run.json</code> to make the record more complete?</p>
+            <details class="hint"><summary>Hint</summary><p>Think of what determines every random number and every floating-point sum.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) The seed ($42$), the parameters and the versions of Python and NumPy are the same, so the generator produces the same random numbers and the same operations are done in the same order. (b) A different NumPy version (the random generator or the summation order may change), a different seed, a changed input or default parameter, a different CPU architecture or compiler flags (floating-point rounding), a program that runs in parallel with a non-deterministic order of operations, a library that uses the system clock, or a dependency that was updated automatically. (c) The git commit identifier of the code (<code>git rev-parse HEAD</code>) so that the exact script can be found, the command line used, the full list of packages (or a hash of <code>requirements.txt</code>), the date, and the machine name.</p>
+            <p class="answer">(a) same seed, parameters and versions  (b) versions, seed/input, hardware or parallelism  (c) the commit id and command line</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-4">
+            <div class="p-head"><span class="p-num">Problem 4</span><span class="p-level">Core</span></div>
+            <p>Using only the commands of Step 2, (a) write a command that prints the number of lines of <code>output/msd.csv</code> in which the MSD (second column) is larger than $3000$ (use <code>awk</code>, a standard tool: <code>awk -F, &#x27;&#36;2 &gt; 3000&#x27;</code> prints the lines whose second field is larger than 3000). (b) Write a command that saves the last ten lines of the file to <code>tail.csv</code>. (c) What is wrong with <code>rm output/*.csv &gt; log.txt</code> as a way of cleaning up?</p>
+            <details class="hint"><summary>Hint</summary><p>Pipes connect commands: <code>cmd1 | cmd2</code>. For (c) think about what the redirection captures.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) <code>awk -F, &#x27;&#36;2 &gt; 3000&#x27; output/msd.csv | wc -l</code>: the field separator is a comma, the condition is applied to each line and <code>wc -l</code> counts the lines that pass (the header line has a text in the second column; awk compares it as a string, so it is also counted: use <code>tail -n +2 output/msd.csv | awk ...</code> to skip it). (b) <code>tail -n 10 output/msd.csv &gt; tail.csv</code>. (c) <code>rm</code> prints nothing when it succeeds, so <code>log.txt</code> will be empty and gives a false sense of a record; more seriously, <code>rm</code> deletes immediately and permanently: run <code>ls output/*.csv</code> first to see what the pattern matches, and use <code>rm -i</code> to ask for confirmation.</p>
+            <p class="answer">(a) <code>awk -F, &#x27;&#36;2 &gt; 3000&#x27; file | wc -l</code>  (b) <code>tail -n 10 file &gt; tail.csv</code>  (c) <code>rm</code> is silent and permanent</p>
+            </details>
+            </div>
+
+            <div class="problem" id="p101-5">
+            <div class="p-head"><span class="p-num">Problem 5</span><span class="p-level">Challenge</span></div>
+            <p>Modify <code>random_walk.py</code> so that the seed is given on the command line (<code>python scripts/random_walk.py --seed 7</code>) and the run record is written to <code>output/run_7.json</code>. Then (a) write the SLURM array job of Step 8 so that ten seeds run as ten independent tasks, (b) write a small script that reads the ten records and prints the mean and the standard error of the slope, (c) explain why this is better than one run of ten times more walkers.</p>
+            <details class="hint"><summary>Hint</summary><p>Use <code>argparse</code> from the standard library for the command line, and <code>glob</code> to find the records.</p></details>
+            <details class="solution"><summary>Full solution</summary>
+            <p>(a) In the script: <code>import argparse; p = argparse.ArgumentParser(); p.add_argument("--seed", type=int, default=42); seed = p.parse_args().seed</code> and name the record with <code>f"output/run_{seed}.json"</code>; the job script of Step 8 then runs the command with <code>--seed "&#36;SLURM_ARRAY_TASK_ID"</code> for ten array tasks. (b) <code>import glob, json, numpy as np; s = [json.load(open(f))["slope"] for f in glob.glob("output/run_*.json")]; print(np.mean(s), np.std(s, ddof=1) / np.sqrt(len(s)))</code>. (c) Ten independent runs give the <em>error bar</em> directly from their scatter (the standard error), whereas one large run gives a single number with no information on its uncertainty (unless it is split into blocks); the runs also run in parallel and finish in the time of one of them, and if a job fails only one tenth of the data is lost. The statistical accuracy is the same for the same total number of walkers.</p>
+            <p class="answer">(a) job array with <code>--seed &#36;SLURM_ARRAY_TASK_ID</code>  (b) mean and std/$\sqrt n$  (c) gives the error bar and runs in parallel</p>
+            </details>
+            </div>
+
+            <h2 id="refs">Going further and references<a class="anchor" href="#refs" aria-label="Link to this section">#</a></h2>
+            <ul>
+                <li>Wilson, G. et al., &ldquo;Good enough practices in scientific computing&rdquo;, <em>PLOS Computational Biology</em> <strong>13</strong>, e1005510 (2017): short and practical; and the Software Carpentry lessons (<code>software-carpentry.org</code>) on the shell, git and Python: free, with exercises.</li>
+                <li>Chacon, S. and Straub, B., <em>Pro Git</em> (free online at <code>git-scm.com/book</code>): the reference on git.</li>
+                <li>The Python documentation on virtual environments (<code>docs.python.org/3/tutorial/venv.html</code>) and the NumPy random-number documentation (<code>numpy.org/doc</code>, &ldquo;Random Generator&rdquo;).</li>
+                <li>SLURM documentation (<code>slurm.schedmd.com</code>) and the user guide of your own cluster.</li>
+                <li>Next: <a href="lab-structures-ase.html">LAB 201</a> builds crystal structures in Python, and <a href="lab-md-lammps-argon.html">LAB 502</a> uses the same habits to run molecular dynamics.</li>
+            </ul>
+
+            <!-- pager:start -->
+<nav class="pager" aria-label="Previous and next course in this subject">
+<span class="spacer"></span>
+<a class="next" href="lab-structures-ase.html"><span class="dir">Next course</span>Lab: Crystal structures in Python with ASE</a>
+</nav>
+<!-- pager:end -->
+        </article>
+
+    </div>
+    </div>
+
+    <footer class="site"><div class="inner">
+        <div><b>MiBeM</b><p>A free university curriculum in computational materials science, from first-year foundations to graduate methods.</p></div>
+        <nav><a href="../curriculum.html">Curriculum</a><a href="../map.html">Prerequisite map</a><a href="../glossary.html">Glossary</a><a href="#main">Back to top</a></nav>
+    </div></footer>
+    <script src="../assets/katex/katex.min.js?v=f4e1ebdc"></script>
+    <script src="../assets/katex/auto-render.min.js?v=71052e38"></script>
+    <script src="../assets/math.js?v=30f9a112"></script>
+    <script src="../assets/topics.js?v=62a0ce61"></script>
+    <script src="../assets/pathdata.js?v=74dcee15"></script>
+    <script src="../assets/glossary.js?v=f0b43d1a"></script>
+    <script src="../assets/site.js?v=bc0be6f7" defer></script>
+    <script src="../assets/learn.js?v=7440bcd6" defer></script>
+</body>
+</html>

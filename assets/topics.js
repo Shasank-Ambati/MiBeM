@@ -263,6 +263,32 @@ window.MIBEM_TOPICS = [
     ]
   },
   {
+    "id": 49,
+    "label": "LAB 101",
+    "code": "LAB 101",
+    "dept": "LAB",
+    "level": 1,
+    "slug": "lab-workstation-setup",
+    "short": "Workstation setup",
+    "part": "Computational labs",
+    "tone": "a",
+    "minutes": 21,
+    "title": "Lab: Setting up a computational workstation",
+    "blurb": "The terminal, Python virtual environments, a first reproducible script with a run record, plotting, git version control, project layout, background jobs and a SLURM template.",
+    "builds": [
+      16
+    ],
+    "related": [],
+    "takeaways": [
+      "A reproducible computational project needs four habits from the first day: work in a terminal, keep each project in its own Python virtual environment with pinned package versions (pip freeze), keep scripts and inputs under version control with git, and let every run write a small record (seed, parameters, package versions, run time) next to its results.",
+      "A random walk of 2000 walkers gave a mean-square-displacement slope of 0.9629 with seed 42, 0.9991 with 5000 walkers and 0.9867 with 5000 walkers of 4000 steps; the statistical scatter between seeds is 0.0286 for 2000 walkers, so a single run cannot be quoted with three decimals.",
+      "The same script in a new virtual environment built from requirements.txt reproduces the result digit for digit (slope 0.962865...), which is what reproducibility means: same inputs, same seed, same software versions, same answer.",
+      "Git records every change as a commit: git add and git commit save a state, git diff shows what changed, git log lists the history, and branches (git checkout -b) allow an experiment to be tried without touching the main line; large generated files and environments belong in .gitignore.",
+      "Long simulations run in the background (nohup, tmux) or through a job scheduler such as SLURM on a cluster; whatever the system, the job must be able to be restarted and must record how it was started."
+    ],
+    "katex": true
+  },
+  {
     "id": 26,
     "label": "MATH 201",
     "code": "MATH 201",
@@ -1141,6 +1167,7 @@ window.MIBEM_PATHPLAN = [
       "MATH 100",
       "MATH 101",
       "COMP 101",
+      "LAB 101",
       "MATH 103",
       "PHYS 101",
       "MSE 101",

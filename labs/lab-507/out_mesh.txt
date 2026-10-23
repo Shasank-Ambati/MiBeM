@@ -1,0 +1,4 @@
+n =  5:    134 nodes,    224 triangles
+n = 10:    170 nodes,    287 triangles
+n = 20:    234 nodes,    395 triangles
+n = 40:    369 nodes,    636 triangles

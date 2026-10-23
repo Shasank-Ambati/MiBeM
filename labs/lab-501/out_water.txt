@@ -1,0 +1,14 @@
+1. basis-set convergence at the experimental geometry (PBE)
+   basis        functions   E (Hartree)     E - E(QZ) (mHa)   time (s)
+   sto-3g           7       -75.225567        1157.50           4.7
+   6-31g           13       -76.298106          84.96           5.0
+   cc-pvdz         24       -76.333442          49.63           7.7
+   cc-pvtz         58       -76.372843          10.23           5.8
+   cc-pvqz        115       -76.383070           0.00          23.5
+2. geometry optimisation with cc-pVTZ
+   method     r(OH) (A)   angle (deg)   E (Hartree)
+   HF         0.9406      106.00       -76.057770
+   LDA        0.9706      104.34       -75.898655
+   PBE        0.9697      103.53       -76.373102
+   B3LYP      0.9613      104.53       -76.459841
+experiment    0.9572      104.52

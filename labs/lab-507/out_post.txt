@@ -1,0 +1,12 @@
+force balance on the ligament: integral of sigma_yy dx from R to W = 4998.5 N/mm ; applied sigma0 * W = 5000.0 N/mm  (difference -0.03 %)
+
+   x/R    sigma_yy/sigma0 (FE)   Kirsch (infinite plate)
+  1.00       3.034                 3.000
+  1.25       1.971                 1.934
+  1.50       1.532                 1.519
+  2.00       1.229                 1.219
+  3.00       1.083                 1.074
+  5.00       1.030                 1.022
+  8.00       1.009                 1.008
+
+maximum displacement u_y at the top edge: 0.0507 mm ; mean strain 5.066e-04

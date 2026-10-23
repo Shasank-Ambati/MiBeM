@@ -1,0 +1,44 @@
+$ pwd
+/home/student/project
+$ ls
+input
+output
+requirements.txt
+scripts
+$ ls -l scripts
+total 8
+-rw-r--r-- 1 student student  833 Oct 23 10:02 plot_msd.py
+-rw-r--r-- 1 student student 1300 Oct 23 10:02 random_walk.py
+$ cd output && ls && cd ..
+msd.csv
+msd.png
+run.json
+$ head -n 3 output/msd.csv
+step,msd
+1.000000000000000000e+00,1.000000000000000000e+00
+2.000000000000000000e+00,2.019200000000000106e+00
+$ wc -l output/msd.csv scripts/*.py
+  4001 output/msd.csv
+    12 scripts/plot_msd.py
+    21 scripts/random_walk.py
+  4034 total
+$ grep -n 'seed' scripts/random_walk.py
+5:def run(n_walkers=2000, n_steps=1000, seed=42):
+6:    rng = np.random.default_rng(seed)                       # a recorded seed makes the run reproducible
+14:    n_walkers, n_steps, seed = 5000, 4000, 42
+15:    msd = run(n_walkers, n_steps, seed)
+18:    meta = {"script": "scripts/random_walk.py", "n_walkers": n_walkers, "n_steps": n_steps, "seed": seed, "slope": float(slope),
+$ grep -c import scripts/*.py
+scripts/plot_msd.py:2
+scripts/random_walk.py:2
+$ tail -n 1 output/msd.csv | cut -d, -f2
+3.967165599999999813e+03
+$ cut -d, -f2 output/msd.csv | sort -g | tail -n 1
+3.968457600000000184e+03
+$ which python; python -c 'import sys; print(sys.prefix)'
+/home/student/venv/bin/python
+/home/student/venv
+$ echo $VIRTUAL_ENV
+/home/student/venv
+$ python scripts/random_walk.py > log.txt 2>&1; cat log.txt
+MSD slope = 0.9867 (exact value 1)

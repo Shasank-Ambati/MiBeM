@@ -1,0 +1,15 @@
+T (C)    D (m^2/s)
+  800    1.44e-12
+  900    5.91e-12
+  927    8.32e-12
+ 1000    1.95e-11
+
+T = 927 C, 10 h: sqrt(D t) = 0.547 mm
+  depth (mm)   FiPy (wt% C)   erf solution
+    0.25        0.8005         0.8012
+    0.49        0.6168         0.6179
+    0.99        0.3582         0.3588
+    1.50        0.2429         0.2427
+    2.00        0.2082         0.2080
+  maximum difference over the whole profile: 1.11e-03 wt%
+  case depth (0.5 wt% C): FiPy 0.685 mm ; analytic 2 z sqrt(D t) = 0.687 mm (z = 0.6273)

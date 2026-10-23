@@ -1,0 +1,28 @@
+?? .gitignore
+?? output/
+?? requirements.txt
+?? scripts/
+98f4a4f Random walk script and run record
+--- after editing the number of walkers:
+@@ -11,7 +11,7 @@ def run(n_walkers=2000, n_steps=1000, seed=42):
+ 
+ if __name__ == "__main__":
+     t0 = time.time()
+-    n_walkers, n_steps, seed = 2000, 1000, 42
++    n_walkers, n_steps, seed = 5000, 1000, 42
+     msd = run(n_walkers, n_steps, seed)
+     slope = np.polyfit(np.arange(1, n_steps + 1), msd, 1)[0]    # for a simple random walk the exact slope is 1
+     np.savetxt("output/msd.csv", np.column_stack([np.arange(1, n_steps + 1), msd]), delimiter=",", header="step,msd", comments="")
+MSD slope = 0.9991 (exact value 1)
+MSD slope = 0.9867 (exact value 1)
+* 7d99bf6 Longer walks
+* 8163910 Use 5000 walkers
+* 98f4a4f Random walk script and run record
+7d99bf6 Longer walks
+8163910 Use 5000 walkers
+98f4a4f Random walk script and run record
+.gitignore
+output/run.json
+requirements.txt
+scripts/plot_msd.py
+scripts/random_walk.py

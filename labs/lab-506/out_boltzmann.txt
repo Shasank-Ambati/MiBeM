@@ -1,0 +1,11 @@
+collapse test: concentration at fixed eta = x/sqrt(t) for three times
+  eta (um/sqrt(s))     c(1 h)    c(4 h)    c(16 h)
+        0.5           0.9251    0.9250    0.9249
+        1.0           0.8454    0.8452    0.8450
+        2.0           0.6724    0.6719    0.6714
+        3.0           0.4832    0.4824    0.4816
+        4.0           0.2860    0.2849    0.2838
+        5.0           0.1069    0.1057    0.1047
+
+recovered diffusivity (16 h profile)
+     c      D from the profile (m^2/s)   true D(c)       error

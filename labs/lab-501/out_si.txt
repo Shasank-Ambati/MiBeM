@@ -1,0 +1,2 @@
+1. k-point convergence (a = 5.43 A, basis gth-szv)
+   k mesh   k points   E per cell (Ha)   dE vs the densest (meV/atom)   time (s)
